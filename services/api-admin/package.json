@@ -124,7 +124,7 @@
   "devDependencies": {
     "@faker-js/faker": "^8.4.1",
     "@nestjs/cli": "^9.0.0",
-    "@nestjs/schematics": "^10.1.1",
+    "@nestjs/schematics": "^10.1.4",
     "@nestjs/testing": "^10.3.8",
     "@repo/config-typescript": "*",
     "@repo/eslint-config": "*",
