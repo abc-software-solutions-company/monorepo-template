@@ -1,0 +1,35 @@
+# Build dependencies
+.github
+.husky
+.vscode
+coverage
+coverage-unit
+unit-results
+coverage-e2e
+e2e-results
+dist
+node_modules
+
+# Logs
+logs
+
+# Environment (contains sensitive data)
+.env\*
+
+# Versioning and metadata
+.git
+.gitignore
+.dockerignore
+.prettierignore
+
+# Config files
+.editorconfig
+jest.config.js
+prettier.config.js
+
+# Docker files
+Dockerfile
+docker-compose.yml
+
+# Documentation
+README.md

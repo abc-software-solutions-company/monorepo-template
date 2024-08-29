@@ -1,0 +1,24 @@
+import { FC } from 'react';
+import classNames from 'classnames';
+import { UploadIcon } from 'lucide-react';
+
+import { ComponentBaseProps } from '@/interfaces/component.interface';
+
+type ButtonSelectFileProps = {
+  onClick?: () => void;
+} & ComponentBaseProps;
+
+const ButtonSelectFile: FC<ButtonSelectFileProps> = ({ className, onClick }) => {
+  return (
+    <button
+      type="button"
+      className={classNames('flex items-center justify-center rounded-md border border-dashed bg-background p-1.5', className)}
+      onClick={onClick}
+    >
+      <UploadIcon className="h-4 w-4 text-muted-foreground" />
+      <span className="sr-only">Select file</span>
+    </button>
+  );
+};
+
+export default ButtonSelectFile;

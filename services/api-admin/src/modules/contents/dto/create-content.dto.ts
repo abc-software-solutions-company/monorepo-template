@@ -1,0 +1,41 @@
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { IsNotEmpty, IsOptional, IsString, MaxLength } from 'class-validator';
+
+import { toSlug } from '@/common/utils/string.util';
+
+import { CONTENT_STATUS, CONTENT_TYPE } from '../constants/contents.constant';
+
+export class CreateContentDto {
+  @ApiProperty({ example: 'This is title' })
+  @IsString()
+  @IsNotEmpty()
+  @MaxLength(255)
+  name: string;
+
+  @ApiProperty({ example: toSlug('This is title') })
+  @IsString()
+  @IsNotEmpty()
+  @MaxLength(255)
+  slug: string;
+
+  @ApiPropertyOptional({ example: '<p>description</p>' })
+  @IsString()
+  @IsOptional()
+  @MaxLength(2000)
+  description: string;
+
+  @ApiPropertyOptional({ example: '<p>body</p>' })
+  @IsString()
+  @IsOptional()
+  body: string;
+
+  @ApiPropertyOptional({ example: CONTENT_TYPE.UNCATEGORIZED })
+  @IsString()
+  @IsOptional()
+  type?: CONTENT_TYPE;
+
+  @ApiPropertyOptional({ example: CONTENT_STATUS.DRAFT })
+  @IsString()
+  @IsOptional()
+  status?: CONTENT_STATUS;
+}

@@ -1,0 +1,159 @@
+import { Body, Controller, Post, Req, Res } from '@nestjs/common';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { Throttle } from '@nestjs/throttler';
+import { Request, Response as ExpressResponse } from 'express';
+
+import { ApiDocumentResponse } from '@/common/decorators/api-document-response.decorator';
+import { Response } from '@/common/decorators/response.decorator';
+
+import {
+  LoginWithAppleDoc,
+  LoginWithCredentialsDoc,
+  LoginWithFacebookDoc,
+  LoginWithGoogleDoc,
+  ResetPasswordDoc,
+  SignOutDoc,
+  SignUpDoc,
+  VerifyResetPasswordDoc,
+} from './docs/auth.doc';
+import { OAuthFacebookSignInDto, OAuthSignInDto, SignInDto } from './dto/auth.dto';
+import { ResetPasswordDto } from './dto/reset-password.dto';
+import { VerifyResetPasswordDto } from './dto/verify-reset-password.dto';
+import { AuthService } from './auth.service';
+
+import { CreateUserDto } from '../users/dto/create-user.dto';
+import { UsersService } from '../users/users.service';
+
+@Controller('auth')
+@ApiTags('Auth')
+export class AuthController {
+  constructor(
+    private readonly authService: AuthService,
+    private readonly usersService: UsersService
+  ) {}
+
+  @Post('login')
+  @Throttle({ default: { limit: 10, ttl: 10000 } })
+  @ApiOperation({ summary: 'Login with credentials' })
+  @ApiDocumentResponse({ message: 'Login successfully', model: LoginWithCredentialsDoc })
+  @Response({ message: 'Login successfully' })
+  async login(@Req() req: Request, @Res({ passthrough: true }) response: ExpressResponse, @Body() signInDto: SignInDto) {
+    const ip = req.ip as string;
+    const ua = req.headers['user-agent'] || '';
+
+    const resp = await this.authService.signIn(signInDto, ip, ua);
+
+    response.cookie('refreshToken', resp.refreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+    });
+
+    delete resp.refreshToken;
+
+    return resp;
+  }
+
+  @Post('login/google')
+  @ApiOperation({ summary: 'Login with Google' })
+  @ApiDocumentResponse({ message: 'Login successfully', model: LoginWithGoogleDoc })
+  @Response({ message: 'Login successfully' })
+  async signInWithGoogle(@Req() req: Request, @Res({ passthrough: true }) response: ExpressResponse, @Body() oAuthSignInDto: OAuthSignInDto) {
+    const ip = req.ip as string;
+    const ua = req.headers['user-agent'] || '';
+
+    const resp = await this.authService.signInWithGoogle(oAuthSignInDto, ip, ua);
+
+    response.cookie('refreshToken', resp.refreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+    });
+
+    delete resp.refreshToken;
+
+    return resp;
+  }
+
+  @Post('login/facebook')
+  @ApiOperation({ summary: 'Login with Facebook' })
+  @ApiDocumentResponse({ message: 'Login successfully', model: LoginWithFacebookDoc })
+  @Response({ message: 'Login successfully' })
+  async signInWithFacebook(
+    @Req() req: Request,
+    @Res({ passthrough: true }) response: ExpressResponse,
+    @Body() oAuthFacebookSignInDto: OAuthFacebookSignInDto
+  ) {
+    const ip = req.ip as string;
+    const ua = req.headers['user-agent'] || '';
+
+    const resp = await this.authService.signInWithFacebook(oAuthFacebookSignInDto, ip, ua);
+
+    response.cookie('refreshToken', resp.refreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+    });
+
+    delete resp.refreshToken;
+
+    return resp;
+  }
+
+  @Post('login/apple')
+  @ApiOperation({ summary: 'Login with Apple' })
+  @ApiDocumentResponse({ message: 'Login successfully', model: LoginWithAppleDoc })
+  @Response({ message: 'Login successfully' })
+  async signInWithApple(@Req() req: Request, @Res({ passthrough: true }) response: ExpressResponse, @Body() oAuthSignInDto: OAuthSignInDto) {
+    const ip = req.ip as string;
+    const ua = req.headers['user-agent'] || '';
+
+    const resp = await this.authService.signInWithApple(oAuthSignInDto, ip, ua);
+
+    response.cookie('refreshToken', resp.user.refreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+    });
+
+    delete resp.user.refreshToken;
+
+    return resp;
+  }
+
+  @Post('logout')
+  @ApiOperation({ summary: 'Log out' })
+  @ApiDocumentResponse({ message: 'Logout successfully', model: SignOutDoc })
+  @Response({ message: 'Logout successfully' })
+  async signOut(@Req() req: Request) {
+    const ip = req.ip as string;
+    const ua = req.headers['user-agent'] || '';
+    const refreshToken = req.cookies['refreshToken'];
+
+    return this.authService.signOut(refreshToken, ip, ua);
+  }
+
+  @Post('signup')
+  @ApiOperation({ summary: 'Create account' })
+  @ApiDocumentResponse({ message: 'Create account successfully', model: SignUpDoc })
+  @Response({ message: 'Create account successfully' })
+  async signUp(@Body() createUserDto: CreateUserDto) {
+    const resp = await this.authService.signUp(createUserDto);
+
+    return resp;
+  }
+
+  @Post('reset-password-for-mobile')
+  @Throttle({ default: { limit: 1, ttl: 1800000 } })
+  @ApiOperation({ summary: 'Reset password for Mobile' })
+  @ApiDocumentResponse({ message: 'Reset password successfully', model: ResetPasswordDoc })
+  @Response({ message: 'Reset password successfully' })
+  async resetPasswordForMobile(@Body() resetPasswordDto: ResetPasswordDto) {
+    return this.authService.resetPasswordForMobile(resetPasswordDto);
+  }
+
+  @Post('verify-reset-password-code')
+  @Throttle({ default: { limit: 1, ttl: 1800000 } })
+  @ApiOperation({ summary: 'Verify reset password for Mobile' })
+  @ApiDocumentResponse({ message: 'Verify reset password successfully', model: VerifyResetPasswordDoc })
+  @Response({ message: 'Verify reset password successfully' })
+  async verifyResetPasswordCode(@Body() verifyResetPasswordDto: VerifyResetPasswordDto) {
+    return this.authService.verifyResetPasswordCode(verifyResetPasswordDto);
+  }
+}

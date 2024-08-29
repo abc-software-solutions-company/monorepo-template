@@ -1,0 +1,66 @@
+import { FC, useState } from 'react';
+import classNames from 'classnames';
+import { ListFilterIcon } from 'lucide-react';
+import { useSearchParams } from 'react-router-dom';
+import { useTranslations } from 'use-intl';
+import { Button } from '~react-web-ui-shadcn/components/ui/button';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuLabel,
+  DropdownMenuPortal,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
+  DropdownMenuTrigger,
+} from '~react-web-ui-shadcn/components/ui/dropdown-menu';
+
+import { ComponentBaseProps } from '@/interfaces/component.interface';
+
+import { FAQ_STATUSES } from '../constants/faqs.constant';
+
+import { useFaqs } from '../hooks/use-faqs';
+
+import FaqFilterStatus from './faq-filter-status';
+
+const FaqFilters: FC<ComponentBaseProps> = ({ className }) => {
+  const t = useTranslations();
+  const [searchParams] = useSearchParams();
+  const { filter, setFilter } = useFaqs();
+  const [isOpenSubMenu, setIsOpenSubMenu] = useState<string | null>(null);
+
+  const currentStatuses = searchParams.getAll('status');
+
+  return (
+    <div className={classNames('faqs-all-filters', className)}>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button className="px-2.5">
+            <ListFilterIcon size={18} />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent className="w-56" side="right" align="start">
+          <DropdownMenuLabel>{t('filters')}</DropdownMenuLabel>
+          <DropdownMenuGroup>
+            <DropdownMenuSub open={isOpenSubMenu === 'status'} onOpenChange={open => (open ? setIsOpenSubMenu('status') : setIsOpenSubMenu(null))}>
+              <DropdownMenuSubTrigger>{t('filter_status')}</DropdownMenuSubTrigger>
+              <DropdownMenuPortal>
+                <DropdownMenuSubContent className="p-0">
+                  <FaqFilterStatus
+                    options={FAQ_STATUSES}
+                    value={currentStatuses}
+                    onChange={statuses => setFilter({ ...filter, page: 1, status: statuses })}
+                    onClose={() => setIsOpenSubMenu(null)}
+                  />
+                </DropdownMenuSubContent>
+              </DropdownMenuPortal>
+            </DropdownMenuSub>
+          </DropdownMenuGroup>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    </div>
+  );
+};
+
+export default FaqFilters;

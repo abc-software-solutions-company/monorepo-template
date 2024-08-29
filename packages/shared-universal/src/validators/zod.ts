@@ -1,0 +1,72 @@
+import { z } from 'zod';
+import { parsePhoneNumberFromString } from 'libphonenumber-js';
+
+export const baseValidator = {
+  userName: stringSchema({
+    min: 1,
+    max: 50,
+    minMessage: 'validator_user_name',
+    maxMessage: 'validator_maximum_n_characters_allowed',
+  }),
+  email: stringSchema({
+    min: 1,
+    max: 320,
+    minMessage: 'validator_user_email',
+    maxMessage: 'validator_maximum_n_characters_allowed',
+  }).email('validator_user_email_invalid'),
+  password: passwordSchema(),
+  phoneNumber: phoneNumberSchema(),
+};
+
+interface StringValidatorOptions {
+  min?: number;
+  minMessage?: string;
+  max?: number;
+  maxMessage?: string;
+}
+
+interface PasswordValidatorOptions extends StringValidatorOptions {
+  pattern?: RegExp;
+  patternMessage?: string;
+}
+
+interface PhoneNumberValidatorOptions {
+  invalidMessage?: string;
+}
+
+export function stringSchema(options: Partial<StringValidatorOptions> = {}) {
+  const { min = 1, minMessage = 'validator_at_least_n_character', max = 255, maxMessage = 'validator_maximum_n_characters_allowed' } = options;
+
+  return z.string().min(min, minMessage).max(max, maxMessage);
+}
+
+export function phoneNumberSchema(options: Partial<PhoneNumberValidatorOptions> = {}) {
+  const { invalidMessage = 'validator_phone_number_invalid' } = options;
+
+  return z.string().refine(
+    (value: string) => {
+      try {
+        const phoneNumber = parsePhoneNumberFromString(value);
+        return phoneNumber && phoneNumber.isValid();
+      } catch (error) {
+        return false;
+      }
+    },
+    {
+      message: invalidMessage,
+    }
+  );
+}
+
+export function passwordSchema(options: Partial<PasswordValidatorOptions> = {}) {
+  const {
+    min = 8,
+    minMessage = 'validator_user_password_at_least_n_character',
+    max = 255,
+    maxMessage = 'validator_maximum_n_characters_allowed',
+    pattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).+$/,
+    patternMessage = 'validator_user_password_rule',
+  } = options;
+
+  return z.string().min(min, minMessage).max(max, maxMessage).regex(pattern, patternMessage);
+}

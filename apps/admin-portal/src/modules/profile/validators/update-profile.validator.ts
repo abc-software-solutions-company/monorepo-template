@@ -1,0 +1,10 @@
+import { z } from 'zod';
+import { baseValidator } from '~shared-universal/validators/zod';
+
+export const updateProfileValidator = z.object({
+  name: baseValidator.userName,
+  phoneNumber: baseValidator.phoneNumber,
+  dateOfBirth: z.date().optional(),
+  country: z.string().optional(),
+  bio: z.string().max(2000, 'validator_maximum_n_characters_allowed'),
+});

@@ -1,0 +1,63 @@
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useLocale, useTranslations } from 'use-intl';
+import { Table } from '@tanstack/react-table';
+import { Button } from '~react-web-ui-shadcn/components/ui/button';
+import { objectToQueryString } from '~shared-universal/utils/string.util';
+
+import { POST_DEFAULT_FILTER } from '../constants/posts.constant';
+
+import { DataTableViewOptions } from '@/components/data-table/data-table-view-options';
+import DropdownBulkActions from '@/components/dropdown-bulk-actions';
+import SearchBox from '@/components/search-box';
+
+import PostFilters from './post-filters';
+
+import { usePostsState } from '../states/posts.state';
+
+type PostListToolbarProps<TData> = {
+  table: Table<TData>;
+  onBulkDelete?: () => void;
+};
+
+export default function PostListToolbar<TData>({ table, onBulkDelete }: PostListToolbarProps<TData>) {
+  const t = useTranslations();
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const locale = useLocale();
+  const postsState = usePostsState();
+
+  return (
+    <div className="flex items-center justify-between">
+      <div className="flex items-center space-x-2">
+        <PostFilters />
+        <SearchBox value={postsState.filter?.q} onSearch={text => postsState.setFilter({ q: text })} />
+        <Button variant="outline" onClick={() => postsState.setFilter(POST_DEFAULT_FILTER)}>
+          {t('filter_reset')}
+        </Button>
+        <DataTableViewOptions table={table} />
+      </div>
+      <div className="flex items-center space-x-2">
+        <Button
+          onClick={() =>
+            navigate({
+              pathname: `/${locale}/posts/new`,
+              search: `?${objectToQueryString({ sidebar: searchParams.get('sidebar') })}`,
+            })
+          }
+        >
+          {t('add_new')}
+        </Button>
+        <DropdownBulkActions
+          actions={[
+            {
+              label: t('bulk_actions_delete_selected_rows'),
+              disabled: !postsState.selected.length,
+              onClick: onBulkDelete,
+            },
+          ]}
+          dropdownLabel={t('bulk_actions')}
+        />
+      </div>
+    </div>
+  );
+}
