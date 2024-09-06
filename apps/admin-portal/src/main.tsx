@@ -3,7 +3,6 @@ import ReactDOM from 'react-dom/client';
 
 import App from './App';
 
-import '@/libs/svg-icons/dist/svg-icons.scss';
 import '@/globals.scss';
 
 const domElementId = 'root';

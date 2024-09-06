@@ -11,8 +11,8 @@
     "body": [
       "import React, { FC } from 'react';",
       "",
-      "import Text from '@/components/core-ui/text';",
-      "import View from '@/components/core-ui/view';",
+      "import Text from '~react-native-ui-core/components/text';",
+      "import View from '~react-native-ui-core/components/view';",
       "",
       "type ${1:Name}Props = {};",
       "",
@@ -25,8 +25,8 @@
       "};",
       "",
       "export default ${1:Name};",
-      ""
+      "",
     ],
-    "description": "Create React Native Function Component - Typescript"
-  }
+    "description": "Create React Native Function Component - Typescript",
+  },
 }

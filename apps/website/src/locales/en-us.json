@@ -1,0 +1,21 @@
+{
+  "back_to_home": "Back to Home",
+  "try_again": "Try again",
+  "something_went_wrong": "Something went wrong",
+
+  "btn_send": "Send",
+
+  "signin": "Sign in",
+  "signup": "Sign up",
+  "signout": "Sign out",
+  "password": "Password",
+
+  "contact": "Contact",
+  "contact_us": "Contact Us",
+  "contact_description": "Please feel free to contact us if you have any questions.",
+  "contact_name": "Name",
+  "contact_email": "Email",
+  "contact_message": "Message",
+  "contact_message_success": "Your message has been sent successfully",
+  "contact_message_failure": "Your message could not be sent"
+}

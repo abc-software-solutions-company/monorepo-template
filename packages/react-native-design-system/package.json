@@ -4,7 +4,6 @@
   "private": true,
   "description": "Design System for React Native",
   "license": "MIT",
-  "scripts": {},
   "exports": {
     ".": "./src/index.ts",
     "./interfaces/*": "./src/interfaces/*.ts",

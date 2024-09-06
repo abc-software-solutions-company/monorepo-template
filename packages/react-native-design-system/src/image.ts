@@ -1,11 +1,12 @@
-import { ImageStyles } from './interfaces/image.interface';
+import { ImageProps } from 'react-native';
+import { createStyleProp } from './utils/style.util';
 
-export const imageStyles: ImageStyles = {
-  resizeMode: {
-    resizeCover: { resizeMode: 'cover' },
-    resizeContain: { resizeMode: 'contain' },
-    resizeStretch: { resizeMode: 'stretch' },
-    resizeRepeat: { resizeMode: 'repeat' },
-    resizeEnter: { resizeMode: 'center' }
-  }
+const RESIZE_MODE_VALUE: Record<Required<ImageProps>['resizeMode'], Required<ImageProps>['resizeMode']> = {
+  cover: 'cover',
+  center: 'center',
+  contain: 'contain',
+  repeat: 'repeat',
+  stretch: 'stretch',
 };
+
+export const IMAGE_STYLE = { ...createStyleProp(RESIZE_MODE_VALUE, 'resizeMode', value => ({ resizeMode: value })) };

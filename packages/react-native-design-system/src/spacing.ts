@@ -1,42 +1,24 @@
-import { SpacingStyles } from './interfaces/spacing.interface';
-import { designSystemConfigs } from './config';
+import { spacing } from './config';
+import { createStyleProp, getNegativeStyleProp } from './utils/style.util';
 
-const generateSpacing = (spacing: Record<string, number>) => {
-  const sizes = Object.entries(spacing);
-  const margin: { [key: string]: { [key: string]: number | string } } = {};
-  const padding: { [key: string]: { [key: string]: number } } = {};
+const spacingNegative = getNegativeStyleProp(spacing);
 
-  margin.mxAuto = { marginLeft: 'auto', marginRight: 'auto' };
-  margin.myAuto = { marginTop: 'auto', marginBottom: 'auto' };
+const SPACING_VALUE = { ...spacing, ...spacingNegative, auto: 'auto' };
 
-  for (const size of sizes) {
-    margin[`m${size[0]}`] = { margin: size[1] };
-    margin[`mx${size[0]}`] = { marginHorizontal: size[1] };
-    margin[`my${size[0]}`] = { marginVertical: size[1] };
-    margin[`mt${size[0]}`] = { marginTop: size[1] };
-    margin[`mr${size[0]}`] = { marginRight: size[1] };
-    margin[`mb${size[0]}`] = { marginBottom: size[1] };
-    margin[`ml${size[0]}`] = { marginLeft: size[1] };
+export const SPACING_STYLE = {
+  ...createStyleProp(SPACING_VALUE, 'm', value => ({ margin: value })),
+  ...createStyleProp(SPACING_VALUE, 'mx', value => ({ marginHorizontal: value })),
+  ...createStyleProp(SPACING_VALUE, 'my', value => ({ marginVertical: value })),
+  ...createStyleProp(SPACING_VALUE, 'mt', value => ({ marginTop: value })),
+  ...createStyleProp(SPACING_VALUE, 'mr', value => ({ marginRight: value })),
+  ...createStyleProp(SPACING_VALUE, 'mb', value => ({ marginBottom: value })),
+  ...createStyleProp(SPACING_VALUE, 'ml', value => ({ marginLeft: value })),
 
-    margin[`m${size[0]}ne`] = { margin: -size[1] };
-    margin[`mx${size[0]}ne`] = { marginHorizontal: -size[1] };
-    margin[`my${size[0]}ne`] = { marginVertical: -size[1] };
-    margin[`mt${size[0]}ne`] = { marginTop: -size[1] };
-    margin[`mr${size[0]}ne`] = { marginRight: -size[1] };
-    margin[`mb${size[0]}ne`] = { marginBottom: -size[1] };
-    margin[`ml${size[0]}ne`] = { marginLeft: -size[1] };
-
-    padding[`p${size[0]}`] = { padding: size[1] };
-    padding[`px${size[0]}`] = { paddingHorizontal: size[1] };
-    padding[`py${size[0]}`] = { paddingVertical: size[1] };
-    padding[`pt${size[0]}`] = { paddingTop: size[1] };
-    padding[`pr${size[0]}`] = { paddingRight: size[1] };
-    padding[`pb${size[0]}`] = { paddingBottom: size[1] };
-    padding[`pl${size[0]}`] = { paddingLeft: size[1] };
-  }
-
-  return { margin, padding };
+  ...createStyleProp(SPACING_VALUE, 'p', value => ({ padding: value })),
+  ...createStyleProp(SPACING_VALUE, 'px', value => ({ paddingHorizontal: value })),
+  ...createStyleProp(SPACING_VALUE, 'py', value => ({ paddingVertical: value })),
+  ...createStyleProp(SPACING_VALUE, 'pt', value => ({ paddingTop: value })),
+  ...createStyleProp(SPACING_VALUE, 'pr', value => ({ paddingRight: value })),
+  ...createStyleProp(SPACING_VALUE, 'pb', value => ({ paddingBottom: value })),
+  ...createStyleProp(SPACING_VALUE, 'pl', value => ({ paddingLeft: value })),
 };
-const spacingStyles = generateSpacing(designSystemConfigs.spacing) as unknown as SpacingStyles;
-
-export default spacingStyles;

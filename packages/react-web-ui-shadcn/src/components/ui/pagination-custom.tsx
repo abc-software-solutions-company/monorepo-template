@@ -2,6 +2,7 @@ import React, { FC, memo, useMemo } from 'react';
 import classNames from 'classnames';
 
 import { Button } from './button';
+import { ChevronLeft, ChevronRight, ChevronsLeftIcon, ChevronsRightIcon, Icon } from 'lucide-react';
 
 interface IPagination {
   className?: string;
@@ -73,7 +74,7 @@ const Pagination: FC<IPagination> = memo(
             data-testid="nap-pagination-prev"
             onClick={() => setPage(1)}
           >
-            <i className="ico-angles-left-small"></i>
+            <ChevronsLeftIcon size={18} />
           </Button>
         </li>
       );
@@ -91,7 +92,7 @@ const Pagination: FC<IPagination> = memo(
             data-testid="nap-pagination-last"
             onClick={() => setPage(pager.totalPages)}
           >
-            <i className="ico-angles-right-small"></i>
+            <ChevronsRightIcon size={18} />
           </Button>
         </li>
       );
@@ -107,7 +108,7 @@ const Pagination: FC<IPagination> = memo(
             data-testid="nap-pagination-prev"
             onClick={() => setPage(pager.currentPage - 1)}
           >
-            <i className="ico-angle-left-small"></i>
+            <ChevronLeft size={18} />
           </Button>
         </li>
       );
@@ -123,7 +124,7 @@ const Pagination: FC<IPagination> = memo(
             data-testid="nap-pagination-next"
             onClick={() => setPage(pager.currentPage + 1)}
           >
-            <i className="ico-angle-right-small"></i>
+            <ChevronRight size={18} />
           </Button>
         </li>
       );

@@ -1,74 +1,32 @@
 import { StyleSheet } from 'react-native';
 
-import borderStyles from './border';
-import colorStyles from './colors';
 import { colors } from './config';
-import { effectStyles } from './effect';
-import { flexStyles } from './flex';
-import { imageStyles } from './image';
-import { layoutStyles } from './layout';
-import sizingStyles from './sizing';
-import Spacing from './spacing';
-import { typographyStyle } from './typography';
+import { SPACING_STYLE } from './spacing';
+import { BORDER_STYLE } from './border';
+import { SIZE_STYLE } from './sizing';
+import { EFFECT_STYLE } from './effect';
+import { IMAGE_STYLE } from './image';
+import { FLEX_STYLE } from './flex';
+import { LAYOUT_STYLE } from './layout';
+import { TYPOGRAPHY_STYLE } from './typography';
+import { COLOR_STYLE } from './colors';
 
 const styles = StyleSheet.create({
-  heading1: { ...typographyStyle.fontSize.text36 },
-  heading2: { ...typographyStyle.fontSize.text32 },
-  heading3: { ...typographyStyle.fontSize.text28 },
-  heading4: { ...typographyStyle.fontSize.text24 },
-  heading5: { ...typographyStyle.fontSize.text20 },
-  heading6: { ...typographyStyle.fontSize.text16 },
-  // COLOR
-  ...colorStyles.background,
-  ...colorStyles.border,
-  ...colorStyles.color,
-  // SPACING
-  ...Spacing.margin,
-  ...Spacing.padding,
-  // SIZING
-  ...sizingStyles.width,
-  ...sizingStyles.height,
-  // BORDER
-  ...borderStyles.borderWidth,
-  ...borderStyles.borderStyle,
-  ...borderStyles.borderRadius,
-  // IMAGE
-  ...imageStyles.resizeMode,
-  // TYPOGRAPHY
-  ...typographyStyle.fontFamily,
-  ...typographyStyle.fontSize,
-  ...typographyStyle.fontWeight,
-  ...typographyStyle.fontStyle,
-  ...typographyStyle.textAlign,
-  ...typographyStyle.fontVariant,
-  ...typographyStyle.letterSpacing,
-  ...typographyStyle.lineHeight,
-  ...typographyStyle.textDecorationLine,
-  // ...typographyStyle.textShadowColor,
-  // ...typographyStyle.textShadowOffset,
-  // ...typographyStyle.textShadowRadius,
-  ...typographyStyle.textTransform,
-  // FLEX
-  ...flexStyles.gap,
-  ...flexStyles.flex,
-  ...flexStyles.flexWrap,
-  ...flexStyles.flexGrow,
-  ...flexStyles.flexShrink,
-  ...flexStyles.flexDirection,
-  ...flexStyles.justifyContent,
-  ...flexStyles.alignItems,
-  ...flexStyles.alignSelf,
-  // LAYOUT
-  ...layoutStyles.overflow,
-  ...layoutStyles.display,
-  ...layoutStyles.position,
-  ...layoutStyles.top,
-  ...layoutStyles.right,
-  ...layoutStyles.bottom,
-  ...layoutStyles.left,
-  ...layoutStyles.zIndex,
-  // EFFECT
-  ...effectStyles.opacity
+  heading1: { ...TYPOGRAPHY_STYLE.text36 },
+  heading2: { ...TYPOGRAPHY_STYLE.text32 },
+  heading3: { ...TYPOGRAPHY_STYLE.text28 },
+  heading4: { ...TYPOGRAPHY_STYLE.text24 },
+  heading5: { ...TYPOGRAPHY_STYLE.text20 },
+  heading6: { ...TYPOGRAPHY_STYLE.text16 },
+  ...SPACING_STYLE,
+  ...BORDER_STYLE,
+  ...SIZE_STYLE,
+  ...EFFECT_STYLE,
+  ...IMAGE_STYLE,
+  ...FLEX_STYLE,
+  ...LAYOUT_STYLE,
+  ...TYPOGRAPHY_STYLE,
+  ...COLOR_STYLE,
 });
 
 export { colors as Colors, styles as ds };
