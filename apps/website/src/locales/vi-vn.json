@@ -1,0 +1,21 @@
+{
+  "back_to_home": "Về trang chủ",
+  "try_again": "Thử lại",
+  "something_went_wrong": "Đã xảy ra sự cố",
+
+  "btn_send": "Gửi",
+
+  "signin": "Đăng nhập",
+  "signup": "Đăng ký",
+  "signout": "Đăng xuất",
+  "password": "Mật khẩu",
+
+  "contact": "Liên hệ",
+  "contact_us": "Liên hệ chúng tôi",
+  "contact_description": "Vui lòng liên hệ chúng tôi nếu bạn có bất kỳ câu hỏi nào.",
+  "contact_name": "Tên",
+  "contact_email": "Email",
+  "contact_message": "Nội dung",
+  "contact_message_success": "Tin nhắn của bạn đã được gửi thành công",
+  "contact_message_failure": "Không thể gửi tin nhắn của bạn"
+}

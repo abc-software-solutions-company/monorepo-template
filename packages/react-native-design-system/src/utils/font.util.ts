@@ -26,7 +26,7 @@ const fontWeightMapping: Record<FontWeight, number> = {
   SemiBold: 600,
   Bold: 700,
   ExtraBold: 800,
-  Black: 900
+  Black: 900,
 };
 
 export const fontMaker = (options: FontMakerOptions = {}): FontMakerResult => {
@@ -38,14 +38,14 @@ export const fontMaker = (options: FontMakerOptions = {}): FontMakerResult => {
     return {
       fontFamily: name,
       fontWeight: mappedFontWeight,
-      fontStyle: style.toLowerCase()
+      fontStyle: style.toLowerCase(),
     };
   } else {
     const androidFontStyle = style === 'Normal' ? '' : 'Italic';
     const androidFontFamily = `${name}${separator}${weight}${androidFontStyle}`;
 
     return {
-      fontFamily: androidFontFamily
+      fontFamily: androidFontFamily,
     };
   }
 };

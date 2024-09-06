@@ -1,0 +1,26 @@
+{
+  "extends": "@repo/config-typescript/next.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"],
+      "@tests/*": ["./__tests__/*"],
+      "@mocks/*": ["./__mocks__/*"],
+      "~react-web-ui-shadcn/*": ["../../packages/react-web-ui-shadcn/src/*"],
+      "~shared-web/*": ["../../packages/shared-web/src/*"],
+      "~shared-universal/*": ["../../packages/shared-universal/src/*"]
+    }
+  },
+  "include": [
+    "next-env.d.ts",
+    ".next/types/**/*.ts",
+    "src",
+    "types",
+    "__tests__",
+    "__mocks__",
+    "../../packages/react-web-ui-shadcn/src",
+    "../../packages/shared-web/src",
+    "../../packages/shared-universal/src"
+  ],
+  "exclude": ["node_modules"]
+}

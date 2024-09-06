@@ -1,50 +1,53 @@
-import { BorderRadiusType, BorderStyles, BorderStyleType, BorderWidthType } from './interfaces/border.interface';
+import { createStyleProp } from './utils/style.util';
 
-const borderStyle: BorderStyleType = {
-  borderSolid: { borderStyle: 'solid' },
-  borderDashed: { borderStyle: 'dashed' },
-  borderDotted: { borderStyle: 'dotted' }
+const BORDER_WIDTH_VALUE = {
+  '0': 0,
+  '1': 1,
+  '2': 2,
+  '3': 3,
+  '4': 4,
+  '5': 5,
+  '6': 6,
+  '7': 7,
+  '8': 8,
+  '9': 9,
+  '10': 10,
+  '11': 11,
+  '12': 12,
 };
 
-const generateBorderRadius = (steps: number[]) => {
-  const borderRadius: Record<string, { [key: string]: number }> = {};
-
-  steps.forEach(step => {
-    borderRadius[`rounded${step}`] = { borderRadius: step };
-    borderRadius[`roundedT${step}`] = { borderTopLeftRadius: step, borderTopRightRadius: step };
-    borderRadius[`roundedR${step}`] = { borderTopRightRadius: step, borderBottomRightRadius: step };
-    borderRadius[`roundedB${step}`] = { borderBottomRightRadius: step, borderBottomLeftRadius: step };
-    borderRadius[`roundedL${step}`] = { borderTopLeftRadius: step, borderBottomLeftRadius: step };
-  });
-  borderRadius.roundedFull = { borderRadius: 9999 };
-  borderRadius.roundedTFull = { borderTopLeftRadius: 9999, borderTopRightRadius: 9999 };
-  borderRadius.roundedRFull = { borderTopRightRadius: 9999, borderBottomRightRadius: 9999 };
-  borderRadius.roundedBFull = { borderBottomRightRadius: 9999, borderBottomLeftRadius: 9999 };
-  borderRadius.roundedLFull = { borderTopLeftRadius: 9999, borderBottomLeftRadius: 9999 };
-
-  return borderRadius as unknown as BorderRadiusType;
+const BORDER_RADIUS_VALUE = {
+  '0': 0,
+  '1': 1,
+  '2': 2,
+  '3': 3,
+  '4': 4,
+  '6': 6,
+  '8': 8,
+  '10': 10,
+  '12': 12,
+  '14': 14,
+  '16': 16,
+  '20': 20,
+  '24': 24,
+  full: 9999,
 };
+const BORDER_STYLE_VALUE = { solid: 'solid', dashed: 'dashed', dotted: 'dotted' };
 
-const generateBorderWidth = (max: number) => {
-  const borderWidth: Record<string, { [key: string]: number }> = {};
+export const BORDER_STYLE = {
+  ...createStyleProp(BORDER_WIDTH_VALUE, 'border', value => ({ borderWidth: value })),
+  ...createStyleProp(BORDER_WIDTH_VALUE, 'borderT', value => ({ borderTopWidth: value })),
+  ...createStyleProp(BORDER_WIDTH_VALUE, 'borderR', value => ({ borderRightWidth: value })),
+  ...createStyleProp(BORDER_WIDTH_VALUE, 'borderB', value => ({ borderBottomWidth: value })),
+  ...createStyleProp(BORDER_WIDTH_VALUE, 'borderL', value => ({ borderLeftWidth: value })),
+  ...createStyleProp(BORDER_WIDTH_VALUE, 'borderStart', value => ({ borderStartWidth: value })),
+  ...createStyleProp(BORDER_WIDTH_VALUE, 'borderEnd', value => ({ borderEndWidth: value })),
 
-  for (let i = 0; i <= max; i++) {
-    borderWidth[`border${i}`] = { borderWidth: i };
-    borderWidth[`borderT${i}`] = { borderTopWidth: i };
-    borderWidth[`borderR${i}`] = { borderRightWidth: i };
-    borderWidth[`borderB${i}`] = { borderBottomWidth: i };
-    borderWidth[`borderL${i}`] = { borderLeftWidth: i };
-    borderWidth[`borderStart${i}`] = { borderStartWidth: i };
-    borderWidth[`borderEnd${i}`] = { borderEndWidth: i };
-  }
+  ...createStyleProp(BORDER_RADIUS_VALUE, 'rounded', value => ({ borderRadius: value })),
+  ...createStyleProp(BORDER_RADIUS_VALUE, 'roundedT', value => ({ borderTopRightRadius: value, borderTopLeftRadius: value })),
+  ...createStyleProp(BORDER_RADIUS_VALUE, 'roundedR', value => ({ borderBottomRightRadius: value, borderTopRightRadius: value })),
+  ...createStyleProp(BORDER_RADIUS_VALUE, 'roundedB', value => ({ borderBottomRightRadius: value, borderBottomLeftRadius: value })),
+  ...createStyleProp(BORDER_RADIUS_VALUE, 'roundedL', value => ({ borderBottomLeftRadius: value, borderTopLeftRadius: value })),
 
-  return borderWidth as unknown as BorderWidthType;
+  ...createStyleProp(BORDER_STYLE_VALUE, 'border', value => ({ borderStyle: value })),
 };
-
-const borderStyles: BorderStyles = {
-  borderStyle: borderStyle,
-  borderWidth: generateBorderWidth(8),
-  borderRadius: generateBorderRadius([0, 2, 4, 6, 8, 10, 12, 14, 16, 20, 24, 28, 32, 36, 40, 44, 48, 52])
-};
-
-export default borderStyles;

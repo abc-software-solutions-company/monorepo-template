@@ -1,9 +1,5 @@
 import { http, HttpResponse } from 'msw';
 
-import setupEnv from '@tests/unit/setup/env';
-
-setupEnv();
-
 const handlers = [
   http.get(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/posts`, async () => {
     return HttpResponse.json({

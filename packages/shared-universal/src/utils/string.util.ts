@@ -26,7 +26,7 @@ export function convertBytes(byte: number): string {
 export const toSlug = (text: string): string => {
   return slugify(text.toLowerCase(), {
     lower: true,
-    remove: /[:;.,*+~!@#^&?(){}"'/[\]]/g
+    remove: /[:;.,*+~!@#^&?(){}"'/[\]]/g,
   });
 };
 
@@ -53,11 +53,18 @@ export function objectToQueryString(obj: { [key: string]: unknown }): string {
     .map(key => {
       const value = obj[key] as string;
       if (Array.isArray(value)) {
-        return value
-          .map((item: string, index: number) => `${encodeURIComponent(key)}[${index}]=${encodeURIComponent(item)}`)
-          .join('&');
+        return value.map((item: string, index: number) => `${encodeURIComponent(key)}[${index}]=${encodeURIComponent(item)}`).join('&');
       }
       return `${encodeURIComponent(key)}=${encodeURIComponent(value)}`;
     })
     .join('&');
+}
+
+export function isJson(text: string) {
+  try {
+    JSON.parse(text);
+  } catch (e) {
+    return false;
+  }
+  return true;
 }

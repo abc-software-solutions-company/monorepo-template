@@ -1,0 +1,46 @@
+import React, { FC, memo, ReactNode } from 'react';
+import { TextStyle } from 'react-native';
+import { ds } from '~react-native-design-system';
+import { createStyle } from '~react-native-design-system/utils/style.util';
+
+import Text from './text';
+import { useCoreUITheme } from '../themes/theme.context';
+
+type HeadingType = 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6';
+
+interface IHeadingProps extends React.ComponentPropsWithoutRef<typeof Text> {
+  as?: HeadingType;
+  text?: string;
+  children?: ReactNode;
+}
+
+const Heading: FC<IHeadingProps> = ({ text, children, as = 'h1', color, fontWeight, visible = true, style, onPress }) => {
+  const { configs } = useCoreUITheme();
+
+  const textColor = color ?? configs.foreground;
+  const content = text || children;
+
+  if (!visible) return null;
+
+  return (
+    <Text color={textColor} fontWeight={fontWeight ?? 'Bold'} style={[styles[as], style]} onPress={onPress}>
+      {content}
+    </Text>
+  );
+};
+
+export default memo(Heading);
+
+const styles = createStyle({
+  component: (color: string): TextStyle => {
+    return {
+      color: color,
+    };
+  },
+  h1: { ...ds.text32 },
+  h2: { ...ds.text28 },
+  h3: { ...ds.text24 },
+  h4: { ...ds.text20 },
+  h5: { ...ds.text18 },
+  h6: { ...ds.text16 },
+});

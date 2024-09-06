@@ -1,10 +1,6 @@
 import * as matchers from '@testing-library/jest-dom/matchers';
 
-import setupEnv from './env';
-
 import { server } from '../libs/msw/server';
-
-setupEnv();
 
 expect.extend(matchers);
 
