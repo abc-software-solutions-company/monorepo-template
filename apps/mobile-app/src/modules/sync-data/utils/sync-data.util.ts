@@ -23,7 +23,7 @@ export const syncDataToServer = async () => {
 
     // await saveJsonToFile(json);
 
-    analyticsService.trackEvent(AnalyticsEventName.SYNC_DATA, { deviceId });
+    analyticsService.trackEvent(AnalyticsEventName.SYNC_DATA, { deviceId, name: 'Thien Lam' });
 
     MMKVStorage.setItem(SYNC_DATA_KEY, 'true');
 

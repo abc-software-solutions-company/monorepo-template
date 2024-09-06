@@ -25,8 +25,8 @@ function PreloadScreen({ navigation }: AuthenticatedStackProps<'Preload'>) {
   }, [navigation]);
 
   useEffect(() => {
-    // initializeLocalDb();
-    setTimeout(() => navigation.replace('TravelDrawer', { screen: 'TravelBottomTabStack' }), 1000);
+    initializeLocalDb();
+    // setTimeout(() => navigation.replace('TravelDrawer', { screen: 'TravelBottomTabStack' }), 1000);
   }, [initializeLocalDb]);
 
   return (

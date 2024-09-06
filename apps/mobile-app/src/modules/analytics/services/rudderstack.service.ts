@@ -8,20 +8,34 @@ export class RudderStackAnalyticsService implements IAnalyticsService {
   constructor(config: IRudderStackConfig) {
     rudderClient.setup(config.writeKey, {
       dataPlaneUrl: config.dataPlaneUrl,
-      trackAppLifecycleEvents: true,
+      trackAppLifecycleEvents: false,
     });
   }
 
   trackEvent(event: string, properties?: Record<string, unknown>): void {
-    log.debug(`RudderStack track: ${event}`, properties);
-    rudderClient.track(event, properties, {});
+    try {
+      log.debug(`RudderStack trackEvent: ${event}`, properties);
+      rudderClient.track(event, properties, {});
+    } catch (error) {
+      log.error('RudderStack trackEvent', error);
+    }
   }
 
   identify(userId: string, traits?: Record<string, unknown>): void {
     log.debug(`RudderStack identify: ${userId}`, traits);
+    try {
+      log.debug(`RudderStack identify: ${userId}`, traits);
+    } catch (error) {
+      log.error('RudderStack identify', error);
+    }
   }
 
   trackScreen(screenName: string, properties?: Record<string, unknown>): void {
-    log.debug(`RudderStack screen: ${screenName}`, properties);
+    log.debug(`RudderStack trackScreen: ${screenName}`, properties);
+    try {
+      log.debug(`RudderStack trackScreen: ${screenName}`, properties);
+    } catch (error) {
+      log.error('RudderStack trackScreen', error);
+    }
   }
 }

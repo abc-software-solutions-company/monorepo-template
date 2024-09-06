@@ -15,6 +15,5 @@ module.exports = {
         },
       },
     ],
-    ['module:react-native-dotenv', { safe: false, allowUndefined: true }],
   ],
 };

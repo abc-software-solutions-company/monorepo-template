@@ -6,27 +6,31 @@ var TARGET_ENV = ENV === 'development' ? 'dev' : 'prod';
 
 // ANDROID
 // google-services.json
-var androidSrcPath = path.join(__dirname, '../src/keystores/android/' + TARGET_ENV + '/google-services.json');
+var androidSrcPath = path.join(__dirname, '../src/keystores/' + TARGET_ENV + '/android/google-services.json');
 var androidDesPath = path.join(__dirname, '../android/app/google-services.json');
 // string.xml
-var androidStringSrcPath = path.join(__dirname, '../src/keystores/android/' + TARGET_ENV + '/strings.xml');
+var androidStringSrcPath = path.join(__dirname, '../src/keystores/' + TARGET_ENV + '/android/strings.xml');
 var androidStringDesPath = path.join(__dirname, '../android/app/src/main/res/values/strings.xml');
 // debug.keystore
-var androidDebugKeystoreSrcPath = path.join(__dirname, '../src/keystores/android/' + TARGET_ENV + '/debug.keystore');
+var androidDebugKeystoreSrcPath = path.join(__dirname, '../src/keystores/' + TARGET_ENV + '/android/debug.keystore');
 var androidDebugKeystoreDesPath = path.join(__dirname, '../android/app/debug.keystore');
 // IOS
 // GoogleService-Info.plist
-var iosSrcPath = path.join(__dirname, '../src/keystores/ios/' + TARGET_ENV + '/GoogleService-Info.plist');
+var iosSrcPath = path.join(__dirname, '../src/keystores/' + TARGET_ENV + '/ios/GoogleService-Info.plist');
 var iosDesPath = path.join(__dirname, '../ios/GoogleService-Info.plist');
 // Info.plist
-var iosInfoSrcPath = path.join(__dirname, '../src/keystores/ios/' + TARGET_ENV + '/Info.plist');
+var iosInfoSrcPath = path.join(__dirname, '../src/keystores/' + TARGET_ENV + '/ios/Info.plist');
 var iosInfoDesPath = path.join(__dirname, '../ios/Bully/Info.plist');
+// ENV
+var envSrcPath = path.join(__dirname, '../src/keystores/' + TARGET_ENV + '/.env');
+var envDesPath = path.join(__dirname, '../.env');
 
 copyFile(androidSrcPath, androidDesPath);
 copyFile(androidStringSrcPath, androidStringDesPath);
 copyFile(androidDebugKeystoreSrcPath, androidDebugKeystoreDesPath);
 copyFile(iosSrcPath, iosDesPath);
 copyFile(iosInfoSrcPath, iosInfoDesPath);
+copyFile(envSrcPath, envDesPath);
 
 function copyFile(sourceFilePath, destinationFilePath) {
   try {
