@@ -12,3 +12,5 @@ export const COMPANY_SOCIAL = {
   twitter: 'https://www.linkedin.com/company/nextap',
 };
 export const COMPANY_PRODUCTS = [...Object.values(COMPANY_SOCIAL), 'https://tintranfs.com'];
+
+export const isEnableSEO = process.env.NEXT_PUBLIC_APP_ENV === 'production';

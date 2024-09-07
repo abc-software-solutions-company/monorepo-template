@@ -43,5 +43,10 @@ declare namespace NodeJS {
     // REDIS
     AP_REDIS_HOST: string;
     AP_REDIS_PORT: string;
+    // ALLOW ORIGIN
+    AP_ALLOW_WEB_APP_ORIGIN: string;
+    AP_ALLOW_ADMIN_PORTAL_ORIGIN: string;
+    // FIREBASE
+    AP_FIREBASE_CONFIG: string;
   }
 }

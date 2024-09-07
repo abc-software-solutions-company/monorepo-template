@@ -1,0 +1,77 @@
+name: Deploy Admin API (Stage)
+
+on:
+  push:
+    #TODO: Change branch deploy when using it in your project
+    branches:
+      - "setup-deploy"
+    paths:
+      - "apps/api/**"
+
+env:
+  APP_ENV: ${{ secrets.API_STAGE }}
+  APP_NAME: api-stage
+  DOCKER_COMPOSE_SERVICE: monorepo-api
+  DOCKERFILE_PATH: apps/api/Dockerfile
+  DOCKER_COMPOSE_PATH: apps/api/docker-compose.yml
+  ENV_FILE_PATH: apps/api/.env
+  DOCKER_MAP_PORT: 3500:3500
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Pull code
+        uses: actions/checkout@v3
+
+      - name: Extract env file multi line.
+        run: |
+          rm -r -f ${{ env.ENV_FILE_PATH }}
+          touch ${{ env.ENV_FILE_PATH }}_temp
+          echo $APP_ENV| tee ${{ env.ENV_FILE_PATH }}_temp
+          sed 's/ /\n/g' ${{ env.ENV_FILE_PATH }}_temp >> ${{ env.ENV_FILE_PATH }}
+          rm -r -f ${{ env.ENV_FILE_PATH }}_temp
+
+      - name: Build Docker Image
+        run: |
+          docker build -f ${{ env.DOCKERFILE_PATH }} -t ${{ env.APP_NAME }} .
+          docker save -o ${{ env.APP_NAME }}.tar ${{ env.APP_NAME }}
+
+      - name: Create docker-compose file
+        run: |
+          rm -f ${{ env.DOCKER_COMPOSE_PATH }}
+          cat << EOF > ${{ env.DOCKER_COMPOSE_PATH }}
+          version: '3.8'
+
+          services:
+            ${{ env.DOCKER_COMPOSE_SERVICE }}:
+              image: ${{ env.APP_NAME }}
+              container_name: ${{ env.APP_NAME }}
+              restart: always
+              ports:
+                - "${{ env.DOCKER_MAP_PORT }}"
+          EOF
+
+      - name: Copy Docker image to ec2 use SSH Key
+        uses: appleboy/scp-action@v0.1.4
+        with:
+          host: ${{ secrets.STAGE_SERVER_HOST }}
+          username: ${{secrets.STAGE_SERVER_USER_NAME}}
+          port: 22
+          password: ${{ secrets.STAGE_SERVER_PASSWORD }}
+          source: "${{ env.APP_NAME }}.tar,${{ env.DOCKER_COMPOSE_PATH }},${{ env.ENV_FILE_PATH }}"
+          target: "~/${{ env.APP_NAME }}"
+
+      - name: Executing remote ssh commands using SSH Key
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.STAGE_SERVER_HOST }}
+          username: ${{secrets.STAGE_SERVER_USER_NAME}}
+          port: 22
+          password: ${{ secrets.STAGE_SERVER_PASSWORD }}
+          script_stop: true
+          script: |
+            cd ~/${{ env.APP_NAME }}
+            sudo docker load --input ${{ env.APP_NAME }}.tar
+            sudo docker-compose -f ${{ env.DOCKER_COMPOSE_PATH }} up -d ${{ env.DOCKER_COMPOSE_SERVICE }} --force-recreate --no-build
+            rm -rf ${{ env.APP_NAME }}.tar

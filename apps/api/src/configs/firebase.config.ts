@@ -1,19 +1,38 @@
+/* eslint-disable no-console */
 import { registerAs } from '@nestjs/config';
 
 import { IConfigs } from '@/common/interfaces/configs.interface';
 
-import serviceAccount from '../keystores/react-native-template-dev-firebase-adminsdk.json';
+const parseFirebaseConfig = (): IConfigs['firebase'] => {
+  try {
+    // Parse the JSON string from the environment variable
+    const firebaseConfig = JSON.parse(process.env.AP_FIREBASE_CONFIG || '{}');
 
-export default registerAs('firebase', (): IConfigs['firebase'] => ({
-  type: serviceAccount.type,
-  project_id: serviceAccount.project_id,
-  private_key_id: serviceAccount.private_key_id,
-  private_key: serviceAccount.private_key,
-  client_email: serviceAccount.client_email,
-  client_id: serviceAccount.client_id,
-  auth_uri: serviceAccount.auth_uri,
-  token_uri: serviceAccount.token_uri,
-  auth_provider_x509_cert_url: serviceAccount.auth_provider_x509_cert_url,
-  client_x509_cert_url: serviceAccount.client_x509_cert_url,
-  universe_domain: serviceAccount.universe_domain,
-}));
+    // Ensure all required fields are present
+    const requiredFields = [
+      'type',
+      'project_id',
+      'private_key_id',
+      'private_key',
+      'client_email',
+      'client_id',
+      'auth_uri',
+      'token_uri',
+      'auth_provider_x509_cert_url',
+      'client_x509_cert_url',
+      'universe_domain',
+    ];
+
+    for (const field of requiredFields) {
+      if (!firebaseConfig[field]) {
+        console.error(`Missing required field: ${field}`);
+      }
+    }
+
+    return firebaseConfig as IConfigs['firebase'];
+  } catch (error) {
+    console.error('Error parsing Firebase config:', error);
+  }
+};
+
+export default registerAs('firebase', parseFirebaseConfig);

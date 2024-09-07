@@ -6,7 +6,7 @@ import { locales } from '@/config';
 
 import { LayoutProps } from '@/interfaces/layout.interface';
 
-import { COMPANY_NAME, COMPANY_URL, WEBSITE_DESCRIPTION, WEBSITE_KEYWORD, WEBSITE_NAME, WEBSITE_URL } from '@/constants/site.constant';
+import { COMPANY_NAME, COMPANY_URL, isEnableSEO, WEBSITE_DESCRIPTION, WEBSITE_KEYWORD, WEBSITE_NAME, WEBSITE_URL } from '@/constants/site.constant';
 
 export default async function RootLayout({ children, params: { locale } }: LayoutProps) {
   unstable_setRequestLocale(locale);
@@ -56,25 +56,29 @@ export async function generateMetadata(_layoutProps: LayoutProps): Promise<Metad
     authors: [{ name: COMPANY_NAME, url: COMPANY_URL }],
     twitter: {
       title: WEBSITE_NAME,
-      description: WEBSITE_DESCRIPTION,
       card: 'summary_large_image',
+      site: '@site',
       creator: '@creator',
-      images: { url: '/og-img.jpg', alt: WEBSITE_NAME },
+      description: WEBSITE_DESCRIPTION,
+      images: { url: `${WEBSITE_URL}/og-img.jpg`, alt: WEBSITE_NAME },
     },
     openGraph: {
+      url: WEBSITE_URL,
       siteName: WEBSITE_NAME,
       title: WEBSITE_NAME,
       description: WEBSITE_DESCRIPTION,
       type: 'website',
-      images: [{ alt: WEBSITE_NAME, url: '/og-img.jpg', width: 1200, height: 630 }],
+      images: [{ alt: WEBSITE_NAME, url: `${WEBSITE_URL}/og-img.jpg`, width: 1200, height: 630 }],
     },
-    verification: {
-      google: 'VERIFICATION_CODE',
-      yandex: 'YANDEX_CODE',
-      yahoo: 'YAHOO_CODE',
-    },
+    colorScheme: 'light',
+    themeColor: [
+      { media: '(prefers-color-scheme: dark)', color: '#000000' },
+      { media: '(prefers-color-scheme: light)', color: '#ffffff' },
+    ],
+    viewport: 'width=device-width, initial-scale=1',
+    manifest: '/manifest.json',
     alternates: {
-      canonical: '/',
+      canonical: WEBSITE_URL,
       languages: {
         'en-US': `${WEBSITE_URL}/en-us`,
         'vi-VN': `${WEBSITE_URL}/vi-vn`,
@@ -121,15 +125,14 @@ export async function generateMetadata(_layoutProps: LayoutProps): Promise<Metad
       },
     ],
     robots: {
-      index: true,
-      follow: true,
+      index: isEnableSEO,
+      follow: isEnableSEO,
       nocache: true,
       googleBot: {
-        index: true,
-        follow: true,
+        index: isEnableSEO,
+        follow: isEnableSEO,
       },
     },
-    manifest: '/manifest.webmanifest',
     other: {
       HandheldFriendly: 'true',
       MobileOptimized: '360',

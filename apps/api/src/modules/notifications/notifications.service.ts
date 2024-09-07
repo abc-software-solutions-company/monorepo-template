@@ -18,7 +18,11 @@ export class NotificationsService {
     private readonly usersService: UsersService
   ) {
     this.logger.setContext(NotificationsService.name);
-    this.messaging = admin.messaging();
+    try {
+      this.messaging = admin.messaging();
+    } catch (error) {
+      this.logger.error(`Error initializing Firebase Messaging: ${error.message}`);
+    }
   }
 
   async sendNotification(sendDto: SendNotificationDto) {
