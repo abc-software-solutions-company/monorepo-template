@@ -29,11 +29,9 @@ const FacebookSignIn: FC<IFacebookSignInProps> = ({ style }) => {
     mutationFn: async (oAuthFacebookSignInDto: OAuthFacebookSignInDto) => {
       // eslint-disable-next-line @typescript-eslint/naming-convention
       const { authenticator, limited, permissions } = oAuthFacebookSignInDto;
-
       const nonce = (Math.random() + 1).toString(36).substring(7);
       const nonceSha256 = await sha256(nonce);
       const result = await LoginManager.logInWithPermissions(permissions, 'limited', nonceSha256);
-
       let authenticationToken: AuthenticationToken | null = null;
       let accessToken: AccessToken | null = null;
       let facebookCredential: FirebaseAuthTypes.AuthCredential;
@@ -41,33 +39,27 @@ const FacebookSignIn: FC<IFacebookSignInProps> = ({ style }) => {
       if (result.isCancelled) {
         throw new Error('User cancelled the login process');
       }
-
       if (limited) {
         authenticationToken = await AuthenticationToken.getAuthenticationTokenIOS();
-
         if (!authenticationToken) {
           throw new Error('Something went wrong obtaining authentication token');
         }
       } else {
         accessToken = await AccessToken.getCurrentAccessToken();
-
         if (!accessToken) {
           throw new Error('Something went wrong obtaining access token');
         }
       }
-
       if (authenticator === AUTH_AUTHENTICATOR.FIREBASE) {
         if (limited) {
           if (!authenticationToken) {
             throw new Error('Authentication token is null');
           }
-
           facebookCredential = Auth.FacebookAuthProvider.credential(authenticationToken.authenticationToken, nonce);
         } else {
           if (!accessToken) {
             throw new Error('Access token is null');
           }
-
           facebookCredential = Auth.FacebookAuthProvider.credential(accessToken.accessToken);
         }
         const facebookSignInRes = await Auth().signInWithCredential(facebookCredential);

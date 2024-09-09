@@ -65,6 +65,11 @@ target 'Bully' do
   pod 'nanopb', :modular_headers => true
   pod 'simdjson', :modular_headers => true, path: '../../../node_modules/@nozbe/simdjson'
 
+  ENVFILES = {
+    'Debug' => '$(PODS_ROOT)/../../.env.development',
+    'Release' => '$(PODS_ROOT)/../../.env.production',
+  }
+
   use_react_native!(
     :path => config[:reactNativePath],
     # Enables Flipper.
@@ -123,9 +128,12 @@ target 'Bully' do
     end
 
     installer.pods_project.targets.each do |target|
-      # Turn off warnings on non-RNFB dependencies - some of them are really really noisy
-      if !target.name.include? "RNFB"
-        target.build_configurations.each do |config|
+      target.build_configurations.each do |config|
+        if target.name == 'react-native-config'
+          config.build_settings['ENVFILE'] = ENVFILES[config.name]
+        end
+        # Turn off warnings on non-RNFB dependencies - some of them are really really noisy
+        if !target.name.include? "RNFB"
           config.build_settings["GCC_WARN_INHIBIT_ALL_WARNINGS"] = "YES"
         end
       end

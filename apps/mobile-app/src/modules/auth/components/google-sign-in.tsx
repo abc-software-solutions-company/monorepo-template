@@ -1,5 +1,6 @@
 import React, { FC } from 'react';
 import { Pressable, PressableProps, StyleProp, ViewStyle } from 'react-native';
+import Config from 'react-native-config';
 import Auth from '@react-native-firebase/auth';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import { useMutation } from '@tanstack/react-query';
@@ -19,10 +20,7 @@ import { useAuthState } from '../states/auth.state';
 interface IGoogleSignInProps {
   style?: StyleProp<PressableProps | ViewStyle>;
 }
-
-GoogleSignin.configure({
-  webClientId: '839571110220-hmcb4ikmoripqlr1hctrh6qkndmd374j.apps.googleusercontent.com',
-});
+GoogleSignin.configure({ webClientId: Config.RN_GOOGLE_WEB_CLIENT_ID });
 
 const GoogleSignIn: FC<IGoogleSignInProps> = ({ style }) => {
   const authState = useAuthState();

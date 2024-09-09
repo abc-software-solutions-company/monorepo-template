@@ -1,15 +1,15 @@
 import React from 'react';
-import HelpCenterScreen from '@/screens/help-center';
-import PreloadScreen from '@/screens/preload';
-import PrivacyPolicyScreen from '@/screens/privacy-policy';
-import ScanCodeScreen from '@/screens/scanner';
-import SearchScreen from '@/screens/search';
-import SettingLanguageScreen from '@/screens/setting-language';
-import SettingThemeScreen from '@/screens/setting-theme';
-import SettingsScreen from '@/screens/settings';
-import SyncDataScreen from '@/screens/sync-data';
-import TermsAndConditionsScreen from '@/screens/terms-and-conditions';
-import UIScreen from '@/screens/ui';
+import HelpCenterScreen from '@/screens/help-center.screen';
+import PreloadScreen from '@/screens/preload.screen';
+import PrivacyPolicyScreen from '@/screens/privacy-policy.screen';
+import ScanCodeScreen from '@/screens/scanner.screen';
+import SearchScreen from '@/screens/search.screen';
+import SettingLanguageScreen from '@/screens/setting-language.screen';
+import SettingThemeScreen from '@/screens/setting-theme.screen';
+import SettingsScreen from '@/screens/settings.screen';
+import SyncDataScreen from '@/screens/sync-data.screen';
+import TermsAndConditionsScreen from '@/screens/terms-and-conditions.screen';
+import UIScreen from '@/screens/ui.screen';
 import { createStackNavigator } from '@react-navigation/stack';
 
 import { AuthenticatedParamList } from '../interfaces/navigation.interface';

@@ -4,6 +4,7 @@ import { WMPost } from '@/localdb/models/post.model';
 import PostRepository from '@/localdb/repositories/post.repository';
 import { randomId } from '@nozbe/watermelondb/utils/common';
 import { useNetInfo } from '@react-native-community/netinfo';
+import { ColumnDef } from '@tanstack/react-table';
 import { ds } from '~react-native-design-system';
 import Button from '~react-native-ui-core/components/button';
 import Loading from '~react-native-ui-core/components/loading';
@@ -12,9 +13,9 @@ import Text from '~react-native-ui-core/components/text';
 import View from '~react-native-ui-core/components/view';
 
 import SafeViewArea from '@/components/safe-view-area';
+import Table from '@/components/table';
 
 import { AuthenticatedStackProps } from '@/modules/navigation/interfaces/navigation.interface';
-import PostList from '@/modules/sync-data/components/post-list';
 import { SYNC_DATA_KEY } from '@/modules/sync-data/constants/sync-data.constant';
 import { syncDataToServer } from '@/modules/sync-data/utils/sync-data.util';
 
@@ -22,6 +23,14 @@ import log from '@/utils/logger.util';
 import { MMKVStorage } from '@/utils/mmkv-storage.util';
 
 const postRepo = new PostRepository(database);
+
+const columns: ColumnDef<WMPost>[] = [
+  {
+    accessorKey: 'title',
+    header: 'Title',
+    meta: { align: 'left' },
+  },
+];
 
 function SyncDataScreen({}: AuthenticatedStackProps<'SyncData'>) {
   const netInfo = useNetInfo();
@@ -63,13 +72,15 @@ function SyncDataScreen({}: AuthenticatedStackProps<'SyncData'>) {
   const isEmpty = posts.length === 0;
 
   return (
-    <View style={[ds.flex1, !netInfo.isConnected && ds.bgRed200]}>
+    <View style={[ds.flex1]}>
       <StatusBar />
       <SafeViewArea spacingBottom={true}>
-        {isLoading && <Loading size={60} thickness={8} />}
-        {!isLoading && !error && isEmpty && <Text style={ds.textCenter}>No posts available.</Text>}
-        {!isLoading && !error && !isEmpty && <PostList items={posts} />}
-        <Button onPress={createNewData}>Create New Data</Button>
+        <View>
+          {isLoading && <Loading size={60} thickness={8} />}
+          {!isLoading && !error && isEmpty && <Text style={ds.textCenter}>No posts available.</Text>}
+          {!isLoading && !error && !isEmpty && <Table data={posts} columns={columns} rowIdAccessor={row => row.id.toString()} />}
+          <Button onPress={createNewData}>Create New Data</Button>
+        </View>
       </SafeViewArea>
     </View>
   );

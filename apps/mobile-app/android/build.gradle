@@ -8,7 +8,7 @@ buildscript {
         // We use NDK 23 which has both M1 support and is the side-by-side NDK version from AGP.
         ndkVersion = "25.1.8937393"
 
-        kotlinVersion = '1.8.0' // https://kotlinlang.org/releases.html
+        kotlinVersion = '1.9.22' // https://kotlinlang.org/releases.html
         supportLibVersion = '1.9.0' // this maps to androidx.core https://developer.android.com/jetpack/androidx/releases/core
         //noinspection GradleDependency  https://github.com/facebook/react-native/pull/30061
         // Can bump to 1.4.0 when react-native 0.68 ships https://github.com/facebook/react-native/commit/e21f8ec34984551f87a306672160cc88e67e4793
@@ -42,7 +42,6 @@ buildscript {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
         classpath 'com.google.gms:google-services:4.4.1'
         classpath 'com.google.firebase:firebase-crashlytics-gradle:2.9.5'
-        classpath 'com.android.tools.build:gradle:8.4.1'
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
     }

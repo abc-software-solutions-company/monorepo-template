@@ -12,10 +12,7 @@ export const signUp = (userDto: UserFormData) => {
 };
 
 export const passwordSignIn = (signInDto: SignInDto) => {
-  return axiosClient.post<SignInResponse>(API_ENDPOINTS.SIGN_IN, {
-    email: signInDto.email,
-    password: signInDto.password,
-  });
+  return axiosClient.post<SignInResponse>(API_ENDPOINTS.SIGN_IN, { email: signInDto.email, password: signInDto.password });
 };
 
 export const googleSignIn = (authenticator: AUTH_AUTHENTICATOR, token: string) => {
@@ -23,11 +20,7 @@ export const googleSignIn = (authenticator: AUTH_AUTHENTICATOR, token: string) =
 };
 
 export const facebookSignIn = (authenticator: AUTH_AUTHENTICATOR, token: string, limited: boolean) => {
-  return axiosClient.post<SignInResponse>(API_ENDPOINTS.SIGN_IN_FACEBOOK, {
-    authenticator,
-    token,
-    isFacebookLimited: limited,
-  });
+  return axiosClient.post<SignInResponse>(API_ENDPOINTS.SIGN_IN_FACEBOOK, { authenticator, token, isFacebookLimited: limited });
 };
 
 export const appleSignIn = (authenticator: AUTH_AUTHENTICATOR, token: string) => {

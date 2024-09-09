@@ -14,7 +14,7 @@ export async function getPosts() {
   const items = await postRepo.getAll();
 
   const postItems = items.map(record => {
-    let clonedItem = JSON.parse(JSON.stringify(record._raw)) as WMPostEntity;
+    let clonedItem = record._raw as unknown as WMPostEntity;
 
     clonedItem = removeInternalProperties(clonedItem);
 

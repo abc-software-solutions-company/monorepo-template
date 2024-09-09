@@ -87,6 +87,9 @@
     },
     "prepare": {
       "dependsOn": ["^prepare"]
+    },
+    "setup": {
+      "dependsOn": ["^setup"]
     }
   }
 }

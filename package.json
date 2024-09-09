@@ -17,6 +17,8 @@
     "website": "turbo dev --filter=website",
     "mobile-app:ios": "yarn workspace mobile-app ios",
     "mobile-app:android": "yarn workspace mobile-app android",
+    "prepare": "turbo prepare",
+    "setup": "turbo setup",
     "postinstall": "manypkg check"
   },
   "dependencies": {

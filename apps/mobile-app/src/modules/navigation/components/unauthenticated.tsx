@@ -1,10 +1,10 @@
 import React from 'react';
-import ForgotPasswordScreen from '@/screens/forgot-password';
-import LoginScreen from '@/screens/login';
-import RegisterScreen from '@/screens/register';
-import ResetPasswordScreen from '@/screens/reset-password';
-import VerifyOtpScreen from '@/screens/verify-otp';
-import WelcomeScreen from '@/screens/welcome';
+import ForgotPasswordScreen from '@/screens/forgot-password.screen';
+import LoginScreen from '@/screens/login.screen';
+import RegisterScreen from '@/screens/register.screen';
+import ResetPasswordScreen from '@/screens/reset-password.screen';
+import VerifyOtpScreen from '@/screens/verify-otp.screen';
+import WelcomeScreen from '@/screens/welcome.screen';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 import { UnauthenticatedParamList } from '../interfaces/navigation.interface';

@@ -21,16 +21,12 @@ var iosDesPath = path.join(__dirname, '../ios/GoogleService-Info.plist');
 // Info.plist
 var iosInfoSrcPath = path.join(__dirname, '../src/keystores/' + TARGET_ENV + '/ios/Info.plist');
 var iosInfoDesPath = path.join(__dirname, '../ios/Bully/Info.plist');
-// ENV
-var envSrcPath = path.join(__dirname, '../src/keystores/' + TARGET_ENV + '/.env');
-var envDesPath = path.join(__dirname, '../.env');
 
 copyFile(androidSrcPath, androidDesPath);
 copyFile(androidStringSrcPath, androidStringDesPath);
 copyFile(androidDebugKeystoreSrcPath, androidDebugKeystoreDesPath);
 copyFile(iosSrcPath, iosDesPath);
 copyFile(iosInfoSrcPath, iosInfoDesPath);
-copyFile(envSrcPath, envDesPath);
 
 function copyFile(sourceFilePath, destinationFilePath) {
   try {

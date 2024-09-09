@@ -5,15 +5,9 @@ PODS:
   - AppAuth/Core (1.7.5)
   - AppAuth/ExternalUserAgent (1.7.5):
     - AppAuth/Core
-  - Base64 (1.1.2)
   - boost (1.83.0)
   - BVLinearGradient (2.8.3):
     - React-Core
-  - CodePush (8.3.1):
-    - Base64 (~> 1.1)
-    - JWT (~> 3.0.0-beta.12)
-    - React-Core
-    - SSZipArchive (~> 2.2.2)
   - DoubleConversion (1.1.6)
   - dr-pogodin-react-native-fs (2.27.1):
     - glog
@@ -203,11 +197,9 @@ PODS:
     - AppAuth/Core (~> 1.6)
     - GTMSessionFetcher/Core (< 4.0, >= 1.5)
   - GTMSessionFetcher/Core (3.4.1)
-  - hermes-engine (0.73.8):
-    - hermes-engine/Pre-built (= 0.73.8)
-  - hermes-engine/Pre-built (0.73.8)
-  - JWT (3.0.0-beta.14):
-    - Base64 (~> 1.1.2)
+  - hermes-engine (0.73.9):
+    - hermes-engine/Pre-built (= 0.73.9)
+  - hermes-engine/Pre-built (0.73.9)
   - libevent (2.1.12)
   - libwebp (1.3.2):
     - libwebp/demux (= 1.3.2)
@@ -1154,10 +1146,6 @@ PODS:
     - React-Core
   - react-native-webview (13.6.3):
     - React-Core
-  - react-native-worklets-core (1.3.3):
-    - React
-    - React-callinvoker
-    - React-Core
   - React-nativeconfig (0.73.9)
   - React-NativeModulesApple (0.73.9):
     - glog
@@ -1330,6 +1318,8 @@ PODS:
     - React-Core
   - RNBootSplash (5.5.3):
     - React-Core
+  - RNCAsyncStorage (1.24.0):
+    - React-Core
   - RNCClipboard (1.14.1):
     - React-Core
   - RNCMaskedView (0.3.1):
@@ -1414,10 +1404,6 @@ PODS:
     - React-Core
   - RNSVG (15.6.0):
     - React-Core
-  - RNVectorIcons (10.1.0):
-    - glog
-    - RCT-Folly (= 2022.05.16.00)
-    - React-Core
   - RSCrashReporter (1.0.1)
   - Rudder (1.28.0):
     - MetricsReporter (= 1.2.1)
@@ -1430,12 +1416,6 @@ PODS:
     - SDWebImage/Core (~> 5.10)
   - simdjson (3.1.0-wmelon1)
   - SocketRocket (0.6.1)
-  - SSZipArchive (2.2.3)
-  - VisionCamera (3.8.2):
-    - React
-    - React-callinvoker
-    - React-Core
-    - react-native-worklets-core
   - WatermelonDB (0.27.1):
     - React
     - simdjson
@@ -1444,7 +1424,6 @@ PODS:
 DEPENDENCIES:
   - boost (from `../../../node_modules/react-native/third-party-podspecs/boost.podspec`)
   - BVLinearGradient (from `../../../node_modules/react-native-linear-gradient`)
-  - CodePush (from `../../../node_modules/react-native-code-push`)
   - DoubleConversion (from `../../../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec`)
   - "dr-pogodin-react-native-fs (from `../../../node_modules/@dr.pogodin/react-native-fs`)"
   - FBLazyVector (from `../../../node_modules/react-native/Libraries/FBLazyVector`)
@@ -1494,7 +1473,6 @@ DEPENDENCIES:
   - react-native-safe-area-context (from `../../../node_modules/react-native-safe-area-context`)
   - react-native-version-check (from `../../../node_modules/react-native-version-check`)
   - react-native-webview (from `../../../node_modules/react-native-webview`)
-  - react-native-worklets-core (from `../../../node_modules/react-native-worklets-core`)
   - React-nativeconfig (from `../../../node_modules/react-native/ReactCommon`)
   - React-NativeModulesApple (from `../../../node_modules/react-native/ReactCommon/react/nativemodule/core/platform/ios`)
   - React-perflogger (from `../../../node_modules/react-native/ReactCommon/reactperflogger`)
@@ -1517,6 +1495,7 @@ DEPENDENCIES:
   - ReactCommon/turbomodule/core (from `../../../node_modules/react-native/ReactCommon`)
   - "RNAppleAuthentication (from `../../../node_modules/@invertase/react-native-apple-authentication`)"
   - RNBootSplash (from `../../../node_modules/react-native-bootsplash`)
+  - "RNCAsyncStorage (from `../../../node_modules/@react-native-async-storage/async-storage`)"
   - "RNCClipboard (from `../../../node_modules/@react-native-clipboard/clipboard`)"
   - "RNCMaskedView (from `../../../node_modules/@react-native-masked-view/masked-view`)"
   - "RNCPicker (from `../../../node_modules/@react-native-picker/picker`)"
@@ -1540,16 +1519,13 @@ DEPENDENCIES:
   - RNSha256 (from `../../../node_modules/react-native-sha256`)
   - RNShare (from `../../../node_modules/react-native-share`)
   - RNSVG (from `../../../node_modules/react-native-svg`)
-  - RNVectorIcons (from `../../../node_modules/react-native-vector-icons`)
   - "simdjson (from `../../../node_modules/@nozbe/simdjson`)"
-  - VisionCamera (from `../../../node_modules/react-native-vision-camera`)
   - "WatermelonDB (from `../../../node_modules/@nozbe/watermelondb`)"
   - Yoga (from `../../../node_modules/react-native/ReactCommon/yoga`)
 
 SPEC REPOS:
   trunk:
     - AppAuth
-    - Base64
     - FBAEMKit
     - FBSDKCoreKit
     - FBSDKCoreKit_Basics
@@ -1576,7 +1552,6 @@ SPEC REPOS:
     - GoogleUtilities
     - GTMAppAuth
     - GTMSessionFetcher
-    - JWT
     - libevent
     - libwebp
     - lottie-ios
@@ -1593,15 +1568,12 @@ SPEC REPOS:
     - SDWebImage
     - SDWebImageWebPCoder
     - SocketRocket
-    - SSZipArchive
 
 EXTERNAL SOURCES:
   boost:
     :podspec: "../../../node_modules/react-native/third-party-podspecs/boost.podspec"
   BVLinearGradient:
     :path: "../../../node_modules/react-native-linear-gradient"
-  CodePush:
-    :path: "../../../node_modules/react-native-code-push"
   DoubleConversion:
     :podspec: "../../../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec"
   dr-pogodin-react-native-fs:
@@ -1679,8 +1651,6 @@ EXTERNAL SOURCES:
     :path: "../../../node_modules/react-native-version-check"
   react-native-webview:
     :path: "../../../node_modules/react-native-webview"
-  react-native-worklets-core:
-    :path: "../../../node_modules/react-native-worklets-core"
   React-nativeconfig:
     :path: "../../../node_modules/react-native/ReactCommon"
   React-NativeModulesApple:
@@ -1725,6 +1695,8 @@ EXTERNAL SOURCES:
     :path: "../../../node_modules/@invertase/react-native-apple-authentication"
   RNBootSplash:
     :path: "../../../node_modules/react-native-bootsplash"
+  RNCAsyncStorage:
+    :path: "../../../node_modules/@react-native-async-storage/async-storage"
   RNCClipboard:
     :path: "../../../node_modules/@react-native-clipboard/clipboard"
   RNCMaskedView:
@@ -1771,12 +1743,8 @@ EXTERNAL SOURCES:
     :path: "../../../node_modules/react-native-share"
   RNSVG:
     :path: "../../../node_modules/react-native-svg"
-  RNVectorIcons:
-    :path: "../../../node_modules/react-native-vector-icons"
   simdjson:
     :path: "../../../node_modules/@nozbe/simdjson"
-  VisionCamera:
-    :path: "../../../node_modules/react-native-vision-camera"
   WatermelonDB:
     :path: "../../../node_modules/@nozbe/watermelondb"
   Yoga:
@@ -1784,10 +1752,8 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   AppAuth: 501c04eda8a8d11f179dbe8637b7a91bb7e5d2fa
-  Base64: cecfb41a004124895a7bcee567a89bae5a89d49b
   boost: d3f49c53809116a5d38da093a8aa78bf551aed09
   BVLinearGradient: 880f91a7854faff2df62518f0281afb1c60d49a3
-  CodePush: d892f13c5012e9e2cb36640f4929654b7be21fe5
   DoubleConversion: fea03f2699887d960129cc54bba7e52542b6f953
   dr-pogodin-react-native-fs: e09f228c827f79b5645ae84ddeee6864998bdee7
   FBAEMKit: 619f96ea65427e8afca240d5b0f4703738dfdf5c
@@ -1819,8 +1785,7 @@ SPEC CHECKSUMS:
   GoogleUtilities: ea963c370a38a8069cc5f7ba4ca849a60b6d7d15
   GTMAppAuth: 99fb010047ba3973b7026e45393f51f27ab965ae
   GTMSessionFetcher: 8000756fc1c19d2e5697b90311f7832d2e33f6cd
-  hermes-engine: b12d9bb1b7cee546f5e48212e7ea7e3c1665a367
-  JWT: ef71dfb03e1f842081e64dc42eef0e164f35d251
+  hermes-engine: ed62e0dcd013bf4a3b487f164feec1c4e705b5b5
   libevent: 4049cae6c81cdb3654a443be001fb9bdceff7913
   libwebp: 1786c9f4ff8a279e4dac1e8f385004d5fc253009
   lottie-ios: e047b1d2e6239b787cc5e9755b988869cf190494
@@ -1862,7 +1827,6 @@ SPEC CHECKSUMS:
   react-native-safe-area-context: b01d8f42d4e62a7be5a3e69fd332e0c7e67584c7
   react-native-version-check: 6cd36aad4e30b8e3216747e3b4ddeb09e0647af8
   react-native-webview: 88293a0f23eca8465c0433c023ec632930e644d0
-  react-native-worklets-core: f51430dd07bf5343d4918d28a4bb00fe8f98b982
   React-nativeconfig: c1729ab95240ec80d47a2bb8354d8f31138e35a7
   React-NativeModulesApple: 115c934a87f3b45fecb0fada08fa70bab3dff65c
   React-perflogger: c93b6a895eca3f9196656bb20ce0e15ad597a4e9
@@ -1886,6 +1850,7 @@ SPEC CHECKSUMS:
   RecaptchaInterop: 7d1a4a01a6b2cb1610a47ef3f85f0c411434cb21
   RNAppleAuthentication: e99eaf3c4c01ad8ecb6125dd6f0cfd98871685b5
   RNBootSplash: e025d4ee98d942ee6c8b495a6fe66339a6b5f6dd
+  RNCAsyncStorage: ec53e44dc3e75b44aa2a9f37618a49c3bc080a7a
   RNCClipboard: 0a720adef5ec193aa0e3de24c3977222c7e52a37
   RNCMaskedView: 090213d32d8b3bb83a4dcb7d12c18f0152591906
   RNCPicker: 0173dedc74776227ec6dcc61bb85cd9f07bbb2ac
@@ -1909,7 +1874,6 @@ SPEC CHECKSUMS:
   RNSha256: e1bc64e9e50b293d5282bb4caa1b2043931f1c9d
   RNShare: 0fad69ae2d71de9d1f7b9a43acf876886a6cb99c
   RNSVG: 5da7a24f31968ec74f0b091e3440080f347e279b
-  RNVectorIcons: 96e8c5c45609932bb2f8347e1c709bcca0e95654
   RSCrashReporter: 6b8376ac729b0289ebe0908553e5f56d8171f313
   Rudder: 9f1f6fdec5bd0e8845e2ac2d4f7b4584d069bf88
   RudderKit: f272f9872183946452ac94cd7bb2244a71e6ca8f
@@ -1917,11 +1881,9 @@ SPEC CHECKSUMS:
   SDWebImageWebPCoder: 908b83b6adda48effe7667cd2b7f78c897e5111d
   simdjson: e6bfae9ce4bcdc80452d388d593816f1ca2106f3
   SocketRocket: f32cd54efbe0f095c4d7594881e52619cfe80b17
-  SSZipArchive: 62d4947b08730e4cda640473b0066d209ff033c9
-  VisionCamera: edbcd00e27a438b2228f67823e2b8d15a189065f
   WatermelonDB: 842d22ba555425aa9f3ce551239a001200c539bc
   Yoga: 6aaa3c45f0fda0c6929f855121622669dabe1aaf
 
-PODFILE CHECKSUM: 95c0bed881e95723c5ab3e4215e13fd4a91adf5d
+PODFILE CHECKSUM: f11ef89324dbe7b696f0c6ded2ff4f3d4754d318
 
 COCOAPODS: 1.14.3

@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Image, ImageStyle } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
-import Icon from 'react-native-vector-icons/Feather';
 import { Colors, ds } from '~react-native-design-system';
 import Divider from '~react-native-ui-core/components/divider';
 import Heading from '~react-native-ui-core/components/heading';
@@ -98,7 +97,6 @@ function UIScreen({ route }: AuthenticatedStackProps<'UI'>) {
             <Divider />
             <Heading as="h4" text="Icons" />
             <Divider />
-            <Icon name="x" size={30} color="#900" />
             <Divider />
             <Heading as="h4" text="Image" />
             <Divider />

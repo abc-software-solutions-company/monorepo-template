@@ -18,7 +18,8 @@ function PreloadScreen({ navigation }: AuthenticatedStackProps<'Preload'>) {
       await resetLocalDatabase();
       await generateSeed();
       await generatePosts();
-      setTimeout(() => navigation.replace('SyncData'), 1000);
+      // setTimeout(() => navigation.replace('SyncData'), 1000);
+      setTimeout(() => navigation.replace('TravelDrawer', { screen: 'TravelBottomTabStack' }), 1000);
     } catch (error) {
       log.error('Error generating local data:', error);
     }
@@ -26,7 +27,6 @@ function PreloadScreen({ navigation }: AuthenticatedStackProps<'Preload'>) {
 
   useEffect(() => {
     initializeLocalDb();
-    // setTimeout(() => navigation.replace('TravelDrawer', { screen: 'TravelBottomTabStack' }), 1000);
   }, [initializeLocalDb]);
 
   return (
