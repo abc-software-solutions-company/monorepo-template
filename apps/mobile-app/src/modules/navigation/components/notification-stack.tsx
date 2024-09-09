@@ -1,5 +1,5 @@
 import React from 'react';
-import NotificationsScreen from '@/screens/notifications';
+import NotificationsScreen from '@/screens/notifications.screen';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 import { NotificationParamList } from '../interfaces/navigation.interface';

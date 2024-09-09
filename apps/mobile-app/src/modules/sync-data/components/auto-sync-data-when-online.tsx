@@ -8,12 +8,12 @@ import { syncDataToServer } from '../utils/sync-data.util';
 
 type SyncDataProps = {};
 
-const SyncData: FC<SyncDataProps> = () => {
+const AutoSyncDataWhenOnline: FC<SyncDataProps> = () => {
   const netInfo = useNetInfo();
 
   useEffect(() => {
-    const isAllowSync = MMKVStorage.getItem(SYNC_DATA_KEY);
-    const isReadyToSyncData = netInfo.isConnected === true && isAllowSync === 'false';
+    const canSyncData = MMKVStorage.getItem(SYNC_DATA_KEY);
+    const isReadyToSyncData = netInfo.isConnected === true && canSyncData === 'false';
 
     if (isReadyToSyncData) syncDataToServer();
   }, [netInfo.isConnected]);
@@ -21,4 +21,4 @@ const SyncData: FC<SyncDataProps> = () => {
   return null;
 };
 
-export default SyncData;
+export default AutoSyncDataWhenOnline;

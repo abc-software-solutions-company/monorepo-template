@@ -11,7 +11,7 @@ import View from '~react-native-ui-core/components/view';
 import NavigationHeader from '@/modules/navigation/components/navigation-header';
 import { AuthenticatedStackProps } from '@/modules/navigation/interfaces/navigation.interface';
 import { getHeaderTitle } from '@/modules/navigation/utils/navigation.util';
-import GoogleMLKitScanner from '@/modules/scancode/components/google-ml-kit-scanner';
+// import GoogleMLKitScanner from '@/modules/scancode/components/google-ml-kit-scanner';
 
 function ScanCodeScreen({ route }: AuthenticatedStackProps<'ScanCode'>) {
   const { t } = useTranslation();
@@ -29,11 +29,7 @@ function ScanCodeScreen({ route }: AuthenticatedStackProps<'ScanCode'>) {
       <StatusBar />
       <NavigationHeader title={t(getHeaderTitle(route.name))} />
       <View style={ds.flex1}>
-        {permissionResult === 'granted' && (
-          <View style={ds.grow}>
-            <GoogleMLKitScanner />
-          </View>
-        )}
+        {permissionResult === 'granted' && <View style={ds.grow}>{/* <GoogleMLKitScanner /> */}</View>}
         {permissionResult === 'blocked' && <Button onPress={() => navigation.goBack()}>Back</Button>}
       </View>
     </View>

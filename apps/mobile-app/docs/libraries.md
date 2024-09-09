@@ -33,7 +33,6 @@ react-hook-form \
 react-i18next \
 react-native@0.72.8 \
 react-native-bootsplash \
-react-native-code-push \
 react-native-device-info \
 react-native-fast-image \
 react-native-fbsdk-next \
@@ -50,7 +49,6 @@ react-native-safe-area-context \
 react-native-screens \
 react-native-share \
 react-native-svg \
-react-native-vector-icons \
 react-native-version-check \
 react-native-vision-camera \
 react-native-webview \
@@ -94,8 +92,6 @@ zustand
 1. https://github.com/zoontek/react-native-permissions
 
 ## Icon
-
-1. https://github.com/oblador/react-native-vector-icons
 
 ## Image
 
@@ -144,5 +140,3 @@ zustand
 ## UI Components
 
 ## Release & Versioning
-
-1. https://github.com/microsoft/react-native-code-push

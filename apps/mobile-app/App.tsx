@@ -1,5 +1,4 @@
 import React from 'react';
-// import CodePush from 'react-native-code-push';
 import { ToastProvider } from 'react-native-toast-notifications';
 import { createAsyncStoragePersister } from '@tanstack/query-async-storage-persister';
 import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client';
@@ -13,8 +12,6 @@ import { useThemeState } from '@/modules/theme/states/theme.state';
 import { MMKVStorage } from '@/utils/mmkv-storage.util';
 import { getQueryClient } from '@/utils/query-client.util';
 
-import '@/global.css';
-
 const queryClient = getQueryClient();
 const asyncStoragePersister = createAsyncStoragePersister({ storage: MMKVStorage });
 
@@ -27,16 +24,10 @@ const App = () => {
         <ToastProvider duration={4000} placement="bottom" animationType="slide-in">
           <NavContainer />
           <NotificationSetup />
-          {/* <SyncData /> */}
         </ToastProvider>
       </CoreUIThemeProvider>
     </PersistQueryClientProvider>
   );
 };
-
-// export default CodePush({
-//   installMode: CodePush.InstallMode.IMMEDIATE,
-//   checkFrequency: CodePush.CheckFrequency.ON_APP_RESUME,
-// })(App);
 
 export default App;

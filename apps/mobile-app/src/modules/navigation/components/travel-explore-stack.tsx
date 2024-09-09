@@ -1,7 +1,7 @@
 import React from 'react';
-import HomeScreen from '@/screens/home';
-import TravelPlaceDetailScreen from '@/screens/travel-place-detail';
-import TravelPlacesScreen from '@/screens/travel-places';
+import HomeScreen from '@/screens/home.screen';
+import TravelPlaceDetailScreen from '@/screens/travel-place-detail.screen';
+import TravelPlacesScreen from '@/screens/travel-places.screen';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 import { ExploreParamList } from '../interfaces/navigation.interface';

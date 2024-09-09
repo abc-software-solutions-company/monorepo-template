@@ -58,3 +58,6 @@
 -keep class com.facebook.react.turbomodule.** { *; }
 -keep class com.dynamsoft.dbr.** { *; }
 -keep class androidx.camera.core.** {*;}
+
+# React Native Config
+-keep class com.tin.bully.BuildConfig { *; }

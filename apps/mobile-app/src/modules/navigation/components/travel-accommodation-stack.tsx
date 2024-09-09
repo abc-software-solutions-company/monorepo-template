@@ -1,6 +1,6 @@
 import React from 'react';
-import AccommodationDetailScreen from '@/screens/travel-accommodation-detail';
-import AccommodationsScreen from '@/screens/travel-accommodations';
+import AccommodationDetailScreen from '@/screens/travel-accommodation-detail.screen';
+import AccommodationsScreen from '@/screens/travel-accommodations.screen';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 import { AccommodationParamList } from '../interfaces/navigation.interface';

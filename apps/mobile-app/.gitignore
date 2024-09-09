@@ -33,7 +33,6 @@ local.properties
 .cxx/
 *.keystore
 !debug.keystore
-index.android.bundle
 
 # node.js
 #
@@ -55,9 +54,10 @@ yarn-error.log
 
 # Bundle artifact
 *.jsbundle
+index.android.bundle
 
 # Ruby / CocoaPods
-/ios/Pods/
+**/Pods/
 /vendor/bundle/
 
 # Temporary files created by Metro to check the health of the file watcher
@@ -71,23 +71,21 @@ yarn-error.log
 !.yarn/sdks
 !.yarn/versions
 
-# testing
+# Testing
 /coverage-unit
 /coverage-e2e
 /unit-results
 /e2e-results
 
-# Keys
-/src/keystores/*
-!/src/keystores/.gitkeep
+# Keystores
+/src/keystores/**
+
+# Environment
+.env*
+!.env.template
+
+# Prevent sensitive files
 /android/app/google-services.json
 /android/app/src/main/res/values/strings.xml
 /ios/GoogleService-Info.plist
 /ios/*/Info.plist
-
-# local env files
-.env
-.env.test
-.env.development
-.env.production
-.env*.local

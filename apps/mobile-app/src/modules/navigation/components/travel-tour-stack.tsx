@@ -1,6 +1,6 @@
 import React from 'react';
-import TourDetailScreen from '@/screens/travel-tour-detail';
-import ToursScreen from '@/screens/travel-tours';
+import TourDetailScreen from '@/screens/travel-tour-detail.screen';
+import ToursScreen from '@/screens/travel-tours.screen';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 import { TourParamList } from '../interfaces/navigation.interface';
