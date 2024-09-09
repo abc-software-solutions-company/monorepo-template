@@ -31,6 +31,7 @@ export class ContentsService {
     }
 
     if (createDto.status) newContent.status = createDto.status;
+    if (createDto.seoMeta) newContent.seoMeta = createDto.seoMeta;
 
     const createdContent = await this.contentRepository.save(newContent);
 
@@ -112,6 +113,7 @@ export class ContentsService {
     }
 
     if (updateDto.status) content.status = updateDto.status;
+    if (updateDto.seoMeta) content.seoMeta = updateDto.seoMeta;
 
     const updatedContent = await this.contentRepository.save(content);
 

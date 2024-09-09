@@ -1,9 +1,14 @@
+import { z } from 'zod';
+
 import { ResponseFormat } from '@/interfaces/api-response.interface';
 import { BaseFilter } from '@/interfaces/filter.interface';
+import { SeoMeta } from '@/interfaces/seo-meta.interface';
 
 import { CATEGORY_STATUS, CATEGORY_TYPE } from '../constants/categories.constant';
 
 import { FileEntity } from '@/modules/files/interfaces/files.interface';
+
+import { categoryFormValidator } from '../validators/category-form.validator';
 
 export type CategoryEntity = {
   id: string;
@@ -21,19 +26,10 @@ export type CategoryEntity = {
   createdAt?: string;
   updatedAt?: string;
   category: CategoryEntity;
+  seoMeta: SeoMeta;
 };
 
-export type CategoryFormData = {
-  name: string;
-  slug: string;
-  cover: string;
-  images: FileEntity[];
-  description: string;
-  body: string;
-  type: CATEGORY_TYPE;
-  status: CATEGORY_STATUS;
-  parentId?: string;
-};
+export type CategoryFormData = z.infer<typeof categoryFormValidator>;
 
 export type CategoriesResponse = ResponseFormat<CategoryEntity[]>;
 export type CategoryResponse = ResponseFormat<CategoryEntity>;

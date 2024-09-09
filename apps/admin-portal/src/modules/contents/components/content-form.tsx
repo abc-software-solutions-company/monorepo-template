@@ -19,6 +19,7 @@ import { useCreateContentMutation, useGetContentQuery, useUpdateContentMutation 
 import EditorFileDialog from '@/components/editors/editor-file-dialog';
 import FormFieldCardInputType from '@/components/form-fields/form-field-card-input-type';
 import FormFieldCardSelectStatus from '@/components/form-fields/form-field-card-select-status';
+import FormFieldCardSeoMeta from '@/components/form-fields/form-field-card-seo-meta';
 import FormFieldCKEditorFull from '@/components/form-fields/form-field-ckeditor-full';
 import FormFieldCKEditorSimple from '@/components/form-fields/form-field-ckeditor-simple';
 import FormFieldInputName from '@/components/form-fields/form-field-input-name';
@@ -51,6 +52,7 @@ const ContentForm: FC<ContentFormProps> = ({ isEdit }) => {
     description: content?.description ?? '',
     body: content?.body ?? '',
     type: content?.type ?? CONTENT_TYPE.UNCATEGORIZED,
+    seoMeta: content?.seoMeta ?? { title: '', description: '', keywords: '' },
   };
 
   const form = useForm<ContentFormData>({ resolver: zodResolver(contentFormValidator), defaultValues });
@@ -129,6 +131,9 @@ const ContentForm: FC<ContentFormProps> = ({ isEdit }) => {
                 <FormFieldInputSlug form={form} />
                 <FormFieldCKEditorSimple form={form} editorRef={editorRef} setVisible={setIsFileManagerVisible} />
                 <FormFieldCKEditorFull form={form} editorRef={editorRef} setVisible={setIsFileManagerVisible} />
+              </CardContent>
+              <CardContent className="grid gap-4 pt-4">
+                <FormFieldCardSeoMeta form={form} />
               </CardContent>
             </Card>
             <div className="w-72 shrink-0">

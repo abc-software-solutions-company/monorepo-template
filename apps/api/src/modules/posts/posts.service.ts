@@ -48,6 +48,7 @@ export class PostsService {
     }
 
     if (createDto.status) newPost.status = createDto.status;
+    if (createDto.seoMeta) newPost.seoMeta = createDto.seoMeta;
 
     const createdPost = await this.postRepository.save(newPost);
 
@@ -138,6 +139,7 @@ export class PostsService {
     }
 
     if (updateDto.status) post.status = updateDto.status;
+    if (updateDto.seoMeta) post.seoMeta = updateDto.seoMeta;
 
     const updatedPost = await this.postRepository.save(post);
 

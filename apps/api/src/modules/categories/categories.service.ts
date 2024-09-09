@@ -51,8 +51,11 @@ export class CategoriesService {
     if (existingCategory) {
       throw new ConflictException('Category with the same name already exists.');
     }
-
     const newCategory = this.categoryRepository.create({ ...createDto, parent: parent });
+
+    if (createDto.status) newCategory.status = createDto.status;
+    if (createDto.seoMeta) newCategory.seoMeta = createDto.seoMeta;
+
     const categoryResponse = await this.categoryRepository.save({ ...newCategory });
 
     await Promise.all([
@@ -169,6 +172,9 @@ export class CategoriesService {
         category[field] = updateDto[field];
       }
     }
+
+    if (updateDto.status) category.status = updateDto.status;
+    if (updateDto.seoMeta) category.seoMeta = updateDto.seoMeta;
 
     const updatedCategory = await this.categoryRepository.save(category);
 

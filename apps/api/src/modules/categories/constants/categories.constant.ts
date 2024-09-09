@@ -1,6 +1,6 @@
 export const CATEGORY_GET_FIELDS = [
   [
-    'category.id category.name category.slug category.description category.body category.type category.parent category.status category.cover category.createdAt',
+    'category.id category.name category.slug category.description category.body category.type category.parent category.status category.cover category.seoMeta category.createdAt',
   ],
   ['user.id user.name user.email'],
   ['parent.id parent.name'],

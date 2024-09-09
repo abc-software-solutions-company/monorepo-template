@@ -48,6 +48,7 @@ export class ProductsService {
     }
 
     if (createDto.status) newProduct.status = createDto.status;
+    if (createDto.seoMeta) newProduct.seoMeta = createDto.seoMeta;
 
     const createdProduct = await this.productRepository.save(newProduct);
 
@@ -141,6 +142,7 @@ export class ProductsService {
     }
 
     if (updateDto.status) product.status = updateDto.status;
+    if (updateDto.seoMeta) product.seoMeta = updateDto.seoMeta;
 
     const updatedProduct = await this.productRepository.save(product);
 

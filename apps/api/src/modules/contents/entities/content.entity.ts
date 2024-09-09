@@ -1,6 +1,7 @@
 import { Column, Entity } from 'typeorm';
 
 import { AbstractEntity } from '@/common/entities/abstract.entity';
+import { SeoMeta } from '@/common/entities/seo-meta.entity';
 
 import { CONTENT_STATUS } from '../constants/contents.constant';
 
@@ -23,4 +24,7 @@ export class Content extends AbstractEntity {
 
   @Column({ type: 'enum', enum: CONTENT_STATUS, default: CONTENT_STATUS.DRAFT })
   status: CONTENT_STATUS;
+
+  @Column({ type: 'json', nullable: true })
+  seoMeta: SeoMeta;
 }

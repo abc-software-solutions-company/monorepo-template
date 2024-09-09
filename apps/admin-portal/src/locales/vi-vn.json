@@ -348,6 +348,11 @@
   "content_delete": "Xoá",
   "content_auditlog": "Audit logs",
 
+  "seo_explain": "Việc nhập các thông tin meta này sẽ giúp cải thiện khả năng hiển thị của trang web trên công cụ tìm kiếm và thu hút nhiều lượt truy cập hơn.",
+  "seo_title": "Tiêu đề",
+  "seo_description": "Mô tả",
+  "seo_keywords": "Từ khoá",
+
   "push_notification_title": "Tiêu đề",
   "push_notification_content": "Nội dung",
   "push_notification_send_button": "Gửi",
@@ -404,5 +409,9 @@
 
   "validator_faq_title": "Bạn chưa nhập tiêu đề",
   "validator_faq_content": "Bạn chưa nhập nội dung",
-  "validator_faq_status": "Bạn chưa chọn trạng thái"
+  "validator_faq_status": "Bạn chưa chọn trạng thái",
+
+  "validator_seo_title": "Tiêu đề nên nhập khoảng 50 đến 60 ký tự",
+  "validator_seo_description": "Mô tả nên nhập khoảng 120 đến 150 ký tự",
+  "validator_seo_keywords": "Từ khoá nên nhập khoảng 120 đến 150 ký tự"
 }

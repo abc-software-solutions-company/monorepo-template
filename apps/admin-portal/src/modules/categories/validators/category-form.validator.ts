@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { baseValidator } from '~shared-universal/validators/zod';
 
 import { CATEGORY_STATUS, CATEGORY_TYPE } from '../constants/categories.constant';
 
@@ -12,4 +13,5 @@ export const categoryFormValidator = z.object({
   images: z.object({ id: z.string().uuid({ message: 'validator_id_should_be_an_uuid' }) }).array(),
   type: z.nativeEnum(CATEGORY_TYPE, { errorMap: () => ({ message: 'validator_category_type' }) }),
   parentId: z.string().optional(),
+  seoMeta: baseValidator.seo,
 });
