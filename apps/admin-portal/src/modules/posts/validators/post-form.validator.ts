@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { baseValidator } from '~shared-universal/validators/zod';
 
 import { POST_STATUS } from '../constants/posts.constant';
 
@@ -11,4 +12,5 @@ export const postFormValidator = z.object({
   cover: z.string().max(1000, 'validator_maximum_n_characters_allowed'),
   images: z.object({ id: z.string().uuid({ message: 'validator_id_should_be_an_uuid' }) }).array(),
   categoryId: z.string().optional(),
+  seoMeta: baseValidator.seo,
 });

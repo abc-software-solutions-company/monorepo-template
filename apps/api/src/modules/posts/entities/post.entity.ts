@@ -2,6 +2,7 @@ import { Exclude, Expose } from 'class-transformer';
 import { AfterLoad, Column, Entity, ManyToOne, OneToMany } from 'typeorm';
 
 import { AbstractEntity } from '@/common/entities/abstract.entity';
+import { SeoMeta } from '@/common/entities/seo-meta.entity';
 
 import { Category } from '@/modules/categories/entities/category.entity';
 import { File } from '@/modules/files/entities/file.entity';
@@ -39,6 +40,9 @@ export class Post extends AbstractEntity {
 
   @Expose()
   images: File[];
+
+  @Column({ type: 'json', nullable: true })
+  seoMeta: SeoMeta;
 
   // Ref: https://orkhan.gitbook.io/typeorm/docs/many-to-many-relations#many-to-many-relations-with-custom-properties
   @OneToMany(() => PostFile, postFile => postFile.post)

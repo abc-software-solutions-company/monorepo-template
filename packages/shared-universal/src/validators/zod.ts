@@ -16,6 +16,23 @@ export const baseValidator = {
   }).email('validator_user_email_invalid'),
   password: passwordSchema(),
   phoneNumber: phoneNumberSchema(),
+  seo: z.object({
+    title: z
+      .string()
+      .nullable()
+      .optional()
+      .refine(value => !value || (value.length >= 1 && value.length <= 60), { message: 'validator_seo_title' }),
+    description: z
+      .string()
+      .nullable()
+      .optional()
+      .refine(value => !value || (value.length >= 1 && value.length <= 150), { message: 'validator_seo_description' }),
+    keywords: z
+      .string()
+      .nullable()
+      .optional()
+      .refine(value => !value || (value.length >= 1 && value.length <= 150), { message: 'validator_seo_keywords' }),
+  }),
 };
 
 interface StringValidatorOptions {

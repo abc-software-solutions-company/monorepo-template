@@ -20,6 +20,7 @@ import FormFieldCardImages from '@/components/form-fields/form-field-card-images
 import FormFieldCardSelectCategory from '@/components/form-fields/form-field-card-select-category';
 import FormFieldCardSelectCategoryType from '@/components/form-fields/form-field-card-select-category-type';
 import FormFieldCardSelectStatus from '@/components/form-fields/form-field-card-select-status';
+import FormFieldCardSeoMeta from '@/components/form-fields/form-field-card-seo-meta';
 import FormFieldCKEditorFull from '@/components/form-fields/form-field-ckeditor-full';
 import FormFieldCKEditorSimple from '@/components/form-fields/form-field-ckeditor-simple';
 import FormFieldInputName from '@/components/form-fields/form-field-input-name';
@@ -60,6 +61,7 @@ const CategoryForm: FC<CategoryFormProps> = ({ isEdit }) => {
     body: category?.body ?? '',
     type: category?.type ?? ('' as CATEGORY_TYPE),
     parentId: category?.parent?.id ?? undefined,
+    seoMeta: category?.seoMeta ?? { title: '', description: '', keywords: '' },
   };
 
   const form = useForm<CategoryFormData>({ resolver: zodResolver(categoryFormValidator), defaultValues });
@@ -97,6 +99,9 @@ const CategoryForm: FC<CategoryFormProps> = ({ isEdit }) => {
                 <FormFieldInputSlug form={form} />
                 <FormFieldCKEditorSimple form={form} editorRef={editorRef} setVisible={setIsFileManagerVisible} />
                 <FormFieldCKEditorFull form={form} editorRef={editorRef} setVisible={setIsFileManagerVisible} />
+              </CardContent>
+              <CardContent className="grid gap-4 pt-4">
+                <FormFieldCardSeoMeta form={form} />
               </CardContent>
             </Card>
             <div className="w-72 shrink-0">

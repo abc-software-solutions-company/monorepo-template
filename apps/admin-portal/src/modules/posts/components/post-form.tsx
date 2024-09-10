@@ -19,6 +19,7 @@ import FormFieldCardCover from '@/components/form-fields/form-field-card-cover';
 import FormFieldCardImages from '@/components/form-fields/form-field-card-images';
 import FormFieldCardSelectCategory from '@/components/form-fields/form-field-card-select-category';
 import FormFieldCardSelectStatus from '@/components/form-fields/form-field-card-select-status';
+import FormFieldCardSeoMeta from '@/components/form-fields/form-field-card-seo-meta';
 import FormFieldCKEditorFull from '@/components/form-fields/form-field-ckeditor-full';
 import FormFieldCKEditorSimple from '@/components/form-fields/form-field-ckeditor-simple';
 import FormFieldInputName from '@/components/form-fields/form-field-input-name';
@@ -55,6 +56,7 @@ const PostForm: FC<PostFormProps> = ({ isEdit }) => {
     description: post?.description ?? '',
     body: post?.body ?? '',
     categoryId: post?.category?.id ?? undefined,
+    seoMeta: post?.seoMeta ?? { title: '', description: '', keywords: '' },
   };
 
   const form = useForm<PostFormData>({ resolver: zodResolver(postFormValidator), defaultValues });
@@ -92,6 +94,9 @@ const PostForm: FC<PostFormProps> = ({ isEdit }) => {
                 <FormFieldInputSlug form={form} />
                 <FormFieldCKEditorSimple form={form} editorRef={editorRef} setVisible={setIsFileManagerVisible} />
                 <FormFieldCKEditorFull form={form} editorRef={editorRef} setVisible={setIsFileManagerVisible} />
+              </CardContent>
+              <CardContent className="grid gap-4 pt-4">
+                <FormFieldCardSeoMeta form={form} />
               </CardContent>
             </Card>
             <div className="w-72 shrink-0">

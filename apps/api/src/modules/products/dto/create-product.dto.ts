@@ -2,6 +2,8 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import { IsArray, IsEnum, IsNotEmpty, IsOptional, IsString, IsUUID, MaxLength, ValidateNested } from 'class-validator';
 
+import { SeoMetaDto } from '@/common/dtos/seo-meta.dto';
+
 import { toSlug } from '@/common/utils/string.util';
 
 import { FileDto } from '@/modules/files/dto/file.dto';
@@ -58,4 +60,10 @@ export class CreateProductDto {
   @IsOptional()
   @IsUUID('4')
   categoryId?: string;
+
+  @ApiPropertyOptional({ type: SeoMetaDto, description: 'SEO Meta Data' })
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => SeoMetaDto)
+  seoMeta?: SeoMetaDto;
 }

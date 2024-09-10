@@ -1,5 +1,5 @@
 export const PRODUCT_GET_FIELDS = [
-  ['product.id product.name product.slug product.description product.body product.status product.cover product.createdAt'],
+  ['product.id product.name product.slug product.description product.body product.status product.seoMeta product.cover product.createdAt'],
   ['user.id user.name user.email'],
   ['category.id category.name'],
   ['productFile.fileId productFile.position'],

@@ -348,6 +348,11 @@
   "content_delete": "Delete",
   "content_auditlog": "Audit logs",
 
+  "seo_explain": "Entering these meta details will help improve the visibility of the website on search engines and attract more traffic.",
+  "seo_title": "Title",
+  "seo_description": "Description",
+  "seo_keywords": "Keywords",
+
   "push_notification_title": "Title",
   "push_notification_content": "Content",
   "push_notification_send_button": "Send",
@@ -404,5 +409,9 @@
 
   "validator_faq_title": "Please enter the title",
   "validator_faq_content": "Please enter the content",
-  "validator_faq_status": "Please select a status"
+  "validator_faq_status": "Please select a status",
+
+  "validator_seo_title": "Title should be between 50 and 60 characters",
+  "validator_seo_description": "Description should be between 120 and 150 characters",
+  "validator_seo_keywords": "Keywords should be between 120 and 150 characters"
 }

@@ -1,5 +1,8 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsNotEmpty, IsOptional, IsString, MaxLength } from 'class-validator';
+import { Type } from 'class-transformer';
+import { IsNotEmpty, IsOptional, IsString, MaxLength, ValidateNested } from 'class-validator';
+
+import { SeoMetaDto } from '@/common/dtos/seo-meta.dto';
 
 import { toSlug } from '@/common/utils/string.util';
 
@@ -38,4 +41,10 @@ export class CreateContentDto {
   @IsString()
   @IsOptional()
   status?: CONTENT_STATUS;
+
+  @ApiPropertyOptional({ type: SeoMetaDto, description: 'SEO Meta Data' })
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => SeoMetaDto)
+  seoMeta?: SeoMetaDto;
 }
