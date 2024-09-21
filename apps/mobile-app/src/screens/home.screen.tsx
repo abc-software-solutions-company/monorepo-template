@@ -6,7 +6,8 @@ import Divider from '~react-native-ui-core/components/divider';
 import Heading from '~react-native-ui-core/components/heading';
 import StatusBar from '~react-native-ui-core/components/statusbar';
 import Text from '~react-native-ui-core/components/text';
-import View from '~react-native-ui-core/components/view';
+
+import SafeViewArea from '@/components/safe-view-area';
 
 import { TravelExploreStackProps } from '@/modules/navigation/interfaces/navigation.interface';
 import { TravelCategories, TravelCategoryList, TravelCategoryTrigger } from '@/modules/travel-categories/components/travel-categories';
@@ -24,7 +25,7 @@ function HomeScreen({}: TravelExploreStackProps<'Home'>) {
   ];
 
   return (
-    <View style={[ds.flex1, ds.relative]}>
+    <SafeViewArea>
       <StatusBar background="transparent" />
       <TravelHeader />
       <Divider height={2} />
@@ -52,7 +53,7 @@ function HomeScreen({}: TravelExploreStackProps<'Home'>) {
         <PopularHotelsRoot />
         <Divider height={14} />
       </ScrollView>
-    </View>
+    </SafeViewArea>
   );
 }
 

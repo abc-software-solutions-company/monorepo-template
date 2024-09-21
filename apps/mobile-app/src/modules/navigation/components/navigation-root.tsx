@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { createStackNavigator } from '@react-navigation/stack';
 
 import { RootStackParamList } from '../interfaces/navigation.interface';
 
@@ -12,7 +12,7 @@ import { useLanguageState } from '@/modules/language/states/language.state';
 import Anthenticated from './authenticated';
 import Unanthenticated from './unauthenticated';
 
-const Stack = createNativeStackNavigator<RootStackParamList>();
+const Stack = createStackNavigator<RootStackParamList>();
 
 const NavigationRoot = () => {
   const { i18n } = useTranslation();

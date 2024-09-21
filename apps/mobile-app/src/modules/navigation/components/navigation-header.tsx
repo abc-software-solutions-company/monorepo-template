@@ -1,11 +1,9 @@
 import React, { FC, ReactNode } from 'react';
 import { Pressable } from 'react-native';
 import FastImage from 'react-native-fast-image';
-import { useNavigation } from '@react-navigation/native';
 import { ds } from '~react-native-design-system';
 import { dynamicStyles } from '~react-native-design-system/utils/style.util';
 import Heading from '~react-native-ui-core/components/heading';
-import Icon from '~react-native-ui-core/components/icon';
 import Text from '~react-native-ui-core/components/text';
 import View from '~react-native-ui-core/components/view';
 import { useCoreUITheme } from '~react-native-ui-core/themes/theme.context';
@@ -18,8 +16,8 @@ type NavigationHeaderProps = {
   borderColor?: string;
   backgroundColor?: string;
   backgroundImage?: string;
-  leftIcon?: ReactNode;
-  rightIcon?: ReactNode;
+  leftComponent?: ReactNode;
+  rightComponent?: ReactNode;
   leftFunc?: () => void;
   rightFunc?: () => void;
 };
@@ -32,37 +30,28 @@ const NavigationHeader: FC<NavigationHeaderProps> = ({
   borderColor,
   backgroundColor,
   backgroundImage = '',
-  leftIcon = null,
-  rightIcon = null,
+  leftComponent = null,
+  rightComponent = null,
   leftFunc,
   rightFunc,
 }) => {
-  const navigation = useNavigation();
   const { configs } = useCoreUITheme();
 
   const foregroundColor = configs.foreground;
 
-  const goBack = () => {
-    navigation.goBack();
-  };
-
-  const renderLeftIcon = () => {
-    return leftIcon || <Icon name="ChevronLeft" size={28} color={foregroundColor} />;
-  };
-
   return (
     <View style={[ds.borderB1, dynamicStyles.border(borderColor ?? configs.border), dynamicStyles.background(backgroundColor ?? configs.card)]}>
       <View style={[ds.row, ds.justifyBetween, ds.itemsCenter, ds.px8]}>
-        <Pressable style={[ds.w32, ds.h32, ds.textCenter, ds.itemsCenter, ds.justifyCenter]} onPress={leftFunc || goBack}>
-          {renderLeftIcon()}
+        <Pressable style={[ds.h32, ds.textCenter, ds.row, ds.gap6, ds.itemsCenter, ds.justifyCenter]} onPress={leftFunc}>
+          {leftComponent}
         </Pressable>
         <View style={[ds.column, ds.itemsCenter, ds.justifyCenter, ds.grow, ds.h56]}>
           {backgroundImage && <FastImage source={{ uri: backgroundImage }} />}
           {title && <Heading text={title} as={'h5'} color={titleColor ? titleColor : foregroundColor} />}
           {subTitle && <Text text={subTitle} color={subTitleColor ? subTitleColor : foregroundColor} />}
         </View>
-        <Pressable style={[ds.w32, ds.h32, ds.textCenter, ds.itemsCenter, ds.justifyCenter]} onPress={rightFunc}>
-          {rightIcon}
+        <Pressable style={[ds.h32, ds.textCenter, ds.row, ds.gap6, ds.itemsCenter, ds.justifyCenter]} onPress={rightFunc}>
+          {rightComponent}
         </Pressable>
       </View>
     </View>

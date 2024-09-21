@@ -1,105 +1,102 @@
-import React, { createContext, useContext, useState } from 'react';
-import { ChevronDownIcon, ChevronUpIcon } from 'lucide-react-native';
-import { Pressable, View } from 'react-native';
+import React, { createContext, ReactElement, useContext, useState } from 'react';
+import { Pressable, StyleProp, ViewStyle } from 'react-native';
 import { ds } from '~react-native-design-system';
+import { dynamicStyles } from '~react-native-design-system/utils/style.util';
+import { useCoreUITheme } from '~react-native-ui-core/themes/theme.context';
 
+import Collapsible from './collapsible';
+import Icon from './icon';
 import Text from './text';
+import View from './view';
 
-import { useCoreUITheme } from '../themes/theme.context';
-
-interface IAccordionContextProps {
-  activeSections: string[];
-  toggleSection: (id: string) => void;
+type AccordionContextType = {
+  activeItems: string[];
+  toggleItem: (value: string) => void;
   type: 'single' | 'multiple';
-  collapsible: boolean;
-}
-const AccordionContext = createContext<IAccordionContextProps>({
-  activeSections: [],
-  toggleSection: () => {},
-  type: 'multiple',
-  collapsible: false,
-});
+};
 
-interface IAccordionProps {
-  type?: 'single' | 'multiple';
-  collapsible?: boolean;
+const AccordionContext = createContext<AccordionContextType | undefined>(undefined);
+
+type AccordionProps = {
   children: React.ReactNode;
-}
-function Accordion({ type = 'multiple', collapsible = false, children }: IAccordionProps) {
-  const [activeSections, setActiveSections] = useState<string[]>([]);
+  type: 'single' | 'multiple';
+  collapsible?: boolean;
+  style?: StyleProp<ViewStyle>;
+};
 
-  const toggleSection = (id: string) => {
-    // LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-    setActiveSections(prevActiveSections => {
-      if (type === 'single') {
-        if (prevActiveSections.includes(id)) {
-          return collapsible ? [] : prevActiveSections;
-        }
+export const Accordion: React.FC<AccordionProps> = ({ children, type, style, collapsible = true }) => {
+  const [activeItems, setActiveItems] = useState<string[]>([]);
 
-        return [id];
+  const toggleItem = (value: string) => {
+    setActiveItems(prev => {
+      if (type === 'multiple') {
+        return prev.includes(value) ? prev.filter(item => item !== value) : [...prev, value];
+      } else {
+        return prev.includes(value) && collapsible ? [] : [value];
       }
-
-      return prevActiveSections.includes(id) ? prevActiveSections.filter(sectionId => sectionId !== id) : [...prevActiveSections, id];
     });
   };
 
   return (
-    <AccordionContext.Provider value={{ activeSections, toggleSection, type, collapsible }}>
-      <View style={ds.gap10}>{children}</View>
+    <AccordionContext.Provider value={{ activeItems, toggleItem, type }}>
+      <View style={style}>{children}</View>
     </AccordionContext.Provider>
   );
-}
+};
 
-interface IAccordionItemProps {
+type AccordionItemProps = {
+  children: React.ReactNode;
   value: string;
-  children: React.ReactNode;
-}
-function AccordionItem({ value, children }: IAccordionItemProps) {
-  return (
-    <AccordionItemContext.Provider value={value}>
-      <View>{children}</View>
-    </AccordionItemContext.Provider>
-  );
-}
+};
 
-const AccordionItemContext = createContext<string>('');
-
-interface IAccordionTriggerProps {
-  children: React.ReactNode;
-}
-function AccordionTrigger({ children, ...props }: IAccordionTriggerProps) {
-  const { activeSections, toggleSection } = useContext(AccordionContext);
-  const value = useContext(AccordionItemContext);
+export const AccordionItem: React.FC<AccordionItemProps> = ({ children, value }) => {
+  const context = useContext(AccordionContext);
   const { configs } = useCoreUITheme();
 
-  const isActive = activeSections.includes(value);
+  if (!context) throw new Error('AccordionItem must be used within an Accordion');
+
+  const isActive = context.activeItems.includes(value);
 
   return (
-    <Pressable
-      style={[ds.px12, ds.py10, ds.row, ds.justifyBetween, ds.bgWhite, isActive ? ds.roundedT8 : ds.rounded8]}
-      onPress={() => toggleSection(value)}
-      {...props}
-    >
-      <View style={[ds.pr28, ds.grow]}>
-        <Text fontWeight="Bold">{children}</Text>
-      </View>
-      <View style={[ds.absolute, ds.right10, ds.top10]}>
-        {isActive ? <ChevronUpIcon color={configs.primary[500]} /> : <ChevronDownIcon color={configs.primary[500]} />}
-      </View>
+    <View style={[ds.border1, ds.rounded8, dynamicStyles.border(configs.border)]}>
+      {React.Children.map(children, child => {
+        if (React.isValidElement(child)) {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          return React.cloneElement(child as ReactElement<any>, { isActive, onToggle: () => context.toggleItem(value) });
+        }
+
+        return child;
+      })}
+    </View>
+  );
+};
+
+type AccordionTriggerProps = {
+  children: React.ReactNode;
+  isActive?: boolean;
+  onToggle?: () => void;
+};
+
+export const AccordionTrigger: React.FC<AccordionTriggerProps> = ({ children, isActive, onToggle }) => {
+  const { configs } = useCoreUITheme();
+
+  return (
+    <Pressable style={[ds.row, ds.itemsCenter, ds.justifyBetween, ds.px12, ds.py8]} onPress={onToggle}>
+      <Text>{typeof children === 'string' ? children : 'Trigger'}</Text>
+      <Icon name={isActive ? 'ChevronUp' : 'ChevronDown'} size={20} color={configs.foreground} />
     </Pressable>
   );
-}
+};
 
-interface IAccordionContentProps {
+type AccordionContentProps = {
   children: React.ReactNode;
-}
-function AccordionContent({ children }: IAccordionContentProps) {
-  const { activeSections } = useContext(AccordionContext);
-  const value = useContext(AccordionItemContext);
+  isActive?: boolean;
+};
 
-  if (!activeSections.includes(value)) return null;
-
-  return <View style={[ds.p12, ds.roundedB8, ds.bgWhite]}>{children}</View>;
-}
-
-export { Accordion, AccordionContent, AccordionItem, AccordionTrigger };
+export const AccordionContent: React.FC<AccordionContentProps> = ({ children, isActive }) => {
+  return (
+    <Collapsible expanded={isActive === true}>
+      <View style={[ds.px12, ds.py8]}>{typeof children === 'string' ? <Text>{children}</Text> : children}</View>
+    </Collapsible>
+  );
+};

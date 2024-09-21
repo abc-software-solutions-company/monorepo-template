@@ -3,7 +3,8 @@ import { generatePosts, generateSeed, resetLocalDatabase } from '@/localdb/local
 import { ds } from '~react-native-design-system';
 import Loading from '~react-native-ui-core/components/loading';
 import StatusBar from '~react-native-ui-core/components/statusbar';
-import View from '~react-native-ui-core/components/view';
+
+import SafeViewArea from '@/components/safe-view-area';
 
 import { AuthenticatedStackProps } from '@/modules/navigation/interfaces/navigation.interface';
 import { SYNC_DATA_KEY } from '@/modules/sync-data/constants/sync-data.constant';
@@ -14,12 +15,14 @@ import { MMKVStorage } from '@/utils/mmkv-storage.util';
 function PreloadScreen({ navigation }: AuthenticatedStackProps<'Preload'>) {
   const initializeLocalDb = useCallback(async () => {
     try {
+      MMKVStorage.clear();
       MMKVStorage.removeItem(SYNC_DATA_KEY);
       await resetLocalDatabase();
       await generateSeed();
       await generatePosts();
+      setTimeout(() => navigation.replace('UI'), 1000);
       // setTimeout(() => navigation.replace('SyncData'), 1000);
-      setTimeout(() => navigation.replace('TravelDrawer', { screen: 'TravelBottomTabStack' }), 1000);
+      // setTimeout(() => navigation.replace('TravelDrawer', { screen: 'TravelBottomTabStack' }), 1000);
     } catch (error) {
       log.error('Error generating local data:', error);
     }
@@ -30,10 +33,10 @@ function PreloadScreen({ navigation }: AuthenticatedStackProps<'Preload'>) {
   }, [initializeLocalDb]);
 
   return (
-    <View style={[ds.flex1, ds.itemsCenter, ds.justifyCenter]}>
+    <SafeViewArea spacingBottom={true} style={[ds.flex1, ds.itemsCenter, ds.justifyCenter]}>
       <StatusBar visible={false} />
       <Loading size={60} thickness={8} />
-    </View>
+    </SafeViewArea>
   );
 }
 

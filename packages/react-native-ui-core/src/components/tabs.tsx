@@ -1,9 +1,10 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
 import { Appearance, Pressable, StyleProp, ViewStyle } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import { ds } from '~react-native-design-system';
-import { createStyle } from '~react-native-design-system/utils/style.util';
+import { dynamicStyles } from '~react-native-design-system/utils/style.util';
 
+import Text from './text';
 import View from './view';
 
 import { useCoreUITheme } from '../themes/theme.context';
@@ -20,11 +21,22 @@ const TabsContext = createContext<ITabsContextProps>({
 interface ITabsProps {
   defaultValue: string;
   children: React.ReactNode;
+  onChange?: (value: string) => void;
 }
-function Tabs({ defaultValue, children }: ITabsProps) {
+function Tabs({ defaultValue, children, onChange }: ITabsProps) {
   const [activeTab, setActiveTab] = useState(defaultValue);
 
-  return <TabsContext.Provider value={{ activeTab, setActiveTab }}>{children}</TabsContext.Provider>;
+  const memoizedOnChange = useCallback((value: string) => onChange?.(value), [onChange]);
+
+  useEffect(() => {
+    memoizedOnChange(activeTab);
+  }, [activeTab, memoizedOnChange]);
+
+  return (
+    <TabsContext.Provider value={{ activeTab, setActiveTab }}>
+      <View style={ds.flex1}>{children}</View>
+    </TabsContext.Provider>
+  );
 }
 
 interface ITabsListProps extends React.ComponentPropsWithoutRef<typeof View> {
@@ -34,21 +46,19 @@ function TabsList({ style, ...props }: ITabsListProps) {
   const { configs } = useCoreUITheme();
 
   return (
-    <ScrollView
-      horizontal={true}
-      showsHorizontalScrollIndicator={false}
-      contentContainerStyle={[ds.p6, ds.wFull]}
-      style={[ds.rounded12, styles.tabList(configs.card), style]}
-    >
-      <View style={ds.row} {...props} />
-    </ScrollView>
+    <View style={[ds.p4, ds.rounded12, dynamicStyles.background(configs.card), style]}>
+      <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
+        <View style={[ds.row]} {...props} />
+      </ScrollView>
+    </View>
   );
 }
 
 interface ITabsTriggerProps extends React.ComponentPropsWithoutRef<typeof Pressable> {
   value: string;
+  text?: string;
 }
-function TabsTrigger({ value, children, ...props }: ITabsTriggerProps) {
+function TabsTrigger({ value, text, ...props }: ITabsTriggerProps) {
   const { activeTab, setActiveTab } = useContext(TabsContext);
   const { theme } = useCoreUITheme();
 
@@ -68,11 +78,11 @@ function TabsTrigger({ value, children, ...props }: ITabsTriggerProps) {
 
   return (
     <Pressable
-      style={[ds.px12, ds.py10, ds.rounded8, ds.grow, ds.itemsCenter, ds.justifyCenter, activeTab === value && activeTabStyle]}
+      style={[ds.px12, ds.py10, ds.rounded8, ds.itemsCenter, ds.justifyCenter, activeTab === value && activeTabStyle]}
       onPress={() => setActiveTab(value)}
       {...props}
     >
-      {children}
+      <Text fontWeight={activeTab === value ? 'Bold' : 'Medium'}>{text}</Text>
     </Pressable>
   );
 }
@@ -83,17 +93,11 @@ interface ITabsContentProps extends React.ComponentPropsWithoutRef<typeof View> 
 function TabsContent({ value, ...props }: ITabsContentProps) {
   const { activeTab } = useContext(TabsContext);
 
-  if (value === activeTab) return <View {...props} />;
+  const { style, ...rest } = props;
+
+  if (value === activeTab) return <View style={[ds.grow, style]} {...rest} />;
 
   return null;
 }
 
 export { Tabs, TabsContent, TabsList, TabsTrigger };
-
-const styles = createStyle({
-  tabList: (bgColor: string): ViewStyle => {
-    return {
-      backgroundColor: bgColor,
-    };
-  },
-});

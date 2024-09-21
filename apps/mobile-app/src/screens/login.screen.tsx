@@ -10,6 +10,8 @@ import Text from '~react-native-ui-core/components/text';
 import View from '~react-native-ui-core/components/view';
 import { useCoreUITheme } from '~react-native-ui-core/themes/theme.context';
 
+import SafeViewArea from '@/components/safe-view-area';
+
 import AppleSignIn from '@/modules/auth/components/apple-sign-in';
 import FacebookSignIn from '@/modules/auth/components/facebook-sign-in';
 import LoginForm from '@/modules/auth/components/form-login';
@@ -22,9 +24,9 @@ function LoginScreen({ navigation }: UnauthenticatedStackProps<'Login'>) {
   const { configs } = useCoreUITheme();
 
   return (
-    <View style={ds.flex1}>
-      <StatusBar background="transparent" />
-      <NavigationHeader backgroundColor="transparent" borderColor="transparent" leftFunc={() => navigation.goBack()} />
+    <SafeViewArea>
+      <StatusBar />
+      <NavigationHeader leftFunc={() => navigation.goBack()} />
       <KeyboardAvoidingView enabled style={ds.flex1} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
         <ScrollView showsVerticalScrollIndicator={false} style={ds.px14}>
           <Heading text={t('signin_title')} style={ds.textCenter} />
@@ -53,7 +55,7 @@ function LoginScreen({ navigation }: UnauthenticatedStackProps<'Login'>) {
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
-    </View>
+    </SafeViewArea>
   );
 }
 

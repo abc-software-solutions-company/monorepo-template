@@ -1,6 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { ds } from '~react-native-design-system';
+import IconButton from '~react-native-ui-core/components/icon-button';
 import StatusBar from '~react-native-ui-core/components/statusbar';
 import View from '~react-native-ui-core/components/view';
 
@@ -9,13 +10,17 @@ import { AuthenticatedStackProps } from '@/modules/navigation/interfaces/navigat
 import { getHeaderTitle } from '@/modules/navigation/utils/navigation.util';
 import ThemeRoot from '@/modules/theme/components/theme-root';
 
-function SettingThemeScreen({ route }: AuthenticatedStackProps<'SettingTheme'>) {
+function SettingThemeScreen({ navigation, route }: AuthenticatedStackProps<'SettingTheme'>) {
   const { t } = useTranslation();
 
   return (
     <View style={ds.flex1}>
       <StatusBar />
-      <NavigationHeader title={t(getHeaderTitle(route.name))} />
+      <NavigationHeader
+        leftComponent={<IconButton name="ChevronLeft" />}
+        leftFunc={() => navigation.goBack()}
+        title={t(getHeaderTitle(route.name))}
+      />
       <ThemeRoot />
     </View>
   );

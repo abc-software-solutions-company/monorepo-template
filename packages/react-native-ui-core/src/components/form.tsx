@@ -1,6 +1,7 @@
 import React from 'react';
 import { Controller, ControllerProps, FieldPath, FieldValues, FormProvider, useFormContext } from 'react-hook-form';
 import { View } from 'react-native';
+import { Slot } from '@radix-ui/react-slot';
 import { Colors, ds } from '~react-native-design-system';
 
 import Text from './text';
@@ -72,6 +73,22 @@ const FormLabel = React.forwardRef<React.ElementRef<typeof Text>, React.Componen
 
 FormLabel.displayName = 'FormLabel';
 
+const FormControl = React.forwardRef<React.ElementRef<typeof Slot>, React.ComponentPropsWithoutRef<typeof Slot>>(({ ...props }, ref) => {
+  const { error, formItemId, formDescriptionId, formMessageId } = useFormField();
+
+  return (
+    <Slot
+      ref={ref}
+      id={formItemId}
+      aria-describedby={!error ? `${formDescriptionId}` : `${formDescriptionId} ${formMessageId}`}
+      aria-invalid={!!error}
+      {...props}
+    />
+  );
+});
+
+FormControl.displayName = 'FormControl';
+
 interface IFormMessageProps extends React.ComponentPropsWithoutRef<typeof Text> {
   message?: string;
 }
@@ -93,4 +110,4 @@ const FormMessage = React.forwardRef<React.ElementRef<typeof Text>, IFormMessage
 
 FormMessage.displayName = 'FormMessage';
 
-export { Form, FormField, FormItem, FormLabel, FormMessage, useFormField };
+export { Form, FormControl, FormField, FormItem, FormLabel, FormMessage, useFormField };

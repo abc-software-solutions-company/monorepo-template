@@ -21,6 +21,7 @@ DerivedData
 *.ipa
 *.xcuserstate
 ios/.xcode.env.local
+index.android.bundle
 
 # Android/IntelliJ
 #
@@ -54,7 +55,6 @@ yarn-error.log
 
 # Bundle artifact
 *.jsbundle
-index.android.bundle
 
 # Ruby / CocoaPods
 **/Pods/

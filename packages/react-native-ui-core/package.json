@@ -14,7 +14,8 @@
     "@repo/react-native-design-system": "*",
     "lucide-react-native": "^0.438.0",
     "react": "^18.2.0",
-    "react-native": "0.73.9"
+    "react-native": "0.73.9",
+    "react-native-gesture-handler": "2.17.1"
   },
   "devDependencies": {
     "@repo/config-tailwindcss": "*",

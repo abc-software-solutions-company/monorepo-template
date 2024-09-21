@@ -1,3 +1,8 @@
+/*
+ * @Author: <Tin Tran> (tin.tran@abcdigital.io)
+ * @Created: 2024-09-18 11:41:36
+ */
+
 import React, { useCallback, useEffect, useState } from 'react';
 import { database } from '@/localdb/localdb.bootstrap';
 import { WMPost } from '@/localdb/models/post.model';
@@ -7,6 +12,7 @@ import { useNetInfo } from '@react-native-community/netinfo';
 import { ColumnDef } from '@tanstack/react-table';
 import { ds } from '~react-native-design-system';
 import Button from '~react-native-ui-core/components/button';
+import IconButton from '~react-native-ui-core/components/icon-button';
 import Loading from '~react-native-ui-core/components/loading';
 import StatusBar from '~react-native-ui-core/components/statusbar';
 import Text from '~react-native-ui-core/components/text';
@@ -15,6 +21,7 @@ import View from '~react-native-ui-core/components/view';
 import SafeViewArea from '@/components/safe-view-area';
 import Table from '@/components/table';
 
+import NavigationHeader from '@/modules/navigation/components/navigation-header';
 import { AuthenticatedStackProps } from '@/modules/navigation/interfaces/navigation.interface';
 import { SYNC_DATA_KEY } from '@/modules/sync-data/constants/sync-data.constant';
 import { syncDataToServer } from '@/modules/sync-data/utils/sync-data.util';
@@ -72,17 +79,28 @@ function SyncDataScreen({}: AuthenticatedStackProps<'SyncData'>) {
   const isEmpty = posts.length === 0;
 
   return (
-    <View style={[ds.flex1]}>
+    <SafeViewArea spacingBottom={true}>
       <StatusBar />
-      <SafeViewArea spacingBottom={true}>
-        <View>
-          {isLoading && <Loading size={60} thickness={8} />}
-          {!isLoading && !error && isEmpty && <Text style={ds.textCenter}>No posts available.</Text>}
-          {!isLoading && !error && !isEmpty && <Table data={posts} columns={columns} rowIdAccessor={row => row.id.toString()} />}
-          <Button onPress={createNewData}>Create New Data</Button>
-        </View>
-      </SafeViewArea>
-    </View>
+      <NavigationHeader
+        title="Crop Information"
+        leftComponent={
+          <>
+            <IconButton name="House" />
+          </>
+        }
+        rightComponent={
+          <>
+            <IconButton name="House" disabled={true} />
+          </>
+        }
+      />
+      <View>
+        {isLoading && <Loading size={60} thickness={8} />}
+        {!isLoading && !error && isEmpty && <Text style={ds.textCenter}>No posts available.</Text>}
+        {!isLoading && !error && !isEmpty && <Table data={posts} columns={columns} rowIdAccessor={row => row.id.toString()} />}
+        <Button onPress={createNewData}>Create New Data</Button>
+      </View>
+    </SafeViewArea>
   );
 }
 
