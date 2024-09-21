@@ -1,6 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import Icon from '~react-native-ui-core/components/icon';
+import { ds } from '~react-native-design-system';
+import IconButton from '~react-native-ui-core/components/icon-button';
 import StatusBar from '~react-native-ui-core/components/statusbar';
 
 import SafeViewArea from '@/components/safe-view-area';
@@ -16,7 +17,11 @@ function SettingThemeScreen({ navigation, route }: AuthenticatedStackProps<'Sett
   return (
     <SafeViewArea>
       <StatusBar />
-      <NavigationHeader title={t(getHeaderTitle(route.name))} leftFunc={() => navigation.goBack()} leftComponent={<Icon name="ChevronLeft" />} />
+      <NavigationHeader
+        leftComponent={<IconButton name="ChevronLeft" />}
+        leftFunc={() => navigation.goBack()}
+        title={t(getHeaderTitle(route.name))}
+      />
       <ThemeRoot />
     </SafeViewArea>
   );

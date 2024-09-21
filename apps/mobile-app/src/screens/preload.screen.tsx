@@ -22,7 +22,7 @@ function PreloadScreen({ navigation }: AuthenticatedStackProps<'Preload'>) {
       await generatePosts();
       // setTimeout(() => navigation.replace('UI'), 1000);
       // setTimeout(() => navigation.replace('SyncData'), 1000);
-      setTimeout(() => navigation.replace('TravelDrawer', { screen: 'TravelBottomTabStack' }), 1000);
+      // setTimeout(() => navigation.replace('TravelDrawer', { screen: 'TravelBottomTabStack' }), 1000);
     } catch (error) {
       log.error('Error generating local data:', error);
     }
