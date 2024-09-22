@@ -1,9 +1,9 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { ds } from '~react-native-design-system';
-import IconButton from '~react-native-ui-core/components/icon-button';
+import Icon from '~react-native-ui-core/components/icon';
 import StatusBar from '~react-native-ui-core/components/statusbar';
-import View from '~react-native-ui-core/components/view';
+
+import SafeViewArea from '@/components/safe-view-area';
 
 import NavigationHeader from '@/modules/navigation/components/navigation-header';
 import { AuthenticatedStackProps } from '@/modules/navigation/interfaces/navigation.interface';
@@ -14,15 +14,11 @@ function SettingThemeScreen({ navigation, route }: AuthenticatedStackProps<'Sett
   const { t } = useTranslation();
 
   return (
-    <View style={ds.flex1}>
+    <SafeViewArea>
       <StatusBar />
-      <NavigationHeader
-        leftComponent={<IconButton name="ChevronLeft" />}
-        leftFunc={() => navigation.goBack()}
-        title={t(getHeaderTitle(route.name))}
-      />
+      <NavigationHeader title={t(getHeaderTitle(route.name))} leftFunc={() => navigation.goBack()} leftComponent={<Icon name="ChevronLeft" />} />
       <ThemeRoot />
-    </View>
+    </SafeViewArea>
   );
 }
 

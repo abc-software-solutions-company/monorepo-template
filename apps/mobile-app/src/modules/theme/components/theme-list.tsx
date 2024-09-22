@@ -17,8 +17,8 @@ const ThemeList: FC<ThemeListProps> = ({ themes }) => {
   const { setTheme } = useCoreUITheme();
 
   const handleSelectTheme = (theme: string) => {
-    setTheme(theme as Theme);
     themeState.setTheme(theme);
+    setTheme(theme as Theme);
   };
 
   return (

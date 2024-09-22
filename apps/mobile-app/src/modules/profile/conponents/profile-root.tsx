@@ -2,6 +2,7 @@ import React from 'react';
 import { t } from 'i18next';
 import { Pressable } from 'react-native';
 import { LoginManager } from 'react-native-fbsdk-next';
+import { ScrollView } from 'react-native-gesture-handler';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import { DrawerNavigationProp } from '@react-navigation/drawer';
 import { CompositeNavigationProp, useNavigation } from '@react-navigation/native';
@@ -16,7 +17,6 @@ import { useCoreUITheme } from '~react-native-ui-core/themes/theme.context';
 
 import { ProfileAction } from '../interfaces/profile.interface';
 
-import Box from '@/components/box';
 import { hideGlobalModal, showGlobalModal } from '@/components/global-modal/global-modal';
 import ModalConfirm from '@/components/modal-confirm';
 
@@ -105,39 +105,37 @@ const Profile = () => {
   };
 
   return (
-    <>
-      <Box padding={0} style={[ds.rounded16, ds.overflowHidden]}>
-        <Divider height={14} />
-        <ProfileAvatar />
-        <ProfileActionList items={profileActions} style={ds.mt14} />
-        <Pressable
-          style={[ds.row, ds.itemsCenter, ds.justifyCenter, ds.gap10, ds.p20]}
-          onPress={() => {
-            showGlobalModal({
-              modalKey: 'modal-confirm',
-              component: (
-                <ModalConfirm
-                  visible={true}
-                  title={t('signout_confirm_title')}
-                  message={t('signout_confirm_message')}
-                  btnConfirmText={t('confirm')}
-                  btnCancelText={t('cancel')}
-                  onConfirm={handleSignOut}
-                  onCancel={() => hideGlobalModal('modal-confirm')}
-                />
-              ),
-              hideClose: true,
-            });
-          }}
-        >
-          <Icon size={28} color={Colors.red[500]} name="LogOut" />
-          <Text fontWeight="Bold" color={Colors.red[500]}>
-            {t('signout')}
-          </Text>
-        </Pressable>
-      </Box>
+    <ScrollView showsVerticalScrollIndicator={false}>
+      <Divider height={14} />
+      <ProfileAvatar />
+      <ProfileActionList items={profileActions} style={ds.mt14} />
+      <Pressable
+        style={[ds.row, ds.itemsCenter, ds.justifyCenter, ds.gap10, ds.p20]}
+        onPress={() => {
+          showGlobalModal({
+            modalKey: 'modal-confirm',
+            component: (
+              <ModalConfirm
+                visible={true}
+                title={t('signout_confirm_title')}
+                message={t('signout_confirm_message')}
+                btnConfirmText={t('confirm')}
+                btnCancelText={t('cancel')}
+                onConfirm={handleSignOut}
+                onCancel={() => hideGlobalModal('modal-confirm')}
+              />
+            ),
+            hideClose: true,
+          });
+        }}
+      >
+        <Icon size={28} color={Colors.red[500]} name="LogOut" />
+        <Text fontWeight="Bold" color={Colors.red[500]}>
+          {t('signout')}
+        </Text>
+      </Pressable>
       <ProfileVersion style={ds.mt10} />
-    </>
+    </ScrollView>
   );
 };
 

@@ -46,7 +46,7 @@ const TravelTabBar = ({ showText = false, ...rest }: TravelTabBarProps) => {
         ds.row,
         ds.justifyEvenly,
         ds.borderT1,
-        dynamicStyles.background(configs.card),
+        dynamicStyles.background(configs.background),
         dynamicStyles.border(configs.border),
         Platform.OS === 'ios' && ds.h80,
       ]}

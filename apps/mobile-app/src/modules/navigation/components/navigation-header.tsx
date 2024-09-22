@@ -40,7 +40,7 @@ const NavigationHeader: FC<NavigationHeaderProps> = ({
   const foregroundColor = configs.foreground;
 
   return (
-    <View style={[ds.borderB1, dynamicStyles.border(borderColor ?? configs.border), dynamicStyles.background(backgroundColor ?? configs.card)]}>
+    <View style={[ds.borderB1, dynamicStyles.border(borderColor ?? configs.border), dynamicStyles.background(backgroundColor ?? configs.background)]}>
       <View style={[ds.row, ds.justifyBetween, ds.itemsCenter, ds.px8]}>
         <Pressable style={[ds.h32, ds.textCenter, ds.row, ds.gap6, ds.itemsCenter, ds.justifyCenter]} onPress={leftFunc}>
           {leftComponent}

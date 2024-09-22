@@ -12,7 +12,7 @@ import WelcomeSlider from '@/modules/welcome/components/welcome-slider';
 function WelcomeScreen({}: UnauthenticatedStackProps<'Welcome'>) {
   return (
     <SafeViewArea>
-      <StatusBar />
+      <StatusBar visible={false} />
       <View style={[ds.flex1, ds.relative]}>
         <WelcomeSlider />
         <GetStarted />

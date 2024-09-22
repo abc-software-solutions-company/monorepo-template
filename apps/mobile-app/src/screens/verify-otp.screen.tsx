@@ -4,9 +4,11 @@ import { KeyboardAvoidingView, Platform } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import { ds } from '~react-native-design-system';
 import Heading from '~react-native-ui-core/components/heading';
+import Icon from '~react-native-ui-core/components/icon';
 import StatusBar from '~react-native-ui-core/components/statusbar';
 import Text from '~react-native-ui-core/components/text';
-import View from '~react-native-ui-core/components/view';
+
+import SafeViewArea from '@/components/safe-view-area';
 
 import VerifyOtpForm from '@/modules/auth/components/form-verify-otp';
 import NavigationHeader from '@/modules/navigation/components/navigation-header';
@@ -16,9 +18,9 @@ function RegisterScreen({ navigation }: UnauthenticatedStackProps<'VerifyOtp'>) 
   const { t } = useTranslation();
 
   return (
-    <View style={ds.flex1}>
-      <StatusBar background="transparent" />
-      <NavigationHeader backgroundColor="transparent" borderColor="transparent" leftFunc={() => navigation.goBack()} />
+    <SafeViewArea spacingBottom={true}>
+      <StatusBar />
+      <NavigationHeader leftFunc={() => navigation.goBack()} leftComponent={<Icon name="ChevronLeft" />} borderColor="transparent" />{' '}
       <KeyboardAvoidingView enabled style={ds.flex1} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
         <ScrollView showsVerticalScrollIndicator={false} style={ds.px14}>
           <Heading text={t('verification_otp_title')} style={ds.textCenter} />
@@ -28,7 +30,7 @@ function RegisterScreen({ navigation }: UnauthenticatedStackProps<'VerifyOtp'>) 
           <VerifyOtpForm />
         </ScrollView>
       </KeyboardAvoidingView>
-    </View>
+    </SafeViewArea>
   );
 }
 

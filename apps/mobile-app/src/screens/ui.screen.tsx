@@ -7,6 +7,7 @@ import Button from '~react-native-ui-core/components/button';
 import Checkbox from '~react-native-ui-core/components/checkbox';
 import Divider from '~react-native-ui-core/components/divider';
 import Heading from '~react-native-ui-core/components/heading';
+import Icon from '~react-native-ui-core/components/icon';
 import Input from '~react-native-ui-core/components/input';
 import Loading from '~react-native-ui-core/components/loading';
 import Pagination from '~react-native-ui-core/components/pagination';
@@ -27,14 +28,14 @@ import { getHeaderTitle } from '@/modules/navigation/utils/navigation.util';
 
 import log from '@/utils/logger.util';
 
-function UIScreen({ route }: AuthenticatedStackProps<'UI'>) {
+function UIScreen({ navigation, route }: AuthenticatedStackProps<'UI'>) {
   const { t } = useTranslation();
   const [currentPage, setCurrentPage] = useState(1);
 
   return (
     <SafeViewArea spacingBottom={true}>
       <StatusBar />
-      <NavigationHeader title={t(getHeaderTitle(route.name))} />
+      <NavigationHeader title={t(getHeaderTitle(route.name))} leftFunc={() => navigation.goBack()} leftComponent={<Icon name="ChevronLeft" />} />
       <Divider />
       <ScrollView style={[ds.px10]}>
         <Tabs defaultValue="tab-other-components">

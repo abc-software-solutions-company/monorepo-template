@@ -1,5 +1,4 @@
 import { ReactNode } from 'react';
-import Config from 'react-native-config';
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
@@ -44,6 +43,6 @@ export const useErrorState = create<IErrorState>()(
         );
       },
     })),
-    { enabled: Config.APP_ENV === 'development' }
+    { enabled: true }
   )
 );

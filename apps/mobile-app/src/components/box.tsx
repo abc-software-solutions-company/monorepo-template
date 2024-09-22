@@ -20,7 +20,7 @@ const Box: FC<BoxProps> = ({
   children,
   hasRounded = true,
   hasBorder = false,
-  hasBg = true,
+  hasBg = false,
   paddingHorizontal = true,
   paddingVertical = true,
   padding = 12,

@@ -4,6 +4,7 @@
  */
 
 import React, { useCallback, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { database } from '@/localdb/localdb.bootstrap';
 import { WMPost } from '@/localdb/models/post.model';
 import PostRepository from '@/localdb/repositories/post.repository';
@@ -23,6 +24,7 @@ import Table from '@/components/table';
 
 import NavigationHeader from '@/modules/navigation/components/navigation-header';
 import { AuthenticatedStackProps } from '@/modules/navigation/interfaces/navigation.interface';
+import { getHeaderTitle } from '@/modules/navigation/utils/navigation.util';
 import { SYNC_DATA_KEY } from '@/modules/sync-data/constants/sync-data.constant';
 import { syncDataToServer } from '@/modules/sync-data/utils/sync-data.util';
 
@@ -39,7 +41,8 @@ const columns: ColumnDef<WMPost>[] = [
   },
 ];
 
-function SyncDataScreen({}: AuthenticatedStackProps<'SyncData'>) {
+function SyncDataScreen({ route }: AuthenticatedStackProps<'SyncData'>) {
+  const { t } = useTranslation();
   const netInfo = useNetInfo();
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -79,10 +82,10 @@ function SyncDataScreen({}: AuthenticatedStackProps<'SyncData'>) {
   const isEmpty = posts.length === 0;
 
   return (
-    <SafeViewArea spacingBottom={true}>
+    <SafeViewArea>
       <StatusBar />
       <NavigationHeader
-        title="Crop Information"
+        title={t(getHeaderTitle(route.name))}
         leftComponent={
           <>
             <IconButton name="House" />

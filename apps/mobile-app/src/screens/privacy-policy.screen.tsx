@@ -2,8 +2,8 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { ScrollView } from 'react-native-gesture-handler';
 import { ds } from '~react-native-design-system';
+import Icon from '~react-native-ui-core/components/icon';
 import StatusBar from '~react-native-ui-core/components/statusbar';
-import View from '~react-native-ui-core/components/view';
 
 import Box from '@/components/box';
 import SafeViewArea from '@/components/safe-view-area';
@@ -13,23 +13,21 @@ import { AuthenticatedStackProps } from '@/modules/navigation/interfaces/navigat
 import { getHeaderTitle } from '@/modules/navigation/utils/navigation.util';
 import PrivacyPolicy from '@/modules/privacy-policy/components/privacy-policy';
 
-function PrivacyPolicyScreen({ route }: AuthenticatedStackProps<'PrivacyPolicy'>) {
+function PrivacyPolicyScreen({ navigation, route }: AuthenticatedStackProps<'PrivacyPolicy'>) {
   const { t } = useTranslation();
 
   return (
-    <View style={ds.flex1}>
+    <SafeViewArea spacingBottom={true}>
       <StatusBar />
-      <NavigationHeader title={t(getHeaderTitle(route.name))} />
-      <SafeViewArea spacingBottom={true}>
-        <Box hasBg={false} style={ds.flex1}>
-          <Box style={ds.flex1}>
-            <ScrollView showsVerticalScrollIndicator={false}>
-              <PrivacyPolicy />
-            </ScrollView>
-          </Box>
+      <NavigationHeader title={t(getHeaderTitle(route.name))} leftFunc={() => navigation.goBack()} leftComponent={<Icon name="ChevronLeft" />} />
+      <Box hasBg={false} style={ds.flex1}>
+        <Box style={ds.flex1}>
+          <ScrollView showsVerticalScrollIndicator={false}>
+            <PrivacyPolicy />
+          </ScrollView>
         </Box>
-      </SafeViewArea>
-    </View>
+      </Box>
+    </SafeViewArea>
   );
 }
 

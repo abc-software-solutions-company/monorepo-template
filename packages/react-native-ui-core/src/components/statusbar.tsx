@@ -36,7 +36,7 @@ const StatusBar: FC<IStatusBarProps> = ({ style, background, visible = true }) =
   return (
     <>
       <RNStatusBar barStyle={textColor} hidden={!visible} translucent={true} backgroundColor={Colors.transparent} />
-      {visible && <View style={[{ height: insets.top }, dynamicStyles.background(background ?? configs.card), style]} />}
+      {visible && <View style={[{ height: insets.top }, dynamicStyles.background(background ?? configs.background), style]} />}
     </>
   );
 };

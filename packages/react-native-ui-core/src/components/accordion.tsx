@@ -19,12 +19,12 @@ const AccordionContext = createContext<AccordionContextType | undefined>(undefin
 
 type AccordionProps = {
   children: React.ReactNode;
-  type: 'single' | 'multiple';
+  type?: 'single' | 'multiple';
   collapsible?: boolean;
   style?: StyleProp<ViewStyle>;
 };
 
-export const Accordion: React.FC<AccordionProps> = ({ children, type, style, collapsible = true }) => {
+export const Accordion: React.FC<AccordionProps> = ({ children, type = 'single', style, collapsible = true }) => {
   const [activeItems, setActiveItems] = useState<string[]>([]);
 
   const toggleItem = (value: string) => {
