@@ -1,4 +1,3 @@
-import Config from 'react-native-config';
 import { create } from 'zustand';
 import { createJSONStorage, devtools, persist } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
@@ -70,6 +69,6 @@ export const useAuthState = create<State & Actions>()(
         }
       )
     ),
-    { enabled: Config.APP_ENV === 'development' }
+    { enabled: true }
   )
 );

@@ -26,9 +26,9 @@ function LoginScreen({ navigation }: UnauthenticatedStackProps<'Login'>) {
   const { configs } = useCoreUITheme();
 
   return (
-    <SafeViewArea>
+    <SafeViewArea spacingBottom={true}>
       <StatusBar />
-      <NavigationHeader leftFunc={() => navigation.goBack()} />
+      <NavigationHeader leftFunc={() => navigation.goBack()} leftComponent={<Icon name="ChevronLeft" />} borderColor="transparent" />
       <KeyboardAvoidingView enabled style={ds.flex1} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
         <ScrollView showsVerticalScrollIndicator={false}>
           <Box>
