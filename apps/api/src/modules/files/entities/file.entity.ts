@@ -26,6 +26,12 @@ export class File extends AbstractEntity {
   @Column({ type: 'bigint' })
   size: number;
 
+  @Column({ type: 'varchar', length: 255, nullable: true })
+  url?: string;
+
+  @Column({ type: 'varchar', length: 255, nullable: true })
+  thumbnailUrl?: string;
+
   @Column({ type: 'varchar', length: 50 })
   mime: string;
 

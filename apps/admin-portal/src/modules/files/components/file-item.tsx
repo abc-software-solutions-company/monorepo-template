@@ -18,19 +18,19 @@ type FileItemProps = {
   onClick?: (file: FileEntity) => void;
 } & ComponentBaseProps;
 
-const FileItem: FC<FileItemProps> = ({ className, type, file, checked, onClick }) => {
-  const getFileContent = (item: FileEntity) => {
-    switch (item.ext) {
-      case '.jpg':
-      case '.jpeg':
-      case '.png':
-      case '.gif':
-        return <FileThumbnail file={item} />;
-      default:
-        return <FileIcon file={item} />;
-    }
-  };
+export const getFileContent = (item: FileEntity) => {
+  switch (item.ext) {
+    case '.jpg':
+    case '.jpeg':
+    case '.png':
+    case '.gif':
+      return <FileThumbnail file={item} />;
+    default:
+      return <FileIcon file={item} />;
+  }
+};
 
+const FileItem: FC<FileItemProps> = ({ className, type, file, checked, onClick }) => {
   return (
     <div className={classNames(type !== 'list' && 'cursor-pointer', className)} onClick={() => onClick?.(file)}>
       <div

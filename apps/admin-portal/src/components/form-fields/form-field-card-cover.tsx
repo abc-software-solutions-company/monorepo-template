@@ -38,29 +38,25 @@ export default function FormFieldCardCover<T extends FieldValues>({
         <FormField
           control={form.control}
           name={fieldName}
-          render={({ field, fieldState: { error } }) => (
-            <>
-              <FormItem>
-                <FormControl>
-                  <Input readOnly {...field} className="hidden" />
-                </FormControl>
-                {field.value && (
-                  <div className="relative overflow-hidden rounded-md">
-                    <img
-                      className="aspect-video w-full object-cover"
-                      src={import.meta.env.VITE_PUBLIC_API_URL + '/thumbnails/' + field.value}
-                      alt={field.value}
-                      height="100"
-                      width="100"
-                    />
-                    <ButtonRemoveFile onClick={() => form.setValue(fieldName, '' as PathValue<T, Path<T>>)} />
-                  </div>
-                )}
-                {error?.message && <FormMessage message={t(error.message, { max: maxLength })} />}
-              </FormItem>
-              {!field.value && <ButtonSelectFile className="w-full py-12" onClick={() => setIsFileManagerVisible(true)} />}
-            </>
-          )}
+          render={({ field, fieldState: { error } }) => {
+            return (
+              <>
+                <FormItem>
+                  <FormControl>
+                    <Input readOnly {...field} className="hidden" />
+                  </FormControl>
+                  {field.value && (
+                    <div className="relative overflow-hidden rounded-md">
+                      <img className="aspect-video w-full object-cover" src={field.value} alt={field.value} height="100" width="100" />
+                      <ButtonRemoveFile onClick={() => form.setValue(fieldName, '' as PathValue<T, Path<T>>)} />
+                    </div>
+                  )}
+                  {error?.message && <FormMessage message={t(error.message, { max: maxLength })} />}
+                </FormItem>
+                {!field.value && <ButtonSelectFile className="w-full py-12" onClick={() => setIsFileManagerVisible(true)} />}
+              </>
+            );
+          }}
         />
         <FileDialog
           visible={isFileManagerVisible}
@@ -70,7 +66,7 @@ export default function FormFieldCardCover<T extends FieldValues>({
           onCancel={() => setIsFileManagerVisible(false)}
           onSelectClick={files => {
             if (files.length > 0 && files[0]) {
-              form.setValue(fieldName, files[0].uniqueName as PathValue<T, Path<T>>);
+              form.setValue(fieldName, files[0].url as PathValue<T, Path<T>>);
               setIsFileManagerVisible(false);
             }
           }}
