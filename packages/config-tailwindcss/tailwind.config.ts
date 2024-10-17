@@ -206,7 +206,7 @@ const config: Omit<Config, 'content'> = {
               marginBottom: theme('spacing.1'),
             },
             p: {
-              marginTop: theme('spacing.2'),
+              marginTop: theme('spacing.0'),
               marginBottom: theme('spacing.2'),
             },
             figure: {

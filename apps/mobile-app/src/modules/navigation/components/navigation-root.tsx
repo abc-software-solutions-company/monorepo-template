@@ -22,7 +22,7 @@ const NavigationRoot = () => {
 
   useEffect(() => {
     i18n.changeLanguage(language);
-  }, [language]);
+  }, [i18n, language]);
 
   if (isShowSplash) {
     return (

@@ -8,6 +8,7 @@ import { useSmoothDragToScroll } from '~shared-web/hooks/use-smooth-drag-to-scro
 import NoData from '../no-data';
 
 interface IDataTableProps<TData, TValue, T> {
+  containerClassName?: string;
   tableClassName?: string;
   columns: ColumnDef<TData, TValue>[];
   rowClassName?: (row: Row<T>) => string;
@@ -15,14 +16,21 @@ interface IDataTableProps<TData, TValue, T> {
   isFetching?: boolean;
 }
 
-export function DataTable<TData, TValue, T>({ tableClassName, rowClassName, columns, table, isFetching }: IDataTableProps<TData, TValue, T>) {
+export function DataTable<TData, TValue, T>({
+  containerClassName,
+  tableClassName,
+  columns,
+  table,
+  isFetching,
+  rowClassName,
+}: IDataTableProps<TData, TValue, T>) {
   const containerRef = useRef<HTMLDivElement>(null);
 
   useSmoothDragToScroll(containerRef);
 
   return (
     <>
-      <div className="relative mt-4 flex h-full grow flex-col">
+      <div className={classNames('relative flex h-full grow flex-col', containerClassName)}>
         {/* scrollbar absolute left-0 top-0 max-h-full min-h-fit w-full overflow-auto rounded border */}
         <div ref={containerRef} className="scrollbar overflow-auto rounded border">
           <Table className={classNames(tableClassName)}>

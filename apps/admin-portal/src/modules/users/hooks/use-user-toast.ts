@@ -20,7 +20,7 @@ function useUserToast() {
     if (!usersState.isFetching && usersState.error) {
       toast(t('user_list_toast_title'), { description: t('user_list_failure') + '<br />' + usersState.message });
     }
-  }, [usersState.isFetching, usersState.error]);
+  }, [usersState.isFetching, usersState.error, usersState.message, t]);
 
   /*****************************************************************
   CREATE
@@ -40,7 +40,7 @@ function useUserToast() {
       toast(t('user_create_toast_title'), { description: t('user_create_failure') + '<br />' + usersState.message });
       usersState.reset();
     }
-  }, [usersState.createdAt, usersState.error]);
+  }, [locale, navigate, searchParams, t, usersState, usersState.createdAt, usersState.error]);
 
   /*****************************************************************
   UPDATE
@@ -59,7 +59,7 @@ function useUserToast() {
       toast(t('user_update_toast_title'), { description: t('user_update_failure') + '<br />' + usersState.message });
       usersState.reset();
     }
-  }, [usersState.updatedAt, usersState.error]);
+  }, [usersState.updatedAt, usersState.error, usersState, t, navigate, locale, searchParams]);
 
   /*****************************************************************
   DELETE
@@ -78,7 +78,7 @@ function useUserToast() {
       toast(t('user_delete_toast_title'), { description: t('user_delete_failure') + '<br />' + usersState.message });
       usersState.reset();
     }
-  }, [usersState.deletedAt, usersState.error]);
+  }, [locale, searchParams, t, usersState, usersState.deletedAt, usersState.error, navigate]);
 }
 
 export default useUserToast;

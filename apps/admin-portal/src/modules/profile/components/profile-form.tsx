@@ -65,7 +65,8 @@ const ProfileForm: FC<ProfileFormProps> = ({ className, user }) => {
 
   useEffect(() => {
     form.reset(defaultValues);
-  }, [user]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [form, user]);
 
   return (
     <div className={classNames('about-form', className)}>

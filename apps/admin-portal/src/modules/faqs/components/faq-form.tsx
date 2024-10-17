@@ -109,6 +109,7 @@ const FaqForm: FC<FaqFormProps> = ({ isEdit }) => {
 
   useEffect(() => {
     form.reset(defaultValues);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [form, faq]);
 
   return (

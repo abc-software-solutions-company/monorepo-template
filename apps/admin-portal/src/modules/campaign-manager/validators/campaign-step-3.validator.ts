@@ -10,7 +10,7 @@ export const ruleSchema = z.object({
     .refine(val => !isNaN(Number(val)), {
       message: 'Tracker value should be a number',
     }),
-  triggers: z.array(z.object({ property: z.string(), condition: z.string() })),
+  triggers: z.array(z.object({ property: z.string().min(1, 'Property is mandatory'), condition: z.string().min(1, 'Condition is mandatory') })),
 });
 
 export const rulesSchema = z.object({

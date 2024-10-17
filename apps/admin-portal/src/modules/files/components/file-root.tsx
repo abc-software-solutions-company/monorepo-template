@@ -79,6 +79,7 @@ const FilesRoot: FC<FilesRootTypes> = ({ className, categoryVisible = true }) =>
 
   useEffect(() => {
     if (categoryVisible) categoriesState.listRequest({ filter: { type: CATEGORY_TYPE.FILE } });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [categoryVisible]);
 
   useEffect(() => {
@@ -96,6 +97,7 @@ const FilesRoot: FC<FilesRootTypes> = ({ className, categoryVisible = true }) =>
     } else {
       filesState.setFilter(currentFilter);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filteredAt]);
 
   return (

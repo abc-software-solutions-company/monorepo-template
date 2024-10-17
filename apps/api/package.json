@@ -87,7 +87,7 @@
     "@repo/shared-universal": "*",
     "aws-sdk": "^2.1687.0",
     "axios": "^1.7.4",
-    "bcrypt": "^5.1.0",
+    "bcrypt": "^5.1.1",
     "bull": "^4.11.5",
     "cache-manager": "^5.2.3",
     "class-transformer": "^0.5.1",

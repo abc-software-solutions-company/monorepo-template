@@ -80,6 +80,7 @@ const PostForm: FC<PostFormProps> = ({ isEdit }) => {
 
   useEffect(() => {
     form.reset(defaultValues);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [form, post, categories]);
 
   return (

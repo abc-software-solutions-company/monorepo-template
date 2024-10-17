@@ -43,7 +43,7 @@ const ProfileRoot: FC<ComponentBaseProps> = ({ className }) => {
 
   useEffect(() => {
     refetch();
-  }, [pathname]);
+  }, [pathname, refetch]);
 
   if (!authState.user || !user) return null;
 

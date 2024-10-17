@@ -60,7 +60,7 @@ const FormItem = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivEl
 
   return (
     <FormItemContext.Provider value={{ id }}>
-      <div ref={ref} className={cn('space-y-2', className)} {...props} />
+      <div ref={ref} className={cn('space-y-1', className)} {...props} />
     </FormItemContext.Provider>
   );
 });
@@ -117,7 +117,31 @@ const getErrorMessage = (error: FieldError | undefined): string | undefined => {
     }
   }
 
-  // Case 3: Error might be a string
+  // Case 3: Nested object with message
+  if (typeof error === 'object') {
+    // Recursive function to find message in nested object
+    const findNestedMessage = (obj: any): string | undefined => {
+      if (!obj || typeof obj !== 'object') return undefined;
+
+      // Check if current object has message property
+      if (obj.message) return obj.message;
+
+      // Check nested properties
+      for (const key in obj) {
+        if (typeof obj[key] === 'object') {
+          const nestedMessage = findNestedMessage(obj[key]);
+          if (nestedMessage) return nestedMessage;
+        }
+      }
+
+      return undefined;
+    };
+
+    const nestedMessage = findNestedMessage(error);
+    if (nestedMessage) return nestedMessage;
+  }
+
+  // Case 4: Error is a string
   if (typeof error === 'string') {
     return error;
   }
@@ -137,7 +161,7 @@ const FormMessage = React.forwardRef<HTMLParagraphElement, FormMessageProps>(({ 
   }
 
   return (
-    <p ref={ref} id={formMessageId} className={cn('text-destructive text-sm font-medium', className)} {...props}>
+    <p ref={ref} id={formMessageId} className={cn('text-destructive text-xs font-medium', className)} {...props}>
       {body}
     </p>
   );

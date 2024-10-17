@@ -4,7 +4,9 @@ import { InputDate } from '~react-web-ui-shadcn/components/ahua/input-date';
 import { FormControl, FormField, FormItem, FormMessage } from '~react-web-ui-shadcn/components/ui/form';
 
 interface IFormFieldDatePickerProps<T extends FieldValues> {
+  dataTestId?: string;
   className?: string;
+  messageClassName?: string;
   form: UseFormReturn<T>;
   formLabel?: string;
   fieldName: Path<T>;
@@ -20,7 +22,9 @@ interface IFormFieldDatePickerProps<T extends FieldValues> {
 }
 
 const FormFieldDatePicker = <T extends FieldValues>({
+  dataTestId,
   className,
+  messageClassName,
   form,
   formLabel,
   fieldName,
@@ -45,6 +49,8 @@ const FormFieldDatePicker = <T extends FieldValues>({
           <FormItem className={className}>
             <FormControl>
               <InputDate
+                {...field}
+                data-testid={dataTestId}
                 locale={locale}
                 label={formLabel}
                 value={field.value}
@@ -55,10 +61,9 @@ const FormFieldDatePicker = <T extends FieldValues>({
                 error={!!error}
                 disableBefore={disableBefore}
                 dateFormat={dateFormat}
-                onChange={field.onChange}
               />
             </FormControl>
-            {showErrorMessage && <FormMessage />}
+            {showErrorMessage && <FormMessage className={messageClassName} />}
           </FormItem>
         );
       }}

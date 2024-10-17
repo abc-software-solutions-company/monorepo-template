@@ -35,7 +35,7 @@ const ModalSuccess: FC<IModalSuccessProps> = ({ redirectTo }) => {
     };
 
     handleModalAndRedirect();
-  }, []);
+  }, [redirectTo]);
 
   return (
     <View style={[ds.column, ds.justifyCenter, ds.itemsCenter, ds.p20, { backgroundColor: configs.card }]}>

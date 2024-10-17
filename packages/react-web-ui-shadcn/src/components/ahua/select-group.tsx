@@ -1,12 +1,15 @@
-import React, { FC, ForwardedRef, forwardRef, Fragment, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { ForwardedRef, forwardRef, Fragment, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { ChevronDownIcon, CheckIcon, XIcon } from 'lucide-react';
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
 import { cn } from '~react-web-ui-shadcn/lib/utils';
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '../ui/command';
-import { cva, type VariantProps } from 'class-variance-authority';
+import { type VariantProps } from 'class-variance-authority';
 import { Separator } from '../ui/separator';
 import { InputLabel } from './input-base';
 import { Button } from '../ui/button';
+
+import { cva } from 'class-variance-authority';
+import { Loading } from '../ui/loading';
 
 const formControlVariants = cva('relative rounded-md border border-input bg-background ring-offset-background', {
   variants: {
@@ -18,6 +21,7 @@ const formControlVariants = cva('relative rounded-md border border-input bg-back
       default: '',
       focused: 'ring-2 ring-ring ring-offset-2 ring-offset-background',
       disabled: 'cursor-not-allowed bg-muted',
+      readOnly: 'cursor-not-allowed bg-muted',
       error: 'border-destructive bg-destructive/10',
       errorFocused: 'bg-destructive/10 ring-2 ring-destructive ring-offset-2',
     },
@@ -160,6 +164,7 @@ export interface GroupOption<T extends BaseOption> {
 }
 
 interface SelectGroupProps<T extends BaseOption> extends VariantProps<typeof formControlVariants> {
+  dataTestId?: string;
   className?: string;
   value: T[];
   options: GroupOption<T>[];
@@ -169,22 +174,28 @@ interface SelectGroupProps<T extends BaseOption> extends VariantProps<typeof for
   tagListClassName?: string;
   required?: boolean;
   disabled?: boolean;
+  readOnly?: boolean;
   valueField?: keyof T;
   displayField?: keyof T;
   size?: 'default' | 'sm';
+  searchText?: string;
   showSearch?: boolean;
   showClearAll?: boolean;
   showSelectAll?: boolean;
   showSelectedTags?: boolean;
-  showGroupNameWhenEmpty?: boolean;
   error?: boolean;
+  loading?: boolean;
   onChange: (value: T[]) => void;
+  onFocus?: React.FocusEventHandler<HTMLButtonElement>;
   onBlur?: React.FocusEventHandler<HTMLButtonElement>;
+  onSearch?: (value: string) => void;
+  onLoadMore?: () => void;
 }
 
-export const SelectGroup = forwardRef(
+const SelectGroup = forwardRef(
   <T extends BaseOption>(
     {
+      dataTestId,
       className,
       value = [],
       options,
@@ -194,16 +205,21 @@ export const SelectGroup = forwardRef(
       tagListClassName,
       required = false,
       disabled = false,
+      readOnly = false,
       valueField = 'id' as keyof T,
       displayField = 'name' as keyof T,
       size = 'default',
       error = false,
+      searchText = 'Enter search text...',
       showSearch = true,
       showClearAll = true,
       showSelectedTags = true,
-      showGroupNameWhenEmpty = false,
+      loading = false,
       onChange,
       onBlur,
+      onFocus,
+      onSearch,
+      onLoadMore,
     }: SelectGroupProps<T>,
     ref: ForwardedRef<HTMLDivElement>
   ) => {
@@ -217,59 +233,51 @@ export const SelectGroup = forwardRef(
 
     const groupedTags = useMemo(() => {
       return options.map(group => {
-        const selected = value.filter(v => group.children.some(child => child[valueField] === v[valueField]));
+        const selectedInGroup = value.filter(v => group.children.some(child => child[valueField] === v[valueField]));
+        const isAllSelected = selectedInGroup.length === group.children.length;
+
         return {
           group,
-          selected,
-          showAllTag: selected.length === 0,
+          selected: selectedInGroup,
+          showAllTag: isAllSelected,
+          showIndividualTags: !isAllSelected && selectedInGroup.length > 0,
         };
       });
     }, [options, value, valueField]);
 
-    const getGroupSelectedState = useCallback(
-      (group: GroupOption<T>) => {
-        const childIds = new Set(group.children.map(child => child[valueField]));
-        const intersection = new Set([...selectedIds].filter(x => childIds.has(x)));
-
-        if (intersection.size === 0) return 'none';
-        if (intersection.size === group.children.length) return 'all';
-        return 'partial';
-      },
-      [selectedIds, valueField]
-    );
-
-    const getSelectedInGroup = useCallback(
-      (group: GroupOption<T>) => {
-        return value.filter(v => group.children.some(child => child[valueField] === v[valueField]));
+    const isOptionSelected = useCallback(
+      (option: T) => {
+        return value.some(v => v[valueField] === option[valueField]);
       },
       [value, valueField]
     );
 
     const displayValue = useMemo(() => {
       if (value.length === 0) {
-        return showGroupNameWhenEmpty ? options.map(group => `${group.name} (All)`).join(', ') : placeholder;
+        return placeholder;
       }
 
-      const groupedSelections = options.map(group => ({
-        group,
-        selected: getSelectedInGroup(group),
-      }));
+      const groupedSelections = options.map(group => {
+        const selectedInGroup = value.filter(v => group.children.some(child => child[valueField] === v[valueField]));
+        const isAllSelected = selectedInGroup.length === group.children.length;
 
-      const displayParts = groupedSelections.map(({ group, selected }) => {
-        if (selected.length === 0) {
-          return `${group.name} (All)`;
-        }
-        if (selected.length === group.children.length) {
-          return `${group.name} (All)`; // Changed this line to show (All) instead of count
-        }
-        if (selected.length <= 2) {
-          return selected.map(item => String(item[displayField])).join(', ');
-        }
-        return `${group.name} (${selected.length})`;
+        return { group, selected: selectedInGroup, isAllSelected };
       });
 
+      const displayParts = groupedSelections
+        .map(({ group, selected, isAllSelected }) => {
+          if (selected.length === 0) {
+            return null;
+          }
+          if (isAllSelected) {
+            return `${group.name} (All)`;
+          }
+          return selected.map(item => String(item[displayField])).join(', ');
+        })
+        .filter(Boolean);
+
       return displayParts.join(', ') || placeholder;
-    }, [value, options, getSelectedInGroup, placeholder, showGroupNameWhenEmpty, displayField]);
+    }, [value, options, placeholder, valueField, displayField]);
 
     const handleOpenChange = (open: boolean) => {
       if (disabled) {
@@ -291,9 +299,10 @@ export const SelectGroup = forwardRef(
       }
     };
 
-    const handleFocus = () => {
-      if (!disabled) {
+    const handleFocus = (e: React.FocusEvent<HTMLButtonElement>) => {
+      if (!readOnly || !disabled) {
         setIsFocused(true);
+        onFocus?.(e);
       }
     };
 
@@ -316,6 +325,7 @@ export const SelectGroup = forwardRef(
 
     const getFormControlState = () => {
       if (disabled) return 'disabled';
+      if (readOnly) return 'readOnly';
       if (error) return isFocused ? 'errorFocused' : 'error';
       if (isFocused) return 'focused';
       return 'default';
@@ -342,17 +352,6 @@ export const SelectGroup = forwardRef(
       onChange(value.filter(v => !groupIds.has(v[valueField])));
     };
 
-    const handleGroupSelect = (group: GroupOption<T>) => {
-      if (disabled) return;
-
-      const groupState = getGroupSelectedState(group);
-      if (groupState === 'all') {
-        handleDeselectAllInGroup(group);
-      } else {
-        handleSelectAllInGroup(group);
-      }
-    };
-
     const handleOptionSelect = (option: T) => {
       if (disabled) return;
 
@@ -369,6 +368,15 @@ export const SelectGroup = forwardRef(
       onChange(value.filter(v => v[valueField] !== option[valueField]));
     };
 
+    const handleScroll = (event: React.UIEvent<HTMLDivElement>) => {
+      const target = event.target as HTMLDivElement;
+      const isAtBottom = target.scrollHeight - target.scrollTop === target.clientHeight;
+
+      if (isAtBottom) {
+        onLoadMore?.();
+      }
+    };
+
     useEffect(() => {
       document.addEventListener('mousedown', handleClickOutside);
       return () => document.removeEventListener('mousedown', handleClickOutside);
@@ -376,16 +384,7 @@ export const SelectGroup = forwardRef(
 
     return (
       <div>
-        <div
-          ref={ref}
-          className={cn(
-            formControlVariants({
-              size,
-              state: getFormControlState(),
-              className,
-            })
-          )}
-        >
+        <div data-testid={dataTestId} ref={ref} className={cn(formControlVariants({ size, state: getFormControlState(), className }))}>
           <div ref={selectRef}>
             <Popover open={isOpen && !disabled} onOpenChange={handleOpenChange}>
               <PopoverTrigger asChild>
@@ -408,15 +407,15 @@ export const SelectGroup = forwardRef(
                 <Command>
                   {showSearch && (
                     <CommandInput
-                      placeholder={placeholder}
+                      placeholder={searchText}
                       className={commandInputVariants({ size: 'default' })}
                       onFocus={() => setIsFocused(true)}
+                      onValueChange={value => onSearch?.(value)}
                     />
                   )}
-                  <CommandList className="scrollbar max-h-[300px] overflow-auto">
+                  <CommandList className="scrollbar max-h-[300px] overflow-auto" onScroll={handleScroll}>
                     <CommandEmpty>No results found.</CommandEmpty>
                     {options.map(group => {
-                      const groupState = getGroupSelectedState(group);
                       return (
                         <CommandGroup key={group.id} className="p-0">
                           <div className={groupHeaderVariants({ size })}>
@@ -432,32 +431,38 @@ export const SelectGroup = forwardRef(
                                 </button>
                               </div>
                             </div>
-                            <div className={cn(checkboxVariants({ size, selected: groupState }), 'ml-2')} onClick={() => handleGroupSelect(group)}>
-                              <CheckIcon className={cn('text-primary-foreground h-3 w-3')} />
-                            </div>
                           </div>
-                          {group.children.map(option => (
-                            <CommandItem
-                              key={`${group.id}-${String(option[valueField])}`}
-                              onSelect={() => handleOptionSelect(option)}
-                              className={commandItemVariants({ size, selected: selectedIds.has(option[valueField]) })}
-                            >
-                              <span>{String(option[displayField])}</span>
-                              <div className={checkboxVariants({ size, selected: selectedIds.has(option[valueField]) ? 'all' : 'none' })}>
-                                <CheckIcon
-                                  className={cn('text-primary-foreground h-3 w-3', {
-                                    'opacity-0': !selectedIds.has(option[valueField]),
-                                  })}
-                                />
-                              </div>
-                            </CommandItem>
-                          ))}
+                          {group.children.map(option => {
+                            const isSelected = isOptionSelected(option);
+                            return (
+                              <CommandItem
+                                key={`${group.id}-${String(option[valueField])}`}
+                                onSelect={() => handleOptionSelect(option)}
+                                className={commandItemVariants({ size, selected: isSelected })}
+                              >
+                                <span>{String(option[displayField])}</span>
+                                <div className={checkboxVariants({ size, selected: isSelected ? 'all' : 'none' })}>
+                                  <CheckIcon
+                                    className={cn('text-primary-foreground h-3 w-3', {
+                                      'opacity-100': isSelected,
+                                      'opacity-0': !isSelected,
+                                    })}
+                                  />
+                                </div>
+                              </CommandItem>
+                            );
+                          })}
                           <Separator />
                         </CommandGroup>
                       );
                     })}
+                    {loading && (
+                      <div className="flex items-center justify-center p-2">
+                        <Loading size="xs" />
+                      </div>
+                    )}
                   </CommandList>
-                  {showClearAll && selectedIds.size > 0 && (
+                  {showClearAll && value.length > 0 && (
                     <>
                       <Separator />
                       <CommandGroup>
@@ -472,23 +477,22 @@ export const SelectGroup = forwardRef(
             </Popover>
           </div>
         </div>
-
         {showSelectedTags && (
           <div className={cn('mt-2 flex flex-wrap gap-1', tagListClassName)}>
-            {groupedTags.map(({ group, selected, showAllTag }) => (
+            {groupedTags.map(({ group, selected, showAllTag, showIndividualTags }) => (
               <Fragment key={group.id}>
                 {showAllTag ? (
                   <span className={tagVariants({ size: 'default' })}>
                     <span>{`${group.name} (All)`}</span>
                   </span>
-                ) : (
+                ) : showIndividualTags ? (
                   selected.map(item => (
                     <span key={`${group.id}-${String(item[valueField])}`} className={tagVariants({ size: 'default' })}>
                       <span>{String(item[displayField])}</span>
                       <XIcon className={tagIconVariants({ size })} strokeWidth={2} onClick={e => handleRemoveTag(item, e)} />
                     </span>
                   ))
-                )}
+                ) : null}
               </Fragment>
             ))}
           </div>
@@ -500,4 +504,4 @@ export const SelectGroup = forwardRef(
 
 SelectGroup.displayName = 'SelectGroup';
 
-export { type SelectGroupProps };
+export { SelectGroup };

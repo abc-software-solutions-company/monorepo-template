@@ -1,3 +1,4 @@
+import { lazy } from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import { Toaster } from '~react-web-ui-shadcn/components/ui/sonner';
 
@@ -36,6 +37,10 @@ import PageUserList from './pages/users';
 import PageUserEdit from './pages/users/edit';
 import PageUserNew from './pages/users/new';
 
+const PageRuleList = lazy(() => import('./pages/rules'));
+const PageRuleEdit = lazy(() => import('./pages/rules/edit'));
+const PageRuleNew = lazy(() => import('./pages/rules/new'));
+
 const App = () => (
   <Router>
     <AllTheProviders>
@@ -44,6 +49,9 @@ const App = () => (
         <Route path="/:locale" element={<PageRedirect />} />
         <Route element={<PublicRoute />}>
           <Route path="/:locale/login" element={<PageLogin />} />
+          <Route path="/:locale/rule" element={<PageRuleList />} />
+          <Route path="/:locale/rule/new" element={<PageRuleNew />} />
+          <Route path="/:locale/rule/:id/edit" element={<PageRuleEdit />} />
         </Route>
         <Route element={<PrivateRoute />}>
           <Route path="/:locale/dashboard" element={<PageDashboard />} />

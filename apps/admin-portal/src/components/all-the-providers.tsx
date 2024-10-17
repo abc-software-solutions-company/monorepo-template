@@ -51,7 +51,7 @@ function AllTheProviders({ children }: AllTheProvidersProps) {
     if (!theme && window.matchMedia('(prefers-color-scheme: dark)').matches) {
       setPreference({ theme: 'dark' } as PreferenceEntity);
     }
-  }, []);
+  }, [setPreference, theme]);
 
   useEffect(() => {
     const subscriptions: Unsubscribe[] = [setupPostListeners(startAppListening)];

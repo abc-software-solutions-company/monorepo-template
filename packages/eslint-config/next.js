@@ -4,6 +4,7 @@ module.exports = {
     'eslint:recommended',
     'plugin:@typescript-eslint/recommended',
     'plugin:react/recommended',
+    'plugin:react-hooks/recommended',
     'prettier',
     require.resolve('@vercel/style-guide/eslint/next'),
   ],
@@ -99,7 +100,7 @@ module.exports = {
         ],
       },
     ],
-    'react-hooks/exhaustive-deps': 'off',
+    'react-hooks/exhaustive-deps': 'warn',
     'react/prop-types': 'off',
     'react/jsx-sort-props': [
       'warn',

@@ -82,9 +82,8 @@ const CategoryForm: FC<CategoryFormProps> = ({ isEdit }) => {
   };
 
   useEffect(() => {
-    if (category) {
-      form.reset(defaultValues);
-    }
+    form.reset(defaultValues);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [form, category, categories]);
 
   return (

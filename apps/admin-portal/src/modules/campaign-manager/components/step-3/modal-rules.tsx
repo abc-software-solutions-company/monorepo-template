@@ -49,7 +49,10 @@ const ModalRules: React.FC<ModalRulesProps> = ({ form, visible, editIndex, onClo
   const rules = form.watch('rules');
   const isEditMode = editIndex !== -1;
 
-  const modalForm = useForm<RuleFormValues>({ resolver: zodResolver(ruleSchema), defaultValues });
+  const modalForm = useForm<RuleFormValues>({
+    resolver: zodResolver(ruleSchema),
+    defaultValues,
+  });
 
   useEffect(() => {
     if (isEditMode) {
@@ -57,15 +60,15 @@ const ModalRules: React.FC<ModalRulesProps> = ({ form, visible, editIndex, onClo
 
       modalForm.reset({
         ruleName: editData.ruleName,
+        triggers: editData.triggers,
         campaignRule: editData.campaignRule,
         trackerType: editData.trackerType,
         trackerValue: editData.trackerValue,
-        triggers: editData.triggers,
       });
     } else {
       modalForm.reset(defaultValues);
     }
-  }, [isEditMode, editIndex, modalForm, visible]);
+  }, [isEditMode, editIndex, modalForm, visible, rules]);
 
   const onSubmit: SubmitHandler<RuleFormValues> = async data => {
     onSave(data, isEditMode ? editIndex : -1);
@@ -84,7 +87,7 @@ const ModalRules: React.FC<ModalRulesProps> = ({ form, visible, editIndex, onClo
               </VisuallyHidden>
             </DialogHeader>
             <Separator />
-            <div className="p-4">
+            <div className="p-4" tabIndex={0}>
               <div className="max-w-lg">
                 <FormFieldRadioBlock
                   form={modalForm}
@@ -105,10 +108,10 @@ const ModalRules: React.FC<ModalRulesProps> = ({ form, visible, editIndex, onClo
                 formLabel="Rule name"
                 placeholder="Enter rule name"
               />
-              <div className="mt-4 rounded-lg border p-3">
+              <div className="mt-4 rounded-lg border p-3" tabIndex={1}>
                 <ConfigureTriggers form={modalForm} />
               </div>
-              <div className="mt-4 flex items-center space-x-4">
+              <div className="mt-4 flex items-center space-x-4" tabIndex={2}>
                 <Label>Outcome</Label>
                 <FormFieldSelect
                   required

@@ -89,6 +89,7 @@ export const FaqProvider: React.FC<FaqProviderProps> = ({ children }) => {
       toggleSelectAll,
       clearSelection,
     }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [filter, isFetching, isError, error, data, selected]
   );
 

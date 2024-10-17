@@ -10,7 +10,9 @@ type Option = {
 };
 
 type FormFieldRadioBlockProps<T extends FieldValues> = {
+  dataTestId?: string;
   className?: string;
+  messageClassName?: string;
   form: UseFormReturn<T>;
   formLabel?: string;
   fieldName: Path<T>;
@@ -23,6 +25,9 @@ type FormFieldRadioBlockProps<T extends FieldValues> = {
 };
 
 export default function FormFieldRadioBlock<T extends FieldValues>({
+  dataTestId,
+  className,
+  messageClassName,
   form,
   formLabel,
   fieldName,
@@ -40,10 +45,11 @@ export default function FormFieldRadioBlock<T extends FieldValues>({
       control={form.control}
       name={fieldName}
       render={({ field }) => (
-        <FormItem>
+        <FormItem className={className}>
           {formLabel && <FormLabel>{formLabel}</FormLabel>}
           <FormControl>
             <RadioGroup
+              data-testid={dataTestId}
               className="flex items-center space-x-2"
               defaultValue={defaultValue}
               value={field.value}
@@ -72,7 +78,7 @@ export default function FormFieldRadioBlock<T extends FieldValues>({
               ))}
             </RadioGroup>
           </FormControl>
-          {showErrorMessage && <FormMessage />}
+          {showErrorMessage && <FormMessage className={messageClassName} />}
         </FormItem>
       )}
     />

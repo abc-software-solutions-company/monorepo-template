@@ -15,6 +15,7 @@ const formControlVariants = cva(
         default: '',
         focused: 'ring-2 ring-ring ring-offset-2',
         disabled: 'cursor-not-allowed bg-muted',
+        readOnly: 'cursor-not-allowed bg-muted',
         error: 'border-destructive bg-destructive/10',
         errorFocused: 'bg-destructive/10 ring-2 ring-destructive ring-offset-2',
       },
@@ -42,6 +43,7 @@ const inputContentVariants = cva(
 );
 
 interface IInputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'size'> {
+  dataTestId?: string;
   size?: 'default' | 'sm';
   label?: string;
   required?: boolean;
@@ -49,29 +51,62 @@ interface IInputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 
   labelClassName?: string;
 }
 
+const ID = new Date().getTime();
+
 const Input = React.forwardRef<HTMLInputElement, IInputProps>(
-  ({ className, type, label, required = false, size = 'default', disabled = false, labelClassName, error, ...props }, ref) => {
+  (
+    {
+      dataTestId,
+      className,
+      type,
+      label,
+      labelClassName,
+      required = false,
+      size = 'default',
+      disabled = false,
+      readOnly = false,
+      error,
+      maxLength,
+      value = '',
+      defaultValue,
+      ...props
+    },
+    ref
+  ) => {
     const [isFocused, setIsFocused] = useState(false);
+    const [inputValue, setInputValue] = useState(defaultValue?.toString() || value?.toString() || '');
 
     const getFormControlState = () => {
       if (disabled) return 'disabled';
+      if (readOnly) return 'readOnly';
       if (error) return isFocused ? 'errorFocused' : 'error';
       if (isFocused) return 'focused';
       return 'default';
     };
 
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+      setInputValue(e.target.value);
+      props.onChange?.(e);
+    };
+
     return (
       <div className={cn(formControlVariants({ size, state: getFormControlState() }), className)}>
         <div>
-          {label && <InputLabel label={label} required={required} size={size} className={cn(labelClassName)} />}
+          {label && <InputLabel htmlFor={`input-${ID}`} label={label} required={required} size={size} className={cn(labelClassName)} />}
           <input
+            {...props}
+            id={`input-${ID}`}
+            data-testid={dataTestId}
             ref={ref}
             type={type}
             disabled={disabled}
+            readOnly={readOnly}
+            maxLength={maxLength}
+            value={value || inputValue}
             className={cn(inputContentVariants({ size }), 'peer', disabled && 'opacity-50')}
             onFocus={() => setIsFocused(true)}
             onBlur={() => setIsFocused(false)}
-            {...props}
+            onChange={handleChange}
           />
         </div>
       </div>

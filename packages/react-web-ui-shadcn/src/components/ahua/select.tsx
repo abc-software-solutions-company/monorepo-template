@@ -1,13 +1,14 @@
 import React, { FC, ForwardedRef, forwardRef, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { CheckIcon, ChevronDownIcon, InfoIcon, XIcon } from 'lucide-react';
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '~react-web-ui-shadcn/components/ui/command';
-import { Popover, PopoverContent, PopoverTrigger } from '~react-web-ui-shadcn/components/ui/popover';
-import { Separator } from '~react-web-ui-shadcn/components/ui/separator';
-import { Tooltip, TooltipArrow, TooltipContent, TooltipProvider, TooltipTrigger } from '~react-web-ui-shadcn/components/ui/tooltip';
-import { cn } from '~react-web-ui-shadcn/lib/utils';
 import { InputLabel } from './input-base';
+import { cn } from '~react-web-ui-shadcn/lib/utils';
+import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '../ui/command';
+import { Separator } from '../ui/separator';
+import { Tooltip, TooltipArrow, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/tooltip';
 import { Button } from '../ui/button';
+import { Loading } from '../ui/loading';
 
 const formControlVariants = cva('h-6 relative rounded-md border border-input bg-background ring-input', {
   variants: {
@@ -19,6 +20,7 @@ const formControlVariants = cva('h-6 relative rounded-md border border-input bg-
       default: '',
       focused: 'ring-2 ring-ring ring-offset-2 ring-offset-background',
       disabled: 'cursor-not-allowed bg-muted',
+      readOnly: 'cursor-not-allowed bg-muted',
       error: 'border-destructive bg-destructive/10',
       errorFocused: 'bg-destructive/10 ring-2 ring-destructive ring-offset-2',
     },
@@ -158,6 +160,7 @@ const Tag: FC<TagProps> = ({ className, label, value, size = 'default', onRemove
 type OptionType = Record<string, string>;
 
 type BaseSelectProps<T extends OptionType> = {
+  dataTestId?: string;
   className?: string;
   options: T[];
   placeholder?: string;
@@ -167,21 +170,27 @@ type BaseSelectProps<T extends OptionType> = {
   tagItemClassName?: string;
   required?: boolean;
   disabled?: boolean;
+  readOnly?: boolean;
   valueField: keyof T;
   displayField: keyof T;
   size?: 'default' | 'sm';
+  error?: boolean;
+  searchText?: string;
   showSearch?: boolean;
   showClearAll?: boolean;
   showSelectAll?: boolean;
   showSelectedTags?: boolean;
-  error?: boolean;
+  loading?: boolean;
+  onFocus?: React.FocusEventHandler<HTMLButtonElement>;
   onBlur?: React.FocusEventHandler<HTMLButtonElement>;
+  onSearch?: (value: string) => void;
+  onLoadMore?: () => void;
 } & VariantProps<typeof formControlVariants>;
 
 type SingleSelectProps<T extends OptionType> = BaseSelectProps<T> & {
   multiple?: false;
-  value: string | null;
-  onChange: (value: string | null) => void;
+  value: string;
+  onChange: (value: string) => void;
 };
 
 type MultiSelectProps<T extends OptionType> = BaseSelectProps<T> & {
@@ -195,6 +204,7 @@ type SelectProps<T extends OptionType> = SingleSelectProps<T> | MultiSelectProps
 const Select = forwardRef(
   <T extends OptionType>(
     {
+      dataTestId,
       className,
       labelClassName,
       tagListClassName,
@@ -205,25 +215,33 @@ const Select = forwardRef(
       displayField,
       placeholder = 'Select items...',
       disabled = false,
+      readOnly = false,
       label,
       required = false,
       multiple,
       size = 'default',
+      error = false,
+      searchText = 'Enter search text...',
       showSearch = false,
       showClearAll = false,
       showSelectAll = true,
       showSelectedTags = false,
-      error,
+      loading = false,
       onChange,
       onBlur,
+      onFocus,
+      onSearch,
+      onLoadMore,
     }: SelectProps<T>,
-    ref: ForwardedRef<HTMLDivElement>
+    ref: ForwardedRef<HTMLButtonElement>
   ) => {
     const [isOpen, setIsOpen] = useState(false);
     const [isFocused, setIsFocused] = useState(false);
-    const selectRef = useRef<HTMLDivElement>(null);
+    const containerRef = useRef<HTMLDivElement>(null);
     const popoverRef = useRef<HTMLDivElement>(null);
     const triggerRef = useRef<HTMLButtonElement>(null);
+
+    React.useImperativeHandle(ref, () => triggerRef.current as HTMLButtonElement);
 
     const selectedValues = useMemo(() => {
       if (multiple) {
@@ -241,14 +259,14 @@ const Select = forwardRef(
 
     const getFormControlState = () => {
       if (disabled) return 'disabled';
+      if (readOnly) return 'readOnly';
       if (error) return isFocused ? 'errorFocused' : 'error';
       if (isFocused) return 'focused';
-
       return 'default';
     };
 
     const handleSelectAll = () => {
-      if (disabled || !multiple) return;
+      if (readOnly || disabled || !multiple) return;
       const multipleOnChange = onChange as MultiSelectProps<T>['onChange'];
       const newValue = isAllSelected ? [] : [...options];
       multipleOnChange(newValue);
@@ -256,7 +274,7 @@ const Select = forwardRef(
     };
 
     const handleToggleOption = (option: T) => {
-      if (disabled) return;
+      if (readOnly || disabled) return;
 
       if (multiple) {
         const multipleOnChange = onChange as MultiSelectProps<T>['onChange'];
@@ -284,21 +302,22 @@ const Select = forwardRef(
       }
     };
 
-    const handleFocus = () => {
-      if (!disabled) {
+    const handleFocus = (e: React.FocusEvent<HTMLButtonElement>) => {
+      if (!readOnly || !disabled) {
         setIsFocused(true);
+        onFocus?.(e);
       }
     };
 
     const handleClearAll = () => {
-      if (disabled) return;
+      if (readOnly || disabled) return;
 
       if (multiple) {
         const multipleOnChange = onChange as MultiSelectProps<T>['onChange'];
         multipleOnChange([]);
       } else {
         const singleOnChange = onChange as SingleSelectProps<T>['onChange'];
-        singleOnChange(null);
+        singleOnChange('');
       }
 
       setIsFocused(true);
@@ -307,21 +326,23 @@ const Select = forwardRef(
     const handleOpenChange = (open: boolean) => {
       if (disabled) {
         setIsOpen(false);
-
         return;
       }
 
       setIsOpen(open);
-      if (open) setIsFocused(true);
+      if (open) {
+        setIsFocused(true);
+        triggerRef.current?.focus();
+      }
     };
 
     const handleClickOutside = useCallback((event: MouseEvent) => {
       const target = event.target as Node;
-      const isInsideSelect = selectRef.current?.contains(target);
+      const isInsideContainer = containerRef.current?.contains(target);
       const isInsidePopover = popoverRef.current?.contains(target);
       const isInsideCommandInput = target instanceof Element && target.closest('[cmdk-input-wrapper]');
 
-      if (!isInsideSelect && !isInsidePopover && !isInsideCommandInput) {
+      if (!isInsideContainer && !isInsidePopover && !isInsideCommandInput) {
         setIsFocused(false);
       }
     }, []);
@@ -330,7 +351,7 @@ const Select = forwardRef(
       e.preventDefault();
       e.stopPropagation();
 
-      if (disabled) return;
+      if (readOnly || disabled) return;
 
       if (multiple) {
         const multipleOnChange = onChange as MultiSelectProps<T>['onChange'];
@@ -338,120 +359,128 @@ const Select = forwardRef(
         multipleOnChange(newItems);
       } else {
         const singleOnChange = onChange as SingleSelectProps<T>['onChange'];
-        singleOnChange(null);
+        singleOnChange('');
       }
 
       setIsFocused(true);
     };
 
+    const handleScroll = (event: React.UIEvent<HTMLDivElement>) => {
+      const target = event.target as HTMLDivElement;
+      const isAtBottom = target.scrollHeight - target.scrollTop === target.clientHeight;
+
+      if (isAtBottom) {
+        onLoadMore?.();
+      }
+    };
+
     useEffect(() => {
       document.addEventListener('mousedown', handleClickOutside);
-
       return () => document.removeEventListener('mousedown', handleClickOutside);
     }, [handleClickOutside]);
 
     return (
       <div>
-        <div
-          ref={ref}
-          className={cn(
-            formControlVariants({
-              size,
-              state: getFormControlState(),
-              className,
-            })
-          )}
-        >
-          <div ref={selectRef}>
-            <Popover open={isOpen && !disabled} onOpenChange={handleOpenChange}>
-              <PopoverTrigger asChild>
-                <button
-                  ref={triggerRef}
-                  className={cn(triggerVariants({ size }), disabled && 'cursor-not-allowed')}
-                  aria-expanded={isOpen}
-                  disabled={disabled}
-                  type="button"
-                  onClick={() => !disabled && setIsFocused(true)}
-                  onFocus={handleFocus}
-                  onBlur={handleBlur}
-                >
-                  <ChevronDownIcon className={triggerIconVariants({ size: 'default', state: disabled ? 'disabled' : 'default' })} />
-                  {label && <InputLabel label={label} required={required} size={size} className={cn(labelClassName)} />}
-                  <p className={cn(contentVariants({ size }), !selectedItems.length && 'text-muted-foreground', disabled && 'opacity-50')}>
-                    {!selectedItems.length && placeholder}
-                    {selectedItems.length > 0 && selectedItems.map(item => item[displayField]).join(', ')}
-                  </p>
-                </button>
-              </PopoverTrigger>
-              <PopoverContent ref={popoverRef} className="w-[--radix-popover-trigger-width] p-0">
-                <Command>
-                  {showSearch && <CommandInput className={commandInputVariants({ size: 'default' })} onFocus={() => setIsFocused(true)} />}
-                  <CommandList>
-                    <CommandEmpty>No results found.</CommandEmpty>
+        <div data-testid={dataTestId} ref={containerRef} className={cn(formControlVariants({ size, state: getFormControlState(), className }))}>
+          <Popover open={isOpen && !disabled} onOpenChange={handleOpenChange}>
+            <PopoverTrigger asChild>
+              <button
+                ref={triggerRef}
+                className={cn(triggerVariants({ size }), disabled && 'cursor-not-allowed')}
+                aria-expanded={isOpen}
+                disabled={disabled}
+                type="button"
+                onClick={() => !disabled && setIsFocused(true)}
+                onFocus={handleFocus}
+                onBlur={handleBlur}
+              >
+                <ChevronDownIcon className={triggerIconVariants({ size: 'default', state: disabled ? 'disabled' : 'default' })} />
+                {label && <InputLabel label={label} required={required} size={size} className={cn(labelClassName)} />}
+                <p className={cn(contentVariants({ size }), !selectedItems.length && 'text-muted-foreground', disabled && 'opacity-50')}>
+                  {!selectedItems.length && placeholder}
+                  {selectedItems.length > 0 && selectedItems.map(item => item[displayField]).join(', ')}
+                </p>
+              </button>
+            </PopoverTrigger>
+            <PopoverContent ref={popoverRef} className="w-[--radix-popover-trigger-width] p-0">
+              <Command>
+                {showSearch && (
+                  <CommandInput
+                    className={commandInputVariants({ size: 'default' })}
+                    placeholder={searchText}
+                    onFocus={() => setIsFocused(true)}
+                    onValueChange={value => onSearch?.(value)}
+                  />
+                )}
+                <CommandList className="scrollbar max-h-[300px] overflow-auto" onScroll={handleScroll}>
+                  <CommandEmpty>No results found.</CommandEmpty>
+                  {multiple && showSelectAll && (
+                    <CommandGroup className="p-0">
+                      <CommandItem className={cn(commandItemVariants({ size: 'default', selected: isAllSelected }))} onSelect={handleSelectAll}>
+                        <span>{isAllSelected ? 'Deselect All' : 'Select All'}</span>
+                        <div className={commandIconVariants({ size: 'default', selected: isAllSelected })}>
+                          <CheckIcon />
+                        </div>
+                      </CommandItem>
+                      <Separator />
+                    </CommandGroup>
+                  )}
+                  <CommandGroup className="p-0">
+                    {options.map((option, index) => {
+                      const isSelected = selectedValues.has(option[valueField]);
 
-                    {multiple && showSelectAll && (
-                      <CommandGroup className="p-0">
-                        <CommandItem className={cn(commandItemVariants({ size: 'default', selected: isAllSelected }))} onSelect={handleSelectAll}>
-                          <span>{isAllSelected ? 'Deselect All' : 'Select All'}</span>
-                          <div className={commandIconVariants({ size: 'default', selected: isAllSelected })}>
-                            <CheckIcon />
+                      return (
+                        <CommandItem
+                          disabled={disabled}
+                          key={option[valueField]}
+                          tabIndex={index}
+                          className={cn(commandItemVariants({ size: 'default', selected: isSelected }))}
+                          onSelect={() => handleToggleOption(option)}
+                        >
+                          <span>{option[displayField]}</span>
+                          <div className="flex items-center space-x-1">
+                            {multiple && (
+                              <div className={commandIconVariants({ size: 'default', selected: isSelected })}>
+                                <CheckIcon />
+                              </div>
+                            )}
+                            {option.tooltip && (
+                              <TooltipProvider>
+                                <Tooltip>
+                                  <TooltipTrigger asChild>
+                                    <InfoIcon size={18} className="text-primary" />
+                                  </TooltipTrigger>
+                                  <TooltipContent className="z-[1402] whitespace-pre-line break-words border-black bg-black text-white">
+                                    <p>{option.tooltip}</p>
+                                    <TooltipArrow className="fill-black" />
+                                  </TooltipContent>
+                                </Tooltip>
+                              </TooltipProvider>
+                            )}
                           </div>
                         </CommandItem>
-                        <Separator />
-                      </CommandGroup>
-                    )}
-
-                    <CommandGroup className="p-0">
-                      {options.map((option, index) => {
-                        const isSelected = selectedValues.has(option[valueField]);
-
-                        return (
-                          <CommandItem
-                            tabIndex={index}
-                            key={option[valueField]}
-                            className={cn(commandItemVariants({ size: 'default', selected: isSelected }))}
-                            onSelect={() => handleToggleOption(option)}
-                          >
-                            <span>{option[displayField]}</span>
-                            <div className="flex items-center space-x-1">
-                              {multiple && (
-                                <div className={commandIconVariants({ size: 'default', selected: isSelected })}>
-                                  <CheckIcon />
-                                </div>
-                              )}
-                              {option.tooltip && (
-                                <TooltipProvider>
-                                  <Tooltip>
-                                    <TooltipTrigger asChild>
-                                      <InfoIcon size={18} className="text-primary" />
-                                    </TooltipTrigger>
-                                    <TooltipContent className="whitespace-pre-line break-words border-black bg-black text-white">
-                                      <p>{option.tooltip}</p>
-                                      <TooltipArrow className="fill-black" />
-                                    </TooltipContent>
-                                  </Tooltip>
-                                </TooltipProvider>
-                              )}
-                            </div>
-                          </CommandItem>
-                        );
-                      })}
-                    </CommandGroup>
-                  </CommandList>
-                  {showClearAll && selectedValues.size > 0 && (
-                    <>
-                      <Separator />
-                      <CommandGroup>
-                        <Button className="w-full" size="sm" variant="secondary" onClick={handleClearAll}>
-                          Clear all
-                        </Button>
-                      </CommandGroup>
-                    </>
+                      );
+                    })}
+                  </CommandGroup>
+                  {loading && (
+                    <div className="flex items-center justify-center p-2">
+                      <Loading size="xs" />
+                    </div>
                   )}
-                </Command>
-              </PopoverContent>
-            </Popover>
-          </div>
+                </CommandList>
+                {showClearAll && selectedValues.size > 0 && (
+                  <>
+                    <Separator />
+                    <CommandGroup>
+                      <Button className="w-full" size="sm" variant="secondary" onClick={handleClearAll}>
+                        Clear all
+                      </Button>
+                    </CommandGroup>
+                  </>
+                )}
+              </Command>
+            </PopoverContent>
+          </Popover>
         </div>
         {showSelectedTags && (
           <div className={cn('mt-2 flex flex-wrap gap-1', tagListClassName)}>

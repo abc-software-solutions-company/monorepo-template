@@ -24,7 +24,7 @@ const AuditLogListFilter: FC<AuditLogListFilterProps> = ({ className, filter, se
       <SearchBox className="w-full" value={filter.email} placeholder="Email" onSearch={value => setFilter({ ...filter, email: value })} />
       <SearchBox
         className="w-full"
-        value={filter.email}
+        value={filter.recordId}
         placeholder={t('audit_log_record_id')}
         onSearch={value => setFilter({ ...filter, recordId: value })}
       />

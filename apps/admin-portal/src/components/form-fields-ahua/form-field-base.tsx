@@ -22,3 +22,36 @@ export const CheckIndicator: FC<CheckIndicatorProps> = ({ className, values = []
     return <CircleCheckBigIcon size={12} className={cn(className, 'text-primary')} />;
   }
 };
+
+type HelperTextProps = {
+  text?: string;
+  className?: string;
+};
+
+export function HelperText({ className, text }: HelperTextProps) {
+  if (!text) return null;
+
+  return (
+    <div className={cn('flex items-center gap-1 text-xs font-medium text-cyan-600', className)}>
+      <InfoIcon className="size-4" />
+      {text}
+    </div>
+  );
+}
+
+type CharacterCountProps = {
+  current: number;
+  max?: number;
+  className?: string;
+  visibled?: boolean;
+};
+
+export function CharacterCount({ className, current, max, visibled }: CharacterCountProps) {
+  if (!visibled || !max) return null;
+
+  return (
+    <div className={cn('text-xs font-medium text-muted-foreground', className)}>
+      {current}/{max}
+    </div>
+  );
+}

@@ -96,7 +96,7 @@ function GlobalModal() {
       showSub.remove();
       hideSub.remove();
     };
-  }, []);
+  }, [layoutAnimationType]);
 
   const closeModal = () => {
     setModalProps(oldProps => {
@@ -141,7 +141,7 @@ function GlobalModal() {
         }
       });
     }
-  }, [isVisible]);
+  }, [isVisible, opacityValue]);
 
   return (
     <Modal transparent animationType="none" visible={isModalVisible} onRequestClose={closeModal}>

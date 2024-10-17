@@ -18,11 +18,14 @@ const BlockEditor: FC<BlockEditorProps> = ({ className, value, onChange }) => {
   const [html, setHTML] = useState<string>(value ?? '');
   const instance = useCreateBlockNote();
 
-  const convertHTMLToBlocks = async (text: string) => {
-    const blocks = await instance.tryParseHTMLToBlocks(text);
+  const convertHTMLToBlocks = useCallback(
+    async (text: string) => {
+      const blocks = await instance.tryParseHTMLToBlocks(text);
 
-    instance.replaceBlocks(instance.document, blocks);
-  };
+      instance.replaceBlocks(instance.document, blocks);
+    },
+    [instance]
+  );
 
   const htmlInputChanged = useCallback(
     async (e: ChangeEvent<HTMLTextAreaElement>) => {
@@ -30,7 +33,7 @@ const BlockEditor: FC<BlockEditorProps> = ({ className, value, onChange }) => {
       convertHTMLToBlocks(e.target.value);
       onChange?.(e.target.value);
     },
-    [instance]
+    [convertHTMLToBlocks, onChange]
   );
 
   const handleEditorChange = useCallback(async () => {
@@ -38,11 +41,11 @@ const BlockEditor: FC<BlockEditorProps> = ({ className, value, onChange }) => {
 
     setHTML(htmlMarkup);
     onChange?.(htmlMarkup);
-  }, [instance]);
+  }, [instance, onChange]);
 
   useEffect(() => {
     convertHTMLToBlocks(html);
-  }, [instance]);
+  }, [html, instance, convertHTMLToBlocks]);
 
   return (
     <div className={classNames('block-editor', className)}>

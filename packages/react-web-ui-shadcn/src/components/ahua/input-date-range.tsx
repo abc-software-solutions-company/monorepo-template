@@ -1,4 +1,4 @@
-import { FC, ForwardedRef, forwardRef, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { cva } from 'class-variance-authority';
 import { format, isValid, Locale } from 'date-fns';
 import { CalendarDaysIcon } from 'lucide-react';
@@ -76,13 +76,12 @@ const triggerIconVariants = cva('text-muted-foreground absolute -translate-y-1/2
 
 type DateRangeValue = DateRange | undefined;
 
-type InputDateRangeProps = {
+interface InputDateRangeProps extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, 'size' | 'value' | 'onChange'> {
   value: DateRangeValue;
   label?: string;
   required?: boolean;
   disabled?: boolean;
   size?: 'default' | 'sm';
-  className?: string;
   labelClassName?: string;
   placeholder?: string;
   fromYear?: number;
@@ -92,10 +91,9 @@ type InputDateRangeProps = {
   error?: boolean;
   locale?: Locale;
   onChange: (dateRange: DateRangeValue) => void;
-  onBlur?: React.FocusEventHandler<HTMLButtonElement>;
-};
+}
 
-const InputDateRange = forwardRef(
+const InputDateRange = React.forwardRef<HTMLButtonElement, InputDateRangeProps>(
   (
     {
       value,
@@ -114,14 +112,14 @@ const InputDateRange = forwardRef(
       locale,
       onChange,
       onBlur,
-    }: InputDateRangeProps,
-    ref: ForwardedRef<HTMLDivElement>
+      ...props
+    },
+    ref
   ) => {
     const [isOpen, setIsOpen] = useState(false);
     const [isFocused, setIsFocused] = useState(false);
-    const inputRef = useRef<HTMLDivElement>(null);
+    const containerRef = useRef<HTMLDivElement>(null);
     const popoverRef = useRef<HTMLDivElement>(null);
-    const triggerRef = useRef<HTMLButtonElement>(null);
 
     const formattedDateRange = useMemo(() => {
       if (!value?.from || !isValid(value.from)) return '';
@@ -146,7 +144,6 @@ const InputDateRange = forwardRef(
       if (disabled) return;
       onChange(dateRange);
 
-      // Only close the popover if both dates are selected
       if (dateRange?.from && dateRange?.to) {
         setIsOpen(false);
       }
@@ -182,10 +179,12 @@ const InputDateRange = forwardRef(
 
     const handleClickOutside = useCallback((event: MouseEvent) => {
       const target = event.target as Node;
-      const isInsideInput = inputRef.current?.contains(target);
+      const isInsideContainer = containerRef.current?.contains(target);
       const isInsidePopover = popoverRef.current?.contains(target);
+      const isInsideCalendar =
+        target instanceof Element && (target.closest('.rdp') || target.closest('[role="listbox"]') || target.closest('[role="combobox"]'));
 
-      if (!isInsideInput && !isInsidePopover) {
+      if (!isInsideContainer && !isInsidePopover && !isInsideCalendar) {
         setIsFocused(false);
       }
     }, []);
@@ -196,12 +195,13 @@ const InputDateRange = forwardRef(
     }, [handleClickOutside]);
 
     return (
-      <div ref={ref} className={cn(formControlVariants({ size, state: getFormControlState() }), className)}>
-        <div ref={inputRef}>
+      <div ref={containerRef} className={cn(formControlVariants({ size, state: getFormControlState() }), className)}>
+        <div>
           <Popover open={isOpen} onOpenChange={handleOpenChange}>
             <PopoverTrigger asChild>
               <button
-                ref={triggerRef}
+                {...props}
+                ref={ref}
                 className={cn(triggerVariants({ size }), disabled && 'cursor-not-allowed')}
                 aria-expanded={isOpen}
                 disabled={disabled}
