@@ -20,6 +20,7 @@ import PageFaqEdit from './pages/faqs/edit';
 import PageFaqNew from './pages/faqs/new';
 import PageFileList from './pages/files';
 import PageLogin from './pages/login';
+import PageMultiStepForm from './pages/multi-step-form';
 import NotFound from './pages/not-found';
 import PageNotifications from './pages/notifications';
 import PagePostList from './pages/posts';
@@ -71,6 +72,7 @@ const App = () => (
           <Route path="/:locale/settings/:type" element={<PageSettings />} />
           <Route path="/:locale/notifications/:type" element={<PageNotifications />} />
           <Route path="/:locale/documentation/:type" element={<PageDocumentation />} />
+          <Route path="/:locale/multi-step-form" element={<PageMultiStepForm />} />
         </Route>
         <Route path="*" element={<NotFound />} />
       </Routes>
