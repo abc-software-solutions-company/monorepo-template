@@ -1,8 +1,6 @@
 import classNames from 'classnames';
 import { Controller, FieldValues, Path, UseFormReturn } from 'react-hook-form';
 
-import { ComponentBaseProps } from '@/interfaces/component.interface';
-
 type SelectLocationItem = {
   id: string;
   label: string;
@@ -17,7 +15,7 @@ type FormFieldSelectLocationProps<T extends FieldValues> = {
   placeholder?: string;
   disabled?: boolean;
   visibled?: boolean;
-} & ComponentBaseProps;
+};
 
 export default function FormFieldSelectLocation<T extends FieldValues>({
   className,

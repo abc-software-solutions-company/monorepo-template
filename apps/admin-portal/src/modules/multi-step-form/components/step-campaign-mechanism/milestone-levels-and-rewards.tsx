@@ -1,15 +1,11 @@
 import classNames from 'classnames';
 import { UseFormReturn } from 'react-hook-form';
-import { z } from 'zod';
 
-import { ProgressMechanicsValues } from '../../interfaces/campaign.interface';
-import { campaignMechanismSchema } from '../../validators/campaign-mechanism.validator';
-
-export type MilestoneLevelsAndRewardsValues = z.infer<typeof campaignMechanismSchema>;
+import { CampaignMechanismFormValues } from '../../interfaces/campaign.interface';
 
 type MilestoneLevelsAndRewardsProps = {
   className?: string;
-  form: UseFormReturn<ProgressMechanicsValues>;
+  form: UseFormReturn<CampaignMechanismFormValues>;
 };
 
 const MilestoneLevelsAndRewards: React.FC<MilestoneLevelsAndRewardsProps> = ({ className }) => {

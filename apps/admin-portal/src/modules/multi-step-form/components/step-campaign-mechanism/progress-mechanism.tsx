@@ -5,11 +5,11 @@ import { Button } from '~react-web-ui-shadcn/components/ui/button';
 
 import ModalProgressMechanics from './modal-progress-mechanics';
 
-import { CampaignMechanicFormValues, ProgressMechanicsValues } from '../../interfaces/campaign.interface';
+import { CampaignMechanismFormValues, ConfigureProgressMechanicsFormValues } from '../../interfaces/campaign.interface';
 
 type ProgressMechanicsProps = {
   className?: string;
-  form: UseFormReturn<ProgressMechanicsValues>;
+  form: UseFormReturn<CampaignMechanismFormValues>;
 };
 
 const ProgressMechanics: React.FC<ProgressMechanicsProps> = ({ className, form }) => {
@@ -34,7 +34,7 @@ const ProgressMechanics: React.FC<ProgressMechanicsProps> = ({ className, form }
     remove(index);
   };
 
-  const handleSaveProgressMechanics = (data: CampaignMechanicFormValues, index?: number) => {
+  const handleSaveProgressMechanics = (data: ConfigureProgressMechanicsFormValues, index?: number) => {
     if (index !== undefined) {
       form.setValue(`progressMechanics.${index}.name`, data.name);
       form.setValue(`progressMechanics.${index}.campaignRule`, data.campaignRule);

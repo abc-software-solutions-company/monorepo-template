@@ -22,7 +22,7 @@ export enum CAMPAIGN_TYPE {
   STAMP = 'stamp',
 }
 
-export enum TRIGGER_PROPERTY {
+export enum CAMPAIGN_TRIGGER_PROPERTY {
   TRANSACTION_TYPE = 'transaction_type',
   AMOUNT = 'amount',
   SKU = 'sku',
@@ -30,22 +30,22 @@ export enum TRIGGER_PROPERTY {
   CUSTOM = 'custom',
 }
 
-export const TRIGGER_PROPERTY_LABELS: Record<TRIGGER_PROPERTY, string> = {
-  [TRIGGER_PROPERTY.TRANSACTION_TYPE]: 'Transaction type',
-  [TRIGGER_PROPERTY.AMOUNT]: 'Amount',
-  [TRIGGER_PROPERTY.SKU]: 'SKU',
-  [TRIGGER_PROPERTY.QUANTITY]: 'Quantity',
-  [TRIGGER_PROPERTY.CUSTOM]: 'Custom',
+export const CAMPAIGN_TRIGGER_PROPERTY_LABELS: Record<CAMPAIGN_TRIGGER_PROPERTY, string> = {
+  [CAMPAIGN_TRIGGER_PROPERTY.TRANSACTION_TYPE]: 'Transaction type',
+  [CAMPAIGN_TRIGGER_PROPERTY.AMOUNT]: 'Amount',
+  [CAMPAIGN_TRIGGER_PROPERTY.SKU]: 'SKU',
+  [CAMPAIGN_TRIGGER_PROPERTY.QUANTITY]: 'Quantity',
+  [CAMPAIGN_TRIGGER_PROPERTY.CUSTOM]: 'Custom',
 };
 
-export enum TRIGGER_CONDITION {
+export enum CAMPAIGN_TRIGGER_CONDITION {
   EQUALS_TO = 'equals_to',
   NOT_EQUALS_TO = 'not_equals_to',
   MORE_THAN = 'more_than',
   LESS_THAN = 'less_than',
 }
 
-export enum TRIGGER_FIELD {
+export enum CAMPAIGN_TRIGGER_FIELD {
   B2B_SALES = 'b2b_sales',
   B2B_PURCHASE = 'b2b_purchase',
   B2C = 'b2c',

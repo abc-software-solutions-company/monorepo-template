@@ -4,12 +4,14 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '~react-web-ui-shadcn/components/ui/button';
 import { Separator } from '~react-web-ui-shadcn/components/ui/separator';
 
-import { CAMPAIGN_STEP } from '../constants/campaign.constant';
+import { CampaignDetailsFormValues, CampaignMechanismFormValues, EligibilityCriteriaFormValues } from '../interfaces/campaign.interface';
 
-import CampaignDetailForm, { CampaignDetailsFormValues } from './step-campaign-details/campaign-details-form';
-import CampaignMechanismForm, { CampaignMechanismFormValues } from './step-campaign-mechanism/campaign-mechanism-form';
+import { CAMPAIGN_STEP, CAMPAIGN_TRIGGER_CONDITION, CAMPAIGN_TRIGGER_FIELD, CAMPAIGN_TRIGGER_PROPERTY } from '../constants/campaign.constant';
+
+import CampaignDetailForm from './step-campaign-details/campaign-details-form';
+import CampaignMechanismForm from './step-campaign-mechanism/campaign-mechanism-form';
 import CampaignConfirmation from './step-confirmation/campaign-confirmation';
-import EligibilityCriteriaForm, { EligibilityCriteriaFormValues } from './step-eligibility-criteria/eligibility-criteria-form';
+import EligibilityCriteriaForm from './step-eligibility-criteria/eligibility-criteria-form';
 import CampaignNavigation from './campaign-navigation';
 
 import { campaignDetailsSchema } from '../validators/campaign-details.validator';
@@ -17,13 +19,13 @@ import { campaignMechanismSchema } from '../validators/campaign-mechanism.valida
 import { eligibilityCriteriaSchema } from '../validators/eligibility-criteria.validator';
 
 type CampaignFormData = {
-  campaignDetail: CampaignDetailsFormValues;
+  campaignDetails: CampaignDetailsFormValues;
   eligibilityCriteria: EligibilityCriteriaFormValues;
   campaignMechanism: CampaignMechanismFormValues;
 };
 
 const CampaignRoot: React.FC = () => {
-  const [currentStep, setCurrentStep] = useState<CAMPAIGN_STEP>(CAMPAIGN_STEP.CAMPAIGN_MECHANISM);
+  const [currentStep, setCurrentStep] = useState<CAMPAIGN_STEP>(CAMPAIGN_STEP.CAMPAIGN_DETAILS);
   const [stepCompleted, setStepCompleted] = useState({
     [CAMPAIGN_STEP.CAMPAIGN_DETAILS]: false,
     [CAMPAIGN_STEP.ELIGIBILITY_CRITERIA]: false,
@@ -31,26 +33,39 @@ const CampaignRoot: React.FC = () => {
     [CAMPAIGN_STEP.CONFIRMATION]: false,
   });
   const [formData, setFormData] = useState<CampaignFormData>({
-    campaignDetail: {
+    campaignDetails: {
       name: '',
       description: '',
+      products: [],
     },
     eligibilityCriteria: {
-      campaignTargetPlatform: '',
+      campaignTargetPlatform: 'FarmCare',
       shopType: '',
-      userLocationLevel1: '',
+      userLocationLevel1: 'location1',
       userLocationLevel2: '',
     },
     campaignMechanism: {
-      campaignType: '',
-      progressMechanics: [],
+      campaignType: 'stamp',
+      progressMechanics: [
+        {
+          name: 'Rule Name 1',
+          campaignRule: 'custom',
+          triggers: [
+            {
+              property: CAMPAIGN_TRIGGER_PROPERTY.TRANSACTION_TYPE,
+              condition: CAMPAIGN_TRIGGER_CONDITION.EQUALS_TO,
+              field: CAMPAIGN_TRIGGER_FIELD.B2B_SALES,
+            },
+          ],
+        },
+      ],
     },
   });
   const [isFormValid, setIsFormValid] = useState<boolean>(false);
 
   const campaignDetailsForm = useForm<CampaignDetailsFormValues>({
     resolver: zodResolver(campaignDetailsSchema),
-    defaultValues: formData.campaignDetail,
+    defaultValues: formData.campaignDetails,
   });
 
   const eligibilityCriteriaForm = useForm<EligibilityCriteriaFormValues>({
@@ -79,7 +94,7 @@ const CampaignRoot: React.FC = () => {
   }, [campaignDetailsForm.formState.isValid, eligibilityCriteriaForm.formState.isValid, campaignMechanismForm.formState.isValid]);
 
   const handleCampaignDetailsSubmit = (data: CampaignDetailsFormValues) => {
-    setFormData(prev => ({ ...prev, campaignDetail: data }));
+    setFormData(prev => ({ ...prev, campaignDetails: data }));
     setCurrentStep(CAMPAIGN_STEP.ELIGIBILITY_CRITERIA);
     setStepCompleted(prev => ({ ...prev, [CAMPAIGN_STEP.CAMPAIGN_DETAILS]: true }));
   };
@@ -109,7 +124,7 @@ const CampaignRoot: React.FC = () => {
 
       setFormData(parsedDraft);
 
-      campaignDetailsForm.reset(parsedDraft.campaignDetail);
+      campaignDetailsForm.reset(parsedDraft.campaignDetails);
       eligibilityCriteriaForm.reset(parsedDraft.eligibilityCriteria);
       campaignMechanismForm.reset(parsedDraft.campaignMechanism);
     }

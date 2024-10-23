@@ -37,7 +37,8 @@ export const campaignMechanicTriggerSchema = z
       }),
     ])
   );
-export const campaignMechanicSchema = z.object({
+
+export const configureProgressMechanicsSchema = z.object({
   name: z.string().min(1, 'name is required'),
   campaignRule: z.string().min(1, 'campaignRule is required'),
   triggers: z.array(campaignMechanicTriggerSchema),
@@ -46,7 +47,11 @@ export const campaignMechanicSchema = z.object({
 export const campaignMechanismSchema = z.object({
   campaignType: z.string().min(1, 'campaignType is required'),
   progressMechanics: z
-    .array(campaignMechanicSchema)
+    .array(configureProgressMechanicsSchema)
     .min(1, 'At least one progress mechanic is required')
     .max(3, 'Maximum of three progress mechanics allowed'),
+});
+
+export const milestoneLevelsAndRewardsSchema = z.object({
+  name: z.string().min(1, 'name is required'),
 });

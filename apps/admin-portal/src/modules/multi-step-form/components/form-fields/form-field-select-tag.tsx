@@ -1,11 +1,11 @@
 import { FieldValues, Path, UseFormReturn } from 'react-hook-form';
 import { FormControl, FormField, FormItem } from '~react-web-ui-shadcn/components/ui/form';
 
-import Select from '@/components/select';
+import SelectTag from '@/components/select-tag';
 
 type OptionType = Record<string, string>;
 
-type FormFieldSelectProps<T extends FieldValues, O extends OptionType> = {
+type FormFieldSelectTagProps<T extends FieldValues, O extends OptionType> = {
   className?: string;
   form: UseFormReturn<T>;
   formLabel?: string;
@@ -17,12 +17,12 @@ type FormFieldSelectProps<T extends FieldValues, O extends OptionType> = {
   valueField: Extract<keyof O, string>;
   displayField: Extract<keyof O, string>;
   size?: 'default' | 'sm';
-  required?: boolean;
+  maxVisible?: number;
   multiple?: boolean;
-  showSelectedTags?: boolean;
+  required?: boolean;
 };
 
-export default function FormFieldSelect<T extends FieldValues, O extends OptionType>({
+export default function FormFieldSelectTag<T extends FieldValues, O extends OptionType>({
   className,
   form,
   formLabel,
@@ -34,10 +34,9 @@ export default function FormFieldSelect<T extends FieldValues, O extends OptionT
   valueField,
   displayField,
   size = 'default',
+  maxVisible,
   required,
-  multiple,
-  showSelectedTags = false,
-}: FormFieldSelectProps<T, O>) {
+}: FormFieldSelectTagProps<T, O>) {
   if (!visibled) return null;
 
   return (
@@ -47,8 +46,7 @@ export default function FormFieldSelect<T extends FieldValues, O extends OptionT
       render={({ field }) => (
         <FormItem>
           <FormControl>
-            <Select
-              multiple={multiple}
+            <SelectTag
               required={required}
               className={className}
               placeholder={placeholder}
@@ -59,7 +57,7 @@ export default function FormFieldSelect<T extends FieldValues, O extends OptionT
               value={field.value}
               disabled={disabled}
               size={size}
-              showSelectedTags={showSelectedTags}
+              maxVisible={maxVisible}
               onChange={field.onChange}
             />
           </FormControl>

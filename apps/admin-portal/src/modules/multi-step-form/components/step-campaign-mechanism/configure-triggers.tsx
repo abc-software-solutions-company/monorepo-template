@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { useFieldArray, UseFormReturn } from 'react-hook-form';
 
-import { TRIGGER_CONDITION, TRIGGER_FIELD, TRIGGER_PROPERTY } from '../../constants/campaign.constant';
-import { CampaignMechanicFormValues } from '../../interfaces/campaign.interface';
+import { CAMPAIGN_TRIGGER_CONDITION, CAMPAIGN_TRIGGER_FIELD, CAMPAIGN_TRIGGER_PROPERTY } from '../../constants/campaign.constant';
+import { ConfigureProgressMechanicsFormValues } from '../../interfaces/campaign.interface';
 
 type ConfigureTriggersProps = {
-  form: UseFormReturn<CampaignMechanicFormValues>;
+  form: UseFormReturn<ConfigureProgressMechanicsFormValues>;
 };
 
 const ConfigureTriggers: React.FC<ConfigureTriggersProps> = ({ form }) => {
@@ -55,30 +55,30 @@ const ConfigureTriggers: React.FC<ConfigureTriggersProps> = ({ form }) => {
               onChange={e => handlePropertyChange(index, e.target.value)}
             >
               <option value="">Select property</option>
-              <option value={TRIGGER_PROPERTY.TRANSACTION_TYPE}>Transaction type</option>
-              <option value={TRIGGER_PROPERTY.AMOUNT}>Amount</option>
-              <option value={TRIGGER_PROPERTY.SKU}>SKU</option>
-              <option value={TRIGGER_PROPERTY.QUANTITY}>Quantity</option>
-              <option value={TRIGGER_PROPERTY.CUSTOM}>Custom</option>
+              <option value={CAMPAIGN_TRIGGER_PROPERTY.TRANSACTION_TYPE}>Transaction type</option>
+              <option value={CAMPAIGN_TRIGGER_PROPERTY.AMOUNT}>Amount</option>
+              <option value={CAMPAIGN_TRIGGER_PROPERTY.SKU}>SKU</option>
+              <option value={CAMPAIGN_TRIGGER_PROPERTY.QUANTITY}>Quantity</option>
+              <option value={CAMPAIGN_TRIGGER_PROPERTY.CUSTOM}>Custom</option>
             </select>
             <select {...form.register(`triggers.${index}.condition`)} className="rounded border p-1">
               <option value="">Select condition</option>
-              <option value={TRIGGER_CONDITION.EQUALS_TO}>Equals to</option>
-              <option value={TRIGGER_CONDITION.NOT_EQUALS_TO}>Not equals to</option>
-              <option value={TRIGGER_CONDITION.MORE_THAN}>More than</option>
-              <option value={TRIGGER_CONDITION.LESS_THAN}>Less than</option>
+              <option value={CAMPAIGN_TRIGGER_CONDITION.EQUALS_TO}>Equals to</option>
+              <option value={CAMPAIGN_TRIGGER_CONDITION.NOT_EQUALS_TO}>Not equals to</option>
+              <option value={CAMPAIGN_TRIGGER_CONDITION.MORE_THAN}>More than</option>
+              <option value={CAMPAIGN_TRIGGER_CONDITION.LESS_THAN}>Less than</option>
             </select>
-            {selectedProperties[index] === TRIGGER_PROPERTY.TRANSACTION_TYPE && (
+            {selectedProperties[index] === CAMPAIGN_TRIGGER_PROPERTY.TRANSACTION_TYPE && (
               <select {...form.register(`triggers.${index}.field`)} className="rounded border p-1">
                 <option value="">Select field</option>
-                <option value={TRIGGER_FIELD.B2B_SALES}>B2B sales</option>
-                <option value={TRIGGER_FIELD.B2B_PURCHASE}>B2B purchase</option>
-                <option value={TRIGGER_FIELD.B2C}>B2C</option>
-                <option value={TRIGGER_FIELD.QR_SCAN}>QR scan</option>
-                <option value={TRIGGER_FIELD.RECEIPT}>Receipt</option>
+                <option value={CAMPAIGN_TRIGGER_FIELD.B2B_SALES}>B2B sales</option>
+                <option value={CAMPAIGN_TRIGGER_FIELD.B2B_PURCHASE}>B2B purchase</option>
+                <option value={CAMPAIGN_TRIGGER_FIELD.B2C}>B2C</option>
+                <option value={CAMPAIGN_TRIGGER_FIELD.QR_SCAN}>QR scan</option>
+                <option value={CAMPAIGN_TRIGGER_FIELD.RECEIPT}>Receipt</option>
               </select>
             )}
-            {selectedProperties[index] === TRIGGER_PROPERTY.AMOUNT && (
+            {selectedProperties[index] === CAMPAIGN_TRIGGER_PROPERTY.AMOUNT && (
               <input
                 type="number"
                 {...form.register(`triggers.${index}.amount`, { valueAsNumber: true })}
@@ -86,13 +86,13 @@ const ConfigureTriggers: React.FC<ConfigureTriggersProps> = ({ form }) => {
                 placeholder="Enter amount"
               />
             )}
-            {selectedProperties[index] === TRIGGER_PROPERTY.SKU && (
+            {selectedProperties[index] === CAMPAIGN_TRIGGER_PROPERTY.SKU && (
               <>
                 <input {...form.register(`triggers.${index}.sku.productFamily`)} className="rounded border p-1" placeholder="Product family" />
                 <input {...form.register(`triggers.${index}.sku.productVariant`)} className="rounded border p-1" placeholder="Product variant" />
               </>
             )}
-            {selectedProperties[index] === TRIGGER_PROPERTY.QUANTITY && (
+            {selectedProperties[index] === CAMPAIGN_TRIGGER_PROPERTY.QUANTITY && (
               <input
                 type="number"
                 {...form.register(`triggers.${index}.quantity`, { valueAsNumber: true })}
@@ -100,7 +100,7 @@ const ConfigureTriggers: React.FC<ConfigureTriggersProps> = ({ form }) => {
                 placeholder="Enter quantity"
               />
             )}
-            {selectedProperties[index] === TRIGGER_PROPERTY.CUSTOM && (
+            {selectedProperties[index] === CAMPAIGN_TRIGGER_PROPERTY.CUSTOM && (
               <input {...form.register(`triggers.${index}.custom`)} className="rounded border p-1" placeholder="<Input>" />
             )}
             <button
