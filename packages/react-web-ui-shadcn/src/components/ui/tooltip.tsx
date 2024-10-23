@@ -25,6 +25,15 @@ const TooltipContent = React.forwardRef<
     {...props}
   />
 ))
+
+const TooltipArrow = React.forwardRef<
+  React.ElementRef<typeof TooltipPrimitive.Arrow>,
+  React.ComponentPropsWithoutRef<typeof TooltipPrimitive.Arrow>
+>(({ className,  ...props }, ref) => (
+  <TooltipPrimitive.Arrow ref={ref} className={cn("fill-popover", className)} {...props} />
+))
+
+
 TooltipContent.displayName = TooltipPrimitive.Content.displayName
 
-export { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider }
+export { Tooltip, TooltipArrow, TooltipTrigger, TooltipContent, TooltipProvider }

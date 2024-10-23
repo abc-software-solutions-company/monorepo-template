@@ -77,14 +77,14 @@ const commandInputVariants = cva('', {
   },
 });
 
-const commandItemVariants = cva('', {
+const commandItemVariants = cva('flex items-center rounded-none', {
   variants: {
     size: {
-      default: '',
+      default: 'h-9',
       sm: 'h-8 text-xs',
     },
     selected: {
-      true: 'bg-accent',
+      true: 'bg-primary/10',
       false: '',
     },
   },
@@ -219,10 +219,10 @@ const SelectTag = forwardRef(
     const selectedItems = useMemo(
       () =>
         options
-          .filter(option => selectedValues.has(String(option[valueField])))
+          .filter(option => selectedValues.has(option[valueField]))
           .map(option => ({
-            value: String(option[valueField]),
-            label: String(option[displayField]),
+            value: option[valueField],
+            label: option[displayField],
           })),
       [options, selectedValues, valueField, displayField]
     );
@@ -230,7 +230,7 @@ const SelectTag = forwardRef(
     const handleToggleOption = (option: T) => {
       if (disabled) return;
 
-      const optionValue = String(option[valueField]);
+      const optionValue = option[valueField];
       const newValues = new Set(selectedValues);
 
       if (newValues.has(optionValue)) {
@@ -367,20 +367,20 @@ const SelectTag = forwardRef(
                 )}
                 <CommandList>
                   <CommandEmpty>No results found.</CommandEmpty>
-                  <CommandGroup>
+                  <CommandGroup className="p-0">
                     {options.map(option => {
-                      const isSelected = selectedValues.has(String(option[valueField]));
+                      const isSelected = selectedValues.has(option[valueField]);
 
                       return (
                         <CommandItem
-                          key={String(option[valueField])}
+                          key={option[valueField]}
                           className={cn(commandItemVariants({ size: 'default', selected: isSelected }))}
                           onSelect={() => handleToggleOption(option)}
                         >
                           <div className={commandIconVariants({ size: 'default', selected: isSelected })}>
-                            <CheckIcon className="h-4 w-4" />
+                            <CheckIcon />
                           </div>
-                          <span>{String(option[displayField])}</span>
+                          <span>{option[displayField]}</span>
                         </CommandItem>
                       );
                     })}

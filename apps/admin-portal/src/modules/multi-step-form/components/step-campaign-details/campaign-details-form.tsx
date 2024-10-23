@@ -14,19 +14,23 @@ type CampaignDetailsFormProps = {
 
 const CampaignDetailsForm: React.FC<CampaignDetailsFormProps> = ({ form, onSubmit }) => {
   const options = [
-    { id: '1', label: 'Option 1' },
-    { id: '2', label: 'Option 2' },
-    { id: '3', label: 'Option 3' },
-    { id: '4', label: 'Option 4' },
-    { id: '5', label: 'Option 5' },
-    { id: '6', label: 'Option 6' },
-    { id: '7', label: 'Option 7' },
-    { id: '8', label: 'Option 8' },
-    { id: '9', label: 'Option 9' },
-    { id: '10', label: 'Option 10' },
-    { id: '11', label: 'Option 11' },
-    { id: '12', label: 'Option 12' },
-    { id: '13', label: 'Option 13' },
+    {
+      id: '1',
+      name: 'Option 1',
+      tooltip: 'Expiry period\nStart: 2023-01-01\nEnd: 2023-12-31\n\nRepeat annually:\nYes\n\nDescription:\nThis is a description',
+    },
+    { id: '2', name: 'Option 2', tooltip: '' },
+    { id: '3', name: 'Option 3', tooltip: '' },
+    { id: '4', name: 'Option 4', tooltip: '' },
+    { id: '5', name: 'Option 5', tooltip: '' },
+    { id: '6', name: 'Option 6', tooltip: 'Hello' },
+    { id: '7', name: 'Option 7', tooltip: 'Line 1\nLine 2\nLine 3' },
+    { id: '8', name: 'Option 8', tooltip: '' },
+    { id: '9', name: 'Option 9', tooltip: '' },
+    { id: '10', name: 'Option 10', tooltip: '' },
+    { id: '11', name: 'Option 11', tooltip: '' },
+    { id: '12', name: 'Option 12', tooltip: '' },
+    { id: '13', name: 'Option 13', tooltip: '' },
   ];
 
   return (
@@ -52,24 +56,22 @@ const CampaignDetailsForm: React.FC<CampaignDetailsFormProps> = ({ form, onSubmi
             </div>
             <div className="grid gap-2">
               <FormFieldSelectTag
-                disabled
                 form={form}
                 options={options}
                 fieldName="products"
                 formLabel="Product variant"
                 placeholder="Select product"
-                displayField="label"
+                displayField="name"
                 valueField="id"
                 required={true}
               />
               <FormFieldSelectTag
-                disabled
                 form={form}
                 options={options}
                 fieldName="products"
                 formLabel="Product variant"
                 placeholder="Select product"
-                displayField="label"
+                displayField="name"
                 valueField="id"
                 size="sm"
                 required={true}
@@ -83,7 +85,7 @@ const CampaignDetailsForm: React.FC<CampaignDetailsFormProps> = ({ form, onSubmi
                 fieldName="products"
                 formLabel="Product variant"
                 placeholder="Select product"
-                displayField="label"
+                displayField="name"
                 valueField="id"
                 required={true}
                 showSelectedTags={true}
@@ -94,7 +96,7 @@ const CampaignDetailsForm: React.FC<CampaignDetailsFormProps> = ({ form, onSubmi
                 fieldName="products"
                 formLabel="Product variant"
                 placeholder="Select product"
-                displayField="label"
+                displayField="name"
                 valueField="id"
                 size="sm"
                 required={true}

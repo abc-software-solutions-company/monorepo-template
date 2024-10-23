@@ -1,9 +1,10 @@
 import React, { FC, ForwardedRef, forwardRef, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { cva, type VariantProps } from 'class-variance-authority';
-import { CheckIcon, ChevronDownIcon, XIcon } from 'lucide-react';
+import { CheckIcon, ChevronDownIcon, InfoIcon, XIcon } from 'lucide-react';
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '~react-web-ui-shadcn/components/ui/command';
 import { Popover, PopoverContent, PopoverTrigger } from '~react-web-ui-shadcn/components/ui/popover';
 import { Separator } from '~react-web-ui-shadcn/components/ui/separator';
+import { Tooltip, TooltipArrow, TooltipContent, TooltipProvider, TooltipTrigger } from '~react-web-ui-shadcn/components/ui/tooltip';
 import { cn } from '~react-web-ui-shadcn/lib/utils';
 
 const selectVariants = cva('grid items-center relative rounded-md border border-input bg-background leading-none ring-input', {
@@ -77,14 +78,14 @@ const commandInputVariants = cva('', {
   },
 });
 
-const commandItemVariants = cva('', {
+const commandItemVariants = cva('flex items-center justify-between rounded-none', {
   variants: {
     size: {
-      default: '',
+      default: 'h-9',
       sm: 'h-8 text-xs',
     },
     selected: {
-      true: 'bg-accent',
+      true: 'bg-primary/10',
       false: '',
     },
   },
@@ -240,10 +241,10 @@ const Select = forwardRef(
     const selectedItems = useMemo(
       () =>
         options
-          .filter(option => selectedValues.has(String(option[valueField])))
+          .filter(option => selectedValues.has(option[valueField]))
           .map(option => ({
-            value: String(option[valueField]),
-            label: String(option[displayField]),
+            value: option[valueField],
+            label: option[displayField],
           })),
       [options, selectedValues, valueField, displayField]
     );
@@ -251,7 +252,7 @@ const Select = forwardRef(
     const handleToggleOption = (option: T) => {
       if (disabled) return;
 
-      const optionValue = String(option[valueField]);
+      const optionValue = option[valueField];
 
       if (multiple) {
         const newValues = new Set(selectedValues);
@@ -397,22 +398,37 @@ const Select = forwardRef(
                   )}
                   <CommandList>
                     <CommandEmpty>No results found.</CommandEmpty>
-                    <CommandGroup>
+                    <CommandGroup className="p-0">
                       {options.map(option => {
-                        const isSelected = selectedValues.has(String(option[valueField]));
+                        const isSelected = selectedValues.has(option[valueField]);
 
                         return (
                           <CommandItem
-                            key={String(option[valueField])}
+                            key={option[valueField]}
                             className={cn(commandItemVariants({ size: 'default', selected: isSelected }))}
                             onSelect={() => handleToggleOption(option)}
                           >
-                            {multiple && (
-                              <div className={commandIconVariants({ size: 'default', selected: isSelected })}>
-                                <CheckIcon className="h-4 w-4" />
-                              </div>
+                            <div className="flex items-center">
+                              {multiple && (
+                                <div className={commandIconVariants({ size: 'default', selected: isSelected })}>
+                                  <CheckIcon />
+                                </div>
+                              )}
+                              <span>{option[displayField]}</span>
+                            </div>
+                            {option.tooltip && (
+                              <TooltipProvider>
+                                <Tooltip>
+                                  <TooltipTrigger asChild>
+                                    <InfoIcon size={18} className="text-primary" />
+                                  </TooltipTrigger>
+                                  <TooltipContent className="whitespace-pre-line break-words border-black bg-black text-white">
+                                    <p>{option.tooltip}</p>
+                                    <TooltipArrow className="fill-black" />
+                                  </TooltipContent>
+                                </Tooltip>
+                              </TooltipProvider>
                             )}
-                            <span>{String(option[displayField])}</span>
                           </CommandItem>
                         );
                       })}
