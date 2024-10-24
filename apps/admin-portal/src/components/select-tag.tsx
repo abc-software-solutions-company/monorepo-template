@@ -171,7 +171,7 @@ type OptionType = Record<string, string>;
 type SelectTagProps<T extends OptionType> = {
   className?: string;
   options: T[];
-  value: string[];
+  value: T[];
   placeholder?: string;
   label?: string;
   labelClassName?: string;
@@ -183,7 +183,7 @@ type SelectTagProps<T extends OptionType> = {
   size?: 'default' | 'sm';
   showSearch?: boolean;
   showClearAll?: boolean;
-  onChange: (value: string[]) => void;
+  onChange: (value: T[]) => void;
   onBlur?: React.FocusEventHandler<HTMLButtonElement>;
 } & VariantProps<typeof selectVariants>;
 
@@ -215,30 +215,29 @@ const SelectTag = forwardRef(
     const popoverRef = useRef<HTMLDivElement>(null);
     const triggerRef = useRef<HTMLButtonElement>(null);
 
-    const selectedValues = useMemo(() => new Set(value), [value]);
+    const selectedValues = useMemo(() => new Set(value.map(item => item[valueField])), [value, valueField]);
+
     const selectedItems = useMemo(
       () =>
-        options
-          .filter(option => selectedValues.has(option[valueField]))
-          .map(option => ({
-            value: option[valueField],
-            label: option[displayField],
-          })),
-      [options, selectedValues, valueField, displayField]
+        value.map(item => ({
+          value: item[valueField],
+          label: item[displayField],
+          original: item,
+        })),
+      [value, valueField, displayField]
     );
 
     const handleToggleOption = (option: T) => {
       if (disabled) return;
 
       const optionValue = option[valueField];
-      const newValues = new Set(selectedValues);
 
-      if (newValues.has(optionValue)) {
-        newValues.delete(optionValue);
+      if (selectedValues.has(optionValue)) {
+        onChange(value.filter(item => item[valueField] !== optionValue));
       } else {
-        newValues.add(optionValue);
+        onChange([...value, option]);
       }
-      onChange(Array.from(newValues));
+
       setIsFocused(true);
     };
 
@@ -314,7 +313,7 @@ const SelectTag = forwardRef(
 
     const handleRemoveTag = (tagValue: string, e: React.MouseEvent) => {
       e.stopPropagation();
-      onChange(Array.from(selectedValues).filter(v => v !== tagValue));
+      onChange(value.filter(item => item[valueField] !== tagValue));
     };
 
     useEffect(() => {
@@ -374,10 +373,20 @@ const SelectTag = forwardRef(
                       return (
                         <CommandItem
                           key={option[valueField]}
-                          className={cn(commandItemVariants({ size: 'default', selected: isSelected }))}
+                          className={cn(
+                            commandItemVariants({
+                              size: 'default',
+                              selected: isSelected,
+                            })
+                          )}
                           onSelect={() => handleToggleOption(option)}
                         >
-                          <div className={commandIconVariants({ size: 'default', selected: isSelected })}>
+                          <div
+                            className={commandIconVariants({
+                              size: 'default',
+                              selected: isSelected,
+                            })}
+                          >
                             <CheckIcon />
                           </div>
                           <span>{option[displayField]}</span>

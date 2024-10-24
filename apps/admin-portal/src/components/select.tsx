@@ -170,7 +170,7 @@ const Label: FC<LabelProps> = ({ label, required, className, size = 'default' })
 
 type OptionType = Record<string, string>;
 
-type BaseSelectProps<T extends OptionType> = {
+type SelectProps<T extends OptionType> = {
   className?: string;
   options: T[];
   placeholder?: string;
@@ -187,20 +187,10 @@ type BaseSelectProps<T extends OptionType> = {
   showSearch?: boolean;
   showClearAll?: boolean;
   showSelectedTags?: boolean;
+  value: T[];
+  onChange: (value: T[]) => void;
   onBlur?: React.FocusEventHandler<HTMLButtonElement>;
 } & VariantProps<typeof selectVariants>;
-
-type SingleSelectProps<T extends OptionType> = BaseSelectProps<T> & {
-  value?: string;
-  onChange: (value: string) => void;
-};
-
-type MultipleSelectProps<T extends OptionType> = BaseSelectProps<T> & {
-  value: string[];
-  onChange: (value: string[]) => void;
-};
-
-type SelectProps<T extends OptionType> = SingleSelectProps<T> | MultipleSelectProps<T>;
 
 const Select = forwardRef(
   <T extends OptionType>(
@@ -234,40 +224,22 @@ const Select = forwardRef(
     const triggerRef = useRef<HTMLButtonElement>(null);
 
     const selectedValues = useMemo(() => {
-      if (multiple) {
-        return new Set(value as string[]);
-      }
+      return new Set(value.map(item => item[valueField]));
+    }, [value, valueField]);
 
-      return new Set(value ? [value as string] : []);
-    }, [value, multiple]);
-
-    const selectedItems = useMemo(
-      () =>
-        options
-          .filter(option => selectedValues.has(option[valueField]))
-          .map(option => ({
-            value: option[valueField],
-            label: option[displayField],
-          })),
-      [options, selectedValues, valueField, displayField]
-    );
+    const selectedItems = useMemo(() => options.filter(option => selectedValues.has(option[valueField])), [options, selectedValues, valueField]);
 
     const handleToggleOption = (option: T) => {
       if (disabled) return;
 
-      const optionValue = option[valueField];
-
       if (multiple) {
-        const newValues = new Set(selectedValues);
+        const newItems = selectedValues.has(option[valueField])
+          ? selectedItems.filter(item => item[valueField] !== option[valueField])
+          : [...selectedItems, option];
 
-        if (newValues.has(optionValue)) {
-          newValues.delete(optionValue);
-        } else {
-          newValues.add(optionValue);
-        }
-        (onChange as MultipleSelectProps<T>['onChange'])(Array.from(newValues));
+        onChange(newItems);
       } else {
-        (onChange as SingleSelectProps<T>['onChange'])(optionValue);
+        onChange([option]);
         setIsOpen(false);
       }
 
@@ -300,12 +272,7 @@ const Select = forwardRef(
 
     const handleClearAll = () => {
       if (disabled) return;
-
-      if (multiple) {
-        (onChange as MultipleSelectProps<T>['onChange'])([]);
-      } else {
-        (onChange as SingleSelectProps<T>['onChange'])('');
-      }
+      onChange([]);
       setIsFocused(true);
     };
 
@@ -337,13 +304,9 @@ const Select = forwardRef(
 
       if (disabled) return;
 
-      if (multiple) {
-        const newValues = Array.from(selectedValues).filter(val => val !== tagValue);
+      const newItems = selectedItems.filter(item => item[valueField] !== tagValue);
 
-        (onChange as MultipleSelectProps<T>['onChange'])(newValues);
-      } else {
-        (onChange as SingleSelectProps<T>['onChange'])('');
-      }
+      onChange(newItems);
       setIsFocused(true);
     };
 
@@ -369,7 +332,12 @@ const Select = forwardRef(
             <Popover open={isOpen && !disabled} onOpenChange={handleOpenChange}>
               <PopoverTrigger asChild>
                 <div>
-                  <ChevronDownIcon className={triggerIconVariants({ size: 'default', state: disabled ? 'disabled' : 'default' })} />
+                  <ChevronDownIcon
+                    className={triggerIconVariants({
+                      size: 'default',
+                      state: disabled ? 'disabled' : 'default',
+                    })}
+                  />
                   {label && <Label label={label} required={required} size={size} className={cn(labelClassName)} />}
                   <button
                     ref={triggerRef}
@@ -385,7 +353,7 @@ const Select = forwardRef(
                     onKeyDown={handleKeyDown}
                   >
                     <p className={cn(contentVariants({ size }), selectedItems.length === 0 && 'text-muted-foreground', disabled && 'opacity-50')}>
-                      {selectedItems.length === 0 ? placeholder : selectedItems.map(item => item.label).join(', ')}
+                      {selectedItems.length === 0 ? placeholder : selectedItems.map(item => item[displayField]).join(', ')}
                     </p>
                   </button>
                 </div>
@@ -408,12 +376,22 @@ const Select = forwardRef(
                         return (
                           <CommandItem
                             key={option[valueField]}
-                            className={cn(commandItemVariants({ size: 'default', selected: isSelected }))}
+                            className={cn(
+                              commandItemVariants({
+                                size: 'default',
+                                selected: isSelected,
+                              })
+                            )}
                             onSelect={() => handleToggleOption(option)}
                           >
                             <div className="flex items-center">
                               {multiple && (
-                                <div className={commandIconVariants({ size: 'default', selected: isSelected })}>
+                                <div
+                                  className={commandIconVariants({
+                                    size: 'default',
+                                    selected: isSelected,
+                                  })}
+                                >
                                   <CheckIcon />
                                 </div>
                               )}
@@ -455,7 +433,14 @@ const Select = forwardRef(
         {showSelectedTags && (
           <div className={cn('mt-1 flex flex-wrap gap-1', tagListClassName)}>
             {selectedItems.map(item => (
-              <Tag key={item.value} className={tagItemClassName} label={item.label} value={item.value} size={size} onRemove={handleRemoveTag} />
+              <Tag
+                key={item[valueField]}
+                className={tagItemClassName}
+                label={item[displayField]}
+                value={item[valueField]}
+                size={size}
+                onRemove={handleRemoveTag}
+              />
             ))}
           </div>
         )}
