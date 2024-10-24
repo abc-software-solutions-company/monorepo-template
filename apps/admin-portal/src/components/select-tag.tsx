@@ -24,7 +24,7 @@ const selectVariants = cva('grid items-center relative rounded-md border border-
   },
 });
 
-const labelVariants = cva('text-muted-foreground px-3 font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70', {
+const labelVariants = cva('text-muted-foreground px-3 font-medium leading-0 peer-disabled:cursor-not-allowed peer-disabled:opacity-70', {
   variants: {
     size: {
       default: 'text-xs',
@@ -40,7 +40,7 @@ const contentVariants = cva('px-3 text-sm flex gap-x-1 overflow-hidden truncate 
   variants: {
     size: {
       default: 'py-1',
-      sm: 'py-0',
+      sm: 'py-0.5',
     },
   },
   defaultVariants: {
@@ -112,7 +112,7 @@ const commandIconVariants = cva('mr-2 flex items-center justify-center rounded-s
 });
 
 const tagVariants = cva(
-  'whitespace-nowrap mt-0.5 py-0.5 flex items-center rounded-lg border border-primary px-1 font-medium leading-none text-primary',
+  'whitespace-nowrap px-1 py-0.5 flex items-center rounded-lg border border-primary font-medium leading-none bg-primary/10 text-primary',
   {
     variants: {
       size: {

@@ -113,7 +113,7 @@ const commandIconVariants = cva('mr-2 flex items-center justify-center rounded-s
 });
 
 const tagVariants = cva(
-  'whitespace-nowrap mt-0.5 py-0.5 flex items-center rounded-lg border border-primary px-1 font-medium leading-none text-primary',
+  'whitespace-nowrap py-1 px-1.5 flex items-center rounded-full border border-primary font-medium leading-none bg-primary/10 text-primary',
   {
     variants: {
       size: {
@@ -140,14 +140,15 @@ const tagIconVariants = cva('ml-1 cursor-pointer', {
 });
 
 type TagProps = {
+  className?: string;
   label: string;
   value: string;
   size?: 'default' | 'sm';
   onRemove: (value: string, e: React.MouseEvent) => void;
 };
 
-const Tag: FC<TagProps> = ({ label, value, size = 'default', onRemove }) => (
-  <span className={tagVariants({ size })}>
+const Tag: FC<TagProps> = ({ className, label, value, size = 'default', onRemove }) => (
+  <span className={cn(tagVariants({ size }), className)}>
     {label}
     <XIcon className={tagIconVariants({ size })} strokeWidth={2} onClick={e => onRemove(value, e)} />
   </span>
@@ -176,6 +177,7 @@ type BaseSelectProps<T extends OptionType> = {
   label?: string;
   labelClassName?: string;
   tagListClassName?: string;
+  tagItemClassName?: string;
   required?: boolean;
   disabled?: boolean;
   valueField: keyof T;
@@ -206,6 +208,7 @@ const Select = forwardRef(
       className,
       labelClassName,
       tagListClassName,
+      tagItemClassName,
       options,
       value,
       valueField,
@@ -452,7 +455,7 @@ const Select = forwardRef(
         {showSelectedTags && (
           <div className={cn('mt-1 flex flex-wrap gap-1', tagListClassName)}>
             {selectedItems.map(item => (
-              <Tag key={item.value} label={item.label} value={item.value} size={size} onRemove={handleRemoveTag} />
+              <Tag key={item.value} className={tagItemClassName} label={item.label} value={item.value} size={size} onRemove={handleRemoveTag} />
             ))}
           </div>
         )}
