@@ -1,3 +1,8 @@
+export type LocaleValue = {
+  lang: string;
+  value: string;
+};
+
 export enum CAMPAIGN_STEP {
   CAMPAIGN_DETAILS = 'campaign_details',
   ELIGIBILITY_CRITERIA = 'eligibility_criteria',
@@ -52,3 +57,18 @@ export enum CAMPAIGN_TRIGGER_FIELD {
   QR_SCAN = 'qr_scan',
   RECEIPT = 'receipt',
 }
+
+export type Locale = {
+  languageLabel: string;
+  languageName: string;
+  id: string;
+  isDefault: boolean;
+};
+
+export const locales = [
+  { languageLabel: 'Vietnam', languageName: 'vi_VN', id: '7422e7b3-883f-539f-add1-e7418eb0330', isDefault: false },
+  { languageLabel: 'Thailand', languageName: 'th_TH', id: '7422e7b3-883f-539f-add1-e5418eb0378', isDefault: false },
+  { languageLabel: 'Ghana English', languageName: 'en_GH', id: '6311d6a2-772e-428e-9cc0-d6f307da0220', isDefault: true },
+  { languageLabel: 'English', languageName: 'en_US', id: '6311d6a2-772e-428e-9cc0-d6f307da0223', isDefault: false },
+  { languageLabel: 'India', languageName: 'in_IN', id: '6311d6a2-772e-428e-9cc0-d6f307da0433', isDefault: false },
+];

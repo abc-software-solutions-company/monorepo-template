@@ -1,12 +1,16 @@
 import { z } from 'zod';
 
-import { campaignDetailsSchema } from '../validators/campaign-details.validator';
+import { locales } from '../constants/campaign.constant';
+
+import { createCampaignDetailsSchema } from '../validators/campaign-details.validator';
 import {
   campaignMechanismSchema,
   configureProgressMechanicsSchema,
   milestoneLevelsAndRewardsSchema,
 } from '../validators/campaign-mechanism.validator';
 import { eligibilityCriteriaSchema } from '../validators/eligibility-criteria.validator';
+
+const campaignDetailsSchema = createCampaignDetailsSchema(locales);
 
 export type CampaignDetailsFormValues = z.infer<typeof campaignDetailsSchema>;
 export type EligibilityCriteriaFormValues = z.infer<typeof eligibilityCriteriaSchema>;

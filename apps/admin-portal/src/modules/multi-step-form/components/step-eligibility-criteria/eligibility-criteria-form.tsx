@@ -3,7 +3,7 @@ import { Form } from '~react-web-ui-shadcn/components/ui/form';
 
 import { EligibilityCriteriaFormValues } from '../../interfaces/campaign.interface';
 import FormFieldSelect from '../form-fields/form-field-select';
-import FormFieldSelectLocation from '../form-fields/form-field-select-location';
+import FormFieldSelectTag from '../form-fields/form-field-select-tag';
 
 type EligibilityCriteriaFormProps = {
   form: UseFormReturn<EligibilityCriteriaFormValues>;
@@ -18,54 +18,86 @@ const EligibilityCriteriaForm: React.FC<EligibilityCriteriaFormProps> = ({ form,
       <form className="frm-eligibility-criteria" onSubmit={form.handleSubmit(onSubmit)}>
         <div className="grid max-w-lg gap-3">
           <FormFieldSelect
-            disabled
             form={form}
             options={[
-              { id: 'YaraConnect', label: 'YaraConnect' },
-              { id: 'FarmCare', label: 'FarmCare' },
+              { id: 'yaraconnect', name: 'YaraConnect' },
+              { id: 'farmcare', name: 'FarmCare' },
             ]}
             fieldName="campaignTargetPlatform"
-            formLabel="Product variant"
-            placeholder="Select product"
-            displayField="label"
+            formLabel="Campaign platform"
+            placeholder="dfa"
+            displayField="name"
+            valueField="id"
+            size="sm"
+            required={true}
+          />
+          <FormFieldSelectTag
+            form={form}
+            options={[
+              { id: 'yaraconnect', name: 'YaraConnect' },
+              { id: 'farmcare', name: 'FarmCare' },
+            ]}
+            fieldName="campaignTargetPlatform"
+            formLabel="Campaign platform"
+            placeholder="dfa"
+            displayField="name"
+            valueField="id"
+            required={true}
+          />
+          <FormFieldSelectTag
+            form={form}
+            options={[
+              { id: 'yaraconnect', name: 'YaraConnect' },
+              { id: 'farmcare', name: 'FarmCare' },
+            ]}
+            fieldName="campaignTargetPlatform"
+            formLabel="Campaign platform"
+            placeholder="dfa"
+            displayField="name"
             valueField="id"
             size="sm"
             required={true}
           />
           <div className="grid gap-2">
-            {campaignTargetPlatform === 'YaraConnect' && (
+            {campaignTargetPlatform?.[0]?.id === 'yaraconnect' && (
               <FormFieldSelect
-                disabled
                 form={form}
                 options={[
-                  { id: 'type1', label: 'Shop 1' },
-                  { id: 'type2', label: 'Shop 2' },
+                  { id: 'type1', name: 'Shop 1' },
+                  { id: 'type2', name: 'Shop 2' },
                 ]}
-                fieldName="campaignTargetPlatform"
-                formLabel="Product variant"
-                placeholder="Select product"
-                displayField="label"
+                fieldName="shopType"
+                formLabel="Shop type"
+                placeholder="Select shop"
+                displayField="name"
                 valueField="id"
                 size="sm"
                 required={true}
               />
             )}
           </div>
-          <FormFieldSelectLocation
+          <FormFieldSelect
             form={form}
             fieldName="userLocationLevel1"
             formLabel="Select Location Level 1"
-            items={[{ id: 'location1', label: 'Location 1' }]}
+            options={[{ id: 'location1', name: 'Location 1' }]}
+            valueField="id"
+            displayField="name"
+            showSelectedTags={true}
           />
-          {campaignTargetPlatform === 'YaraConnect' && (
-            <FormFieldSelectLocation
+          {campaignTargetPlatform?.[0]?.id === 'yaraconnect' && (
+            <FormFieldSelect
               form={form}
               fieldName="userLocationLevel2"
               formLabel="Select Location Level 2"
-              items={[{ id: 'location1', label: 'Location 1' }]}
+              options={[{ id: 'location1', name: 'Location 1' }]}
+              valueField="id"
+              displayField="name"
+              showSelectedTags={true}
             />
           )}
         </div>
+        <pre>{JSON.stringify(form.watch(), null, 2)}</pre>
       </form>
     </Form>
   );

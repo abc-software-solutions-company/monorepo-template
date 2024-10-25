@@ -1,15 +1,21 @@
 import { z } from 'zod';
 
+const optionSchema = z.object({
+  id: z.string().min(1, 'Location ID is required'),
+  name: z.string().optional(),
+  tooltip: z.string().optional(),
+});
+
 export const eligibilityCriteriaSchema = z
   .object({
-    campaignTargetPlatform: z.string().min(1, 'Campaign Target Platform is required'),
-    shopType: z.string().optional(),
-    userLocationLevel1: z.string().min(1, 'User Location Level 1 is required'),
-    userLocationLevel2: z.string().optional(),
+    campaignTargetPlatform: z.array(optionSchema).optional(),
+    shopType: z.array(optionSchema).optional(),
+    userLocationLevel1: z.array(optionSchema).optional(),
+    userLocationLevel2: z.array(optionSchema).optional(),
   })
   .refine(
     data => {
-      if (data.campaignTargetPlatform === 'YaraConnect') {
+      if (data.campaignTargetPlatform?.[0]?.id === 'yaraconnect') {
         return data.shopType && data.shopType.length > 0;
       }
 
@@ -22,7 +28,7 @@ export const eligibilityCriteriaSchema = z
   )
   .refine(
     data => {
-      if (data.campaignTargetPlatform === 'YaraConnect') {
+      if (data.campaignTargetPlatform?.[0]?.id === 'yaraconnect') {
         return data.userLocationLevel2 && data.userLocationLevel2.length > 0;
       }
 

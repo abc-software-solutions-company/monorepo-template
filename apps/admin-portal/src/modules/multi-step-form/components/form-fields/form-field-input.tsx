@@ -34,7 +34,7 @@ export default function FormFieldInput<T extends FieldValues>({
     <FormField
       control={form.control}
       name={fieldName}
-      render={({ field }) => (
+      render={({ field, fieldState }) => (
         <FormItem>
           <FormControl>
             <Input
@@ -46,6 +46,7 @@ export default function FormFieldInput<T extends FieldValues>({
               value={field.value}
               disabled={disabled}
               inputSize={size}
+              error={!!fieldState.error}
               onChange={field.onChange}
             />
           </FormControl>

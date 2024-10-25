@@ -12,6 +12,7 @@ const inputVariants = cva('grid items-center relative w-full rounded-md border b
       default: '',
       focused: 'ring-2 ring-ring ring-offset-2',
       disabled: 'cursor-not-allowed bg-muted',
+      error: 'border-destructive bg-destructive/10 focus-visible:ring-destructive',
     },
   },
   defaultVariants: {
@@ -21,7 +22,7 @@ const inputVariants = cva('grid items-center relative w-full rounded-md border b
 });
 
 const inputContentVariants = cva(
-  'w-full px-3 bg-transparent text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:font-medium placeholder:text-muted-foreground focus-visible:outline-none disabled:cursor-not-allowed',
+  'w-full px-3 bg-transparent text-sm font-medium file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:font-medium placeholder:text-muted-foreground focus-visible:outline-none disabled:cursor-not-allowed',
   {
     variants: {
       inputSize: {
@@ -35,15 +36,20 @@ const inputContentVariants = cva(
   }
 );
 
-const labelVariants = cva('text-muted-foreground px-3 font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70', {
+const labelVariants = cva('px-3 font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70', {
   variants: {
     inputSize: {
       default: 'text-xs',
       sm: 'text-[10px]',
     },
+    state: {
+      default: 'text-muted-foreground',
+      error: 'text-destructive',
+    },
   },
   defaultVariants: {
     inputSize: 'default',
+    state: 'default',
   },
 });
 
@@ -52,10 +58,11 @@ type LabelProps = {
   label: string;
   required?: boolean;
   size?: 'default' | 'sm' | null;
+  error?: boolean;
 };
 
-const Label: FC<LabelProps> = ({ label, required, className, size = 'default' }) => (
-  <label className={cn(labelVariants({ inputSize: size }), className)}>
+const Label: FC<LabelProps> = ({ label, required, className, size = 'default', error = false }) => (
+  <label className={cn(labelVariants({ inputSize: size, state: error ? 'error' : 'default' }), className)}>
     {label}
     {required && <span className="ml-0.5 text-destructive">*</span>}
   </label>
@@ -68,24 +75,33 @@ interface IInputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 
   label?: string;
   required?: boolean;
   labelClassName?: string;
+  error?: boolean;
 }
 
 const Input = React.forwardRef<HTMLInputElement, IInputProps>(
-  ({ className, type, label, required = false, inputSize = 'default', disabled = false, labelClassName, ...props }, ref) => {
+  ({ className, type, label, required = false, inputSize = 'default', disabled = false, error = false, labelClassName, ...props }, ref) => {
     const [isFocused, setIsFocused] = useState(false);
+
+    const getState = () => {
+      if (disabled) return 'disabled';
+      if (error) return 'error';
+      if (isFocused) return 'focused';
+
+      return 'default';
+    };
 
     return (
       <div
         className={cn(
           inputVariants({
             inputSize,
-            state: disabled ? 'disabled' : isFocused ? 'focused' : 'default',
+            state: getState(),
             className,
           })
         )}
       >
         <div>
-          {label && <Label label={label} required={required} size={inputSize} className={cn(labelClassName)} />}
+          {label && <Label label={label} required={required} size={inputSize} className={cn(labelClassName)} error={error} />}
           <input
             ref={ref}
             type={type}

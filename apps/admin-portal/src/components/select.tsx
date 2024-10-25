@@ -7,7 +7,7 @@ import { Separator } from '~react-web-ui-shadcn/components/ui/separator';
 import { Tooltip, TooltipArrow, TooltipContent, TooltipProvider, TooltipTrigger } from '~react-web-ui-shadcn/components/ui/tooltip';
 import { cn } from '~react-web-ui-shadcn/lib/utils';
 
-const selectVariants = cva('grid items-center relative rounded-md border border-input bg-background leading-none ring-input', {
+const selectVariants = cva('h-6 relative rounded-md border border-input bg-background ring-input', {
   variants: {
     size: {
       default: 'h-14',
@@ -25,11 +25,11 @@ const selectVariants = cva('grid items-center relative rounded-md border border-
   },
 });
 
-const labelVariants = cva('text-muted-foreground px-3 font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70', {
+const labelVariants = cva('block text-muted-foreground px-3 font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70', {
   variants: {
     size: {
-      default: 'text-xs',
-      sm: 'text-[10px]',
+      default: '!leading-[26px] text-[12px]',
+      sm: '!leading-[16px] text-[10px]',
     },
   },
   defaultVariants: {
@@ -40,8 +40,20 @@ const labelVariants = cva('text-muted-foreground px-3 font-medium leading-none p
 const contentVariants = cva('px-3 text-sm overflow-hidden truncate text-ellipsis whitespace-nowrap font-medium', {
   variants: {
     size: {
-      default: 'py-1',
-      sm: 'py-0',
+      default: '!leading-[24px] h-[28px]',
+      sm: '!leading-[22px] h-[22px]',
+    },
+  },
+  defaultVariants: {
+    size: 'default',
+  },
+});
+
+const triggerVariants = cva('grid w-full justify-between focus:outline-none', {
+  variants: {
+    size: {
+      default: '',
+      sm: '',
     },
   },
   defaultVariants: {
@@ -112,20 +124,17 @@ const commandIconVariants = cva('mr-2 flex items-center justify-center rounded-s
   },
 });
 
-const tagVariants = cva(
-  'whitespace-nowrap py-1 px-1.5 flex items-center rounded-full border border-primary font-medium leading-none bg-primary/10 text-primary',
-  {
-    variants: {
-      size: {
-        default: 'text-xs',
-        sm: 'text-[10px]',
-      },
+const tagVariants = cva('whitespace-nowrap py-1 px-1.5 flex items-center rounded-full border border-primary font-medium bg-primary/10 text-primary', {
+  variants: {
+    size: {
+      default: 'text-xs',
+      sm: 'text-[10px]',
     },
-    defaultVariants: {
-      size: 'default',
-    },
-  }
-);
+  },
+  defaultVariants: {
+    size: 'default',
+  },
+});
 
 const tagIconVariants = cva('ml-1 cursor-pointer', {
   variants: {
@@ -161,7 +170,7 @@ type LabelProps = {
   size?: 'default' | 'sm';
 };
 
-const Label: FC<LabelProps> = ({ label, required, className, size = 'default' }) => (
+const Label: FC<LabelProps> = ({ className, label, required, size = 'default' }) => (
   <label className={cn(labelVariants({ size }), className)}>
     {label}
     {required && <span className="ml-0.5 text-destructive">*</span>}
@@ -328,20 +337,15 @@ const Select = forwardRef(
             })
           )}
         >
-          <div ref={selectRef} className="grid items-center">
+          <div ref={selectRef}>
             <Popover open={isOpen && !disabled} onOpenChange={handleOpenChange}>
               <PopoverTrigger asChild>
                 <div>
-                  <ChevronDownIcon
-                    className={triggerIconVariants({
-                      size: 'default',
-                      state: disabled ? 'disabled' : 'default',
-                    })}
-                  />
+                  <ChevronDownIcon className={triggerIconVariants({ size: 'default', state: disabled ? 'disabled' : 'default' })} />
                   {label && <Label label={label} required={required} size={size} className={cn(labelClassName)} />}
                   <button
                     ref={triggerRef}
-                    className={cn('grid w-full justify-between focus:outline-none', disabled && 'cursor-not-allowed')}
+                    className={cn(triggerVariants({ size }), disabled && 'cursor-not-allowed')}
                     role="combobox"
                     aria-expanded={isOpen}
                     disabled={disabled}
@@ -353,7 +357,8 @@ const Select = forwardRef(
                     onKeyDown={handleKeyDown}
                   >
                     <p className={cn(contentVariants({ size }), selectedItems.length === 0 && 'text-muted-foreground', disabled && 'opacity-50')}>
-                      {selectedItems.length === 0 ? placeholder : selectedItems.map(item => item[displayField]).join(', ')}
+                      {selectedItems.length === 0 && selectedItems.map(item => item[displayField]).join(', ')}
+                      {selectedItems.length > 0 && selectedItems.map(item => item[displayField]).join(', ')}
                     </p>
                   </button>
                 </div>
@@ -376,22 +381,12 @@ const Select = forwardRef(
                         return (
                           <CommandItem
                             key={option[valueField]}
-                            className={cn(
-                              commandItemVariants({
-                                size: 'default',
-                                selected: isSelected,
-                              })
-                            )}
+                            className={cn(commandItemVariants({ size: 'default', selected: isSelected }))}
                             onSelect={() => handleToggleOption(option)}
                           >
                             <div className="flex items-center">
                               {multiple && (
-                                <div
-                                  className={commandIconVariants({
-                                    size: 'default',
-                                    selected: isSelected,
-                                  })}
-                                >
+                                <div className={commandIconVariants({ size: 'default', selected: isSelected })}>
                                   <CheckIcon />
                                 </div>
                               )}
@@ -431,7 +426,7 @@ const Select = forwardRef(
           </div>
         </div>
         {showSelectedTags && (
-          <div className={cn('mt-1 flex flex-wrap gap-1', tagListClassName)}>
+          <div className={cn('mt-2 flex flex-wrap gap-1', tagListClassName)}>
             {selectedItems.map(item => (
               <Tag
                 key={item[valueField]}

@@ -112,3 +112,18 @@
     @apply h-0 w-0;
   }
 }
+
+.quill-simple .ql-toolbar.ql-snow {
+  @apply border-x-0 border-none p-1.5 py-1;
+}
+.quill-simple .ql-container.ql-snow {
+  @apply border-none;
+  font-family: inherit;
+}
+.quill-simple .ql-editor {
+  @apply min-h-32 p-2 text-sm;
+  font-family: inherit;
+}
+.quill-simple .ql-editor.ql-blank:before {
+  @apply left-3 right-3 not-italic;
+}

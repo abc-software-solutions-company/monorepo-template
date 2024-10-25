@@ -6,7 +6,13 @@ import { Separator } from '~react-web-ui-shadcn/components/ui/separator';
 
 import { CampaignDetailsFormValues, CampaignMechanismFormValues, EligibilityCriteriaFormValues } from '../interfaces/campaign.interface';
 
-import { CAMPAIGN_STEP, CAMPAIGN_TRIGGER_CONDITION, CAMPAIGN_TRIGGER_FIELD, CAMPAIGN_TRIGGER_PROPERTY } from '../constants/campaign.constant';
+import {
+  CAMPAIGN_STEP,
+  CAMPAIGN_TRIGGER_CONDITION,
+  CAMPAIGN_TRIGGER_FIELD,
+  CAMPAIGN_TRIGGER_PROPERTY,
+  locales,
+} from '../constants/campaign.constant';
 
 import CampaignDetailForm from './step-campaign-details/campaign-details-form';
 import CampaignMechanismForm from './step-campaign-mechanism/campaign-mechanism-form';
@@ -14,7 +20,7 @@ import CampaignConfirmation from './step-confirmation/campaign-confirmation';
 import EligibilityCriteriaForm from './step-eligibility-criteria/eligibility-criteria-form';
 import CampaignNavigation from './campaign-navigation';
 
-import { campaignDetailsSchema } from '../validators/campaign-details.validator';
+import { createCampaignDetailsSchema } from '../validators/campaign-details.validator';
 import { campaignMechanismSchema } from '../validators/campaign-mechanism.validator';
 import { eligibilityCriteriaSchema } from '../validators/eligibility-criteria.validator';
 
@@ -34,18 +40,19 @@ const CampaignRoot: React.FC = () => {
   });
   const [formData, setFormData] = useState<CampaignFormData>({
     campaignDetails: {
-      name: '',
-      description: '',
-      products: [],
+      text: '',
+      name: [],
+      description: [],
+      tnc: [],
     },
     eligibilityCriteria: {
-      campaignTargetPlatform: 'FarmCare',
-      shopType: '',
-      userLocationLevel1: 'location1',
-      userLocationLevel2: '',
+      campaignTargetPlatform: [],
+      shopType: [],
+      userLocationLevel1: [],
+      userLocationLevel2: [],
     },
     campaignMechanism: {
-      campaignType: 'stamp',
+      campaignType: 'milestone',
       progressMechanics: [
         {
           name: 'Rule Name 1',
@@ -64,7 +71,7 @@ const CampaignRoot: React.FC = () => {
   const [isFormValid, setIsFormValid] = useState<boolean>(false);
 
   const campaignDetailsForm = useForm<CampaignDetailsFormValues>({
-    resolver: zodResolver(campaignDetailsSchema),
+    resolver: zodResolver(createCampaignDetailsSchema(locales)),
     defaultValues: formData.campaignDetails,
   });
 
@@ -163,7 +170,7 @@ const CampaignRoot: React.FC = () => {
         return (
           <Button
             type="button"
-            disabled={!campaignDetailsForm.formState.isValid}
+            // disabled={!campaignDetailsForm.formState.isValid}
             onClick={campaignDetailsForm.handleSubmit(handleCampaignDetailsSubmit)}
           >
             Next
@@ -173,7 +180,7 @@ const CampaignRoot: React.FC = () => {
         return (
           <Button
             type="button"
-            disabled={!eligibilityCriteriaForm.formState.isValid}
+            // disabled={!eligibilityCriteriaForm.formState.isValid}
             onClick={eligibilityCriteriaForm.handleSubmit(handleEligibilityCriteriaSubmit)}
           >
             Next
@@ -184,7 +191,7 @@ const CampaignRoot: React.FC = () => {
         return (
           <Button
             type="button"
-            disabled={!campaignMechanismForm.formState.isValid}
+            // disabled={!campaignMechanismForm.formState.isValid}
             onClick={campaignMechanismForm.handleSubmit(handleCampaignMechanismSubmit)}
           >
             Next

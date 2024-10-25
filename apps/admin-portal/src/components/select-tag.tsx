@@ -6,7 +6,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '~react-web-ui-shadcn/co
 import { Separator } from '~react-web-ui-shadcn/components/ui/separator';
 import { cn } from '~react-web-ui-shadcn/lib/utils';
 
-const selectVariants = cva('grid items-center relative rounded-md border border-input bg-background leading-none ring-input', {
+const selectVariants = cva('h-6 relative rounded-md border border-input bg-background ring-input', {
   variants: {
     size: {
       default: 'h-14',
@@ -24,11 +24,11 @@ const selectVariants = cva('grid items-center relative rounded-md border border-
   },
 });
 
-const labelVariants = cva('text-muted-foreground px-3 font-medium leading-0 peer-disabled:cursor-not-allowed peer-disabled:opacity-70', {
+const labelVariants = cva('block text-muted-foreground px-3 font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70', {
   variants: {
     size: {
-      default: 'text-xs',
-      sm: 'text-[10px]',
+      default: '!leading-[26px] text-[12px]',
+      sm: '!leading-[16px] text-[10px]',
     },
   },
   defaultVariants: {
@@ -36,11 +36,23 @@ const labelVariants = cva('text-muted-foreground px-3 font-medium leading-0 peer
   },
 });
 
-const contentVariants = cva('px-3 text-sm flex gap-x-1 overflow-hidden truncate text-ellipsis whitespace-nowrap font-medium', {
+const contentVariants = cva('px-3 text-sm overflow-hidden truncate text-ellipsis whitespace-nowrap font-medium flex items-center gap-x-1', {
   variants: {
     size: {
-      default: 'py-1',
-      sm: 'py-0.5',
+      default: '!leading-[24px] h-[28px]',
+      sm: '!leading-[22px] h-[22px]',
+    },
+  },
+  defaultVariants: {
+    size: 'default',
+  },
+});
+
+const triggerVariants = cva('grid w-full justify-between focus:outline-none', {
+  variants: {
+    size: {
+      default: '',
+      sm: '',
     },
   },
   defaultVariants: {
@@ -111,20 +123,17 @@ const commandIconVariants = cva('mr-2 flex items-center justify-center rounded-s
   },
 });
 
-const tagVariants = cva(
-  'whitespace-nowrap px-1 py-0.5 flex items-center rounded-lg border border-primary font-medium leading-none bg-primary/10 text-primary',
-  {
-    variants: {
-      size: {
-        default: 'text-xs',
-        sm: 'text-[10px]',
-      },
+const tagVariants = cva('block whitespace-nowrap px-1 flex items-center rounded-xl border border-primary font-medium bg-primary/10 text-primary', {
+  variants: {
+    size: {
+      default: 'h-5 text-[12px]',
+      sm: 'h-4 text-[10px]',
     },
-    defaultVariants: {
-      size: 'default',
-    },
-  }
-);
+  },
+  defaultVariants: {
+    size: 'default',
+  },
+});
 
 const tagIconVariants = cva('ml-1 cursor-pointer', {
   variants: {
@@ -147,7 +156,7 @@ type TagProps = {
 
 const Tag: FC<TagProps> = ({ label, value, size = 'default', onRemove }) => (
   <span className={tagVariants({ size })}>
-    {label}
+    {label || value}
     <XIcon className={tagIconVariants({ size })} strokeWidth={2} onClick={e => onRemove(value, e)} />
   </span>
 );
@@ -341,7 +350,7 @@ const SelectTag = forwardRef(
                 {label && <Label label={label} required={required} size={size} className={cn(labelClassName)} />}
                 <button
                   ref={triggerRef}
-                  className={cn('grid w-full justify-between focus:outline-none', disabled && 'cursor-not-allowed')}
+                  className={cn(triggerVariants({ size }), disabled && 'cursor-not-allowed')}
                   role="combobox"
                   aria-expanded={isOpen}
                   disabled={disabled}
