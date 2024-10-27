@@ -1,7 +1,7 @@
 import { FieldValues, Path, UseFormReturn } from 'react-hook-form';
 import { FormControl, FormField, FormItem } from '~react-web-ui-shadcn/components/ui/form';
 
-import { Input } from '@/components/input';
+import { Input } from '@/components/form-fields-yara/input';
 
 type FormFieldInputProps<T extends FieldValues> = {
   className?: string;

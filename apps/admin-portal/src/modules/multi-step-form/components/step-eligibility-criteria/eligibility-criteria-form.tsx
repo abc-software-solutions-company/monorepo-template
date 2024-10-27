@@ -1,9 +1,10 @@
 import { UseFormReturn } from 'react-hook-form';
 import { Form } from '~react-web-ui-shadcn/components/ui/form';
 
+import FormFieldSelect from '@/components/form-fields-yara/form-field-select';
+import FormFieldSelectTag from '@/components/form-fields-yara/form-field-select-tag';
+
 import { EligibilityCriteriaFormValues } from '../../interfaces/campaign.interface';
-import FormFieldSelect from '../form-fields/form-field-select';
-import FormFieldSelectTag from '../form-fields/form-field-select-tag';
 
 type EligibilityCriteriaFormProps = {
   form: UseFormReturn<EligibilityCriteriaFormValues>;

@@ -40,10 +40,11 @@ const CampaignRoot: React.FC = () => {
   });
   const [formData, setFormData] = useState<CampaignFormData>({
     campaignDetails: {
-      text: '',
       name: [],
       description: [],
       tnc: [],
+      startDate: undefined,
+      endDate: undefined,
     },
     eligibilityCriteria: {
       campaignTargetPlatform: [],

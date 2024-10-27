@@ -6,12 +6,13 @@ import { Form } from '~react-web-ui-shadcn/components/ui/form';
 import { Label } from '~react-web-ui-shadcn/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '~react-web-ui-shadcn/components/ui/radio-group';
 
+import FormFieldInput from '@/components/form-fields-yara/form-field-input';
+
 import ConfigureTriggers from './configure-triggers';
 
 import { CAMPAIGN_RULE, CAMPAIGN_TRIGGER_CONDITION, CAMPAIGN_TRIGGER_FIELD, CAMPAIGN_TRIGGER_PROPERTY } from '../../constants/campaign.constant';
 import { CampaignMechanismFormValues, ConfigureProgressMechanicsFormValues } from '../../interfaces/campaign.interface';
 import { configureProgressMechanicsSchema } from '../../validators/campaign-mechanism.validator';
-import FormFieldInput from '../form-fields/form-field-input';
 
 type ModalProgressMechanicsProps = {
   form: UseFormReturn<CampaignMechanismFormValues>;

@@ -1,7 +1,7 @@
 import { FieldValues, Path, UseFormReturn } from 'react-hook-form';
 import { FormControl, FormField, FormItem } from '~react-web-ui-shadcn/components/ui/form';
 
-import SelectTag from '@/components/select-tag';
+import SelectTag from '@/components/form-fields-yara/select-tag';
 
 type OptionType = Record<string, string>;
 

@@ -2,13 +2,13 @@ import React from 'react';
 import { UseFormReturn } from 'react-hook-form';
 import { Form } from '~react-web-ui-shadcn/components/ui/form';
 
-import FileUpload from '@/components/file-upload';
+import FileUpload from '@/components/form-fields-yara/file-upload';
+import FormFieldDatePicker from '@/components/form-fields-yara/form-field-date-picker';
+import FormFieldEditorMultiLanguage from '@/components/form-fields-yara/form-field-editor-multi-language';
+import FormFieldInputMultiLanguage from '@/components/form-fields-yara/form-field-input-multi-language';
 
 import { locales } from '../../constants/campaign.constant';
 import { CampaignDetailsFormValues } from '../../interfaces/campaign.interface';
-import FormFieldEditorMultiLanguage from '../form-fields/form-field-editor-multi-language';
-import FormFieldInput from '../form-fields/form-field-input';
-import FormFieldInputMultiLanguage from '../form-fields/form-field-input-multi-language';
 
 type CampaignDetailsFormProps = {
   form: UseFormReturn<CampaignDetailsFormValues>;
@@ -21,7 +21,6 @@ const CampaignDetailsForm: React.FC<CampaignDetailsFormProps> = ({ form, onSubmi
       <form className="frm-campaign-details" onSubmit={form.handleSubmit(onSubmit)}>
         <div className="grid grid-cols-2">
           <div className="grid max-w-lg gap-3">
-            <FormFieldInput required form={form} fieldName="text" formLabel="Text" placeholder="Type something..." />
             <FormFieldInputMultiLanguage required form={form} fieldName="name" formLabel="Campaign name" locales={locales} maxLength={50} />
             <FormFieldInputMultiLanguage
               required
@@ -31,6 +30,8 @@ const CampaignDetailsForm: React.FC<CampaignDetailsFormProps> = ({ form, onSubmi
               locales={locales}
               maxLength={300}
             />
+            <FormFieldDatePicker required form={form} fieldName="startDate" formLabel="Start Date" />
+            <FormFieldDatePicker required size="sm" form={form} fieldName="endDate" formLabel="End Date" />
             <FormFieldEditorMultiLanguage form={form} fieldName="tnc" formLabel="Terms and conditions" locales={locales} maxLength={300} />
           </div>
           <div>

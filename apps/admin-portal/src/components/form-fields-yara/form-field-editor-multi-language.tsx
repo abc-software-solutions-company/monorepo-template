@@ -8,7 +8,9 @@ import { FormControl, FormField, FormItem, FormLabel } from '~react-web-ui-shadc
 import { Popover, PopoverContent, PopoverTrigger } from '~react-web-ui-shadcn/components/ui/popover';
 import { cn } from '~react-web-ui-shadcn/lib/utils';
 
-import { Locale, LocaleValue } from '../../constants/campaign.constant';
+import InputEditor from '@/components/form-fields-yara/input-editor';
+
+import { Locale, LocaleValue } from '../../modules/multi-step-form/constants/campaign.constant';
 
 const container = cva('w-full rounded-md border border-input bg-background ring-offset-background', {
   variants: {
@@ -24,7 +26,7 @@ const container = cva('w-full rounded-md border border-input bg-background ring-
   },
 });
 
-const input = cva('w-full bg-transparent text-sm font-medium py-2 px-3 placeholder:text-muted-foreground focus-visible:outline-none', {
+const input = cva('w-full bg-transparent text-sm font-medium placeholder:text-muted-foreground focus-visible:outline-none', {
   variants: {
     state: {
       default: '',
@@ -235,8 +237,7 @@ export default function MultiLanguageInput<T extends FieldValues>({
                   </Popover>
                 )}
               </div>
-
-              <input
+              <InputEditor
                 className={input({
                   state: getInputState(isOverMaxLength(field.value, activeLocale)),
                 })}
@@ -244,7 +245,7 @@ export default function MultiLanguageInput<T extends FieldValues>({
                 value={field.value?.find((item: LocaleValue) => item.lang === activeLocale)?.value || ''}
                 required={required}
                 disabled={disabled}
-                onChange={e => handleInputChange(field, activeLocale, e.target.value)}
+                onChange={value => handleInputChange(field, activeLocale, value)}
                 onFocus={() => setIsFocused(true)}
                 onBlur={() => setIsFocused(false)}
               />

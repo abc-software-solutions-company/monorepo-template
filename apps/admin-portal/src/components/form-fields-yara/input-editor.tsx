@@ -3,7 +3,7 @@ import ReactQuill from 'react-quill';
 
 import 'react-quill/dist/quill.snow.css';
 
-interface IQuillEditorProps {
+type InputEditorProps = {
   value: string;
   required?: boolean;
   disabled?: boolean;
@@ -12,7 +12,7 @@ interface IQuillEditorProps {
   onChange: (value: string) => void;
   onFocus?: () => void;
   onBlur?: () => void;
-}
+};
 
 const modules = {
   toolbar: [[{ list: 'ordered' }, { list: 'bullet' }, 'bold', 'italic', 'underline', 'link']],
@@ -20,7 +20,7 @@ const modules = {
 
 const formats = ['bold', 'italic', 'underline', 'list', 'bullet', 'link'];
 
-const QuillEditor: React.FC<IQuillEditorProps> = ({
+const InputEditor: React.FC<InputEditorProps> = ({
   value,
   disabled = false,
   placeholder = 'Type something...',
@@ -62,4 +62,4 @@ const QuillEditor: React.FC<IQuillEditorProps> = ({
   );
 };
 
-export default QuillEditor;
+export default InputEditor;
