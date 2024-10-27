@@ -80,7 +80,7 @@ interface IProps<T extends FieldValues> extends VariantProps<typeof container> {
   maxLength?: number;
 }
 
-export default function MultiLanguageInput<T extends FieldValues>({
+export default function FormFieldEditorMultiLanguage<T extends FieldValues>({
   className,
   form,
   formLabel,

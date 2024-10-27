@@ -9,12 +9,12 @@ export const createCampaignDetailsSchema = (locales: Locale[]) => {
     throw new Error('No default locale specified. At least one locale must have isDefault set to true.');
   }
 
-  const createLocalizedField = (fieldName: string, maxLength = 50) =>
+  const createLocalizedField = (fieldName: string, maxLength?: number) =>
     z
       .array(
         z.object({
           lang: z.string(),
-          value: z.string().max(50, `Maximum length for this field is only ${maxLength} characters`),
+          value: maxLength ? z.string().max(maxLength, `Maximum length for this field is only ${maxLength} characters`) : z.string(),
         })
       )
       .min(1, `${fieldName} must have at least one language`)
@@ -31,14 +31,21 @@ export const createCampaignDetailsSchema = (locales: Locale[]) => {
 
   return z
     .object({
-      name: createLocalizedField('Name'),
+      name: createLocalizedField('Name', 50),
       description: createLocalizedField('Description', 300),
       tnc: createLocalizedField('Terms and Conditions', 300),
+      image_url: createLocalizedField('Image URL'),
       startDate: z.date().optional(),
       endDate: z.date().optional(),
     })
-    .refine(data => data.startDate !== undefined, { message: 'Start date is required', path: ['startDate'] })
-    .refine(data => data.endDate !== undefined, { message: 'End date is required', path: ['endDate'] })
+    .refine(data => data.startDate !== undefined, {
+      message: 'Start date is required',
+      path: ['startDate'],
+    })
+    .refine(data => data.endDate !== undefined, {
+      message: 'End date is required',
+      path: ['endDate'],
+    })
     .refine(
       data => {
         if (!data.startDate || !data.endDate) return false;

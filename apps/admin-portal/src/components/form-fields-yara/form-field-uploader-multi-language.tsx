@@ -1,16 +1,20 @@
-import { useState } from 'react';
+import { FC, Fragment, useEffect, useState } from 'react';
 import { cva, type VariantProps } from 'class-variance-authority';
-import { CheckIcon, ChevronDown, CircleCheckBigIcon } from 'lucide-react';
+import { CheckIcon, ChevronDown, CircleCheckBigIcon, Trash2Icon } from 'lucide-react';
 import { FieldValues, Path, UseFormReturn } from 'react-hook-form';
 import { Button } from '~react-web-ui-shadcn/components/ui/button';
 import { Command, CommandGroup, CommandItem, CommandList } from '~react-web-ui-shadcn/components/ui/command';
 import { FormControl, FormField, FormItem, FormLabel } from '~react-web-ui-shadcn/components/ui/form';
 import { Popover, PopoverContent, PopoverTrigger } from '~react-web-ui-shadcn/components/ui/popover';
 import { cn } from '~react-web-ui-shadcn/lib/utils';
+import { convertBytes } from '~shared-universal/utils/string.util';
+
+import FileUpload from './file-upload';
 
 import { Locale, LocaleValue } from '../../modules/multi-step-form/constants/campaign.constant';
+import ModalConfirm from '../modals/modal-confirm';
 
-const container = cva('w-full rounded-md border border-input bg-background ring-offset-background', {
+const container = cva('w-full rounded-md  border-input bg-background ring-offset-background', {
   variants: {
     state: {
       default: '',
@@ -24,7 +28,7 @@ const container = cva('w-full rounded-md border border-input bg-background ring-
   },
 });
 
-const input = cva('w-full bg-transparent text-sm font-medium py-2 px-3 placeholder:text-muted-foreground focus-visible:outline-none', {
+const input = cva('h-64 w-full bg-transparent text-sm font-medium placeholder:text-muted-foreground focus-visible:outline-none', {
   variants: {
     state: {
       default: '',
@@ -63,6 +67,18 @@ const label = cva('text-xs font-medium', {
   },
 });
 
+type FilePreview = {
+  name: string;
+  size: number;
+  type: string;
+  url?: string;
+};
+
+type ImageDimensions = {
+  width: number;
+  height: number;
+};
+
 interface IProps<T extends FieldValues> extends VariantProps<typeof container> {
   className?: string;
   form: UseFormReturn<T>;
@@ -74,22 +90,52 @@ interface IProps<T extends FieldValues> extends VariantProps<typeof container> {
   visibled?: boolean;
   required?: boolean;
   maxVisible?: number;
-  minLength?: number;
-  maxLength?: number;
+  maxSize?: number;
+  imageDimensions?: ImageDimensions;
+  maxFiles?: number;
 }
 
-export default function FormFieldInputMultiLanguage<T extends FieldValues>({
+type FileUploadRulesProps = {
+  className?: string;
+  maxSize: number;
+  maxFiles: number;
+  imageDimensions?: ImageDimensions;
+};
+
+type FormFieldProps = {
+  value?: LocaleValue[];
+  onChange: (value: LocaleValue[]) => void;
+};
+
+const FileUploadRules: React.FC<FileUploadRulesProps> = ({ className, maxSize, maxFiles, imageDimensions }) => (
+  <ul className={cn('list-inside list-disc space-y-1 text-xs text-muted-foreground', className)}>
+    <li>Images should not be blurred</li>
+    {imageDimensions && (
+      <li>
+        Images dimensions {imageDimensions.width}x{imageDimensions.height}
+      </li>
+    )}
+    <li>
+      Maximum of {maxFiles} file{maxFiles > 1 ? 's' : ''} can be uploaded
+    </li>
+    <li>File size should not exceed {convertBytes(maxSize)}</li>
+    <li>Supports JPEG, PNG, JPG, HEIC (image files)</li>
+  </ul>
+);
+
+export default function FormFieldUploaderMultiLanguage<T extends FieldValues>({
   className,
   form,
   formLabel,
   fieldName,
   locales,
-  placeholder = 'Type something...',
   visibled = true,
   disabled,
   required,
   maxVisible = 4,
-  maxLength = 255,
+  maxSize = 52428800,
+  imageDimensions,
+  maxFiles = 1,
 }: IProps<T>) {
   const sortedLocales = [...locales].sort((a, b) => (a.isDefault ? -1 : b.isDefault ? 1 : a.languageLabel.localeCompare(b.languageLabel)));
   const defaultLocale = sortedLocales.find(locale => locale.isDefault);
@@ -97,13 +143,22 @@ export default function FormFieldInputMultiLanguage<T extends FieldValues>({
   const [activeLocale, setActiveLocale] = useState(defaultLocale?.languageName || sortedLocales?.[0]?.languageName);
   const [isFocused, setIsFocused] = useState(false);
   const [isOpenDropdown, setIsOpenDropdown] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
+  const [isConfirmVisible, setIsConfirmVisible] = useState(false);
+  const [previews, setPreviews] = useState<Record<string, FilePreview[]>>({});
+
+  useEffect(() => {
+    return () => {
+      Object.values(previews).forEach(files => {
+        files.forEach(file => {
+          if (file.url) URL.revokeObjectURL(file.url);
+        });
+      });
+    };
+  }, [previews]);
 
   const visibleLocales = sortedLocales.slice(0, maxVisible);
   const dropdownLocales = sortedLocales.slice(maxVisible);
-
-  const getCharCount = (values: LocaleValue[] = [], lang: string): number => values.find(item => item.lang === lang)?.value?.length || 0;
-
-  const isOverMaxLength = (values: LocaleValue[] = [], lang: string): boolean => getCharCount(values, lang) > maxLength;
 
   const hasInput = (values: LocaleValue[] = [], lang: string): boolean => {
     const value = values.find(item => item.lang === lang)?.value;
@@ -111,7 +166,7 @@ export default function FormFieldInputMultiLanguage<T extends FieldValues>({
     return Boolean(value?.trim());
   };
 
-  const getContainerState = (error?: boolean) => {
+  const getContainerState = (error?: boolean): 'disabled' | 'error' | 'focused' | 'default' => {
     if (disabled) return 'disabled';
     if (error) return 'error';
     if (isFocused) return 'focused';
@@ -119,31 +174,37 @@ export default function FormFieldInputMultiLanguage<T extends FieldValues>({
     return 'default';
   };
 
-  const getInputState = (error?: boolean) => {
+  const getInputState = (error?: boolean): 'disabled' | 'error' | 'default' => {
     if (disabled) return 'disabled';
     if (error) return 'error';
 
     return 'default';
   };
 
-  const getTabState = (isActive: boolean, hasError: boolean) => {
+  const getTabState = (isActive: boolean): 'disabled' | 'active' | 'default' => {
     if (disabled) return 'disabled';
-    if (hasError) return 'error';
     if (isActive) return 'active';
 
     return 'default';
   };
 
-  const handleInputChange = (
-    field: {
-      value?: LocaleValue[];
-      onChange: (value: LocaleValue[]) => void;
-    },
-    lang: string,
-    value: string
-  ) => {
+  const handleFileSelect = (field: FormFieldProps, lang: string, files: File[], filenames: string[]) => {
     const values = [...(field.value || [])];
     const index = values.findIndex(v => v.lang === lang);
+
+    const fileInfos: FilePreview[] = filenames.map((filename, idx) => ({
+      name: filename,
+      size: files[idx].size,
+      type: files[idx].type,
+      url: URL.createObjectURL(files[idx]),
+    }));
+
+    setPreviews(prev => ({
+      ...prev,
+      [lang]: fileInfos,
+    }));
+
+    const value = JSON.stringify(fileInfos.map(({ ...rest }) => rest));
 
     if (index >= 0) {
       values[index] = { ...values[index], value };
@@ -154,11 +215,80 @@ export default function FormFieldInputMultiLanguage<T extends FieldValues>({
     field.onChange(values);
   };
 
-  const CheckIndicator = ({ values, lang }: { values: LocaleValue[]; lang: string }) => {
+  const handleRemoveFile = (field: FormFieldProps, lang: string, fileIndex: number) => {
+    setPreviews(prev => {
+      const langPreviews = prev[lang];
+
+      if (!langPreviews) return prev;
+
+      if (langPreviews[fileIndex]?.url) {
+        URL.revokeObjectURL(langPreviews[fileIndex].url);
+      }
+
+      const newPreviews = {
+        ...prev,
+        [lang]: langPreviews.filter((_, idx) => idx !== fileIndex),
+      };
+
+      if (newPreviews[lang].length === 0) {
+        delete newPreviews[lang];
+      }
+
+      return newPreviews;
+    });
+
+    const values = [...(field.value || [])];
+    const valueIndex = values.findIndex(v => v.lang === lang);
+
+    if (valueIndex >= 0) {
+      const currentFiles = JSON.parse(values[valueIndex].value) as FilePreview[];
+      const newFiles = currentFiles.filter((_, idx) => idx !== fileIndex);
+
+      if (newFiles.length === 0) {
+        values.splice(valueIndex, 1);
+      } else {
+        values[valueIndex] = { ...values[valueIndex], value: JSON.stringify(newFiles) };
+      }
+
+      field.onChange(values);
+    }
+  };
+
+  const CheckIndicator: FC<{ values: LocaleValue[]; lang: string }> = ({ values, lang }) => {
     if (!hasInput(values, lang)) return null;
 
-    return <CircleCheckBigIcon size={12} className={cn(isOverMaxLength(values, lang) ? 'text-destructive' : 'text-primary')} />;
+    return <CircleCheckBigIcon size={12} className={cn('text-primary')} />;
   };
+
+  const renderPreview = (field: FormFieldProps, files: FilePreview[]): JSX.Element => (
+    <div className="relative h-64" onMouseEnter={() => setIsHovered(true)} onMouseLeave={() => setIsHovered(false)}>
+      {files.map((file, index) => (
+        <Fragment key={index}>
+          <div className="flex h-full items-center justify-center">
+            {file.type.startsWith('image/') && file.url && <img src={file.url} alt={file.name} className="h-full w-full rounded-md object-contain" />}
+          </div>
+          {isHovered && (
+            <button
+              type="button"
+              className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-black/50 p-3"
+              onClick={() => setIsConfirmVisible(true)}
+            >
+              <Trash2Icon size={24} color="white" />
+            </button>
+          )}
+          <ModalConfirm
+            visible={isConfirmVisible}
+            title="Are you sure?"
+            content="This will permanently delete the file"
+            btnYes="Yes"
+            btnNo="No"
+            onYes={() => handleRemoveFile(field, activeLocale, index)}
+            onNo={() => setIsConfirmVisible(false)}
+          />
+        </Fragment>
+      ))}
+    </div>
+  );
 
   if (!visibled) return null;
 
@@ -183,7 +313,7 @@ export default function FormFieldInputMultiLanguage<T extends FieldValues>({
                     type="button"
                     disabled={disabled}
                     className={tab({
-                      state: getTabState(activeLocale === locale.languageName, isOverMaxLength(field.value, locale.languageName)),
+                      state: getTabState(activeLocale === locale.languageName),
                     })}
                     onClick={() => setActiveLocale(locale.languageName)}
                   >
@@ -216,12 +346,7 @@ export default function FormFieldInputMultiLanguage<T extends FieldValues>({
                                   setIsOpenDropdown(false);
                                 }}
                               >
-                                <span
-                                  className={cn(
-                                    'flex w-full items-center justify-between gap-1',
-                                    isOverMaxLength(field.value, locale.languageName) && 'text-destructive'
-                                  )}
-                                >
+                                <span className="flex w-full items-center justify-between gap-1">
                                   {locale.languageLabel}
                                   <CheckIndicator values={field.value} lang={locale.languageName} />
                                   {activeLocale === locale.languageName && <CheckIcon className="h-4 w-4 text-primary" />}
@@ -236,27 +361,23 @@ export default function FormFieldInputMultiLanguage<T extends FieldValues>({
                 )}
               </div>
 
-              <input
-                className={input({
-                  state: getInputState(isOverMaxLength(field.value, activeLocale)),
-                })}
-                placeholder={placeholder}
-                value={field.value?.find((item: LocaleValue) => item.lang === activeLocale)?.value || ''}
-                required={required}
-                disabled={disabled}
-                onChange={e => handleInputChange(field, activeLocale, e.target.value)}
-                onFocus={() => setIsFocused(true)}
-                onBlur={() => setIsFocused(false)}
-              />
+              <div className="mt-4">
+                {previews[activeLocale] && renderPreview(field, previews[activeLocale])}
+                {!previews[activeLocale] && (
+                  <FileUpload
+                    className={cn(input({ state: getInputState(!!error) }))}
+                    required={required}
+                    onFileSelect={(files, filenames) => handleFileSelect(field, activeLocale, files, filenames)}
+                    onFocus={() => setIsFocused(true)}
+                    onBlur={() => setIsFocused(false)}
+                  />
+                )}
+
+                <FileUploadRules className="mt-2" maxSize={maxSize} maxFiles={maxFiles} imageDimensions={imageDimensions} />
+              </div>
             </div>
           </FormControl>
-
-          <p className={cn('mt-1.5 flex gap-1 text-xs')}>
-            <span className={cn(isOverMaxLength(field.value, activeLocale) && 'text-destructive')}>
-              {getCharCount(field.value, activeLocale)}/{maxLength}
-            </span>
-            <span className="text-destructive">{error?.message}</span>
-          </p>
+          {error?.message && <p className="mt-1.5 text-xs text-destructive">{error.message}</p>}
         </FormItem>
       )}
     />

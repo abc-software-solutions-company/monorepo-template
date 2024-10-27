@@ -43,6 +43,7 @@ const CampaignRoot: React.FC = () => {
       name: [],
       description: [],
       tnc: [],
+      image_url: [],
       startDate: undefined,
       endDate: undefined,
     },
