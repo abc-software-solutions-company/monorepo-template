@@ -1,7 +1,6 @@
 import { FieldValues, Path, UseFormReturn } from 'react-hook-form';
-import { FormControl, FormField, FormItem } from '~react-web-ui-shadcn/components/ui/form';
-
-import SelectTag from '@/components/form-fields-yara/select-tag';
+import { SelectTag } from '~react-web-ui-shadcn/components/ahua/select-tag';
+import { FormControl, FormField, FormItem, FormMessage } from '~react-web-ui-shadcn/components/ui/form';
 
 type OptionType = Record<string, string>;
 
@@ -14,8 +13,8 @@ type FormFieldSelectTagProps<T extends FieldValues, O extends OptionType> = {
   placeholder?: string;
   disabled?: boolean;
   visibled?: boolean;
-  valueField: Extract<keyof O, string>;
-  displayField: Extract<keyof O, string>;
+  valueField?: Extract<keyof O, string>;
+  displayField?: Extract<keyof O, string>;
   size?: 'default' | 'sm';
   maxVisible?: number;
   multiple?: boolean;
@@ -31,8 +30,8 @@ export default function FormFieldSelectTag<T extends FieldValues, O extends Opti
   placeholder = '',
   visibled = true,
   disabled,
-  valueField,
-  displayField,
+  valueField = 'id' as Extract<keyof O, string>,
+  displayField = 'name' as Extract<keyof O, string>,
   size = 'default',
   maxVisible,
   required,
@@ -43,7 +42,7 @@ export default function FormFieldSelectTag<T extends FieldValues, O extends Opti
     <FormField
       control={form.control}
       name={fieldName}
-      render={({ field }) => (
+      render={({ field, fieldState: { error } }) => (
         <FormItem>
           <FormControl>
             <SelectTag
@@ -61,6 +60,7 @@ export default function FormFieldSelectTag<T extends FieldValues, O extends Opti
               onChange={field.onChange}
             />
           </FormControl>
+          {error?.message && <FormMessage message={error.message} />}
         </FormItem>
       )}
     />

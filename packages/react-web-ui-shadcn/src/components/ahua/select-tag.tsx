@@ -5,6 +5,7 @@ import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, Command
 import { Popover, PopoverContent, PopoverTrigger } from '~react-web-ui-shadcn/components/ui/popover';
 import { Separator } from '~react-web-ui-shadcn/components/ui/separator';
 import { cn } from '~react-web-ui-shadcn/lib/utils';
+import { InputLabel } from './input-base';
 
 const selectVariants = cva('h-6 relative rounded-md border border-input bg-background ring-input', {
   variants: {
@@ -21,18 +22,6 @@ const selectVariants = cva('h-6 relative rounded-md border border-input bg-backg
   defaultVariants: {
     size: 'default',
     state: 'default',
-  },
-});
-
-const labelVariants = cva('block text-muted-foreground px-3 font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70', {
-  variants: {
-    size: {
-      default: '!leading-[26px] text-[12px]',
-      sm: '!leading-[16px] text-[10px]',
-    },
-  },
-  defaultVariants: {
-    size: 'default',
   },
 });
 
@@ -123,7 +112,7 @@ const commandIconVariants = cva('mr-2 flex items-center justify-center rounded-s
   },
 });
 
-const tagVariants = cva('block whitespace-nowrap px-1 flex items-center rounded-xl border border-primary font-medium bg-primary/10 text-primary', {
+const tagVariants = cva('whitespace-nowrap px-1 flex items-center rounded-xl border border-primary font-medium bg-primary/10 text-primary', {
   variants: {
     size: {
       default: 'h-5 text-[12px]',
@@ -148,31 +137,18 @@ const tagIconVariants = cva('ml-1 cursor-pointer', {
 });
 
 type TagProps = {
+  className?: string;
   label: string;
   value: string;
   size?: 'default' | 'sm';
   onRemove: (value: string, e: React.MouseEvent) => void;
 };
 
-const Tag: FC<TagProps> = ({ label, value, size = 'default', onRemove }) => (
-  <span className={tagVariants({ size })}>
-    {label || value}
+const Tag: FC<TagProps> = ({ className, label, value, size = 'default', onRemove }) => (
+  <span className={cn(tagVariants({ size }), className)}>
+    {label}
     <XIcon className={tagIconVariants({ size })} strokeWidth={2} onClick={e => onRemove(value, e)} />
   </span>
-);
-
-type LabelProps = {
-  className?: string;
-  label: string;
-  required?: boolean;
-  size?: 'default' | 'sm';
-};
-
-const Label: FC<LabelProps> = ({ label, required, className, size = 'default' }) => (
-  <label className={cn(labelVariants({ size }), className)}>
-    {label}
-    {required && <span className="ml-0.5 text-destructive">*</span>}
-  </label>
 );
 
 type OptionType = Record<string, string>;
@@ -305,7 +281,7 @@ const SelectTag = forwardRef(
 
     const renderSelectedTags = () => {
       if (selectedItems.length === 0) {
-        return <span className={cn('font-medium leading-none text-muted-foreground', disabled && 'opacity-50')}>{placeholder}</span>;
+        return <span className={cn('text-muted-foreground font-medium leading-none', disabled && 'opacity-50')}>{placeholder}</span>;
       }
 
       const visibleItems = selectedItems.slice(0, maxVisible);
@@ -347,7 +323,7 @@ const SelectTag = forwardRef(
             <PopoverTrigger asChild>
               <div>
                 <ChevronDownIcon className={triggerIconVariants({ size: 'default', state: disabled ? 'disabled' : 'default' })} />
-                {label && <Label label={label} required={required} size={size} className={cn(labelClassName)} />}
+                {label && <InputLabel label={label} required={required} size={size} className={cn(labelClassName)} />}
                 <button
                   ref={triggerRef}
                   className={cn(triggerVariants({ size }), disabled && 'cursor-not-allowed')}
@@ -425,4 +401,4 @@ const SelectTag = forwardRef(
 
 SelectTag.displayName = 'SelectTag';
 
-export default SelectTag;
+export { SelectTag };

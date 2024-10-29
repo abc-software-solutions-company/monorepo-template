@@ -19,6 +19,12 @@
   "[javascriptreact]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
+  "tailwindCSS.experimental": {
+    "classRegex": [
+      ["cva\\(([^)]*)\\)", "[\"'`]([^\"'`]*).*?[\"'`]"],
+      ["cx\\(([^)]*)\\)", "(?:'|\"|`)([^']*)(?:'|\"|`)"]
+    ]
+  },
   "todo-tree.general.tags": ["BUG", "HACK", "FIXME", "TODO", "CHANGEME"],
   "todo-tree.highlights.customHighlight": {
     "FIXME": {

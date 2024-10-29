@@ -6,7 +6,7 @@ import { Form } from '~react-web-ui-shadcn/components/ui/form';
 import { Label } from '~react-web-ui-shadcn/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '~react-web-ui-shadcn/components/ui/radio-group';
 
-import FormFieldInput from '@/components/form-fields-yara/form-field-input';
+import FormFieldInput from '@/components/form-fields-ahua/form-field-input';
 
 import ConfigureTriggers from './configure-triggers';
 

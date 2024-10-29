@@ -1,14 +1,19 @@
 import { useState } from 'react';
 import { cva, type VariantProps } from 'class-variance-authority';
-import { CheckIcon, ChevronDown, CircleCheckBigIcon } from 'lucide-react';
+import { ChevronDown } from 'lucide-react';
 import { FieldValues, Path, UseFormReturn } from 'react-hook-form';
+import { InputEditor } from '~react-web-ui-shadcn/components/ahua/input-editor';
 import { Button } from '~react-web-ui-shadcn/components/ui/button';
 import { Command, CommandGroup, CommandItem, CommandList } from '~react-web-ui-shadcn/components/ui/command';
-import { FormControl, FormField, FormItem, FormLabel } from '~react-web-ui-shadcn/components/ui/form';
+import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '~react-web-ui-shadcn/components/ui/form';
 import { Popover, PopoverContent, PopoverTrigger } from '~react-web-ui-shadcn/components/ui/popover';
 import { cn } from '~react-web-ui-shadcn/lib/utils';
 
-import { Locale, LocaleValue } from '../../modules/multi-step-form/constants/campaign.constant';
+import { TranslationValue } from '@/modules/multi-step-form/interfaces/campaign.interface';
+
+import { CheckIndicator } from './form-field-base';
+
+import { Locale } from '../../modules/multi-step-form/constants/campaign.constant';
 
 const container = cva('w-full rounded-md border border-input bg-background ring-offset-background', {
   variants: {
@@ -24,7 +29,7 @@ const container = cva('w-full rounded-md border border-input bg-background ring-
   },
 });
 
-const input = cva('w-full bg-transparent text-sm font-medium py-2 px-3 placeholder:text-muted-foreground focus-visible:outline-none', {
+const input = cva('w-full bg-transparent text-sm font-medium placeholder:text-muted-foreground focus-visible:outline-none', {
   variants: {
     state: {
       default: '',
@@ -78,7 +83,7 @@ interface IProps<T extends FieldValues> extends VariantProps<typeof container> {
   maxLength?: number;
 }
 
-export default function FormFieldInputMultiLanguage<T extends FieldValues>({
+export default function FormFieldEditorMultiLanguage<T extends FieldValues>({
   className,
   form,
   formLabel,
@@ -101,15 +106,15 @@ export default function FormFieldInputMultiLanguage<T extends FieldValues>({
   const visibleLocales = sortedLocales.slice(0, maxVisible);
   const dropdownLocales = sortedLocales.slice(maxVisible);
 
-  const getCharCount = (values: LocaleValue[] = [], lang: string): number => values.find(item => item.lang === lang)?.value?.length || 0;
+  const getCharCount = (values: TranslationValue[] = [], lang: string): number => {
+    const value = values.find(item => item.lang === lang)?.value || '';
 
-  const isOverMaxLength = (values: LocaleValue[] = [], lang: string): boolean => getCharCount(values, lang) > maxLength;
+    const valueOnlyText = value.replace(/<\/?[^>]+(>|$)/g, '');
 
-  const hasInput = (values: LocaleValue[] = [], lang: string): boolean => {
-    const value = values.find(item => item.lang === lang)?.value;
-
-    return Boolean(value?.trim());
+    return valueOnlyText?.length || 0;
   };
+
+  const isOverMaxLength = (values: TranslationValue[] = [], lang: string): boolean => getCharCount(values, lang) > maxLength;
 
   const getContainerState = (error?: boolean) => {
     if (disabled) return 'disabled';
@@ -136,8 +141,8 @@ export default function FormFieldInputMultiLanguage<T extends FieldValues>({
 
   const handleInputChange = (
     field: {
-      value?: LocaleValue[];
-      onChange: (value: LocaleValue[]) => void;
+      value?: TranslationValue[];
+      onChange: (value: TranslationValue[]) => void;
     },
     lang: string,
     value: string
@@ -152,12 +157,6 @@ export default function FormFieldInputMultiLanguage<T extends FieldValues>({
     }
 
     field.onChange(values);
-  };
-
-  const CheckIndicator = ({ values, lang }: { values: LocaleValue[]; lang: string }) => {
-    if (!hasInput(values, lang)) return null;
-
-    return <CircleCheckBigIcon size={12} className={cn(isOverMaxLength(values, lang) ? 'text-destructive' : 'text-primary')} />;
   };
 
   if (!visibled) return null;
@@ -179,7 +178,7 @@ export default function FormFieldInputMultiLanguage<T extends FieldValues>({
               <div className="flex h-10 items-center border-b border-input">
                 {visibleLocales.map(locale => (
                   <button
-                    key={locale.id}
+                    key={locale.languageName}
                     type="button"
                     disabled={disabled}
                     className={tab({
@@ -209,7 +208,8 @@ export default function FormFieldInputMultiLanguage<T extends FieldValues>({
                           <CommandGroup>
                             {dropdownLocales.map(locale => (
                               <CommandItem
-                                key={locale.id}
+                                key={locale.languageName}
+                                className={activeLocale === locale.languageName ? '!bg-primary/20' : ''}
                                 disabled={disabled}
                                 onSelect={() => {
                                   setActiveLocale(locale.languageName);
@@ -224,7 +224,6 @@ export default function FormFieldInputMultiLanguage<T extends FieldValues>({
                                 >
                                   {locale.languageLabel}
                                   <CheckIndicator values={field.value} lang={locale.languageName} />
-                                  {activeLocale === locale.languageName && <CheckIcon className="h-4 w-4 text-primary" />}
                                 </span>
                               </CommandItem>
                             ))}
@@ -235,28 +234,27 @@ export default function FormFieldInputMultiLanguage<T extends FieldValues>({
                   </Popover>
                 )}
               </div>
-
-              <input
+              <InputEditor
                 className={input({
                   state: getInputState(isOverMaxLength(field.value, activeLocale)),
                 })}
                 placeholder={placeholder}
-                value={field.value?.find((item: LocaleValue) => item.lang === activeLocale)?.value || ''}
+                value={field.value?.find((item: TranslationValue) => item.lang === activeLocale)?.value || ''}
                 required={required}
                 disabled={disabled}
-                onChange={e => handleInputChange(field, activeLocale, e.target.value)}
+                onChange={value => handleInputChange(field, activeLocale, value)}
                 onFocus={() => setIsFocused(true)}
                 onBlur={() => setIsFocused(false)}
               />
             </div>
           </FormControl>
 
-          <p className={cn('mt-1.5 flex gap-1 text-xs')}>
-            <span className={cn(isOverMaxLength(field.value, activeLocale) && 'text-destructive')}>
+          {!error?.message && (
+            <p className={cn(isOverMaxLength(field.value, activeLocale) && 'text-destructive')}>
               {getCharCount(field.value, activeLocale)}/{maxLength}
-            </span>
-            <span className="text-destructive">{error?.message}</span>
-          </p>
+            </p>
+          )}
+          {error?.message && <FormMessage message={error.message} />}
         </FormItem>
       )}
     />

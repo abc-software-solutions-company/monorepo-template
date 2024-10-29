@@ -1,7 +1,6 @@
 import { FieldValues, Path, UseFormReturn } from 'react-hook-form';
-import { FormControl, FormField, FormItem } from '~react-web-ui-shadcn/components/ui/form';
-
-import Select from '@/components/form-fields-yara/select';
+import { Select } from '~react-web-ui-shadcn/components/ahua/select';
+import { FormControl, FormField, FormItem, FormMessage } from '~react-web-ui-shadcn/components/ui/form';
 
 type OptionType = Record<string, string>;
 
@@ -14,8 +13,8 @@ type FormFieldSelectProps<T extends FieldValues, O extends OptionType> = {
   placeholder?: string;
   disabled?: boolean;
   visibled?: boolean;
-  valueField: Extract<keyof O, string>;
-  displayField: Extract<keyof O, string>;
+  valueField?: Extract<keyof O, string>;
+  displayField?: Extract<keyof O, string>;
   size?: 'default' | 'sm';
   required?: boolean;
   multiple?: boolean;
@@ -31,8 +30,8 @@ export default function FormFieldSelect<T extends FieldValues, O extends OptionT
   placeholder = '',
   visibled = true,
   disabled,
-  valueField,
-  displayField,
+  valueField = 'id' as Extract<keyof O, string>,
+  displayField = 'name' as Extract<keyof O, string>,
   size = 'default',
   required,
   multiple,
@@ -44,7 +43,7 @@ export default function FormFieldSelect<T extends FieldValues, O extends OptionT
     <FormField
       control={form.control}
       name={fieldName}
-      render={({ field }) => (
+      render={({ field, fieldState: { error } }) => (
         <FormItem>
           <FormControl>
             <Select
@@ -63,6 +62,7 @@ export default function FormFieldSelect<T extends FieldValues, O extends OptionT
               onChange={field.onChange}
             />
           </FormControl>
+          {error?.message && <FormMessage message={error.message} />}
         </FormItem>
       )}
     />

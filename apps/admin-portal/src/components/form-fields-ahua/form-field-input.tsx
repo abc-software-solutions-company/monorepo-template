@@ -1,7 +1,6 @@
 import { FieldValues, Path, UseFormReturn } from 'react-hook-form';
-import { FormControl, FormField, FormItem } from '~react-web-ui-shadcn/components/ui/form';
-
-import { Input } from '@/components/form-fields-yara/input';
+import { Input } from '~react-web-ui-shadcn/components/ahua/input';
+import { FormControl, FormField, FormItem, FormMessage } from '~react-web-ui-shadcn/components/ui/form';
 
 type FormFieldInputProps<T extends FieldValues> = {
   className?: string;
@@ -34,7 +33,7 @@ export default function FormFieldInput<T extends FieldValues>({
     <FormField
       control={form.control}
       name={fieldName}
-      render={({ field, fieldState }) => (
+      render={({ field, fieldState: { error } }) => (
         <FormItem>
           <FormControl>
             <Input
@@ -45,11 +44,12 @@ export default function FormFieldInput<T extends FieldValues>({
               label={formLabel}
               value={field.value}
               disabled={disabled}
-              inputSize={size}
-              error={!!fieldState.error}
+              size={size}
+              error={!!error}
               onChange={field.onChange}
             />
           </FormControl>
+          {error?.message && <FormMessage message={error.message} />}
         </FormItem>
       )}
     />

@@ -18,3 +18,13 @@ export type CampaignMechanismFormValues = z.infer<typeof campaignMechanismSchema
 
 export type ConfigureProgressMechanicsFormValues = z.infer<typeof configureProgressMechanicsSchema>;
 export type MilestoneLevelsAndRewardsFormValues = z.infer<typeof milestoneLevelsAndRewardsSchema>;
+
+export type TranslationValue = {
+  lang: string;
+  value: string;
+};
+
+export type FormFieldTranslationProps = {
+  value?: TranslationValue[];
+  onChange: (value: TranslationValue[]) => void;
+};

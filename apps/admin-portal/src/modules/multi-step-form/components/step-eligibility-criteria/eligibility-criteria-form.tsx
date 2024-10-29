@@ -1,8 +1,8 @@
 import { UseFormReturn } from 'react-hook-form';
 import { Form } from '~react-web-ui-shadcn/components/ui/form';
 
-import FormFieldSelect from '@/components/form-fields-yara/form-field-select';
-import FormFieldSelectTag from '@/components/form-fields-yara/form-field-select-tag';
+import FormFieldSelect from '@/components/form-fields-ahua/form-field-select';
+import FormFieldSelectTag from '@/components/form-fields-ahua/form-field-select-tag';
 
 import { EligibilityCriteriaFormValues } from '../../interfaces/campaign.interface';
 
@@ -18,20 +18,6 @@ const EligibilityCriteriaForm: React.FC<EligibilityCriteriaFormProps> = ({ form,
     <Form {...form}>
       <form className="frm-eligibility-criteria" onSubmit={form.handleSubmit(onSubmit)}>
         <div className="grid max-w-lg gap-3">
-          <FormFieldSelect
-            form={form}
-            options={[
-              { id: 'yaraconnect', name: 'YaraConnect' },
-              { id: 'farmcare', name: 'FarmCare' },
-            ]}
-            fieldName="campaignTargetPlatform"
-            formLabel="Campaign platform"
-            placeholder="dfa"
-            displayField="name"
-            valueField="id"
-            size="sm"
-            required={true}
-          />
           <FormFieldSelectTag
             form={form}
             options={[
@@ -40,23 +26,9 @@ const EligibilityCriteriaForm: React.FC<EligibilityCriteriaFormProps> = ({ form,
             ]}
             fieldName="campaignTargetPlatform"
             formLabel="Campaign platform"
-            placeholder="dfa"
+            placeholder="Select platform"
             displayField="name"
             valueField="id"
-            required={true}
-          />
-          <FormFieldSelectTag
-            form={form}
-            options={[
-              { id: 'yaraconnect', name: 'YaraConnect' },
-              { id: 'farmcare', name: 'FarmCare' },
-            ]}
-            fieldName="campaignTargetPlatform"
-            formLabel="Campaign platform"
-            placeholder="dfa"
-            displayField="name"
-            valueField="id"
-            size="sm"
             required={true}
           />
           <div className="grid gap-2">
@@ -72,7 +44,6 @@ const EligibilityCriteriaForm: React.FC<EligibilityCriteriaFormProps> = ({ form,
                 placeholder="Select shop"
                 displayField="name"
                 valueField="id"
-                size="sm"
                 required={true}
               />
             )}
@@ -82,6 +53,7 @@ const EligibilityCriteriaForm: React.FC<EligibilityCriteriaFormProps> = ({ form,
             fieldName="userLocationLevel1"
             formLabel="Select Location Level 1"
             options={[{ id: 'location1', name: 'Location 1' }]}
+            placeholder="All"
             valueField="id"
             displayField="name"
             showSelectedTags={true}
@@ -92,6 +64,7 @@ const EligibilityCriteriaForm: React.FC<EligibilityCriteriaFormProps> = ({ form,
               fieldName="userLocationLevel2"
               formLabel="Select Location Level 2"
               options={[{ id: 'location1', name: 'Location 1' }]}
+              placeholder="All"
               valueField="id"
               displayField="name"
               showSelectedTags={true}

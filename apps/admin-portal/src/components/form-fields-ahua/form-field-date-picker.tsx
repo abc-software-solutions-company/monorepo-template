@@ -1,8 +1,7 @@
 import { FieldValues, Path, UseFormReturn } from 'react-hook-form';
 import { useTranslations } from 'use-intl';
+import { InputDate } from '~react-web-ui-shadcn/components/ahua/input-date';
 import { FormControl, FormField, FormItem, FormMessage } from '~react-web-ui-shadcn/components/ui/form';
-
-import { InputDate } from '@/components/form-fields-yara/input-date';
 
 type FormFieldDatePickerProps<T extends FieldValues> = {
   className?: string;
@@ -14,6 +13,7 @@ type FormFieldDatePickerProps<T extends FieldValues> = {
   visibled?: boolean;
   size?: 'default' | 'sm';
   required?: boolean;
+  disableBefore?: Date;
 };
 
 const FormFieldDatePicker = <T extends FieldValues>({
@@ -26,6 +26,7 @@ const FormFieldDatePicker = <T extends FieldValues>({
   visibled = true,
   size = 'default',
   required = false,
+  disableBefore,
 }: FormFieldDatePickerProps<T>) => {
   const t = useTranslations();
 
@@ -39,13 +40,14 @@ const FormFieldDatePicker = <T extends FieldValues>({
         <FormItem className={className}>
           <FormControl>
             <InputDate
-              label={formLabel ?? t('form_field_date_picker')}
+              label={formLabel}
               value={field.value}
               error={!!error}
               placeholder={placeholder}
               disabled={disabled}
               size={size}
               required={required}
+              disableBefore={disableBefore}
               onChange={field.onChange}
             />
           </FormControl>

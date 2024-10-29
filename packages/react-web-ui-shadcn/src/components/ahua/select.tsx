@@ -6,6 +6,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '~react-web-ui-shadcn/co
 import { Separator } from '~react-web-ui-shadcn/components/ui/separator';
 import { Tooltip, TooltipArrow, TooltipContent, TooltipProvider, TooltipTrigger } from '~react-web-ui-shadcn/components/ui/tooltip';
 import { cn } from '~react-web-ui-shadcn/lib/utils';
+import { InputLabel } from './input-base';
 
 const selectVariants = cva('h-6 relative rounded-md border border-input bg-background ring-input', {
   variants: {
@@ -22,18 +23,6 @@ const selectVariants = cva('h-6 relative rounded-md border border-input bg-backg
   defaultVariants: {
     size: 'default',
     state: 'default',
-  },
-});
-
-const labelVariants = cva('block text-muted-foreground px-3 font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70', {
-  variants: {
-    size: {
-      default: '!leading-[26px] text-[12px]',
-      sm: '!leading-[16px] text-[10px]',
-    },
-  },
-  defaultVariants: {
-    size: 'default',
   },
 });
 
@@ -161,20 +150,6 @@ const Tag: FC<TagProps> = ({ className, label, value, size = 'default', onRemove
     {label}
     <XIcon className={tagIconVariants({ size })} strokeWidth={2} onClick={e => onRemove(value, e)} />
   </span>
-);
-
-type LabelProps = {
-  className?: string;
-  label: string;
-  required?: boolean;
-  size?: 'default' | 'sm';
-};
-
-const Label: FC<LabelProps> = ({ className, label, required, size = 'default' }) => (
-  <label className={cn(labelVariants({ size }), className)}>
-    {label}
-    {required && <span className="ml-0.5 text-destructive">*</span>}
-  </label>
 );
 
 type OptionType = Record<string, string>;
@@ -342,7 +317,7 @@ const Select = forwardRef(
               <PopoverTrigger asChild>
                 <div>
                   <ChevronDownIcon className={triggerIconVariants({ size: 'default', state: disabled ? 'disabled' : 'default' })} />
-                  {label && <Label label={label} required={required} size={size} className={cn(labelClassName)} />}
+                  {label && <InputLabel label={label} required={required} size={size} className={cn(labelClassName)} />}
                   <button
                     ref={triggerRef}
                     className={cn(triggerVariants({ size }), disabled && 'cursor-not-allowed')}
@@ -357,7 +332,7 @@ const Select = forwardRef(
                     onKeyDown={handleKeyDown}
                   >
                     <p className={cn(contentVariants({ size }), selectedItems.length === 0 && 'text-muted-foreground', disabled && 'opacity-50')}>
-                      {selectedItems.length === 0 && selectedItems.map(item => item[displayField]).join(', ')}
+                      {selectedItems.length === 0 && placeholder}
                       {selectedItems.length > 0 && selectedItems.map(item => item[displayField]).join(', ')}
                     </p>
                   </button>
@@ -365,13 +340,7 @@ const Select = forwardRef(
               </PopoverTrigger>
               <PopoverContent ref={popoverRef} className="w-[--radix-popover-trigger-width] p-0">
                 <Command>
-                  {showSearch && (
-                    <CommandInput
-                      placeholder={placeholder}
-                      className={commandInputVariants({ size: 'default' })}
-                      onFocus={() => setIsFocused(true)}
-                    />
-                  )}
+                  {showSearch && <CommandInput className={commandInputVariants({ size: 'default' })} onFocus={() => setIsFocused(true)} />}
                   <CommandList>
                     <CommandEmpty>No results found.</CommandEmpty>
                     <CommandGroup className="p-0">
@@ -446,4 +415,4 @@ const Select = forwardRef(
 
 Select.displayName = 'Select';
 
-export default Select;
+export { Select };
