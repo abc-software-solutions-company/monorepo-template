@@ -1,3 +1,5 @@
+import { Locale } from '@/interfaces/language.interface';
+
 export enum CAMPAIGN_STEP {
   CAMPAIGN_DETAILS = 'campaign_details',
   ELIGIBILITY_CRITERIA = 'eligibility_criteria',
@@ -53,16 +55,15 @@ export enum CAMPAIGN_TRIGGER_FIELD {
   RECEIPT = 'receipt',
 }
 
-export type Locale = {
-  languageLabel: string;
-  languageName: string;
-  isDefault: boolean;
-};
-
-export const locales = [
+export const locales: Locale[] = [
   { languageLabel: 'Vietnam', languageName: 'vi_VN', isDefault: false },
   { languageLabel: 'Thailand', languageName: 'th_TH', isDefault: false },
   { languageLabel: 'Ghana English', languageName: 'en_GH', isDefault: true },
   { languageLabel: 'English', languageName: 'en_US', isDefault: false },
   { languageLabel: 'India', languageName: 'in_IN', isDefault: false },
+];
+
+export const countries = [
+  { id: 'vi-vn', name: 'Vietnam' },
+  { id: 'th-th', name: 'Thailand' },
 ];

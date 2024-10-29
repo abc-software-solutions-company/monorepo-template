@@ -9,11 +9,10 @@ import { Popover, PopoverContent, PopoverTrigger } from '~react-web-ui-shadcn/co
 import { cn } from '~react-web-ui-shadcn/lib/utils';
 import { convertBytes } from '~shared-universal/utils/string.util';
 
-import { FormFieldTranslationProps } from '@/modules/multi-step-form/interfaces/campaign.interface';
+import { FormFieldTranslationProps, Locale } from '@/interfaces/language.interface';
 
 import { CheckIndicator } from './form-field-base';
 
-import { Locale } from '../../modules/multi-step-form/constants/campaign.constant';
 import ModalConfirm from '../modals/modal-confirm';
 
 export type FilePreview = {
@@ -43,6 +42,7 @@ interface IFormFieldUploaderMultiLanguageProps<T extends FieldValues> {
   imageDimensions?: ImageDimensions;
   maxFiles?: number;
   previews: Record<string, FilePreview[]>;
+  isUploading?: boolean;
   onSelectFile: (field: FormFieldTranslationProps, lang: string, files: File[], filenames: string[]) => void;
   onRemoveFile: (field: FormFieldTranslationProps, lang: string, fileIndex: number) => void;
 }
@@ -61,6 +61,7 @@ export default function FormFieldUploaderMultiLanguage<T extends FieldValues>({
   imageDimensions,
   maxFiles = 1,
   previews,
+  isUploading = false,
   onSelectFile,
   onRemoveFile,
 }: IFormFieldUploaderMultiLanguageProps<T>) {
@@ -205,6 +206,7 @@ export default function FormFieldUploaderMultiLanguage<T extends FieldValues>({
                       required={required}
                       disabled={disabled}
                       error={!!error}
+                      isUploading={isUploading}
                       onSelectFile={(files, filenames) => onSelectFile(field, locale.languageName, files, filenames)}
                       onFocus={() => handleFocus(locale.languageName)}
                       onBlur={() => handleBlur(locale.languageName)}

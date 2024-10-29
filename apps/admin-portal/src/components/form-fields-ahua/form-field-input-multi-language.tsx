@@ -8,11 +8,9 @@ import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '~react
 import { Popover, PopoverContent, PopoverTrigger } from '~react-web-ui-shadcn/components/ui/popover';
 import { cn } from '~react-web-ui-shadcn/lib/utils';
 
-import { TranslationValue } from '@/modules/multi-step-form/interfaces/campaign.interface';
+import { Locale, TranslationValue } from '@/interfaces/language.interface';
 
 import { CheckIndicator } from './form-field-base';
-
-import { Locale } from '../../modules/multi-step-form/constants/campaign.constant';
 
 const container = cva('w-full rounded-md border border-input bg-background ring-offset-background', {
   variants: {
@@ -169,24 +167,30 @@ export default function FormFieldInputMultiLanguage<T extends FieldValues>({
           <FormControl>
             <div className={cn(container({ state: getContainerState(!!error) }), className)}>
               <div className="flex h-10 items-center border-b border-input">
-                {visibleLocales.map(locale => (
-                  <button
-                    key={locale.languageName}
-                    type="button"
-                    disabled={disabled}
-                    className={tab({
-                      state: getTabState(activeLocale === locale.languageName, isOverMaxLength(field.value, locale.languageName)),
-                    })}
-                    onClick={() => setActiveLocale(locale.languageName)}
-                  >
-                    <span className="flex items-center gap-1">
-                      {locale.languageLabel}
-                      {locale.isDefault && <span className="ml-1">(Default)</span>}
-                      <CheckIndicator values={field.value} lang={locale.languageName} />
-                    </span>
-                    {activeLocale === locale.languageName && <div className="absolute bottom-0 left-0 h-0.5 w-full bg-primary" />}
-                  </button>
-                ))}
+                {visibleLocales.map(locale => {
+                  const isTooLong = isOverMaxLength(field.value, locale.languageName);
+
+                  return (
+                    <button
+                      key={locale.languageName}
+                      type="button"
+                      disabled={disabled}
+                      className={tab({
+                        state: getTabState(activeLocale === locale.languageName, isTooLong),
+                      })}
+                      onClick={() => setActiveLocale(locale.languageName)}
+                    >
+                      <span className="flex items-center gap-1">
+                        {locale.languageLabel}
+                        {locale.isDefault && <span className="ml-1">(Default)</span>}
+                        <CheckIndicator values={field.value} lang={locale.languageName} error={isTooLong} />
+                      </span>
+                      {activeLocale === locale.languageName && (
+                        <div className={cn('absolute bottom-0 left-0 h-0.5 w-full', isTooLong ? 'bg-destructive' : 'bg-primary')} />
+                      )}
+                    </button>
+                  );
+                })}
 
                 {dropdownLocales.length > 0 && (
                   <Popover open={isOpenDropdown} onOpenChange={setIsOpenDropdown}>

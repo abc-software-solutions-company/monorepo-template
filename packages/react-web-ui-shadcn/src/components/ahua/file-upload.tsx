@@ -3,7 +3,7 @@ import { cva } from 'class-variance-authority';
 import { Button } from '~react-web-ui-shadcn/components/ui/button';
 import { cn } from '~react-web-ui-shadcn/lib/utils';
 
-const dropzoneVariants = cva('flex items-center justify-center cursor-pointer rounded-lg border border-dashed text-center', {
+const dropzoneVariants = cva('relative flex items-center justify-center cursor-pointer rounded-lg border border-dashed text-center', {
   variants: {
     state: {
       default: 'bg-muted hover:border-primary',
@@ -31,6 +31,7 @@ type FileUploadProps = {
   required?: boolean;
   error?: boolean;
   disabled?: boolean;
+  isUploading?: boolean;
   onSelectFile?: (files: File[], filenames: string[]) => void;
   onFocus?: () => void;
   onBlur?: () => void;
@@ -43,6 +44,7 @@ const FileUpload: React.FC<FileUploadProps> = ({
   maxFiles = 10,
   error,
   disabled = false,
+  isUploading = false,
   onSelectFile,
   onFocus,
   onBlur,
@@ -145,6 +147,11 @@ const FileUpload: React.FC<FileUploadProps> = ({
         onFocus={handleFocus}
         onBlur={handleBlur}
       />
+      {isUploading && (
+        <div className="absolute left-0 top-0 flex h-full w-full items-center justify-center rounded-lg bg-black/30">
+          <p>Loading</p>
+        </div>
+      )}
     </div>
   );
 };

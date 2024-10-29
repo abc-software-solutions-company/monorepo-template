@@ -43,7 +43,7 @@ const CampaignRoot: React.FC = () => {
       name: [],
       description: [],
       tnc: [],
-      image_url: [],
+      imageUrl: [],
       country: [],
       keyword: '',
       startDate: undefined,
@@ -106,8 +106,8 @@ const CampaignRoot: React.FC = () => {
 
   const handleCampaignDetailsSubmit = (data: CampaignDetailsFormValues) => {
     setFormData(prev => ({ ...prev, campaignDetails: data }));
-    setCurrentStep(CAMPAIGN_STEP.ELIGIBILITY_CRITERIA);
-    setStepCompleted(prev => ({ ...prev, [CAMPAIGN_STEP.CAMPAIGN_DETAILS]: true }));
+    // setCurrentStep(CAMPAIGN_STEP.ELIGIBILITY_CRITERIA);
+    // setStepCompleted(prev => ({ ...prev, [CAMPAIGN_STEP.CAMPAIGN_DETAILS]: true }));
   };
 
   const handleEligibilityCriteriaSubmit = (data: EligibilityCriteriaFormValues) => {

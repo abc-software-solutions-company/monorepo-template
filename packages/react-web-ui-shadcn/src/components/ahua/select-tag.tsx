@@ -200,17 +200,11 @@ const SelectTag = forwardRef(
     const popoverRef = useRef<HTMLDivElement>(null);
     const triggerRef = useRef<HTMLButtonElement>(null);
 
-    const selectedValues = useMemo(() => new Set(value.map(item => item[valueField])), [value, valueField]);
+    const selectedValues = useMemo(() => {
+      return new Set(value.map(item => item[valueField]));
+    }, [value, valueField]);
 
-    const selectedItems = useMemo(
-      () =>
-        value.map(item => ({
-          value: item[valueField],
-          label: item[displayField],
-          original: item,
-        })),
-      [value, valueField, displayField]
-    );
+    const selectedItems = useMemo(() => options.filter(option => selectedValues.has(option[valueField])), [options, selectedValues, valueField]);
 
     const handleToggleOption = (option: T) => {
       if (disabled) return;
@@ -288,9 +282,9 @@ const SelectTag = forwardRef(
 
       return (
         <>
-          {visibleItems.map(item => (
-            <Tag key={item.value} label={item.label} value={item.value} size={size} onRemove={handleRemoveTag} />
-          ))}
+          {visibleItems.map(item => {
+            return <Tag key={item[valueField]} label={item[displayField]} value={item[valueField]} size={size} onRemove={handleRemoveTag} />;
+          })}
           {selectedItems.length > maxVisible && <span className={tagVariants({ size })}>+{selectedItems.length - maxVisible} more</span>}
         </>
       );

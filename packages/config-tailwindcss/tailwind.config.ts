@@ -33,7 +33,7 @@ const config: Omit<Config, 'content'> = {
         caption: ['0.625rem', { lineHeight: '1rem', letterSpacing: '0' }], // 10/16
       },
       colors: {
-        // https://uicolors.app/create
+        // https://www.tailwindshades.com/
         primary: {
           50: '#eff5ff',
           100: '#dbe8fe',

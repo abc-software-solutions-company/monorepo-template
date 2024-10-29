@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-import { Locale } from '../constants/campaign.constant';
+import { Locale } from '@/interfaces/language.interface';
 
 export const createCampaignDetailsSchema = (locales: Locale[]) => {
   const defaultLocale = locales.find(locale => locale.isDefault);
@@ -34,7 +34,7 @@ export const createCampaignDetailsSchema = (locales: Locale[]) => {
       name: createLocalizedField(50),
       description: createLocalizedField(300),
       tnc: createLocalizedField(300),
-      image_url: createLocalizedField(),
+      imageUrl: createLocalizedField(),
       country: z.array(z.object({})),
       keyword: z.string(),
       startDate: z.date().optional(),

@@ -1,12 +1,24 @@
 import { FC } from 'react';
-import { CircleCheckBigIcon } from 'lucide-react';
+import { CircleCheckBigIcon, InfoIcon } from 'lucide-react';
+import { cn } from '~react-web-ui-shadcn/lib/utils';
 
-import { TranslationValue } from '@/modules/multi-step-form/interfaces/campaign.interface';
+import { TranslationValue } from '@/interfaces/language.interface';
 
-export const CheckIndicator: FC<{ className?: string; values: TranslationValue[]; lang: string }> = ({ className, values = [], lang }) => {
+type CheckIndicatorProps = {
+  className?: string;
+  values: TranslationValue[];
+  lang: string;
+  error?: boolean;
+};
+
+export const CheckIndicator: FC<CheckIndicatorProps> = ({ className, values = [], lang, error }) => {
   const hasValue = values.find(item => item.lang === lang)?.value?.trim();
 
   if (!hasValue) return null;
 
-  return <CircleCheckBigIcon size={12} className={className} />;
+  if (error) {
+    return <InfoIcon size={12} className={cn(className, 'text-destructive')} />;
+  } else {
+    return <CircleCheckBigIcon size={12} className={cn(className, 'text-primary')} />;
+  }
 };
