@@ -1,4 +1,4 @@
-import { FC, useMemo, useState } from 'react';
+import { FC, ForwardedRef, forwardRef, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { cva } from 'class-variance-authority';
 import { format, isValid } from 'date-fns';
 import { CalendarDaysIcon } from 'lucide-react';
@@ -29,6 +29,30 @@ const inputVariants = cva('grid items-center relative w-full rounded-md border b
   },
 });
 
+const contentVariants = cva('px-3 text-sm whitespace-nowrap font-medium', {
+  variants: {
+    size: {
+      default: '!leading-[24px] h-[28px]',
+      sm: '!leading-[22px] h-[22px]',
+    },
+  },
+  defaultVariants: {
+    size: 'default',
+  },
+});
+
+const triggerVariants = cva('grid w-full justify-between focus:outline-none text-left', {
+  variants: {
+    size: {
+      default: '',
+      sm: '',
+    },
+  },
+  defaultVariants: {
+    size: 'default',
+  },
+});
+
 const triggerIconVariants = cva('text-muted-foreground absolute -translate-y-1/2', {
   variants: {
     size: {
@@ -46,21 +70,6 @@ const triggerIconVariants = cva('text-muted-foreground absolute -translate-y-1/2
   },
 });
 
-const dateInputContentVariants = cva(
-  'w-full px-3 bg-transparent text-sm flex justify-between font-medium placeholder:text-muted-foreground focus-visible:outline-none disabled:cursor-not-allowed items-center',
-  {
-    variants: {
-      size: {
-        default: 'py-1',
-        sm: 'py-0',
-      },
-    },
-    defaultVariants: {
-      size: 'default',
-    },
-  }
-);
-
 type InputDateProps = {
   value: Date | undefined;
   label?: string;
@@ -76,79 +85,148 @@ type InputDateProps = {
   disableBefore?: Date;
   dateFormat?: string;
   onChange: (date: Date | undefined) => void;
+  onBlur?: React.FocusEventHandler<HTMLButtonElement>;
 };
 
-const InputDate: FC<InputDateProps> = ({
-  value,
-  label,
-  required = false,
-  error = false,
-  disabled = false,
-  size = 'default',
-  className,
-  labelClassName,
-  placeholder = 'Pick a date',
-  fromYear = CURRENT_YEAR,
-  toYear = CURRENT_YEAR + 10,
-  disableBefore,
-  dateFormat = 'dd/MM/yyyy',
-  onChange,
-}) => {
-  const [isOpen, setIsOpen] = useState(false);
+const InputDate = forwardRef(
+  (
+    {
+      value,
+      label,
+      required = false,
+      error = false,
+      disabled = false,
+      size = 'default',
+      className,
+      labelClassName,
+      placeholder = 'Pick a date',
+      fromYear = CURRENT_YEAR,
+      toYear = CURRENT_YEAR + 10,
+      disableBefore,
+      dateFormat = 'dd/MM/yyyy',
+      onChange,
+      onBlur,
+    }: InputDateProps,
+    ref: ForwardedRef<HTMLDivElement>
+  ) => {
+    const [isOpen, setIsOpen] = useState(false);
+    const [isFocused, setIsFocused] = useState(false);
+    const inputRef = useRef<HTMLDivElement>(null);
+    const popoverRef = useRef<HTMLDivElement>(null);
+    const triggerRef = useRef<HTMLButtonElement>(null);
 
-  const getState = () => {
-    if (disabled) return 'disabled';
-    if (error) return 'error';
-    if (isOpen) return 'focused';
-    return 'default';
-  };
+    const formattedDate = useMemo(() => {
+      if (!value || !isValid(value)) return '';
+      try {
+        return format(value, dateFormat);
+      } catch (e) {
+        return '';
+      }
+    }, [value, dateFormat]);
 
-  const formattedDate = useMemo(() => {
-    if (!value || !isValid(value)) return '';
-    try {
-      return format(value, dateFormat);
-    } catch (e) {
-      return '';
-    }
-  }, [value, dateFormat]);
+    const handleSelect = (date: Date | undefined) => {
+      if (disabled) return;
 
-  const handleSelect = (date: Date | undefined) => {
-    onChange(date);
-    setIsOpen(false);
-  };
+      onChange(date);
+      setIsOpen(false);
+      setIsFocused(true);
+    };
 
-  return (
-    <div className={cn(inputVariants({ size, state: getState() }), className)}>
-      <Popover open={isOpen} onOpenChange={setIsOpen}>
-        <PopoverTrigger asChild>
-          <div>
-            <CalendarDaysIcon size={20} className={triggerIconVariants({ size: 'default', state: disabled ? 'disabled' : 'default' })} />
-            {label && <InputLabel label={label} required={required} size={size} className={cn(labelClassName)} />}
-            <button type="button" disabled={disabled} className={cn(dateInputContentVariants({ size }), disabled && 'cursor-not-allowed')}>
-              {formattedDate ? (
-                <span className="text-foreground">{formattedDate}</span>
-              ) : (
-                <span className="text-muted-foreground">{placeholder}</span>
-              )}
-            </button>
-          </div>
-        </PopoverTrigger>
-        <PopoverContent className="w-auto p-0" align="start">
-          <Calendar
-            initialFocus
-            mode="single"
-            captionLayout="dropdown-buttons"
-            fromYear={fromYear}
-            toYear={toYear}
-            defaultMonth={value}
-            selected={value}
-            disabled={{ before: disableBefore } as Matcher}
-            onSelect={handleSelect}
-          />
-        </PopoverContent>
-      </Popover>
-    </div>
-  );
-};
+    const handleBlur = (e: React.FocusEvent<HTMLButtonElement>) => {
+      const relatedTarget = e.relatedTarget as Node | null;
+      const isInsidePopover = popoverRef.current?.contains(relatedTarget);
+      const isInsideCalendar = relatedTarget instanceof Element && relatedTarget.closest('rdp');
+
+      if (!isInsidePopover && !isInsideCalendar) {
+        setIsFocused(false);
+        onBlur?.(e);
+      }
+    };
+
+    const handleFocus = () => {
+      if (!disabled) {
+        setIsFocused(true);
+      }
+    };
+
+    const handleOpenChange = (open: boolean) => {
+      if (disabled) {
+        setIsOpen(false);
+        return;
+      }
+
+      setIsOpen(open);
+      if (open) setIsFocused(true);
+    };
+
+    const handleClickOutside = useCallback((event: MouseEvent) => {
+      const target = event.target as Node;
+      const isInsideInput = inputRef.current?.contains(target);
+      const isInsidePopover = popoverRef.current?.contains(target);
+      const isInsideCalendar = target instanceof Element && target.closest('rdp');
+
+      if (!isInsideInput && !isInsidePopover && !isInsideCalendar) {
+        setIsFocused(false);
+        setIsOpen(false);
+      }
+    }, []);
+
+    useEffect(() => {
+      document.addEventListener('mousedown', handleClickOutside);
+      return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, [handleClickOutside]);
+
+    return (
+      <div ref={ref} className={cn(inputVariants({ size, state: disabled ? 'disabled' : isFocused ? 'focused' : 'default' }), className)}>
+        <div ref={inputRef}>
+          <Popover open={isOpen} onOpenChange={handleOpenChange}>
+            <PopoverTrigger asChild>
+              <button
+                ref={triggerRef}
+                className={cn(triggerVariants({ size }), disabled && 'cursor-not-allowed')}
+                aria-expanded={isOpen}
+                disabled={disabled}
+                type="button"
+                onClick={() => !disabled && setIsFocused(true)}
+                onFocus={handleFocus}
+                onBlur={handleBlur}
+              >
+                <CalendarDaysIcon
+                  className={triggerIconVariants({
+                    size,
+                    state: disabled ? 'disabled' : 'default',
+                  })}
+                />
+                {label && <InputLabel label={label} required={required} size={size} className={cn(labelClassName)} />}
+                <p className={cn(contentVariants({ size }), disabled && 'opacity-50')}>
+                  {formattedDate ? (
+                    <span className="text-foreground">{formattedDate}</span>
+                  ) : (
+                    <span className="text-muted-foreground">{placeholder}</span>
+                  )}
+                </p>
+              </button>
+            </PopoverTrigger>
+            <PopoverContent ref={popoverRef} className="w-auto p-0">
+              <Calendar
+                initialFocus
+                mode="single"
+                captionLayout="dropdown-buttons"
+                fromYear={fromYear}
+                toYear={toYear}
+                defaultMonth={value}
+                selected={value}
+                disabled={{ before: disableBefore } as Matcher}
+                onSelect={handleSelect}
+              />
+            </PopoverContent>
+          </Popover>
+        </div>
+      </div>
+    );
+  }
+);
+
+InputDate.displayName = 'InputDate';
 
 export { InputDate };

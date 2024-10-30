@@ -10,7 +10,7 @@ type CreateCampaignVariables = {
   end_date: Date;
 };
 
-export const createCampaignDto = (formValues: CampaignDetailsFormValues): CreateCampaignVariables => {
+export const campaignDetailsDto = (formValues: CampaignDetailsFormValues): CreateCampaignVariables => {
   const { name, startDate, endDate } = formValues;
 
   const adjustedStartDate = setStartOfDay(startDate ?? new Date());

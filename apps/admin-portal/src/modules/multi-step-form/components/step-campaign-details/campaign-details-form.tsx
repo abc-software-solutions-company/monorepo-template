@@ -11,7 +11,7 @@ import FormFieldSelectTag from '@/components/form-fields-ahua/form-field-select-
 import FormFieldUploaderMultiLanguage, { FilePreview } from '@/components/form-fields-ahua/form-field-uploader-multi-language';
 
 import { countries, locales } from '../../constants/campaign.constant';
-import { createCampaignDto } from '../../dtos/create-campaign.dto';
+import { campaignDetailsDto } from '../../dtos/campaign-details.dto';
 import { CampaignDetailsFormValues } from '../../interfaces/campaign.interface';
 
 type CampaignDetailsFormProps = {
@@ -123,7 +123,7 @@ const CampaignDetailsForm: React.FC<CampaignDetailsFormProps> = ({ form, onSubmi
             <pre className="overflow-hidden rounded-md border-slate-200 bg-slate-100 p-2">{JSON.stringify(form.watch(), null, 2)}</pre>
             <h2 className="text-lg font-semibold">Data send to API</h2>
             <pre className="overflow-hidden rounded-md border-green-200 bg-green-100 p-2">
-              {JSON.stringify(createCampaignDto(form.watch()), null, 2)}
+              {JSON.stringify(campaignDetailsDto(form.watch()), null, 2)}
             </pre>
           </div>
         </div>

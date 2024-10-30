@@ -301,7 +301,6 @@ const SelectTag = forwardRef(
           selectVariants({
             size,
             state: disabled ? 'disabled' : isFocused ? 'focused' : 'default',
-            className,
           })
         )}
       >

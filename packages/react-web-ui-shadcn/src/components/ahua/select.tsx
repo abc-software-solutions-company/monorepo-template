@@ -7,7 +7,6 @@ import { Separator } from '~react-web-ui-shadcn/components/ui/separator';
 import { Tooltip, TooltipArrow, TooltipContent, TooltipProvider, TooltipTrigger } from '~react-web-ui-shadcn/components/ui/tooltip';
 import { cn } from '~react-web-ui-shadcn/lib/utils';
 import { InputLabel } from './input-base';
-import { Button } from '../ui/button';
 
 const selectVariants = cva('h-6 relative rounded-md border border-input bg-background ring-input', {
   variants: {
