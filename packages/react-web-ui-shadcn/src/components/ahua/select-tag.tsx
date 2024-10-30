@@ -37,7 +37,7 @@ const contentVariants = cva('px-3 text-sm overflow-hidden truncate text-ellipsis
   },
 });
 
-const triggerVariants = cva('grid w-full justify-between focus:outline-none', {
+const triggerVariants = cva('grid w-full justify-between focus:outline-none text-left', {
   variants: {
     size: {
       default: '',
@@ -237,13 +237,6 @@ const SelectTag = forwardRef(
       }
     };
 
-    const handleKeyDown = (e: React.KeyboardEvent<HTMLButtonElement>) => {
-      if (!disabled && (e.key === 'Enter' || e.key === ' ')) {
-        e.preventDefault();
-        setIsOpen(true);
-      }
-    };
-
     const handleClearAll = () => {
       if (disabled) return;
 
@@ -315,28 +308,25 @@ const SelectTag = forwardRef(
         <div ref={selectRef} className="grid items-center">
           <Popover open={isOpen && !disabled} onOpenChange={handleOpenChange}>
             <PopoverTrigger asChild>
-              <div>
+              <button
+                ref={triggerRef}
+                className={cn(triggerVariants({ size }), disabled && 'cursor-not-allowed')}
+                role="combobox"
+                aria-expanded={isOpen}
+                disabled={disabled}
+                type="button"
+                onClick={() => !disabled && setIsFocused(true)}
+                onFocus={handleFocus}
+                onBlur={handleBlur}
+              >
                 <ChevronDownIcon className={triggerIconVariants({ size: 'default', state: disabled ? 'disabled' : 'default' })} />
                 {label && <InputLabel label={label} required={required} size={size} className={cn(labelClassName)} />}
-                <button
-                  ref={triggerRef}
-                  className={cn(triggerVariants({ size }), disabled && 'cursor-not-allowed')}
-                  role="combobox"
-                  aria-expanded={isOpen}
-                  disabled={disabled}
-                  type="button"
-                  tabIndex={0}
-                  onClick={() => !disabled && setIsFocused(true)}
-                  onFocus={handleFocus}
-                  onBlur={handleBlur}
-                  onKeyDown={handleKeyDown}
-                >
-                  <p className={cn(contentVariants({ size }), selectedItems.length === 0 && 'text-muted-foreground', disabled && 'opacity-50')}>
-                    {selectedItems.length === 0 && placeholder}
-                    {selectedItems.length > 0 && renderSelectedTags()}
-                  </p>
-                </button>
-              </div>
+
+                <p className={cn(contentVariants({ size }), selectedItems.length === 0 && 'text-muted-foreground', disabled && 'opacity-50')}>
+                  {selectedItems.length === 0 && placeholder}
+                  {selectedItems.length > 0 && renderSelectedTags()}
+                </p>
+              </button>
             </PopoverTrigger>
             <PopoverContent ref={popoverRef} className="w-[--radix-popover-trigger-width] p-0">
               <Command>
@@ -346,11 +336,12 @@ const SelectTag = forwardRef(
                 <CommandList>
                   <CommandEmpty>No results found.</CommandEmpty>
                   <CommandGroup className="p-0">
-                    {options.map(option => {
+                    {options.map((option, index) => {
                       const isSelected = selectedValues.has(option[valueField]);
 
                       return (
                         <CommandItem
+                          tabIndex={index}
                           key={option[valueField]}
                           className={cn(
                             commandItemVariants({

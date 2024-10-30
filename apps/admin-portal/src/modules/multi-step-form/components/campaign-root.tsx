@@ -43,7 +43,7 @@ const CampaignRoot: React.FC = () => {
       name: [],
       description: [],
       tnc: [],
-      imageUrl: [],
+      imageUrl: [{ lang: 'en_GH', value: 'https://www.w3schools.com/html/pic_trulli.jpg' }],
       country: [],
       keyword: '',
       startDate: undefined,
@@ -106,8 +106,8 @@ const CampaignRoot: React.FC = () => {
 
   const handleCampaignDetailsSubmit = (data: CampaignDetailsFormValues) => {
     setFormData(prev => ({ ...prev, campaignDetails: data }));
-    // setCurrentStep(CAMPAIGN_STEP.ELIGIBILITY_CRITERIA);
-    // setStepCompleted(prev => ({ ...prev, [CAMPAIGN_STEP.CAMPAIGN_DETAILS]: true }));
+    setCurrentStep(CAMPAIGN_STEP.ELIGIBILITY_CRITERIA);
+    setStepCompleted(prev => ({ ...prev, [CAMPAIGN_STEP.CAMPAIGN_DETAILS]: true }));
   };
 
   const handleEligibilityCriteriaSubmit = (data: EligibilityCriteriaFormValues) => {
@@ -172,32 +172,20 @@ const CampaignRoot: React.FC = () => {
     switch (currentStep) {
       case CAMPAIGN_STEP.CAMPAIGN_DETAILS:
         return (
-          <Button
-            type="button"
-            // disabled={!campaignDetailsForm.formState.isValid}
-            onClick={campaignDetailsForm.handleSubmit(handleCampaignDetailsSubmit)}
-          >
+          <Button type="button" onClick={campaignDetailsForm.handleSubmit(handleCampaignDetailsSubmit)}>
             Next
           </Button>
         );
       case CAMPAIGN_STEP.ELIGIBILITY_CRITERIA:
         return (
-          <Button
-            type="button"
-            // disabled={!eligibilityCriteriaForm.formState.isValid}
-            onClick={eligibilityCriteriaForm.handleSubmit(handleEligibilityCriteriaSubmit)}
-          >
+          <Button type="button" onClick={eligibilityCriteriaForm.handleSubmit(handleEligibilityCriteriaSubmit)}>
             Next
           </Button>
         );
 
       case CAMPAIGN_STEP.CAMPAIGN_MECHANISM:
         return (
-          <Button
-            type="button"
-            // disabled={!campaignMechanismForm.formState.isValid}
-            onClick={campaignMechanismForm.handleSubmit(handleCampaignMechanismSubmit)}
-          >
+          <Button type="button" onClick={campaignMechanismForm.handleSubmit(handleCampaignMechanismSubmit)}>
             Next
           </Button>
         );

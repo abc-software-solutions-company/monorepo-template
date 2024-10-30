@@ -8,8 +8,3 @@ export type TranslationValue = {
   lang: string;
   value: string;
 };
-
-export type FormFieldTranslationProps = {
-  value?: TranslationValue[];
-  onChange: (value: TranslationValue[]) => void;
-};

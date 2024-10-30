@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { UseFormReturn } from 'react-hook-form';
+import { ControllerRenderProps, Path, UseFormReturn } from 'react-hook-form';
 import { Form } from '~react-web-ui-shadcn/components/ui/form';
-
-import { FormFieldTranslationProps } from '@/interfaces/language.interface';
 
 import FormFieldDatePicker from '@/components/form-fields-ahua/form-field-date-picker';
 import FormFieldEditorMultiLanguage from '@/components/form-fields-ahua/form-field-editor-multi-language';
@@ -21,6 +19,10 @@ type CampaignDetailsFormProps = {
   onSubmit: (data: CampaignDetailsFormValues) => void;
 };
 
+type FormFieldType = ControllerRenderProps<CampaignDetailsFormValues, Path<CampaignDetailsFormValues>>;
+
+const NEXT_DAY = new Date(Date.now() + 86400000);
+
 const CampaignDetailsForm: React.FC<CampaignDetailsFormProps> = ({ form, onSubmit }) => {
   const [previews, setPreviews] = useState<Record<string, FilePreview[]>>({});
   const [isUploading, setIsUploading] = useState(false);
@@ -35,11 +37,11 @@ const CampaignDetailsForm: React.FC<CampaignDetailsFormProps> = ({ form, onSubmi
     };
   }, [previews]);
 
-  const handleSelectFile = (field: FormFieldTranslationProps, lang: string, files: File[], filenames: string[]) => {
+  const handleSelectFile = (field: FormFieldType, locale: string, files: File[], filenames: string[]) => {
     setIsUploading(true);
 
-    const values = [...(field.value || [])];
-    const index = values.findIndex(v => v.lang === lang);
+    const values = Array.isArray(field.value) ? [...field.value] : [];
+    const index = values.findIndex(v => v.lang === locale);
 
     const fileInfos: FilePreview[] = filenames.map((filename, idx) => ({
       name: filename,
@@ -48,14 +50,14 @@ const CampaignDetailsForm: React.FC<CampaignDetailsFormProps> = ({ form, onSubmi
       url: URL.createObjectURL(files[idx]),
     }));
 
-    setPreviews(prev => ({ ...prev, [lang]: fileInfos }));
+    setPreviews(prev => ({ ...prev, [locale]: fileInfos }));
 
     const value = JSON.stringify(fileInfos.map(({ ...rest }) => rest));
 
     if (index >= 0) {
       values[index] = { ...values[index], value };
     } else {
-      values.push({ lang, value });
+      values.push({ lang: locale, value });
     }
 
     field.onChange(values);
@@ -63,41 +65,27 @@ const CampaignDetailsForm: React.FC<CampaignDetailsFormProps> = ({ form, onSubmi
     setIsUploading(false);
   };
 
-  const handleRemoveFile = (field: FormFieldTranslationProps, lang: string, fileIndex: number) => {
+  const handleRemoveFile = (field: FormFieldType, locale: string) => {
     setPreviews(prev => {
-      const langPreviews = prev[lang];
+      const langPreviews = prev[locale];
 
-      if (!langPreviews) return prev;
-
-      if (langPreviews[fileIndex]?.url) {
-        URL.revokeObjectURL(langPreviews[fileIndex].url);
+      if (langPreviews) {
+        langPreviews.forEach(file => {
+          if (file.url) URL.revokeObjectURL(file.url);
+        });
       }
+      const newPreviews = { ...prev };
 
-      const newPreviews = {
-        ...prev,
-        [lang]: langPreviews.filter((_, idx) => idx !== fileIndex),
-      };
-
-      if (newPreviews[lang].length === 0) {
-        delete newPreviews[lang];
-      }
+      delete newPreviews[locale];
 
       return newPreviews;
     });
 
-    const values = [...(field.value || [])];
-    const valueIndex = values.findIndex(v => v.lang === lang);
+    const values = Array.isArray(field.value) ? [...field.value] : [];
+    const valueIndex = values.findIndex(v => v.lang === locale);
 
     if (valueIndex >= 0) {
-      const currentFiles = JSON.parse(values[valueIndex].value) as FilePreview[];
-      const newFiles = currentFiles.filter((_, idx) => idx !== fileIndex);
-
-      if (newFiles.length === 0) {
-        values.splice(valueIndex, 1);
-      } else {
-        values[valueIndex] = { ...values[valueIndex], value: JSON.stringify(newFiles) };
-      }
-
+      values.splice(valueIndex, 1);
       field.onChange(values);
     }
   };
@@ -109,8 +97,8 @@ const CampaignDetailsForm: React.FC<CampaignDetailsFormProps> = ({ form, onSubmi
           <div className="w-full max-w-md space-y-4">
             <FormFieldInputMultiLanguage required form={form} fieldName="name" formLabel="Name" locales={locales} maxLength={50} />
             <FormFieldInputMultiLanguage required form={form} fieldName="description" formLabel="Description" locales={locales} maxLength={300} />
-            <FormFieldDatePicker required form={form} fieldName="startDate" formLabel="Start Date" disableBefore={new Date(Date.now() + 86400000)} />
-            <FormFieldDatePicker required form={form} fieldName="endDate" formLabel="End Date" disableBefore={form.watch('startDate')} />
+            <FormFieldDatePicker required form={form} fieldName="startDate" formLabel="Start Date" disableBefore={NEXT_DAY} />
+            <FormFieldDatePicker required form={form} fieldName="endDate" formLabel="End Date" disableBefore={form.watch('startDate') ?? NEXT_DAY} />
             <FormFieldSelect form={form} fieldName="country" formLabel="Country" placeholder="Select country" options={countries} />
             <FormFieldSelectTag form={form} fieldName="country" formLabel="Country" placeholder="Select country" options={countries} />
             <FormFieldInput form={form} fieldName="keyword" formLabel="Keyword" placeholder="Keyword" />
@@ -125,6 +113,7 @@ const CampaignDetailsForm: React.FC<CampaignDetailsFormProps> = ({ form, onSubmi
               locales={locales}
               previews={previews}
               isUploading={isUploading}
+              maxSize={5242880}
               onSelectFile={handleSelectFile}
               onRemoveFile={handleRemoveFile}
             />

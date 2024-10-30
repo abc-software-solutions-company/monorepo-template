@@ -7,6 +7,7 @@ import { Separator } from '~react-web-ui-shadcn/components/ui/separator';
 import { Tooltip, TooltipArrow, TooltipContent, TooltipProvider, TooltipTrigger } from '~react-web-ui-shadcn/components/ui/tooltip';
 import { cn } from '~react-web-ui-shadcn/lib/utils';
 import { InputLabel } from './input-base';
+import { Button } from '../ui/button';
 
 const selectVariants = cva('h-6 relative rounded-md border border-input bg-background ring-input', {
   variants: {
@@ -38,7 +39,7 @@ const contentVariants = cva('px-3 text-sm overflow-hidden truncate text-ellipsis
   },
 });
 
-const triggerVariants = cva('grid w-full justify-between focus:outline-none', {
+const triggerVariants = cva('grid w-full justify-between focus:outline-none text-left', {
   variants: {
     size: {
       default: '',
@@ -247,13 +248,6 @@ const Select = forwardRef(
       }
     };
 
-    const handleKeyDown = (e: React.KeyboardEvent<HTMLButtonElement>) => {
-      if (!disabled && (e.key === 'Enter' || e.key === ' ')) {
-        e.preventDefault();
-        setIsOpen(true);
-      }
-    };
-
     const handleClearAll = () => {
       if (disabled) return;
       onChange([]);
@@ -315,28 +309,23 @@ const Select = forwardRef(
           <div ref={selectRef}>
             <Popover open={isOpen && !disabled} onOpenChange={handleOpenChange}>
               <PopoverTrigger asChild>
-                <div>
+                <button
+                  ref={triggerRef}
+                  className={cn(triggerVariants({ size }), disabled && 'cursor-not-allowed')}
+                  aria-expanded={isOpen}
+                  disabled={disabled}
+                  type="button"
+                  onClick={() => !disabled && setIsFocused(true)}
+                  onFocus={handleFocus}
+                  onBlur={handleBlur}
+                >
                   <ChevronDownIcon className={triggerIconVariants({ size: 'default', state: disabled ? 'disabled' : 'default' })} />
                   {label && <InputLabel label={label} required={required} size={size} className={cn(labelClassName)} />}
-                  <button
-                    ref={triggerRef}
-                    className={cn(triggerVariants({ size }), disabled && 'cursor-not-allowed')}
-                    role="combobox"
-                    aria-expanded={isOpen}
-                    disabled={disabled}
-                    type="button"
-                    tabIndex={0}
-                    onClick={() => !disabled && setIsFocused(true)}
-                    onFocus={handleFocus}
-                    onBlur={handleBlur}
-                    onKeyDown={handleKeyDown}
-                  >
-                    <p className={cn(contentVariants({ size }), selectedItems.length === 0 && 'text-muted-foreground', disabled && 'opacity-50')}>
-                      {selectedItems.length === 0 && placeholder}
-                      {selectedItems.length > 0 && selectedItems.map(item => item[displayField]).join(', ')}
-                    </p>
-                  </button>
-                </div>
+                  <p className={cn(contentVariants({ size }), selectedItems.length === 0 && 'text-muted-foreground', disabled && 'opacity-50')}>
+                    {selectedItems.length === 0 && placeholder}
+                    {selectedItems.length > 0 && selectedItems.map(item => item[displayField]).join(', ')}
+                  </p>
+                </button>
               </PopoverTrigger>
               <PopoverContent ref={popoverRef} className="w-[--radix-popover-trigger-width] p-0">
                 <Command>
@@ -344,11 +333,12 @@ const Select = forwardRef(
                   <CommandList>
                     <CommandEmpty>No results found.</CommandEmpty>
                     <CommandGroup className="p-0">
-                      {options.map(option => {
+                      {options.map((option, index) => {
                         const isSelected = selectedValues.has(option[valueField]);
 
                         return (
                           <CommandItem
+                            tabIndex={index}
                             key={option[valueField]}
                             className={cn(commandItemVariants({ size: 'default', selected: isSelected }))}
                             onSelect={() => handleToggleOption(option)}
