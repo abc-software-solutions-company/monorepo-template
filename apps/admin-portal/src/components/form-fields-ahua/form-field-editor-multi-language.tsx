@@ -20,6 +20,7 @@ const container = cva('w-full rounded-md border border-input bg-background ring-
       focused: 'ring-2 ring-ring ring-offset-2',
       disabled: 'cursor-not-allowed bg-muted',
       error: 'border-destructive bg-destructive/10',
+      errorFocused: 'bg-destructive/10 ring-2 ring-destructive ring-offset-2',
     },
   },
   defaultVariants: {
@@ -114,9 +115,9 @@ export default function FormFieldEditorMultiLanguage<T extends FieldValues>({
 
   const isOverMaxLength = (values: TranslationValue[] = [], lang: string): boolean => getCharCount(values, lang) > maxLength;
 
-  const getContainerState = (error?: boolean) => {
+  const getFormControlState = (error?: boolean) => {
     if (disabled) return 'disabled';
-    if (error) return 'error';
+    if (error) return isFocused ? 'errorFocused' : 'error';
     if (isFocused) return 'focused';
 
     return 'default';
@@ -172,18 +173,20 @@ export default function FormFieldEditorMultiLanguage<T extends FieldValues>({
             </FormLabel>
           )}
           <FormControl>
-            <div className={cn(container({ state: getContainerState(!!error) }), className)}>
+            <div className={cn(container({ state: getFormControlState(!!error) }), className)}>
               <div className="flex h-10 items-center border-b border-input">
                 {visibleLocales.map(locale => {
                   const isTooLong = isOverMaxLength(field.value, locale.languageName);
+                  const isActive = activeLocale === locale.languageName;
 
                   return (
-                    <button
+                    <Button
                       key={locale.languageName}
+                      variant="transparent"
                       type="button"
                       disabled={disabled}
                       className={tab({
-                        state: getTabState(activeLocale === locale.languageName, isOverMaxLength(field.value, locale.languageName)),
+                        state: getTabState(isActive, isTooLong),
                       })}
                       onClick={() => setActiveLocale(locale.languageName)}
                     >
@@ -192,10 +195,8 @@ export default function FormFieldEditorMultiLanguage<T extends FieldValues>({
                         {locale.isDefault && <span className="ml-1">(Default)</span>}
                         <CheckIndicator values={field.value} lang={locale.languageName} error={isTooLong} />
                       </span>
-                      {activeLocale === locale.languageName && (
-                        <div className={cn('absolute bottom-0 left-0 h-0.5 w-full', isTooLong ? 'bg-destructive' : 'bg-primary')} />
-                      )}
-                    </button>
+                      {isActive && <div className={cn('absolute bottom-0 left-0 h-0.5 w-full', isTooLong ? 'bg-destructive' : 'bg-primary')} />}
+                    </Button>
                   );
                 })}
 
@@ -210,27 +211,28 @@ export default function FormFieldEditorMultiLanguage<T extends FieldValues>({
                       <Command>
                         <CommandList>
                           <CommandGroup>
-                            {dropdownLocales.map(locale => (
-                              <CommandItem
-                                key={locale.languageName}
-                                className={activeLocale === locale.languageName ? '!bg-primary/20' : ''}
-                                disabled={disabled}
-                                onSelect={() => {
-                                  setActiveLocale(locale.languageName);
-                                  setIsOpenDropdown(false);
-                                }}
-                              >
-                                <span
-                                  className={cn(
-                                    'flex w-full items-center justify-between gap-1',
-                                    isOverMaxLength(field.value, locale.languageName) && 'text-destructive'
-                                  )}
+                            {dropdownLocales.map((locale, index) => {
+                              const isTooLong = isOverMaxLength(field.value, locale.languageName);
+                              const isActive = activeLocale === locale.languageName;
+
+                              return (
+                                <CommandItem
+                                  key={locale.languageName}
+                                  tabIndex={index}
+                                  className={isActive ? '!bg-primary/20' : ''}
+                                  disabled={disabled}
+                                  onSelect={() => {
+                                    setActiveLocale(locale.languageName);
+                                    setIsOpenDropdown(false);
+                                  }}
                                 >
-                                  {locale.languageLabel}
-                                  <CheckIndicator values={field.value} lang={locale.languageName} />
-                                </span>
-                              </CommandItem>
-                            ))}
+                                  <span className={cn('flex w-full items-center justify-between gap-1', isTooLong && 'text-destructive')}>
+                                    {locale.languageLabel}
+                                    <CheckIndicator values={field.value} lang={locale.languageName} />
+                                  </span>
+                                </CommandItem>
+                              );
+                            })}
                           </CommandGroup>
                         </CommandList>
                       </Command>
@@ -258,7 +260,7 @@ export default function FormFieldEditorMultiLanguage<T extends FieldValues>({
               {getCharCount(field.value, activeLocale)}/{maxLength}
             </p>
           )}
-          {error?.message && <FormMessage message={error.message} />}
+          <FormMessage />
         </FormItem>
       )}
     />

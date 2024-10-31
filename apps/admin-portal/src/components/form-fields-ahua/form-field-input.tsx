@@ -33,25 +33,27 @@ export default function FormFieldInput<T extends FieldValues>({
     <FormField
       control={form.control}
       name={fieldName}
-      render={({ field, fieldState: { error } }) => (
-        <FormItem>
-          <FormControl>
-            <Input
-              multiple={multiple}
-              required={required}
-              className={className}
-              placeholder={placeholder}
-              label={formLabel}
-              value={field.value}
-              disabled={disabled}
-              size={size}
-              error={!!error}
-              onChange={field.onChange}
-            />
-          </FormControl>
-          {error?.message && <FormMessage message={error.message} />}
-        </FormItem>
-      )}
+      render={({ field, fieldState: { error } }) => {
+        return (
+          <FormItem>
+            <FormControl>
+              <Input
+                multiple={multiple}
+                required={required}
+                className={className}
+                placeholder={placeholder}
+                label={formLabel}
+                value={field.value}
+                disabled={disabled}
+                size={size}
+                error={!!error}
+                onChange={field.onChange}
+              />
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        );
+      }}
     />
   );
 }

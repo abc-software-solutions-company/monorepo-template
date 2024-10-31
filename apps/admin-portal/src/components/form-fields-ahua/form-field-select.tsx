@@ -43,28 +43,31 @@ export default function FormFieldSelect<T extends FieldValues, O extends OptionT
     <FormField
       control={form.control}
       name={fieldName}
-      render={({ field, fieldState: { error } }) => (
-        <FormItem>
-          <FormControl>
-            <Select
-              multiple={multiple}
-              required={required}
-              className={className}
-              placeholder={placeholder}
-              label={formLabel}
-              valueField={valueField}
-              displayField={displayField}
-              options={options}
-              value={field.value}
-              disabled={disabled}
-              size={size}
-              showSelectedTags={showSelectedTags}
-              onChange={field.onChange}
-            />
-          </FormControl>
-          {error?.message && <FormMessage message={error.message} />}
-        </FormItem>
-      )}
+      render={({ field, fieldState: { error } }) => {
+        return (
+          <FormItem>
+            <FormControl>
+              <Select
+                multiple={multiple}
+                required={required}
+                className={className}
+                placeholder={placeholder}
+                label={formLabel}
+                valueField={valueField}
+                displayField={displayField}
+                options={options}
+                value={field.value}
+                disabled={disabled}
+                size={size}
+                showSelectedTags={showSelectedTags}
+                error={!!error}
+                onChange={field.onChange}
+              />
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        );
+      }}
     />
   );
 }

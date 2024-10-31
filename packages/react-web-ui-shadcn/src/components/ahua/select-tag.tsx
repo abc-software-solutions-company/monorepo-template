@@ -7,7 +7,7 @@ import { Separator } from '~react-web-ui-shadcn/components/ui/separator';
 import { cn } from '~react-web-ui-shadcn/lib/utils';
 import { InputLabel } from './input-base';
 
-const selectVariants = cva('h-6 relative rounded-md border border-input bg-background ring-input', {
+const formControlVariants = cva('h-6 relative rounded-md border border-input bg-background ring-input', {
   variants: {
     size: {
       default: 'h-14',
@@ -17,6 +17,8 @@ const selectVariants = cva('h-6 relative rounded-md border border-input bg-backg
       default: '',
       focused: 'ring-2 ring-ring ring-offset-2 ring-offset-background',
       disabled: 'cursor-not-allowed bg-muted',
+      error: 'border-destructive bg-destructive/10',
+      errorFocused: 'bg-destructive/10 ring-2 ring-destructive ring-offset-2',
     },
   },
   defaultVariants: {
@@ -78,7 +80,7 @@ const commandInputVariants = cva('', {
   },
 });
 
-const commandItemVariants = cva('flex items-center rounded-none', {
+const commandItemVariants = cva('flex items-center justify-between rounded-none', {
   variants: {
     size: {
       default: 'h-9',
@@ -95,7 +97,7 @@ const commandItemVariants = cva('flex items-center rounded-none', {
   },
 });
 
-const commandIconVariants = cva('mr-2 flex items-center justify-center rounded-sm border border-primary', {
+const commandIconVariants = cva('flex items-center justify-center rounded-sm border border-primary', {
   variants: {
     size: {
       default: 'h-4 w-4',
@@ -168,9 +170,11 @@ type SelectTagProps<T extends OptionType> = {
   size?: 'default' | 'sm';
   showSearch?: boolean;
   showClearAll?: boolean;
+  showSelectAll?: boolean;
+  error?: boolean;
   onChange: (value: T[]) => void;
   onBlur?: React.FocusEventHandler<HTMLButtonElement>;
-} & VariantProps<typeof selectVariants>;
+} & VariantProps<typeof formControlVariants>;
 
 const SelectTag = forwardRef(
   <T extends OptionType>(
@@ -189,6 +193,8 @@ const SelectTag = forwardRef(
       size = 'default',
       showSearch = false,
       showClearAll = false,
+      showSelectAll = true,
+      error,
       onChange,
       onBlur,
     }: SelectTagProps<T>,
@@ -205,6 +211,22 @@ const SelectTag = forwardRef(
     }, [value, valueField]);
 
     const selectedItems = useMemo(() => options.filter(option => selectedValues.has(option[valueField])), [options, selectedValues, valueField]);
+
+    const isAllSelected = useMemo(() => selectedValues.size === options.length, [selectedValues.size, options.length]);
+
+    const getFormControlState = () => {
+      if (disabled) return 'disabled';
+      if (error) return isFocused ? 'errorFocused' : 'error';
+      if (isFocused) return 'focused';
+
+      return 'default';
+    };
+
+    const handleSelectAll = () => {
+      if (disabled) return;
+      onChange(isAllSelected ? [] : [...options]);
+      setIsFocused(true);
+    };
 
     const handleToggleOption = (option: T) => {
       if (disabled) return;
@@ -298,9 +320,10 @@ const SelectTag = forwardRef(
       <div
         ref={ref}
         className={cn(
-          selectVariants({
+          formControlVariants({
             size,
-            state: disabled ? 'disabled' : isFocused ? 'focused' : 'default',
+            state: getFormControlState(),
+            className,
           })
         )}
       >
@@ -334,6 +357,19 @@ const SelectTag = forwardRef(
                 )}
                 <CommandList>
                   <CommandEmpty>No results found.</CommandEmpty>
+
+                  {showSelectAll && (
+                    <CommandGroup className="p-0">
+                      <CommandItem className={cn(commandItemVariants({ size: 'default', selected: isAllSelected }))} onSelect={handleSelectAll}>
+                        <span>{isAllSelected ? 'Deselect All' : 'Select All'}</span>
+                        <div className={commandIconVariants({ size: 'default', selected: isAllSelected })}>
+                          <CheckIcon />
+                        </div>
+                      </CommandItem>
+                      <Separator />
+                    </CommandGroup>
+                  )}
+
                   <CommandGroup className="p-0">
                     {options.map((option, index) => {
                       const isSelected = selectedValues.has(option[valueField]);
@@ -350,6 +386,7 @@ const SelectTag = forwardRef(
                           )}
                           onSelect={() => handleToggleOption(option)}
                         >
+                          <span>{option[displayField]}</span>
                           <div
                             className={commandIconVariants({
                               size: 'default',
@@ -358,7 +395,6 @@ const SelectTag = forwardRef(
                           >
                             <CheckIcon />
                           </div>
-                          <span>{option[displayField]}</span>
                         </CommandItem>
                       );
                     })}

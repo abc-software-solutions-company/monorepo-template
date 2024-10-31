@@ -8,7 +8,7 @@ import { Tooltip, TooltipArrow, TooltipContent, TooltipProvider, TooltipTrigger 
 import { cn } from '~react-web-ui-shadcn/lib/utils';
 import { InputLabel } from './input-base';
 
-const selectVariants = cva('h-6 relative rounded-md border border-input bg-background ring-input', {
+const formControlVariants = cva('h-6 relative rounded-md border border-input bg-background ring-input', {
   variants: {
     size: {
       default: 'h-14',
@@ -18,6 +18,8 @@ const selectVariants = cva('h-6 relative rounded-md border border-input bg-backg
       default: '',
       focused: 'ring-2 ring-ring ring-offset-2 ring-offset-background',
       disabled: 'cursor-not-allowed bg-muted',
+      error: 'border-destructive bg-destructive/10',
+      errorFocused: 'bg-destructive/10 ring-2 ring-destructive ring-offset-2',
     },
   },
   defaultVariants: {
@@ -96,7 +98,7 @@ const commandItemVariants = cva('flex items-center justify-between rounded-none'
   },
 });
 
-const commandIconVariants = cva('mr-2 flex items-center justify-center rounded-sm border border-primary', {
+const commandIconVariants = cva('flex items-center justify-center rounded-sm border border-primary', {
   variants: {
     size: {
       default: 'h-4 w-4',
@@ -170,11 +172,13 @@ type SelectProps<T extends OptionType> = {
   size?: 'default' | 'sm';
   showSearch?: boolean;
   showClearAll?: boolean;
+  showSelectAll?: boolean;
   showSelectedTags?: boolean;
   value: T[];
+  error?: boolean;
   onChange: (value: T[]) => void;
   onBlur?: React.FocusEventHandler<HTMLButtonElement>;
-} & VariantProps<typeof selectVariants>;
+} & VariantProps<typeof formControlVariants>;
 
 const Select = forwardRef(
   <T extends OptionType>(
@@ -195,7 +199,9 @@ const Select = forwardRef(
       size = 'default',
       showSearch = false,
       showClearAll = false,
+      showSelectAll = true,
       showSelectedTags = false,
+      error,
       onChange,
       onBlur,
     }: SelectProps<T>,
@@ -212,6 +218,22 @@ const Select = forwardRef(
     }, [value, valueField]);
 
     const selectedItems = useMemo(() => options.filter(option => selectedValues.has(option[valueField])), [options, selectedValues, valueField]);
+
+    const isAllSelected = useMemo(() => selectedValues.size === options.length, [selectedValues.size, options.length]);
+
+    const getFormControlState = () => {
+      if (disabled) return 'disabled';
+      if (error) return isFocused ? 'errorFocused' : 'error';
+      if (isFocused) return 'focused';
+
+      return 'default';
+    };
+
+    const handleSelectAll = () => {
+      if (disabled) return;
+      onChange(isAllSelected ? [] : [...options]);
+      setIsFocused(true);
+    };
 
     const handleToggleOption = (option: T) => {
       if (disabled) return;
@@ -298,9 +320,9 @@ const Select = forwardRef(
         <div
           ref={ref}
           className={cn(
-            selectVariants({
+            formControlVariants({
               size,
-              state: disabled ? 'disabled' : isFocused ? 'focused' : 'default',
+              state: getFormControlState(),
               className,
             })
           )}
@@ -331,6 +353,19 @@ const Select = forwardRef(
                   {showSearch && <CommandInput className={commandInputVariants({ size: 'default' })} onFocus={() => setIsFocused(true)} />}
                   <CommandList>
                     <CommandEmpty>No results found.</CommandEmpty>
+
+                    {multiple && showSelectAll && (
+                      <CommandGroup className="p-0">
+                        <CommandItem className={cn(commandItemVariants({ size: 'default', selected: isAllSelected }))} onSelect={handleSelectAll}>
+                          <span>{isAllSelected ? 'Deselect All' : 'Select All'}</span>
+                          <div className={commandIconVariants({ size: 'default', selected: isAllSelected })}>
+                            <CheckIcon />
+                          </div>
+                        </CommandItem>
+                        <Separator />
+                      </CommandGroup>
+                    )}
+
                     <CommandGroup className="p-0">
                       {options.map((option, index) => {
                         const isSelected = selectedValues.has(option[valueField]);
@@ -342,27 +377,27 @@ const Select = forwardRef(
                             className={cn(commandItemVariants({ size: 'default', selected: isSelected }))}
                             onSelect={() => handleToggleOption(option)}
                           >
-                            <div className="flex items-center">
+                            <span>{option[displayField]}</span>
+                            <div className="flex items-center space-x-1">
                               {multiple && (
                                 <div className={commandIconVariants({ size: 'default', selected: isSelected })}>
                                   <CheckIcon />
                                 </div>
                               )}
-                              <span>{option[displayField]}</span>
+                              {option.tooltip && (
+                                <TooltipProvider>
+                                  <Tooltip>
+                                    <TooltipTrigger asChild>
+                                      <InfoIcon size={18} className="text-primary" />
+                                    </TooltipTrigger>
+                                    <TooltipContent className="whitespace-pre-line break-words border-black bg-black text-white">
+                                      <p>{option.tooltip}</p>
+                                      <TooltipArrow className="fill-black" />
+                                    </TooltipContent>
+                                  </Tooltip>
+                                </TooltipProvider>
+                              )}
                             </div>
-                            {option.tooltip && (
-                              <TooltipProvider>
-                                <Tooltip>
-                                  <TooltipTrigger asChild>
-                                    <InfoIcon size={18} className="text-primary" />
-                                  </TooltipTrigger>
-                                  <TooltipContent className="whitespace-pre-line break-words border-black bg-black text-white">
-                                    <p>{option.tooltip}</p>
-                                    <TooltipArrow className="fill-black" />
-                                  </TooltipContent>
-                                </Tooltip>
-                              </TooltipProvider>
-                            )}
                           </CommandItem>
                         );
                       })}

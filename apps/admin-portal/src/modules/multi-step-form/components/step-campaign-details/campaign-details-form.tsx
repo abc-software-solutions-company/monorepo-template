@@ -99,7 +99,7 @@ const CampaignDetailsForm: React.FC<CampaignDetailsFormProps> = ({ form, onSubmi
             <FormFieldInputMultiLanguage required form={form} fieldName="description" formLabel="Description" locales={locales} maxLength={300} />
             <FormFieldDatePicker required form={form} fieldName="startDate" formLabel="Start Date" disableBefore={NEXT_DAY} />
             <FormFieldDatePicker required form={form} fieldName="endDate" formLabel="End Date" disableBefore={form.watch('startDate') ?? NEXT_DAY} />
-            <FormFieldSelect form={form} fieldName="country" formLabel="Country" placeholder="Select country" options={countries} />
+            <FormFieldSelect multiple form={form} fieldName="country" formLabel="Country" placeholder="Select country" options={countries} />
             <FormFieldSelectTag form={form} fieldName="country" formLabel="Country" placeholder="Select country" options={countries} />
             <FormFieldInput form={form} fieldName="keyword" formLabel="Keyword" placeholder="Keyword" />
             <FormFieldEditorMultiLanguage form={form} fieldName="tnc" formLabel="Terms and conditions" locales={locales} maxLength={300} />

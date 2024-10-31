@@ -61,6 +61,7 @@ export const locales: Locale[] = [
   { languageLabel: 'Ghana English', languageName: 'en_GH', isDefault: true },
   { languageLabel: 'English', languageName: 'en_US', isDefault: false },
   { languageLabel: 'India', languageName: 'in_IN', isDefault: false },
+  { languageLabel: 'Indonesia', languageName: 'id_ID', isDefault: false },
 ];
 
 export const countries = [

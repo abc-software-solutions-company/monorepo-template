@@ -10,24 +10,28 @@ import { InputLabel } from './input-base';
 
 const CURRENT_YEAR = new Date().getFullYear();
 
-const inputVariants = cva('grid items-center relative w-full rounded-md border border-input bg-background leading-none ring-offset-background', {
-  variants: {
-    size: {
-      default: 'h-14',
-      sm: 'h-10',
+const formControlVariants = cva(
+  'grid items-center relative w-full rounded-md border border-input bg-background leading-none ring-offset-background',
+  {
+    variants: {
+      size: {
+        default: 'h-14',
+        sm: 'h-10',
+      },
+      state: {
+        default: '',
+        focused: 'ring-2 ring-ring ring-offset-2',
+        disabled: 'cursor-not-allowed bg-muted',
+        error: 'border-destructive bg-destructive/10',
+        errorFocused: 'bg-destructive/10 ring-2 ring-destructive ring-offset-2',
+      },
     },
-    state: {
-      default: '',
-      focused: 'ring-2 ring-ring ring-offset-2',
-      disabled: 'cursor-not-allowed bg-muted',
-      error: 'border-destructive bg-destructive/10 focus-visible:ring-destructive',
+    defaultVariants: {
+      size: 'default',
+      state: 'default',
     },
-  },
-  defaultVariants: {
-    size: 'default',
-    state: 'default',
-  },
-});
+  }
+);
 
 const contentVariants = cva('px-3 text-sm whitespace-nowrap font-medium', {
   variants: {
@@ -83,6 +87,7 @@ type InputDateProps = {
   toYear?: number;
   disableBefore?: Date;
   dateFormat?: string;
+  error?: boolean;
   onChange: (date: Date | undefined) => void;
   onBlur?: React.FocusEventHandler<HTMLButtonElement>;
 };
@@ -102,6 +107,7 @@ const InputDate = forwardRef(
       toYear = CURRENT_YEAR + 10,
       disableBefore,
       dateFormat = 'dd/MM/yyyy',
+      error,
       onChange,
       onBlur,
     }: InputDateProps,
@@ -121,6 +127,14 @@ const InputDate = forwardRef(
         return '';
       }
     }, [value, dateFormat]);
+
+    const getFormControlState = () => {
+      if (disabled) return 'disabled';
+      if (error) return isFocused ? 'errorFocused' : 'error';
+      if (isFocused) return 'focused';
+
+      return 'default';
+    };
 
     const handleSelect = (date: Date | undefined) => {
       if (disabled) return;
@@ -175,7 +189,7 @@ const InputDate = forwardRef(
     }, [handleClickOutside]);
 
     return (
-      <div ref={ref} className={cn(inputVariants({ size, state: disabled ? 'disabled' : isFocused ? 'focused' : 'default' }), className)}>
+      <div ref={ref} className={cn(formControlVariants({ size, state: getFormControlState() }), className)}>
         <div ref={inputRef}>
           <Popover open={isOpen} onOpenChange={handleOpenChange}>
             <PopoverTrigger asChild>

@@ -232,10 +232,11 @@ export default function FormFieldUploaderMultiLanguage<T extends FieldValues>({
               <div className="flex h-10 items-center justify-between border-b border-input">
                 <div className="flex h-full items-center">
                   {visibleLocales.map(locale => (
-                    <button
+                    <Button
                       key={locale.languageName}
                       type="button"
                       disabled={disabled}
+                      variant="transparent"
                       className={cn(
                         'relative h-full whitespace-nowrap px-3 text-sm transition-colors focus:outline-none',
                         disabled && 'cursor-not-allowed opacity-50',
@@ -249,7 +250,7 @@ export default function FormFieldUploaderMultiLanguage<T extends FieldValues>({
                         <CheckIndicator values={field.value} lang={locale.languageName} />
                       </span>
                       {activeLocale === locale.languageName && <div className="absolute bottom-0 left-0 h-0.5 w-full bg-primary" />}
-                    </button>
+                    </Button>
                   ))}
 
                   {dropdownLocales.length > 0 && (
@@ -263,9 +264,10 @@ export default function FormFieldUploaderMultiLanguage<T extends FieldValues>({
                         <Command>
                           <CommandList>
                             <CommandGroup>
-                              {dropdownLocales.map(locale => (
+                              {dropdownLocales.map((locale, index) => (
                                 <CommandItem
                                   key={locale.languageName}
+                                  tabIndex={index}
                                   className={activeLocale === locale.languageName ? '!bg-primary/20' : ''}
                                   disabled={disabled}
                                   onSelect={() => {
@@ -327,7 +329,7 @@ export default function FormFieldUploaderMultiLanguage<T extends FieldValues>({
             </div>
           </FormControl>
 
-          {error?.message && <FormMessage message={error.message} />}
+          <FormMessage />
           <ModalConfirm
             visible={isConfirmOpen}
             title="Are you sure?"

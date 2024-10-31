@@ -6,6 +6,7 @@ import { Slot } from "@radix-ui/react-slot"
 import {
   Controller,
   ControllerProps,
+  FieldError,
   FieldPath,
   FieldValues,
   FormProvider,
@@ -146,12 +147,39 @@ interface FormMessageProps extends React.HTMLAttributes<HTMLParagraphElement> {
   message?: string;
 }
 
+const getErrorMessage = (error: FieldError | undefined): string | undefined => {
+  if (!error) return undefined;
+
+  // Case 1: Direct error object with message
+  if (typeof error === 'object' && error.message) {
+    return error.message;
+  }
+
+  // Case 2: Array of errors
+  if (Array.isArray(error)) {
+    const firstError = error[0]?.value;
+    if (firstError?.message) {
+      return firstError.message;
+    }
+  }
+
+  // Case 3: Error might be a string
+  if (typeof error === 'string') {
+    return error;
+  }
+
+  // Default case: stringify the error
+  return String(error);
+};
+
 const FormMessage = React.forwardRef<
   HTMLParagraphElement,
   FormMessageProps
 >(({ className, children, message, ...props }, ref) => {
   const { error, formMessageId } = useFormField()
-  const body = error ? (message ? message : String(error?.message)) : children;
+
+  const errorMessage = message || getErrorMessage(error);
+  const body = errorMessage || children;
 
   if (!body) {
     return null

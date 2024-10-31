@@ -14,14 +14,14 @@ const inputLabelVariants = cva('block text-muted-foreground px-3 font-medium pee
   },
 });
 
-type InputLabelProps = {
+interface IInputLabelProps {
   className?: string;
   label: string;
   required?: boolean;
   size?: 'default' | 'sm';
 };
 
-export const InputLabel: FC<InputLabelProps> = ({ className, label, required, size = 'default' }) => (
+export const InputLabel: FC<IInputLabelProps> = ({ className, label, required, size = 'default' }) => (
   <label className={cn(inputLabelVariants({ size }), className)}>
     {label}
     {required && <span className="text-destructive ml-0.5">*</span>}
