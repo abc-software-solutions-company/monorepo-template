@@ -74,7 +74,6 @@ type InputDateProps = {
   value: Date | undefined;
   label?: string;
   required?: boolean;
-  error?: boolean;
   disabled?: boolean;
   size?: 'default' | 'sm';
   className?: string;
@@ -94,7 +93,6 @@ const InputDate = forwardRef(
       value,
       label,
       required = false,
-      error = false,
       disabled = false,
       size = 'default',
       className,
@@ -207,7 +205,7 @@ const InputDate = forwardRef(
                 </p>
               </button>
             </PopoverTrigger>
-            <PopoverContent ref={popoverRef} className="w-auto p-0">
+            <PopoverContent ref={popoverRef} className="w-auto p-0" align="end">
               <Calendar
                 initialFocus
                 mode="single"

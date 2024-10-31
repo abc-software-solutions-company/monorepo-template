@@ -42,7 +42,6 @@ const FormFieldDatePicker = <T extends FieldValues>({
             <InputDate
               label={formLabel}
               value={field.value}
-              error={!!error}
               placeholder={placeholder}
               disabled={disabled}
               size={size}

@@ -2,6 +2,7 @@ import React, { useRef, useState } from 'react';
 import { cva } from 'class-variance-authority';
 import { Button } from '~react-web-ui-shadcn/components/ui/button';
 import { cn } from '~react-web-ui-shadcn/lib/utils';
+import { Loading } from '../ui/loading';
 
 const dropzoneVariants = cva('relative flex items-center justify-center cursor-pointer rounded-lg border border-dashed text-center', {
   variants: {
@@ -21,7 +22,6 @@ const dropzoneVariants = cva('relative flex items-center justify-center cursor-p
 type FileUploadProps = {
   className?: string;
   label?: string;
-  maxSize?: number;
   acceptedFileTypes?: string[];
   maxFiles?: number;
   imageDimensions?: {
@@ -39,7 +39,6 @@ type FileUploadProps = {
 
 const FileUpload: React.FC<FileUploadProps> = ({
   className,
-  maxSize = 52428800,
   acceptedFileTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/heic'],
   maxFiles = 10,
   error,
@@ -57,30 +56,10 @@ const FileUpload: React.FC<FileUploadProps> = ({
     if (!files || disabled) return;
 
     const fileArray = Array.from(files);
+    if (fileArray.length > maxFiles) return;
 
-    if (fileArray.length > maxFiles) {
-      return;
-    }
-
-    const validFiles: File[] = [];
-    let validationError = '';
-
-    for (const file of fileArray) {
-      const validation = validateFile(file, maxSize, acceptedFileTypes);
-
-      if (validation.isValid) {
-        validFiles.push(file);
-      } else {
-        validationError = validation.error || '';
-        break;
-      }
-    }
-
-    if (validFiles.length > 0) {
-      const filenames = validFiles.map(file => file.name);
-      onSelectFile?.(validFiles, filenames);
-    } else if (validationError) {
-    }
+    const filenames = fileArray.map(file => file.name);
+    onSelectFile?.(fileArray, filenames);
   };
 
   const handleFocus = () => {
@@ -148,31 +127,13 @@ const FileUpload: React.FC<FileUploadProps> = ({
         onBlur={handleBlur}
       />
       {isUploading && (
-        <div className="absolute left-0 top-0 flex h-full w-full items-center justify-center rounded-lg bg-black/30">
-          <p>Loading</p>
+        <div className="absolute left-0 top-0 flex h-full w-full items-center justify-center rounded-lg bg-black/70">
+          <Loading />
         </div>
       )}
     </div>
   );
 };
-
-function validateFile(file: File, maxSize: number, acceptedFileTypes: string[]): { isValid: boolean; error?: string } {
-  if (file.size > maxSize) {
-    return {
-      isValid: false,
-      error: `File is too large. Max size is ${maxSize / 1024 / 1024}MB`,
-    };
-  }
-
-  if (!acceptedFileTypes.includes(file.type)) {
-    return {
-      isValid: false,
-      error: 'Invalid file type. Please upload an image file.',
-    };
-  }
-
-  return { isValid: true };
-}
 
 type DropZoneProps = {
   className?: string;
