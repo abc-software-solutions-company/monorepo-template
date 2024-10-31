@@ -27,7 +27,7 @@ const container = cva('w-full rounded-md border border-input bg-background ring-
   },
 });
 
-const input = cva('w-full bg-transparent text-sm font-medium py-2 px-3 placeholder:text-muted-foreground focus-visible:outline-none', {
+const input = cva('w-full bg-transparent text-sm font-medium py-2 px-3 placeholder:text-muted-foreground focus-visible:outline-none scrollbar', {
   variants: {
     state: {
       default: '',
@@ -66,7 +66,7 @@ const label = cva('text-xs font-medium', {
   },
 });
 
-interface IProps<T extends FieldValues> extends VariantProps<typeof container> {
+interface IFormFieldInputMultiLanguageProps<T extends FieldValues> extends VariantProps<typeof container> {
   className?: string;
   form: UseFormReturn<T>;
   formLabel?: string;
@@ -79,6 +79,7 @@ interface IProps<T extends FieldValues> extends VariantProps<typeof container> {
   maxVisible?: number;
   minLength?: number;
   maxLength?: number;
+  multiline?: boolean;
 }
 
 export default function FormFieldInputMultiLanguage<T extends FieldValues>({
@@ -93,7 +94,8 @@ export default function FormFieldInputMultiLanguage<T extends FieldValues>({
   required,
   maxVisible = 4,
   maxLength = 255,
-}: IProps<T>) {
+  multiline = false,
+}: IFormFieldInputMultiLanguageProps<T>) {
   const sortedLocales = [...locales].sort((a, b) => (a.isDefault ? -1 : b.isDefault ? 1 : a.languageLabel.localeCompare(b.languageLabel)));
   const defaultLocale = sortedLocales.find(locale => locale.isDefault);
 
@@ -152,6 +154,8 @@ export default function FormFieldInputMultiLanguage<T extends FieldValues>({
   };
 
   if (!visibled) return null;
+
+  const InputComponent = multiline ? 'textarea' : 'input';
 
   return (
     <FormField
@@ -235,7 +239,7 @@ export default function FormFieldInputMultiLanguage<T extends FieldValues>({
                   )}
                 </div>
 
-                <input
+                <InputComponent
                   className={input({ state: getInputState(isOverMaxLength(field.value, activeLocale)) })}
                   placeholder={placeholder}
                   value={field.value?.find((item: TranslationValue) => item.lang === activeLocale)?.value || ''}

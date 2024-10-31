@@ -43,7 +43,7 @@ const CampaignRoot: React.FC = () => {
       name: [],
       description: [],
       tnc: [],
-      imageUrl: [{ lang: 'en_GH', value: 'https://www.w3schools.com/html/pic_trulli.jpg' }],
+      imageUrl: [{ lang: 'en-us', value: 'https://www.w3schools.com/html/pic_trulli.jpg' }],
       country: [],
       keyword: '',
       startDate: undefined,

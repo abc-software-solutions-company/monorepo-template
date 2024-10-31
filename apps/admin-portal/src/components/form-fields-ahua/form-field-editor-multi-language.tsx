@@ -67,7 +67,7 @@ const label = cva('text-xs font-medium', {
   },
 });
 
-interface IProps<T extends FieldValues> extends VariantProps<typeof container> {
+interface IFormFieldEditorMultiLanguageProps<T extends FieldValues> extends VariantProps<typeof container> {
   className?: string;
   form: UseFormReturn<T>;
   formLabel?: string;
@@ -94,7 +94,7 @@ export default function FormFieldEditorMultiLanguage<T extends FieldValues>({
   required,
   maxVisible = 4,
   maxLength = 255,
-}: IProps<T>) {
+}: IFormFieldEditorMultiLanguageProps<T>) {
   const sortedLocales = [...locales].sort((a, b) => (a.isDefault ? -1 : b.isDefault ? 1 : a.languageLabel.localeCompare(b.languageLabel)));
   const defaultLocale = sortedLocales.find(locale => locale.isDefault);
 

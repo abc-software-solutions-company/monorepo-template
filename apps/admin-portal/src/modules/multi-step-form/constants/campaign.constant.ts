@@ -56,12 +56,12 @@ export enum CAMPAIGN_TRIGGER_FIELD {
 }
 
 export const locales: Locale[] = [
-  { languageLabel: 'Vietnam', languageName: 'vi_VN', isDefault: false },
-  { languageLabel: 'Thailand', languageName: 'th_TH', isDefault: false },
-  { languageLabel: 'Ghana English', languageName: 'en_GH', isDefault: true },
-  { languageLabel: 'English', languageName: 'en_US', isDefault: false },
-  { languageLabel: 'India', languageName: 'in_IN', isDefault: false },
-  { languageLabel: 'Indonesia', languageName: 'id_ID', isDefault: false },
+  { languageLabel: 'English', languageName: 'en-us', isDefault: true },
+  { languageLabel: 'Vietnam', languageName: 'vi-vn', isDefault: false },
+  { languageLabel: 'Germany', languageName: 'de-de', isDefault: false },
+  { languageLabel: 'Thailand', languageName: 'th-th', isDefault: false },
+  { languageLabel: 'India', languageName: 'in-hi', isDefault: false },
+  { languageLabel: 'Indonesia', languageName: 'id-id', isDefault: false },
 ];
 
 export const countries = [
