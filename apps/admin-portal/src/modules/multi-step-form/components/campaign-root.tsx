@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Button } from '~react-web-ui-shadcn/components/ui/button';
 import { Separator } from '~react-web-ui-shadcn/components/ui/separator';
 
 import { CampaignDetailsFormValues, CampaignMechanismFormValues, EligibilityCriteriaFormValues } from '../interfaces/campaign.interface';
@@ -19,6 +18,7 @@ import CampaignMechanismForm from './step-campaign-mechanism/campaign-mechanism-
 import CampaignConfirmation from './step-confirmation/campaign-confirmation';
 import EligibilityCriteriaForm from './step-eligibility-criteria/eligibility-criteria-form';
 import CampaignNavigation from './campaign-navigation';
+import CampaignToolbar from './campaign-toolbar';
 
 import { createCampaignDetailsSchema } from '../validators/campaign-details.validator';
 import { campaignMechanismSchema } from '../validators/campaign-mechanism.validator';
@@ -72,7 +72,7 @@ const CampaignRoot: React.FC = () => {
       ],
     },
   });
-  const [isFormValid, setIsFormValid] = useState<boolean>(false);
+  const [isFormValid, setIsFormValid] = useState(false);
 
   const campaignDetailsForm = useForm<CampaignDetailsFormValues>({
     resolver: zodResolver(createCampaignDetailsSchema(locales)),
@@ -88,21 +88,6 @@ const CampaignRoot: React.FC = () => {
     resolver: zodResolver(campaignMechanismSchema),
     defaultValues: formData.campaignMechanism,
   });
-
-  useEffect(() => {
-    const isCampaignDetailsValid = campaignDetailsForm.formState.isValid;
-    const isEligibilityCriteriaValid = eligibilityCriteriaForm.formState.isValid;
-    const isCampaignMechanismValid = campaignMechanismForm.formState.isValid;
-
-    setIsFormValid(isCampaignDetailsValid && isEligibilityCriteriaValid && isCampaignMechanismValid);
-
-    setStepCompleted(prev => ({
-      ...prev,
-      [CAMPAIGN_STEP.CAMPAIGN_DETAILS]: campaignDetailsForm.formState.isValid,
-      [CAMPAIGN_STEP.ELIGIBILITY_CRITERIA]: eligibilityCriteriaForm.formState.isValid,
-      [CAMPAIGN_STEP.CAMPAIGN_MECHANISM]: campaignMechanismForm.formState.isValid,
-    }));
-  }, [campaignDetailsForm.formState.isValid, eligibilityCriteriaForm.formState.isValid, campaignMechanismForm.formState.isValid]);
 
   const handleCampaignDetailsSubmit = (data: CampaignDetailsFormValues) => {
     setFormData(prev => ({ ...prev, campaignDetails: data }));
@@ -123,21 +108,27 @@ const CampaignRoot: React.FC = () => {
   };
 
   const saveDraft = () => {
-    localStorage.setItem('formDraft', JSON.stringify(formData));
-    alert(JSON.stringify(formData, null, 2));
+    alert(JSON.stringify(campaignDetailsForm.watch(), null, 2));
   };
 
-  const loadDraft = () => {
-    const savedDraft = localStorage.getItem('formDraft');
+  const handleCancel = () => {
+    alert('Canceled');
+  };
 
-    if (savedDraft) {
-      const parsedDraft = JSON.parse(savedDraft) as CampaignFormData;
-
-      setFormData(parsedDraft);
-
-      campaignDetailsForm.reset(parsedDraft.campaignDetails);
-      eligibilityCriteriaForm.reset(parsedDraft.eligibilityCriteria);
-      campaignMechanismForm.reset(parsedDraft.campaignMechanism);
+  const handleNextStep = () => {
+    switch (currentStep) {
+      case CAMPAIGN_STEP.CAMPAIGN_DETAILS:
+        campaignDetailsForm.handleSubmit(handleCampaignDetailsSubmit)();
+        break;
+      case CAMPAIGN_STEP.ELIGIBILITY_CRITERIA:
+        eligibilityCriteriaForm.handleSubmit(handleEligibilityCriteriaSubmit)();
+        break;
+      case CAMPAIGN_STEP.CAMPAIGN_MECHANISM:
+        campaignMechanismForm.handleSubmit(handleCampaignMechanismSubmit)();
+        break;
+      case CAMPAIGN_STEP.CONFIRMATION:
+        handleSubmit();
+        break;
     }
   };
 
@@ -150,7 +141,7 @@ const CampaignRoot: React.FC = () => {
   };
 
   const handleStepChange = (step: CAMPAIGN_STEP) => {
-    if (isFormValid) setCurrentStep(step);
+    setCurrentStep(step);
   };
 
   const renderStep = () => {
@@ -168,54 +159,24 @@ const CampaignRoot: React.FC = () => {
     }
   };
 
-  const renderNextButton = () => {
-    switch (currentStep) {
-      case CAMPAIGN_STEP.CAMPAIGN_DETAILS:
-        return (
-          <Button type="button" onClick={campaignDetailsForm.handleSubmit(handleCampaignDetailsSubmit)}>
-            Next
-          </Button>
-        );
-      case CAMPAIGN_STEP.ELIGIBILITY_CRITERIA:
-        return (
-          <Button type="button" onClick={eligibilityCriteriaForm.handleSubmit(handleEligibilityCriteriaSubmit)}>
-            Next
-          </Button>
-        );
+  useEffect(() => {
+    const isCampaignDetailsValid = campaignDetailsForm.formState.isValid;
+    const isEligibilityCriteriaValid = eligibilityCriteriaForm.formState.isValid;
+    const isCampaignMechanismValid = campaignMechanismForm.formState.isValid;
 
-      case CAMPAIGN_STEP.CAMPAIGN_MECHANISM:
-        return (
-          <Button type="button" onClick={campaignMechanismForm.handleSubmit(handleCampaignMechanismSubmit)}>
-            Next
-          </Button>
-        );
+    setIsFormValid(isCampaignDetailsValid && isEligibilityCriteriaValid && isCampaignMechanismValid);
 
-      case CAMPAIGN_STEP.CONFIRMATION:
-        return (
-          <Button type="button" disabled={!isFormValid || currentStep !== CAMPAIGN_STEP.CONFIRMATION} onClick={handleSubmit}>
-            Publish
-          </Button>
-        );
-
-      default:
-        return null;
-    }
-  };
+    setStepCompleted(prev => ({
+      ...prev,
+      [CAMPAIGN_STEP.CAMPAIGN_DETAILS]: campaignDetailsForm.formState.isValid,
+      [CAMPAIGN_STEP.ELIGIBILITY_CRITERIA]: eligibilityCriteriaForm.formState.isValid,
+      [CAMPAIGN_STEP.CAMPAIGN_MECHANISM]: campaignMechanismForm.formState.isValid,
+    }));
+  }, [campaignDetailsForm.formState.isValid, eligibilityCriteriaForm.formState.isValid, campaignMechanismForm.formState.isValid]);
 
   return (
     <div>
-      <div className="flex gap-x-2">
-        <Button className="ml-auto" type="button" onClick={saveDraft}>
-          Save as draft
-        </Button>
-        <Button type="button" onClick={loadDraft}>
-          Load draft
-        </Button>
-        <Button type="button" onClick={() => alert('Canceled')}>
-          Cancel
-        </Button>
-        {renderNextButton()}
-      </div>
+      <CampaignToolbar currentStep={currentStep} isFormValid={isFormValid} onSaveDraft={saveDraft} onCancel={handleCancel} onNext={handleNextStep} />
       <CampaignNavigation currentStep={currentStep} stepCompleted={stepCompleted} onStepChange={handleStepChange} />
       <Separator className="my-6" />
       {renderStep()}

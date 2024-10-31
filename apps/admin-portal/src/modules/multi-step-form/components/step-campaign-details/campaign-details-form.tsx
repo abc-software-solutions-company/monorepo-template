@@ -9,6 +9,7 @@ import FormFieldInputMultiLanguage from '@/components/form-fields-ahua/form-fiel
 import FormFieldSelect from '@/components/form-fields-ahua/form-field-select';
 import FormFieldSelectTag from '@/components/form-fields-ahua/form-field-select-tag';
 import FormFieldUploaderMultiLanguage, { FilePreview } from '@/components/form-fields-ahua/form-field-uploader-multi-language';
+import ModalLoading from '@/components/modals/modal-loading';
 
 import { countries, locales } from '../../constants/campaign.constant';
 import { campaignDetailsDto } from '../../dtos/campaign-details.dto';
@@ -127,6 +128,7 @@ const CampaignDetailsForm: React.FC<CampaignDetailsFormProps> = ({ form, onSubmi
             </pre>
           </div>
         </div>
+        <ModalLoading visible={form.formState.isSubmitting} />
       </form>
     </Form>
   );
