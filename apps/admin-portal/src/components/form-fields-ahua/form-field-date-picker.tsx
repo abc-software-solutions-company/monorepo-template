@@ -1,5 +1,4 @@
 import { FieldValues, Path, UseFormReturn } from 'react-hook-form';
-import { useTranslations } from 'use-intl';
 import { InputDate } from '~react-web-ui-shadcn/components/ahua/input-date';
 import { FormControl, FormField, FormItem, FormMessage } from '~react-web-ui-shadcn/components/ui/form';
 
@@ -28,8 +27,6 @@ const FormFieldDatePicker = <T extends FieldValues>({
   required = false,
   disableBefore,
 }: IFormFieldDatePickerProps<T>) => {
-  const t = useTranslations();
-
   if (!visibled) return null;
 
   return (
@@ -52,7 +49,7 @@ const FormFieldDatePicker = <T extends FieldValues>({
                 onChange={field.onChange}
               />
             </FormControl>
-            {error?.message && <FormMessage message={t(error.message)} />}
+            <FormMessage />
           </FormItem>
         );
       }}
