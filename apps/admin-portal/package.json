@@ -38,7 +38,7 @@
   },
   "dependencies": {
     "@artsy/fresnel": "^7.1.4",
-    "@blocknote/core": "^0.13.2",
+    "@blocknote/core": "^0.18.0",
     "@blocknote/react": "^0.13.2",
     "@blocknote/shadcn": "^0.13.2",
     "@ckeditor/ckeditor5-react": "^8.0.0",
