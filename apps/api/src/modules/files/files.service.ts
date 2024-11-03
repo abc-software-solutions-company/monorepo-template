@@ -96,6 +96,8 @@ export class FilesService {
 
     if (status) {
       queryBuilder.where('file.status in (:...status)', { status });
+    } else {
+      queryBuilder.where('file.status in (:...status)', { status: [FILE_STATUS.VISIBLED] });
     }
     if (categoryId) {
       queryBuilder.andWhere('category.id = :categoryId', { categoryId });
@@ -129,14 +131,19 @@ export class FilesService {
       throw new NotFoundException('File not found');
     }
 
+    await this.awsService.moveToTrashObject(file.uniqueName);
+
     file.status = FILE_STATUS.DELETED;
 
-    return this.fileRepository.save(file);
+    return await this.fileRepository.save(file);
   }
 
   async bulkDelete(bulkDeleteFileDto: BulkDeleteDto) {
     const queryBuilder = this.fileRepository.createQueryBuilder().update(File).set({ status: FILE_STATUS.DELETED }).whereInIds(bulkDeleteFileDto.ids);
-    const data = await queryBuilder.returning('id, status').execute();
+
+    const data = await queryBuilder.returning('id, status, uniqueName, thumbnailUrl').execute();
+
+    await this.awsService.moveToTrashObjects(data.raw.map(x => x.unique_name));
 
     return data.raw;
   }

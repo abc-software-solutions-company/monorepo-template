@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { DeleteObjectCommand, PutObjectCommand, S3Client, S3ClientConfig } from '@aws-sdk/client-s3';
+import { HttpStatusCode } from 'axios';
+import { CopyObjectCommand, DeleteObjectCommand, PutObjectCommand, S3Client, S3ClientConfig } from '@aws-sdk/client-s3';
 
 import { IConfigs } from '@/common/interfaces/configs.interface';
 
@@ -65,4 +66,44 @@ export class AwsService {
       throw new Error(`Failed to remove object: ${err.message}`);
     }
   }
+
+  moveToTrashObject = async (objectKey: string) => {
+    const moveObjectCommand = new CopyObjectCommand({
+      CopySource: `${this.bucketName}/${objectKey}`,
+      Bucket: this.bucketName,
+      Key: `${'temp-upload'}/${objectKey}`,
+    });
+
+    const moveObjectThumbnail = new CopyObjectCommand({
+      CopySource: `${this.bucketName}/${'thumbnails'}/${objectKey}`,
+      Bucket: this.bucketName,
+      Key: `${'temp-upload'}/${'thumbnails'}/${objectKey}`,
+    });
+
+    try {
+      const moveObjectResponse = await this.s3Client.send(moveObjectCommand);
+
+      if (moveObjectResponse.$metadata.httpStatusCode === HttpStatusCode.Ok) {
+        const removedObject = await this.removeObject(objectKey);
+
+        const moveObjectThumbnailResponse = await this.s3Client.send(moveObjectThumbnail);
+
+        if (moveObjectThumbnailResponse.$metadata.httpStatusCode === HttpStatusCode.Ok) {
+          await this.removeObject(`${'thumbnails'}/${objectKey}`);
+        }
+
+        return removedObject;
+      }
+    } catch (err) {
+      return false;
+    }
+  };
+
+  moveToTrashObjects = async (objectKeys: string[]) => {
+    // Updated to accept an array of object keys
+    for (const objectKey of objectKeys) {
+      // Iterate over each object key
+      await this.moveToTrashObject(objectKey);
+    }
+  };
 }

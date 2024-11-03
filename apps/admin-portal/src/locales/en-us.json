@@ -281,6 +281,9 @@
 
   "file_records": "file records",
   "file_choose_selected": "Choose selected",
+  "file_delete_assets": "Delete assets",
+  "file_delete_assets_confirm": "If you delete these files, you will permanently lose these images from the website. Please double-check before proceeding:",
+  "file_delete_mutil_success": "Deleted files successfully.",
 
   "audit_log_table_name": "Table Name",
   "audit_log_record_id": "Record ID",

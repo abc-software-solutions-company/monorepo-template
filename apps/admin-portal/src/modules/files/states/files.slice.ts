@@ -155,12 +155,7 @@ const slice = createSlice({
       state.error = error;
       state.message = message;
       state.statusCode = statusCode;
-      entityAdapter.updateOne(state, {
-        id: data.id,
-        changes: {
-          status: data.status,
-        },
-      });
+      entityAdapter.removeOne(state, data.id);
     },
     destroyFailure: (state, action: PayloadAction<AxiosError<ResponseError>>) => {
       const responseData = action.payload.response?.data;
@@ -189,16 +184,9 @@ const slice = createSlice({
         state.selected,
         data.map(x => x.id)
       );
-      entityAdapter.updateMany(
+      entityAdapter.removeMany(
         state,
-        data.map(item => {
-          return {
-            id: item.id,
-            changes: {
-              status: item.status,
-            },
-          };
-        })
+        data.map(item => item.id)
       );
     },
     bulkDestroyFailure(state, action: PayloadAction<AxiosError<ResponseError>>) {

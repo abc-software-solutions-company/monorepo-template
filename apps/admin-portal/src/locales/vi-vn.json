@@ -281,6 +281,9 @@
 
   "file_records": "tệp",
   "file_choose_selected": "Chọn",
+  "file_delete_assets": "Xóa tài nguyên",
+  "file_delete_assets_confirm": "Nếu bạn xóa các tệp này, bạn sẽ mất vĩnh viễn những hình ảnh này từ trang web. Vui lòng kiểm tra kỹ trước khi tiến hành:",
+  "file_delete_mutil_success": "Đã xóa các tập tin thành công.",
 
   "audit_log_table_name": "Tên Bảng",
   "audit_log_record_id": "Id Đối Tượng",

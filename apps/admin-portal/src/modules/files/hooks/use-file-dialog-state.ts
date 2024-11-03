@@ -9,6 +9,7 @@ import { FileDialogType } from '../constants/files.constant';
 interface IState {
   type: FileDialogType;
   selectedItems: FileEntity[];
+  selectedIds: string[];
 }
 
 interface IActions {
@@ -22,6 +23,7 @@ export const useFileDialogState = create<IState & IActions>()(
     immer(set => ({
       type: 'single',
       selectedItems: [],
+      selectedIds: [],
       setType: type => {
         set(state => {
           state.type = type;
@@ -36,13 +38,16 @@ export const useFileDialogState = create<IState & IActions>()(
         set(state => {
           if (type === 'single') {
             state.selectedItems = [item];
+            state.selectedIds = [item.id];
           } else if (type === 'multiple') {
             const isSelected = state.selectedItems.some(x => x.id === item.id);
 
             if (isSelected) {
               state.selectedItems = state.selectedItems.filter(x => x.id !== item.id);
+              state.selectedIds = state.selectedIds.filter(x => x !== item.id);
             } else {
               state.selectedItems = [...state.selectedItems, item];
+              state.selectedIds = [...state.selectedIds, item.id];
             }
           }
         });
