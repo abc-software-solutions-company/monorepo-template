@@ -90,18 +90,22 @@ export function toDateTime(date: Date, locale = 'en-us', showTime = true): strin
   return date.toLocaleDateString(locale, options);
 }
 
-export const setStartOfDay = (date: Date): Date => {
-  const newDate = new Date(date);
+export const setUTCStartOfDay = (date: Date): Date => {
+  const year = date.getUTCFullYear();
+  const month = date.getUTCMonth();
+  const day = date.getUTCDate();
 
-  newDate.setHours(0, 0, 0, 0);
+  const newDate = new Date(Date.UTC(year, month, day, 0, 0, 0, 0));
 
   return newDate;
 };
 
-export const setEndOfDay = (date: Date): Date => {
-  const newDate = new Date(date);
+export const setUTCEndOfDay = (date: Date): Date => {
+  const year = date.getUTCFullYear();
+  const month = date.getUTCMonth();
+  const day = date.getUTCDate();
 
-  newDate.setHours(23, 59, 59, 999);
+  const newDate = new Date(Date.UTC(year, month, day, 23, 59, 59, 999));
 
   return newDate;
 };

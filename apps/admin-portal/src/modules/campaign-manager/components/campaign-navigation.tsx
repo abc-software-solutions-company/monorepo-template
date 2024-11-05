@@ -8,9 +8,9 @@ type CampaignNavigationProps = {
   onStepChange?: (step: CAMPAIGN_STEP) => void;
 };
 
-const CampaignNavigation: React.FC<CampaignNavigationProps> = ({ currentStep, stepCompleted, onStepChange }) => {
-  const steps = [CAMPAIGN_STEP.CAMPAIGN_DETAILS, CAMPAIGN_STEP.ELIGIBILITY_CRITERIA, CAMPAIGN_STEP.CAMPAIGN_MECHANISM, CAMPAIGN_STEP.CONFIRMATION];
+const STEPS = Object.values(CAMPAIGN_STEP);
 
+const CampaignNavigation: React.FC<CampaignNavigationProps> = ({ currentStep, stepCompleted, onStepChange }) => {
   const getStepClassName = (step: CAMPAIGN_STEP) => {
     if (stepCompleted[step]) {
       return 'border-2 border-green-500 bg-green-500 text-white';
@@ -38,7 +38,7 @@ const CampaignNavigation: React.FC<CampaignNavigationProps> = ({ currentStep, st
   return (
     <div className="mx-auto max-w-[700px]">
       <div className="grid grid-cols-4">
-        {steps.map((step, index) => (
+        {STEPS.map((step, index) => (
           <div key={step} className="flex flex-col items-center">
             <button
               type="button"
@@ -46,7 +46,7 @@ const CampaignNavigation: React.FC<CampaignNavigationProps> = ({ currentStep, st
               onClick={() => onStepChange?.(step)}
             >
               <strong>{index + 1}</strong>
-              {index < steps.length - 1 && (
+              {index < STEPS.length - 1 && (
                 <div className={`absolute left-full top-1/2 z-0 ml-[2px] h-[1px] w-[144px] -translate-y-1/2 ${getLineClassName(step)}`} />
               )}
             </button>

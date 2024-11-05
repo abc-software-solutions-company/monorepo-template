@@ -1,6 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import ReactQuill, { UnprivilegedEditor } from 'react-quill';
-
 import 'react-quill/dist/quill.snow.css';
 
 interface IInputEditorProps {
@@ -35,6 +34,7 @@ const InputEditor: React.FC<IInputEditorProps> = ({
 }) => {
   const [internalValue, setInternalValue] = useState<string>('');
   const [isFocused, setIsFocused] = useState(false);
+  const [quillInstance, setQuillInstance] = useState<any>(null);
 
   useEffect(() => {
     if (typeof value === 'string') {
@@ -44,35 +44,58 @@ const InputEditor: React.FC<IInputEditorProps> = ({
     }
   }, [value]);
 
-  const handleChange = (newValue: string, _delta: any, _source: any, editor: UnprivilegedEditor) => {
-    const isEditorEmpty = editor.getText().trim().length === 0;
+  const handleChange = useCallback(
+    (newValue: string, _delta: any, _source: any, editor: UnprivilegedEditor) => {
+      const isEditorEmpty = editor.getText().trim().length === 0;
+      const cleanValue = isEditorEmpty ? '' : newValue;
 
-    const cleanValue = isEditorEmpty ? '' : newValue;
+      setInternalValue(cleanValue);
+      onChange(cleanValue, editor);
+    },
+    [onChange]
+  );
 
-    setInternalValue(cleanValue);
-    onChange(cleanValue, editor);
-  };
-
-  const handleFocus = () => {
+  const handleFocus = useCallback(() => {
     setIsFocused(true);
     onFocus?.();
-  };
+  }, [onFocus]);
 
-  const handleBlur = (_previousRange: ReactQuill.Range, _source: any, editor: UnprivilegedEditor) => {
-    const isEditorEmpty = editor.getText().trim().length === 0;
+  const handleBlur = useCallback(
+    (_previousRange: ReactQuill.Range, _source: any, editor: UnprivilegedEditor) => {
+      const isEditorEmpty = editor.getText().trim().length === 0;
 
-    if (isEditorEmpty && internalValue !== '') {
-      setInternalValue('');
-      onChange('', editor);
+      if (isEditorEmpty && internalValue !== '') {
+        setInternalValue('');
+        onChange('', editor);
+      }
+
+      setIsFocused(false);
+      onBlur?.(editor);
+    },
+    [internalValue, onChange, onBlur]
+  );
+
+  useEffect(() => {
+    if (quillInstance) {
+      const editor = quillInstance.getEditor();
+
+      const blurHandler = () => {
+        const unprivilegedEditor = quillInstance.makeUnprivilegedEditor(editor);
+        handleBlur(null, null, unprivilegedEditor);
+      };
+
+      editor.root.addEventListener('blur', blurHandler);
+
+      return () => {
+        editor.root.removeEventListener('blur', blurHandler);
+      };
     }
-
-    setIsFocused(false);
-    onBlur?.(editor);
-  };
+  }, [quillInstance, handleBlur]);
 
   return (
     <div className={className}>
       <ReactQuill
+        ref={el => setQuillInstance(el)}
         theme="snow"
         value={internalValue}
         modules={modules}

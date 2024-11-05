@@ -16,24 +16,14 @@ interface IPagination {
 }
 
 const Pagination: FC<IPagination> = memo(
-  ({
-    className,
-    type,
-    totalItems = 0,
-    currentPage = 1,
-    itemPerPage = 5,
-    pageVisible = 5,
-    visible = true,
-    onChange,
-    ...rest
-  }) => {
+  ({ className, type, totalItems = 0, currentPage = 1, itemPerPage = 5, pageVisible = 5, visible = true, onChange, ...rest }) => {
     const pager = useMemo(
       () =>
         generatePagination({
           totalItems,
           currentPage,
           itemPerPage,
-          pageVisible
+          pageVisible,
         }),
       [totalItems, currentPage, itemPerPage, pageVisible]
     );
@@ -196,7 +186,7 @@ export const generatePagination = ({ totalItems, currentPage, itemPerPage, pageV
   const endIndex = Math.min(startIndex + itemPerPage - 1, totalItems - 1);
   // eslint-disable-next-line prefer-spread
   const pages = Array.apply(null, {
-    length: endPage + 1 - startPage
+    length: endPage + 1 - startPage,
   } as unknown[]).map((_, i) => startPage + i);
   return {
     totalItems: totalItems,
@@ -207,6 +197,6 @@ export const generatePagination = ({ totalItems, currentPage, itemPerPage, pageV
     endPage: endPage,
     startIndex: startIndex,
     endIndex: endIndex,
-    pages: pages
+    pages: pages,
   } as IPager;
 };

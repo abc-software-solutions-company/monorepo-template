@@ -1,17 +1,17 @@
 import { Locale } from '@/interfaces/language.interface';
 
 export enum CAMPAIGN_STEP {
-  CAMPAIGN_DETAILS = 'campaign_details',
-  ELIGIBILITY_CRITERIA = 'eligibility_criteria',
-  CAMPAIGN_MECHANISM = 'campaign_mechanism',
-  CONFIRMATION = 'confirmation',
+  STEP_1 = 'step_1',
+  STEP_2 = 'step_2',
+  STEP_3 = 'step_3',
+  STEP_4 = 'step_4',
 }
 
 export const CAMPAIGN_STEP_LABELS: Record<CAMPAIGN_STEP, string> = {
-  [CAMPAIGN_STEP.CAMPAIGN_DETAILS]: 'Campaign Details',
-  [CAMPAIGN_STEP.ELIGIBILITY_CRITERIA]: 'Eligibility Criteria',
-  [CAMPAIGN_STEP.CAMPAIGN_MECHANISM]: 'Campaign Mechanism',
-  [CAMPAIGN_STEP.CONFIRMATION]: 'Confirmation',
+  [CAMPAIGN_STEP.STEP_1]: 'Step 1',
+  [CAMPAIGN_STEP.STEP_2]: 'Step 2',
+  [CAMPAIGN_STEP.STEP_3]: 'Step 3',
+  [CAMPAIGN_STEP.STEP_4]: 'Step 4',
 };
 
 export enum CAMPAIGN_RULE {
@@ -47,13 +47,10 @@ export enum CAMPAIGN_TRIGGER_CONDITION {
   LESS_THAN = 'less_than',
 }
 
-export enum CAMPAIGN_TRIGGER_FIELD {
-  B2B_SALES = 'b2b_sales',
-  B2B_PURCHASE = 'b2b_purchase',
-  B2C = 'b2c',
-  QR_SCAN = 'qr_scan',
-  RECEIPT = 'receipt',
-}
+export const CAMPAIGN_TYPE_LIST = [
+  { label: 'Milestone', value: CAMPAIGN_TYPE.MILESTONE, description: 'Rewards can be configured for each completed level.' },
+  { label: 'Stamp', value: CAMPAIGN_TYPE.STAMP, description: 'Rewards can be configured for each completed level.' },
+];
 
 export const locales: Locale[] = [
   { languageLabel: 'English', languageName: 'en-us', isDefault: true },

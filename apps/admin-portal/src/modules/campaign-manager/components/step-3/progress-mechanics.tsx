@@ -5,28 +5,24 @@ import { Button } from '~react-web-ui-shadcn/components/ui/button';
 
 import ModalProgressMechanics from './modal-progress-mechanics';
 
-import { CampaignMechanismFormValues, ConfigureProgressMechanicsFormValues } from '../../interfaces/campaign.interface';
-
 type ProgressMechanicsProps = {
   className?: string;
-  form: UseFormReturn<CampaignMechanismFormValues>;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  form: UseFormReturn<any>;
 };
 
 const ProgressMechanics: React.FC<ProgressMechanicsProps> = ({ className, form }) => {
   const [isModalVisible, setIsModalVisible] = React.useState(false);
-  const [modalMode, setModalMode] = useState<'add' | 'edit'>('add');
   const [editIndex, setEditIndex] = useState<number | undefined>(undefined);
   const { fields, remove, append } = useFieldArray({ control: form.control, name: 'progressMechanics' });
 
   const handleAddProgressMechanics = () => {
     setEditIndex(undefined);
-    setModalMode('add');
     setIsModalVisible(true);
   };
 
   const handleEditProgressMechanic = (index: number) => {
     setEditIndex(index);
-    setModalMode('edit');
     setIsModalVisible(true);
   };
 
@@ -34,16 +30,13 @@ const ProgressMechanics: React.FC<ProgressMechanicsProps> = ({ className, form }
     remove(index);
   };
 
-  const handleSaveProgressMechanics = (data: ConfigureProgressMechanicsFormValues, index?: number) => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const handleSaveProgressMechanics = (data: any, index?: number) => {
     if (index !== undefined) {
-      form.setValue(`progressMechanics.${index}.name`, data.name);
+      form.setValue(`progressMechanics.${index}.ruleName`, data.ruleName);
       form.setValue(`progressMechanics.${index}.campaignRule`, data.campaignRule);
     } else {
-      append({
-        name: data.name,
-        campaignRule: data.campaignRule,
-        triggers: data.triggers,
-      });
+      append({ ruleName: data.ruleName, campaignRule: data.campaignRule });
     }
 
     setIsModalVisible(false);
@@ -51,11 +44,11 @@ const ProgressMechanics: React.FC<ProgressMechanicsProps> = ({ className, form }
 
   return (
     <div className={classNames('border bg-gray-50 p-4', className)}>
-      <label className="mb-2 block font-bold">Progress Mechanics</label>
+      <strong>Progress Mechanics</strong>
       <p className="mb-4">Set rules for campaign, a maximum of 3 rules can be created for each campaign.</p>
       <table className="w-full border-collapse">
         <thead>
-          <tr className="bg-gray-200">
+          <tr>
             <th className="border p-2 text-left">Campaign Rule</th>
             <th className="border p-2 text-left">Rule name</th>
             <th className="border p-2 text-left">Actions</th>
@@ -65,7 +58,7 @@ const ProgressMechanics: React.FC<ProgressMechanicsProps> = ({ className, form }
           {fields.map((field, index) => (
             <tr key={field.id} className="border-b">
               <td className="border p-2">{form.getValues(`progressMechanics.${index}.campaignRule`)}</td>
-              <td className="border p-2">{form.getValues(`progressMechanics.${index}.name`)}</td>
+              <td className="border p-2">{form.getValues(`progressMechanics.${index}.ruleName`)}</td>
               <td className="border p-2">
                 <Button type="button" onClick={() => handleRemoveProgressMechanic(index)}>
                   Remove
@@ -84,8 +77,6 @@ const ProgressMechanics: React.FC<ProgressMechanicsProps> = ({ className, form }
       <ModalProgressMechanics
         form={form}
         visible={isModalVisible}
-        title={'Configure progress mechanics'}
-        mode={modalMode}
         editIndex={editIndex}
         onSave={(data, index) => {
           handleSaveProgressMechanics(data, index);

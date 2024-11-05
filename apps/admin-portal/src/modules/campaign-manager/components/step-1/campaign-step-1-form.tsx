@@ -4,27 +4,24 @@ import { Form } from '~react-web-ui-shadcn/components/ui/form';
 
 import FormFieldDatePicker from '@/components/form-fields-ahua/form-field-date-picker';
 import FormFieldEditorMultiLanguage from '@/components/form-fields-ahua/form-field-editor-multi-language';
-import FormFieldInput from '@/components/form-fields-ahua/form-field-input';
 import FormFieldInputMultiLanguage from '@/components/form-fields-ahua/form-field-input-multi-language';
-import FormFieldSelect from '@/components/form-fields-ahua/form-field-select';
-import FormFieldSelectTag from '@/components/form-fields-ahua/form-field-select-tag';
 import FormFieldUploaderMultiLanguage, { FilePreview } from '@/components/form-fields-ahua/form-field-uploader-multi-language';
 import ModalLoading from '@/components/modals/modal-loading';
 
-import { countries, locales } from '../../constants/campaign.constant';
-import { campaignDetailsDto } from '../../dtos/campaign-details.dto';
-import { CampaignDetailsFormValues } from '../../interfaces/campaign.interface';
+import { locales } from '../../constants/campaign.constant';
+import { campaignStep1Dto } from '../../dtos/campaign-step-1.dto';
+import { CampaignStep1FormValues } from '../../interfaces/campaign.interface';
 
-type CampaignDetailsFormProps = {
-  form: UseFormReturn<CampaignDetailsFormValues>;
-  onSubmit: (data: CampaignDetailsFormValues) => void;
+type CampaignStep1FormProps = {
+  form: UseFormReturn<CampaignStep1FormValues>;
+  onSubmit: (data: CampaignStep1FormValues) => void;
 };
 
-type FormFieldType = ControllerRenderProps<CampaignDetailsFormValues, Path<CampaignDetailsFormValues>>;
+type FormFieldType = ControllerRenderProps<CampaignStep1FormValues, Path<CampaignStep1FormValues>>;
 
 const NEXT_DAY = new Date(Date.now() + 86400000);
 
-const CampaignDetailsForm: React.FC<CampaignDetailsFormProps> = ({ form, onSubmit }) => {
+const CampaignStep1Form: React.FC<CampaignStep1FormProps> = ({ form, onSubmit }) => {
   const [previews, setPreviews] = useState<Record<string, FilePreview[]>>({});
   const [isUploading, setIsUploading] = useState(false);
 
@@ -100,9 +97,6 @@ const CampaignDetailsForm: React.FC<CampaignDetailsFormProps> = ({ form, onSubmi
             <FormFieldInputMultiLanguage required form={form} fieldName="description" formLabel="Description" locales={locales} maxLength={300} />
             <FormFieldDatePicker required form={form} fieldName="startDate" formLabel="Start Date" disableBefore={NEXT_DAY} />
             <FormFieldDatePicker required form={form} fieldName="endDate" formLabel="End Date" disableBefore={form.watch('startDate') ?? NEXT_DAY} />
-            <FormFieldSelect multiple form={form} fieldName="country" formLabel="Country" placeholder="Select country" options={countries} />
-            <FormFieldSelectTag form={form} fieldName="country" formLabel="Country" placeholder="Select country" options={countries} />
-            <FormFieldInput form={form} fieldName="keyword" formLabel="Keyword" placeholder="Keyword" />
             <FormFieldEditorMultiLanguage form={form} fieldName="tnc" formLabel="Terms and conditions" locales={locales} maxLength={300} />
           </div>
           <div className="w-full max-w-md space-y-4">
@@ -124,7 +118,7 @@ const CampaignDetailsForm: React.FC<CampaignDetailsFormProps> = ({ form, onSubmi
             <pre className="overflow-hidden rounded-md border-slate-200 bg-slate-100 p-2">{JSON.stringify(form.watch(), null, 2)}</pre>
             <h2 className="text-lg font-semibold">Data send to API</h2>
             <pre className="overflow-hidden rounded-md border-green-200 bg-green-100 p-2">
-              {JSON.stringify(campaignDetailsDto(form.watch()), null, 2)}
+              {JSON.stringify(campaignStep1Dto(form.watch()), null, 2)}
             </pre>
           </div>
         </div>
@@ -134,4 +128,4 @@ const CampaignDetailsForm: React.FC<CampaignDetailsFormProps> = ({ form, onSubmi
   );
 };
 
-export default CampaignDetailsForm;
+export default CampaignStep1Form;

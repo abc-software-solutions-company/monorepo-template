@@ -241,9 +241,7 @@ export default function FormFieldEditorMultiLanguage<T extends FieldValues>({
                 )}
               </div>
               <InputEditor
-                className={input({
-                  state: getInputState(isOverMaxLength(field.value, activeLocale)),
-                })}
+                className={input({ state: getInputState(isOverMaxLength(field.value, activeLocale)) })}
                 placeholder={placeholder}
                 value={field.value?.find((item: TranslationValue) => item.lang === activeLocale)?.value || ''}
                 required={required}

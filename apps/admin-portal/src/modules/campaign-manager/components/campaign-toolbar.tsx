@@ -13,7 +13,7 @@ type CampaignToolbarProps = {
 
 const CampaignToolbar: React.FC<CampaignToolbarProps> = ({ currentStep, isFormValid, onSaveDraft, onCancel, onNext }) => {
   const renderNextButton = () => {
-    const isConfirmationStep = currentStep === CAMPAIGN_STEP.CONFIRMATION;
+    const isConfirmationStep = currentStep === CAMPAIGN_STEP.STEP_4;
 
     return (
       <Button type="button" disabled={isConfirmationStep && !isFormValid} onClick={onNext}>

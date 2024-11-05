@@ -19,7 +19,7 @@ const dropzoneVariants = cva('relative flex items-center justify-center cursor-p
   },
 });
 
-interface IFileUploadProps  {
+interface IFileUploadProps {
   className?: string;
   label?: string;
   acceptedFileTypes?: string[];
@@ -35,7 +35,7 @@ interface IFileUploadProps  {
   onSelectFile?: (files: File[], filenames: string[]) => void;
   onFocus?: () => void;
   onBlur?: () => void;
-};
+}
 
 const FileUpload: React.FC<IFileUploadProps> = ({
   className,

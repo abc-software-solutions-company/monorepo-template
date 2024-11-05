@@ -19,7 +19,7 @@ interface IInputLabelProps {
   label: string;
   required?: boolean;
   size?: 'default' | 'sm';
-};
+}
 
 export const InputLabel: FC<IInputLabelProps> = ({ className, label, required, size = 'default' }) => (
   <label className={cn(inputLabelVariants({ size }), className)}>

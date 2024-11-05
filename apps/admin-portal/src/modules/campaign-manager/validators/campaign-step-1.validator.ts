@@ -4,7 +4,7 @@ import { Locale } from '@/interfaces/language.interface';
 
 import { createLocalizedField, createLocalizedFieldAndValidateMaxLength } from './campaign-base.validator';
 
-export const createCampaignDetailsSchema = (locales: Locale[]) => {
+export const campaignStep1LocalizeSchema = (locales: Locale[]) => {
   const defaultLocale = locales.find(locale => locale.isDefault);
 
   if (!defaultLocale) {
@@ -19,8 +19,6 @@ export const createCampaignDetailsSchema = (locales: Locale[]) => {
       description: localizedField('Description', 300),
       tnc: createLocalizedFieldAndValidateMaxLength(300),
       imageUrl: localizedField(),
-      country: z.array(z.object({})).min(1, 'Country is mandatory'),
-      keyword: z.string().min(1, 'Keyword is mandatory'),
       startDate: z.date().optional(),
       endDate: z.date().optional(),
     })

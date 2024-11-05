@@ -1,9 +1,9 @@
 import classNames from 'classnames';
 import { z } from 'zod';
 
-import { campaignMechanismSchema } from '../../validators/campaign-mechanism.validator';
+import { campaignStep3Schema } from '../../validators/campaign-step-3.validator';
 
-export type CampaignConfirmationValues = z.infer<typeof campaignMechanismSchema>;
+export type CampaignConfirmationValues = z.infer<typeof campaignStep3Schema>;
 
 type CampaignConfirmationProps = {
   className?: string;
@@ -12,8 +12,7 @@ type CampaignConfirmationProps = {
 const CampaignConfirmation: React.FC<CampaignConfirmationProps> = ({ className }) => {
   return (
     <div className={classNames(className)}>
-      <strong>Progress Mechanics</strong>
-      <p>Set rules for campaign, a maximum of 3 rules can be created for each campaign.</p>
+      <p>Review your campaign</p>
     </div>
   );
 };

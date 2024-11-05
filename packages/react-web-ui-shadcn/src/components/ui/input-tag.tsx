@@ -75,7 +75,7 @@ export const InputTag = React.forwardRef<HTMLInputElement, InputTagProps>(({ cla
     <div
       ref={containerRef}
       className={cn(
-        'border-input gap-1 bg-background ring-offset-background focus-within:ring-ring flex flex-wrap items-center rounded-md border px-3 py-2 text-sm focus-within:ring-2 focus-within:ring-offset-2',
+        'border-input bg-background ring-offset-background focus-within:ring-ring flex flex-wrap items-center gap-1 rounded-md border px-3 py-2 text-sm focus-within:ring-2 focus-within:ring-offset-2',
         isFocused && 'ring-ring ring-2 ring-offset-2',
         className
       )}
@@ -92,7 +92,7 @@ export const InputTag = React.forwardRef<HTMLInputElement, InputTagProps>(({ cla
         >
           {keyword}
           <button type="button" onClick={() => removeKeyword(index)} className="hover:text-muted-foreground ml-1 rounded-full outline-none">
-            <CircleXIcon size={12} className='text-muted-foreground' />
+            <CircleXIcon size={12} className="text-muted-foreground" />
           </button>
         </span>
       ))}
