@@ -34,8 +34,6 @@ const CampaignRoot: React.FC = () => {
   });
   const [formData, setFormData] = useState<CampaignFormData>({
     step1: {
-      nation: 'vi-vn',
-      countries: [{ id: 'vi-vn', name: 'Vietnam' }],
       name: [{ lang: 'en-us', value: 'Title' }],
       description: [{ lang: 'en-us', value: 'Desc' }],
       tnc: [],
@@ -44,6 +42,7 @@ const CampaignRoot: React.FC = () => {
       endDate: new Date('2024-11-30T16:59:59.999Z'),
     },
     step2: {
+      nation: 'vi-vn',
       country: [{ id: 'vi-vn', name: 'Vietnam' }],
       keyword: 'key1',
     },

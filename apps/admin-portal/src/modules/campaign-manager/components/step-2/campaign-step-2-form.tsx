@@ -21,6 +21,7 @@ const CampaignStep2Form: React.FC<CampaignStep2FormProps> = ({ form, onSubmit })
       <form onSubmit={form.handleSubmit(onSubmit)}>
         <div className="flex space-x-10">
           <div className="w-full max-w-md space-y-4">
+            <FormFieldSelect required form={form} fieldName="nation" formLabel="Nation" options={countries} />
             <FormFieldSelect multiple form={form} fieldName="country" formLabel="Country" placeholder="Select country" options={countries} />
             <FormFieldSelectTag form={form} fieldName="country" formLabel="Country" placeholder="Select country" options={countries} />
             <FormFieldInput form={form} fieldName="keyword" formLabel="Keyword" placeholder="Keyword" />

@@ -1,15 +1,19 @@
 import { CampaignStep2FormValues } from '../interfaces/campaign.interface';
 
 export type CampaignStep2Payload = {
-  country: { id: string; name: string }[];
+  nation: string;
+  country: { id: string }[];
   keyword: string;
 };
 
 export const campaignStep2Dto = (formValues: CampaignStep2FormValues): Partial<CampaignStep2Payload> => {
-  const { country, keyword } = formValues;
+  const { nation, country, keyword } = formValues;
+
+  const c = country.map(item => ({ id: item.id }));
 
   return {
-    country,
+    nation,
+    country: c,
     keyword,
   };
 };

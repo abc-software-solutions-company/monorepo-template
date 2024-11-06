@@ -7,11 +7,10 @@ import { TranslationValue } from '@/interfaces/language.interface';
 import FormFieldDatePicker from '@/components/form-fields-ahua/form-field-date-picker';
 import FormFieldEditorMultiLanguage from '@/components/form-fields-ahua/form-field-editor-multi-language';
 import FormFieldInputMultiLanguage from '@/components/form-fields-ahua/form-field-input-multi-language';
-import FormFieldSelect from '@/components/form-fields-ahua/form-field-select';
 import FormFieldUploaderMultiLanguage, { FilePreview } from '@/components/form-fields-ahua/form-field-uploader-multi-language';
 import ModalLoading from '@/components/modals/modal-loading';
 
-import { countries, locales } from '../../constants/campaign.constant';
+import { locales } from '../../constants/campaign.constant';
 import { campaignStep1Dto } from '../../dtos/campaign-step-1.dto';
 import { CampaignStep1FormValues } from '../../interfaces/campaign.interface';
 
@@ -99,8 +98,6 @@ const CampaignStep1Form: React.FC<CampaignStep1FormProps> = ({ form, onSubmit })
       <form onSubmit={form.handleSubmit(onSubmit)}>
         <div className="flex space-x-10">
           <div className="w-full max-w-md space-y-4">
-            <FormFieldSelect required form={form} fieldName="nation" formLabel="Country" options={countries} />
-            <FormFieldSelect multiple required form={form} fieldName="countries" formLabel="Country" options={countries} />
             <FormFieldInputMultiLanguage required form={form} fieldName="name" formLabel="Name" locales={locales} maxLength={50} />
             <FormFieldInputMultiLanguage required form={form} fieldName="description" formLabel="Description" locales={locales} maxLength={300} />
             <FormFieldDatePicker required form={form} fieldName="startDate" formLabel="Start Date" disableBefore={NEXT_DAY} />
