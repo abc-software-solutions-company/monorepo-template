@@ -14,6 +14,16 @@ export const CAMPAIGN_STEP_LABELS: Record<CAMPAIGN_STEP, string> = {
   [CAMPAIGN_STEP.STEP_4]: 'Step 4',
 };
 
+export enum CAMPAIGN_TRACKER_TYPE {
+  PRORATED = 'prorated',
+  FIXED = 'fixed',
+}
+
+export const CAMPAIGN_TRACKER_TYPE_LIST = [
+  { id: CAMPAIGN_TRACKER_TYPE.PRORATED, name: 'Prorated' },
+  { id: CAMPAIGN_TRACKER_TYPE.FIXED, name: 'Fixed' },
+];
+
 export enum CAMPAIGN_RULE {
   PRODUCT_SALES_OR_PURCHASE = 'product_sales_or_purchase',
   CUSTOM = 'custom',

@@ -1,21 +1,27 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import classNames from 'classnames';
+import { PenSquareIcon, PlusIcon, Trash2Icon } from 'lucide-react';
 import { useFieldArray, UseFormReturn } from 'react-hook-form';
+import { ColumnDef, getCoreRowModel, useReactTable } from '@tanstack/react-table';
 import { Button } from '~react-web-ui-shadcn/components/ui/button';
 import { Label } from '~react-web-ui-shadcn/components/ui/label';
 
+import { DataTable } from '@/components/data-table/data-table';
+
 import ModalProgressMechanics from './modal-progress-mechanics';
+
+import { CampaignStep3FormValues, ProgressMechanicFormValues } from '../../interfaces/campaign.interface';
 
 type ProgressMechanicsProps = {
   className?: string;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  form: UseFormReturn<any>;
+  form: UseFormReturn<CampaignStep3FormValues>;
 };
 
 const ProgressMechanics: React.FC<ProgressMechanicsProps> = ({ className, form }) => {
-  const [isModalVisible, setIsModalVisible] = React.useState(false);
+  const [isModalVisible, setIsModalVisible] = useState(false);
   const [editIndex, setEditIndex] = useState<number | undefined>(undefined);
   const { fields, remove, append } = useFieldArray({ control: form.control, name: 'progressMechanics' });
+  const progressMechanics = form.watch('progressMechanics');
 
   const handleAddProgressMechanics = () => {
     setEditIndex(undefined);
@@ -31,58 +37,103 @@ const ProgressMechanics: React.FC<ProgressMechanicsProps> = ({ className, form }
     remove(index);
   };
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const handleSaveProgressMechanics = (data: any, index?: number) => {
+  const handleSaveProgressMechanics = (data: ProgressMechanicFormValues, index?: number) => {
     if (index !== undefined) {
       form.setValue(`progressMechanics.${index}.ruleName`, data.ruleName);
       form.setValue(`progressMechanics.${index}.campaignRule`, data.campaignRule);
+      form.setValue(`progressMechanics.${index}.trackerType`, data.trackerType);
+      form.setValue(`progressMechanics.${index}.trackerValue`, data.trackerValue);
+      form.setValue(`progressMechanics.${index}.triggers`, data.triggers);
     } else {
-      append({ ruleName: data.ruleName, campaignRule: data.campaignRule });
+      append({
+        ruleName: data.ruleName,
+        campaignRule: data.campaignRule,
+        trackerType: data.trackerType,
+        trackerValue: data.trackerValue,
+        triggers: data.triggers,
+      });
     }
-
     setIsModalVisible(false);
   };
 
+  const columns = useMemo<ColumnDef<ProgressMechanicFormValues>[]>(
+    () => [
+      {
+        accessorKey: 'campaignRule',
+        size: 200,
+        header: () => <Label>Campaign Rule</Label>,
+        cell: ({ row }) => {
+          const index = parseInt(row.id);
+
+          return <p className="flex items-center">{progressMechanics[index]?.campaignRule}</p>;
+        },
+      },
+      {
+        accessorKey: 'ruleName',
+        size: 0,
+        header: () => <Label>Rule Name</Label>,
+        cell: ({ row }) => {
+          const index = parseInt(row.id);
+
+          return <p className="flex items-center">{progressMechanics[index]?.ruleName}</p>;
+        },
+      },
+      {
+        accessorKey: 'trackerValue',
+        size: 0,
+        header: () => <Label>Tracker Value</Label>,
+        cell: ({ row }) => {
+          const index = parseInt(row.id);
+
+          return <p className="flex items-center">{progressMechanics[index]?.trackerValue}</p>;
+        },
+      },
+      {
+        id: 'actions',
+        size: 120,
+        header: () => <Label>Actions</Label>,
+        cell: ({ row }) => {
+          const index = parseInt(row.id);
+
+          return (
+            <div className="flex gap-3">
+              <Button type="button" size="icon-sm" variant="secondary" onClick={() => handleEditProgressMechanic(index)}>
+                <PenSquareIcon size={20} />
+              </Button>
+              <Button type="button" size="icon-sm" variant="destructive" onClick={() => handleRemoveProgressMechanic(index)}>
+                <Trash2Icon size={20} />
+              </Button>
+            </div>
+          );
+        },
+      },
+    ],
+    [progressMechanics]
+  );
+
+  const table = useReactTable({
+    data: fields,
+    columns,
+    getCoreRowModel: getCoreRowModel(),
+  });
+
   return (
     <div className={classNames('rounded-lg border p-4', className)}>
-      <Label>Progress Mechanics</Label>
-      <p className="mb-4">Set rules for campaign, a maximum of 3 rules can be created for each campaign.</p>
-      <table className="w-full border-collapse">
-        <thead>
-          <tr>
-            <th className="border p-2 text-left">Campaign Rule</th>
-            <th className="border p-2 text-left">Rule name</th>
-            <th className="border p-2 text-left">Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {fields.map((field, index) => (
-            <tr key={field.id} className="border-b">
-              <td className="border p-2">{form.getValues(`progressMechanics.${index}.campaignRule`)}</td>
-              <td className="border p-2">{form.getValues(`progressMechanics.${index}.ruleName`)}</td>
-              <td className="border p-2">
-                <Button type="button" onClick={() => handleRemoveProgressMechanic(index)}>
-                  Remove
-                </Button>
-                <Button type="button" onClick={() => handleEditProgressMechanic(index)}>
-                  Edit
-                </Button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-      <Button type="button" disabled={fields.length >= 3} className="mt-4" onClick={handleAddProgressMechanics}>
-        Add Progress Mechanic
-      </Button>
+      <div className="flex items-start justify-between">
+        <div>
+          <Label>Progress Mechanics</Label>
+          <p className="mb-4">Set rules for campaign, a maximum of 3 rules can be created for each campaign.</p>
+        </div>
+        <Button type="button" disabled={fields.length >= 3} onClick={handleAddProgressMechanics}>
+          <PlusIcon /> Add rule
+        </Button>
+      </div>
+      <DataTable table={table} columns={columns} isFetching={false} />
       <ModalProgressMechanics
         form={form}
         visible={isModalVisible}
         editIndex={editIndex}
-        onSave={(data, index) => {
-          handleSaveProgressMechanics(data, index);
-          setIsModalVisible(false);
-        }}
+        onSave={handleSaveProgressMechanics}
         onClose={() => setIsModalVisible(false)}
       />
     </div>

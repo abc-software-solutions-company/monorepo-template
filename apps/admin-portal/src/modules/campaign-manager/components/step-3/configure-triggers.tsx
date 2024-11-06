@@ -1,74 +1,114 @@
 import React from 'react';
+import { PlusIcon, Trash2Icon } from 'lucide-react';
 import { useFieldArray, UseFormReturn } from 'react-hook-form';
+import { toast } from 'sonner';
 import { Button } from '~react-web-ui-shadcn/components/ui/button';
 import { Label } from '~react-web-ui-shadcn/components/ui/label';
 
 import FormFieldSelect from '@/components/form-fields-ahua/form-field-select';
 
 import { CAMPAIGN_TRIGGER_CONDITION, CAMPAIGN_TRIGGER_PROPERTY } from '../../constants/campaign.constant';
+import { ProgressMechanicFormValues } from '../../interfaces/campaign.interface';
 
-type ConfigureTriggersProps = {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  form: UseFormReturn<any>;
-};
+const propertyOptions = [
+  { id: CAMPAIGN_TRIGGER_PROPERTY.TRANSACTION_TYPE, name: 'Transaction type' },
+  { id: CAMPAIGN_TRIGGER_PROPERTY.AMOUNT, name: 'Amount' },
+  { id: CAMPAIGN_TRIGGER_PROPERTY.SKU, name: 'SKU' },
+  { id: CAMPAIGN_TRIGGER_PROPERTY.QUANTITY, name: 'Quantity' },
+  { id: CAMPAIGN_TRIGGER_PROPERTY.CUSTOM, name: 'Custom' },
+];
 
-const ConfigureTriggers: React.FC<ConfigureTriggersProps> = ({ form }) => {
-  const { fields: triggerItems, append, remove } = useFieldArray({ control: form.control, name: 'triggers' });
+const conditionOptions = [
+  { id: CAMPAIGN_TRIGGER_CONDITION.EQUALS_TO, name: 'Equals to' },
+  { id: CAMPAIGN_TRIGGER_CONDITION.NOT_EQUALS_TO, name: 'Not equals to' },
+  { id: CAMPAIGN_TRIGGER_CONDITION.MORE_THAN, name: 'More than' },
+  { id: CAMPAIGN_TRIGGER_CONDITION.LESS_THAN, name: 'Less than' },
+];
+
+const ConfigureTriggers = ({ form }: { form: UseFormReturn<ProgressMechanicFormValues> }) => {
+  const { fields, append, remove } = useFieldArray({
+    control: form.control,
+    name: 'triggers',
+  });
+
+  const triggers = form.watch('triggers');
+
+  const addTrigger = () => {
+    if (fields.length >= 5) {
+      toast('Maximum 5 triggers allowed');
+
+      return;
+    }
+    append({ property: '', condition: '' });
+  };
+
+  const removeTrigger = (index: number) => {
+    const isTransactionType = triggers[index]?.property === CAMPAIGN_TRIGGER_PROPERTY.TRANSACTION_TYPE;
+
+    if (isTransactionType) {
+      toast('Cannot remove transaction type trigger');
+
+      return;
+    }
+
+    remove(index);
+  };
+
+  const getAvailableProperties = (currentIndex: number) => {
+    const usedProperties = triggers.map((t, i) => (i !== currentIndex ? t.property : null));
+
+    return propertyOptions.filter(option => !usedProperties.includes(option.id));
+  };
 
   return (
-    <div className="grid gap-2">
+    <div>
       <div className="flex items-center justify-between">
-        <Label>Configure triggers</Label>
-        <Button
-          type="button"
-          className="bg-primary-500 p-2 text-white"
-          onClick={() => {
-            append({ property: '', condition: '' });
-          }}
-        >
-          Add trigger
+        <div>
+          <Label>Configure triggers</Label>
+          <p className="text-xs text-muted-foreground">Maximum 5 triggers allowed. Each property can be used once.</p>
+        </div>
+        <Button size="sm" onClick={addTrigger}>
+          <PlusIcon className="mr-2" /> Add trigger
         </Button>
       </div>
-      {triggerItems.map((field, index) => {
-        return (
-          <div key={field.id} className="flex items-center space-x-2 rounded bg-gray-100 p-2">
-            <FormFieldSelect
-              size="sm"
-              form={form}
-              fieldName={`triggers.${index}.property`}
-              formLabel="Select property"
-              options={[
-                { id: CAMPAIGN_TRIGGER_PROPERTY.TRANSACTION_TYPE, name: 'Transaction type' },
-                { id: CAMPAIGN_TRIGGER_PROPERTY.AMOUNT, name: 'Amount' },
-                { id: CAMPAIGN_TRIGGER_PROPERTY.SKU, name: 'SKU' },
-                { id: CAMPAIGN_TRIGGER_PROPERTY.QUANTITY, name: 'Quantity' },
-                { id: CAMPAIGN_TRIGGER_PROPERTY.CUSTOM, name: 'Custom' },
-              ]}
-            />
-            <FormFieldSelect
-              size="sm"
-              form={form}
-              fieldName={`triggers.${index}.condition`}
-              formLabel="Select condition"
-              options={[
-                { id: CAMPAIGN_TRIGGER_CONDITION.EQUALS_TO, name: 'Equals to' },
-                { id: CAMPAIGN_TRIGGER_CONDITION.NOT_EQUALS_TO, name: 'Not equals to' },
-                { id: CAMPAIGN_TRIGGER_CONDITION.MORE_THAN, name: 'More than' },
-                { id: CAMPAIGN_TRIGGER_CONDITION.LESS_THAN, name: 'Less than' },
-              ]}
-            />
-            <Button
-              className="bg-red-500 p-2 text-white"
-              type="button"
-              onClick={() => {
-                remove(index);
-              }}
-            >
-              Remove
-            </Button>
-          </div>
-        );
-      })}
+      <div className="mt-4 space-y-4">
+        {fields.map((field, index) => {
+          const isTransactionType = triggers[index]?.property === CAMPAIGN_TRIGGER_PROPERTY.TRANSACTION_TYPE;
+
+          return (
+            <div key={field.id} className="flex items-center justify-between">
+              <div className="flex items-center space-x-4">
+                <Label>{String(index + 1).padStart(2, '0')}</Label>
+                <FormFieldSelect
+                  className="min-w-40"
+                  size="sm"
+                  form={form}
+                  fieldName={`triggers.${index}.property`}
+                  formLabel="Property"
+                  options={getAvailableProperties(index)}
+                />
+                <FormFieldSelect
+                  className="min-w-40"
+                  size="sm"
+                  form={form}
+                  fieldName={`triggers.${index}.condition`}
+                  formLabel="Condition"
+                  options={conditionOptions}
+                />
+              </div>
+              <Button
+                size="icon-sm"
+                variant="outline-destructive"
+                disabled={isTransactionType}
+                className={isTransactionType ? 'opacity-50' : ''}
+                onClick={() => removeTrigger(index)}
+              >
+                <Trash2Icon size={20} />
+              </Button>
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 };

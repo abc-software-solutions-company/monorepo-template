@@ -5,7 +5,7 @@ import { Separator } from '~react-web-ui-shadcn/components/ui/separator';
 
 import { CampaignStep1FormValues, CampaignStep2FormValues, CampaignStep3FormValues } from '../interfaces/campaign.interface';
 
-import { CAMPAIGN_STEP, CAMPAIGN_TRIGGER_CONDITION, CAMPAIGN_TRIGGER_PROPERTY, locales } from '../constants/campaign.constant';
+import { CAMPAIGN_STEP, CAMPAIGN_TRACKER_TYPE, CAMPAIGN_TRIGGER_CONDITION, CAMPAIGN_TRIGGER_PROPERTY, locales } from '../constants/campaign.constant';
 
 import CampaignStep1Form from './step-1/campaign-step-1-form';
 import CampaignStep2Form from './step-2/campaign-step-2-form';
@@ -25,7 +25,7 @@ type CampaignFormData = {
 };
 
 const CampaignRoot: React.FC = () => {
-  const [currentStep, setCurrentStep] = useState<CAMPAIGN_STEP>(CAMPAIGN_STEP.STEP_1);
+  const [currentStep, setCurrentStep] = useState<CAMPAIGN_STEP>(CAMPAIGN_STEP.STEP_3);
   const [stepCompleted, setStepCompleted] = useState({
     [CAMPAIGN_STEP.STEP_1]: false,
     [CAMPAIGN_STEP.STEP_2]: false,
@@ -50,8 +50,10 @@ const CampaignRoot: React.FC = () => {
       campaignType: 'milestone',
       progressMechanics: [
         {
-          campaignRule: 'custom',
           ruleName: 'Rule Name 1',
+          campaignRule: 'custom',
+          trackerType: CAMPAIGN_TRACKER_TYPE.PRORATED,
+          trackerValue: '1',
           triggers: [
             {
               property: CAMPAIGN_TRIGGER_PROPERTY.TRANSACTION_TYPE,
