@@ -2,13 +2,16 @@ import React, { useEffect, useState } from 'react';
 import { ControllerRenderProps, Path, UseFormReturn } from 'react-hook-form';
 import { Form } from '~react-web-ui-shadcn/components/ui/form';
 
+import { TranslationValue } from '@/interfaces/language.interface';
+
 import FormFieldDatePicker from '@/components/form-fields-ahua/form-field-date-picker';
 import FormFieldEditorMultiLanguage from '@/components/form-fields-ahua/form-field-editor-multi-language';
 import FormFieldInputMultiLanguage from '@/components/form-fields-ahua/form-field-input-multi-language';
+import FormFieldSelect from '@/components/form-fields-ahua/form-field-select';
 import FormFieldUploaderMultiLanguage, { FilePreview } from '@/components/form-fields-ahua/form-field-uploader-multi-language';
 import ModalLoading from '@/components/modals/modal-loading';
 
-import { locales } from '../../constants/campaign.constant';
+import { countries, locales } from '../../constants/campaign.constant';
 import { campaignStep1Dto } from '../../dtos/campaign-step-1.dto';
 import { CampaignStep1FormValues } from '../../interfaces/campaign.interface';
 
@@ -16,8 +19,6 @@ type CampaignStep1FormProps = {
   form: UseFormReturn<CampaignStep1FormValues>;
   onSubmit: (data: CampaignStep1FormValues) => void;
 };
-
-type FormFieldType = ControllerRenderProps<CampaignStep1FormValues, Path<CampaignStep1FormValues>>;
 
 const NEXT_DAY = new Date(Date.now() + 86400000);
 
@@ -35,10 +36,15 @@ const CampaignStep1Form: React.FC<CampaignStep1FormProps> = ({ form, onSubmit })
     };
   }, [previews]);
 
-  const handleSelectFile = (field: FormFieldType, locale: string, files: File[], filenames: string[]) => {
+  const handleSelectFile = <T extends Path<CampaignStep1FormValues>>(
+    field: ControllerRenderProps<CampaignStep1FormValues, T>,
+    locale: string,
+    files: File[],
+    filenames: string[]
+  ) => {
     setIsUploading(true);
 
-    const values = Array.isArray(field.value) ? [...field.value] : [];
+    const values: TranslationValue[] = Array.isArray(field.value) ? [...field.value] : [];
     const index = values.findIndex(v => v.lang === locale);
 
     const fileInfos: FilePreview[] = filenames.map((filename, idx) => ({
@@ -63,7 +69,7 @@ const CampaignStep1Form: React.FC<CampaignStep1FormProps> = ({ form, onSubmit })
     setIsUploading(false);
   };
 
-  const handleRemoveFile = (field: FormFieldType, locale: string) => {
+  const handleRemoveFile = <T extends Path<CampaignStep1FormValues>>(field: ControllerRenderProps<CampaignStep1FormValues, T>, locale: string) => {
     setPreviews(prev => {
       const langPreviews = prev[locale];
 
@@ -79,7 +85,7 @@ const CampaignStep1Form: React.FC<CampaignStep1FormProps> = ({ form, onSubmit })
       return newPreviews;
     });
 
-    const values = Array.isArray(field.value) ? [...field.value] : [];
+    const values: TranslationValue[] = Array.isArray(field.value) ? [...field.value] : [];
     const valueIndex = values.findIndex(v => v.lang === locale);
 
     if (valueIndex >= 0) {
@@ -93,6 +99,8 @@ const CampaignStep1Form: React.FC<CampaignStep1FormProps> = ({ form, onSubmit })
       <form onSubmit={form.handleSubmit(onSubmit)}>
         <div className="flex space-x-10">
           <div className="w-full max-w-md space-y-4">
+            <FormFieldSelect required form={form} fieldName="nation" formLabel="Country" options={countries} />
+            <FormFieldSelect multiple required form={form} fieldName="countries" formLabel="Country" options={countries} />
             <FormFieldInputMultiLanguage required form={form} fieldName="name" formLabel="Name" locales={locales} maxLength={50} />
             <FormFieldInputMultiLanguage required form={form} fieldName="description" formLabel="Description" locales={locales} maxLength={300} />
             <FormFieldDatePicker required form={form} fieldName="startDate" formLabel="Start Date" disableBefore={NEXT_DAY} />

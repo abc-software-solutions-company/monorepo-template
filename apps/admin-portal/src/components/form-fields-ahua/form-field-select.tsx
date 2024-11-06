@@ -34,7 +34,7 @@ export default function FormFieldSelect<T extends FieldValues, O extends OptionT
   displayField = 'name' as Extract<keyof O, string>,
   size = 'default',
   required,
-  multiple,
+  multiple = false,
   showSelectedTags = false,
 }: FormFieldSelectProps<T, O>) {
   if (!visibled) return null;
@@ -60,6 +60,7 @@ export default function FormFieldSelect<T extends FieldValues, O extends OptionT
                 disabled={disabled}
                 size={size}
                 showSelectedTags={showSelectedTags}
+                showSearch={true}
                 error={!!error}
                 onChange={field.onChange}
               />

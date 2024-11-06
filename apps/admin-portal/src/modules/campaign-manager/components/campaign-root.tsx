@@ -25,7 +25,7 @@ type CampaignFormData = {
 };
 
 const CampaignRoot: React.FC = () => {
-  const [currentStep, setCurrentStep] = useState<CAMPAIGN_STEP>(CAMPAIGN_STEP.STEP_3);
+  const [currentStep, setCurrentStep] = useState<CAMPAIGN_STEP>(CAMPAIGN_STEP.STEP_1);
   const [stepCompleted, setStepCompleted] = useState({
     [CAMPAIGN_STEP.STEP_1]: false,
     [CAMPAIGN_STEP.STEP_2]: false,
@@ -34,6 +34,8 @@ const CampaignRoot: React.FC = () => {
   });
   const [formData, setFormData] = useState<CampaignFormData>({
     step1: {
+      nation: 'vi-vn',
+      countries: [{ id: 'vi-vn', name: 'Vietnam' }],
       name: [{ lang: 'en-us', value: 'Title' }],
       description: [{ lang: 'en-us', value: 'Desc' }],
       tnc: [],
@@ -53,8 +55,8 @@ const CampaignRoot: React.FC = () => {
           ruleName: 'Rule Name 1',
           triggers: [
             {
-              property: [{ id: CAMPAIGN_TRIGGER_PROPERTY.TRANSACTION_TYPE }],
-              condition: [{ id: CAMPAIGN_TRIGGER_CONDITION.EQUALS_TO }],
+              property: CAMPAIGN_TRIGGER_PROPERTY.TRANSACTION_TYPE,
+              condition: CAMPAIGN_TRIGGER_CONDITION.EQUALS_TO,
             },
           ],
         },

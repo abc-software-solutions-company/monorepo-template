@@ -36,8 +36,8 @@ const ModalProgressMechanics: React.FC<ModalProgressMechanicsProps> = ({ form, v
       ? progressMechanics[editIndex].triggers
       : [
           {
-            property: [{ id: CAMPAIGN_TRIGGER_PROPERTY.TRANSACTION_TYPE }],
-            condition: [{ id: CAMPAIGN_TRIGGER_CONDITION.EQUALS_TO }],
+            property: CAMPAIGN_TRIGGER_PROPERTY.TRANSACTION_TYPE,
+            condition: CAMPAIGN_TRIGGER_CONDITION.EQUALS_TO,
           },
         ],
   };

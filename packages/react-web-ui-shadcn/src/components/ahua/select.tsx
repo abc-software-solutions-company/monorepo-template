@@ -156,7 +156,7 @@ const Tag: FC<TagProps> = ({ className, label, value, size = 'default', onRemove
 
 type OptionType = Record<string, string>;
 
-type SelectProps<T extends OptionType> = {
+type BaseSelectProps<T extends OptionType> = {
   className?: string;
   options: T[];
   placeholder?: string;
@@ -168,17 +168,28 @@ type SelectProps<T extends OptionType> = {
   disabled?: boolean;
   valueField: keyof T;
   displayField: keyof T;
-  multiple?: boolean;
   size?: 'default' | 'sm';
   showSearch?: boolean;
   showClearAll?: boolean;
   showSelectAll?: boolean;
   showSelectedTags?: boolean;
-  value: T[];
   error?: boolean;
-  onChange: (value: T[]) => void;
   onBlur?: React.FocusEventHandler<HTMLButtonElement>;
 } & VariantProps<typeof formControlVariants>;
+
+type SingleSelectProps<T extends OptionType> = BaseSelectProps<T> & {
+  multiple?: false;
+  value: string | null;
+  onChange: (value: string | null) => void;
+};
+
+type MultiSelectProps<T extends OptionType> = BaseSelectProps<T> & {
+  multiple: true;
+  value: T[];
+  onChange: (value: T[]) => void;
+};
+
+type SelectProps<T extends OptionType> = SingleSelectProps<T> | MultiSelectProps<T>;
 
 const Select = forwardRef(
   <T extends OptionType>(
@@ -195,7 +206,7 @@ const Select = forwardRef(
       disabled = false,
       label,
       required = false,
-      multiple = false,
+      multiple,
       size = 'default',
       showSearch = false,
       showClearAll = false,
@@ -214,12 +225,18 @@ const Select = forwardRef(
     const triggerRef = useRef<HTMLButtonElement>(null);
 
     const selectedValues = useMemo(() => {
-      return new Set(value.map(item => item[valueField]));
-    }, [value, valueField]);
+      if (multiple) {
+        return new Set(value.map(item => item[valueField]));
+      }
+      return new Set(value ? [value] : []);
+    }, [value, valueField, multiple]);
 
-    const selectedItems = useMemo(() => options.filter(option => selectedValues.has(option[valueField])), [options, selectedValues, valueField]);
+    const selectedItems = useMemo(
+      () => options.filter(option => selectedValues.has(multiple ? option[valueField] : option[valueField])),
+      [options, selectedValues, valueField, multiple]
+    );
 
-    const isAllSelected = useMemo(() => selectedValues.size === options.length, [selectedValues.size, options.length]);
+    const isAllSelected = useMemo(() => multiple && selectedValues.size === options.length, [multiple, selectedValues.size, options.length]);
 
     const getFormControlState = () => {
       if (disabled) return 'disabled';
@@ -230,8 +247,10 @@ const Select = forwardRef(
     };
 
     const handleSelectAll = () => {
-      if (disabled) return;
-      onChange(isAllSelected ? [] : [...options]);
+      if (disabled || !multiple) return;
+      const multipleOnChange = onChange as MultiSelectProps<T>['onChange'];
+      const newValue = isAllSelected ? [] : [...options];
+      multipleOnChange(newValue);
       setIsFocused(true);
     };
 
@@ -239,13 +258,14 @@ const Select = forwardRef(
       if (disabled) return;
 
       if (multiple) {
+        const multipleOnChange = onChange as MultiSelectProps<T>['onChange'];
         const newItems = selectedValues.has(option[valueField])
           ? selectedItems.filter(item => item[valueField] !== option[valueField])
           : [...selectedItems, option];
-
-        onChange(newItems);
+        multipleOnChange(newItems);
       } else {
-        onChange([option]);
+        const singleOnChange = onChange as SingleSelectProps<T>['onChange'];
+        singleOnChange(option[valueField] as string);
         setIsOpen(false);
       }
 
@@ -271,7 +291,15 @@ const Select = forwardRef(
 
     const handleClearAll = () => {
       if (disabled) return;
-      onChange([]);
+
+      if (multiple) {
+        const multipleOnChange = onChange as MultiSelectProps<T>['onChange'];
+        multipleOnChange([]);
+      } else {
+        const singleOnChange = onChange as SingleSelectProps<T>['onChange'];
+        singleOnChange(null);
+      }
+
       setIsFocused(true);
     };
 
@@ -303,9 +331,15 @@ const Select = forwardRef(
 
       if (disabled) return;
 
-      const newItems = selectedItems.filter(item => item[valueField] !== tagValue);
+      if (multiple) {
+        const multipleOnChange = onChange as MultiSelectProps<T>['onChange'];
+        const newItems = selectedItems.filter(item => item[valueField] !== tagValue);
+        multipleOnChange(newItems);
+      } else {
+        const singleOnChange = onChange as SingleSelectProps<T>['onChange'];
+        singleOnChange(null);
+      }
 
-      onChange(newItems);
       setIsFocused(true);
     };
 
@@ -342,8 +376,8 @@ const Select = forwardRef(
                 >
                   <ChevronDownIcon className={triggerIconVariants({ size: 'default', state: disabled ? 'disabled' : 'default' })} />
                   {label && <InputLabel label={label} required={required} size={size} className={cn(labelClassName)} />}
-                  <p className={cn(contentVariants({ size }), selectedItems.length === 0 && 'text-muted-foreground', disabled && 'opacity-50')}>
-                    {selectedItems.length === 0 && placeholder}
+                  <p className={cn(contentVariants({ size }), !selectedItems.length && 'text-muted-foreground', disabled && 'opacity-50')}>
+                    {!selectedItems.length && placeholder}
                     {selectedItems.length > 0 && selectedItems.map(item => item[displayField]).join(', ')}
                   </p>
                 </button>

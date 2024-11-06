@@ -9,8 +9,8 @@ export const campaignStep3Schema = z.object({
         campaignRule: z.string().min(1, 'Campaign rule is required'),
         triggers: z.array(
           z.object({
-            property: z.array(z.object({ id: z.string() })).optional(),
-            condition: z.array(z.object({ id: z.string() })).optional(),
+            property: z.string(),
+            condition: z.string(),
           })
         ),
       })

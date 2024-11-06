@@ -15,6 +15,8 @@ export const campaignStep1LocalizeSchema = (locales: Locale[]) => {
 
   return z
     .object({
+      nation: z.string(),
+      countries: z.array(z.object({ id: z.string(), name: z.string() })),
       name: localizedField('Name', 50),
       description: localizedField('Description', 300),
       tnc: createLocalizedFieldAndValidateMaxLength(300),
