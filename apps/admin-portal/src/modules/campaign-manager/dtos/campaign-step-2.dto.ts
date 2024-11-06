@@ -5,7 +5,7 @@ export type CampaignStep2Payload = {
   keyword: string;
 };
 
-export const campaignStep2Dto = (formValues: CampaignStep2FormValues) => {
+export const campaignStep2Dto = (formValues: CampaignStep2FormValues): Partial<CampaignStep2Payload> => {
   const { country, keyword } = formValues;
 
   return {

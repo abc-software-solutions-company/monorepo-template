@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import classNames from 'classnames';
 import { useFieldArray, UseFormReturn } from 'react-hook-form';
 import { Button } from '~react-web-ui-shadcn/components/ui/button';
+import { Label } from '~react-web-ui-shadcn/components/ui/label';
 
 import ModalProgressMechanics from './modal-progress-mechanics';
 
@@ -43,8 +44,8 @@ const ProgressMechanics: React.FC<ProgressMechanicsProps> = ({ className, form }
   };
 
   return (
-    <div className={classNames('border bg-gray-50 p-4', className)}>
-      <strong>Progress Mechanics</strong>
+    <div className={classNames('rounded-lg border p-4', className)}>
+      <Label>Progress Mechanics</Label>
       <p className="mb-4">Set rules for campaign, a maximum of 3 rules can be created for each campaign.</p>
       <table className="w-full border-collapse">
         <thead>

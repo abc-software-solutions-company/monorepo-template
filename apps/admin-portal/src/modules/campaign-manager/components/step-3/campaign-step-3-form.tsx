@@ -23,8 +23,8 @@ const CampaignStep3Form: React.FC<CampaignStep3FormProps> = ({ form, onSubmit })
           <div className="max-w-md space-y-4">
             <FormFieldRadioBlock form={form} formLabel="Campaign type" fieldName="campaignType" options={CAMPAIGN_TYPE_LIST} />
           </div>
-          <ProgressMechanics form={form} />
-          <div className="space-y-4">
+          <ProgressMechanics className="mt-4" form={form} />
+          <div className="mt-4 space-y-4">
             <div className="w-full space-y-4">
               <h2 className="text-lg font-semibold">Form data</h2>
               <pre className="overflow-hidden rounded-md border-slate-200 bg-slate-100 p-2">{JSON.stringify(form.watch(), null, 2)}</pre>

@@ -4,7 +4,7 @@ export type CampaignStep3Payload = {
   campaign_type: string;
 };
 
-export const campaignStep3Dto = (formValues: CampaignStep3FormValues) => {
+export const campaignStep3Dto = (formValues: CampaignStep3FormValues): Partial<CampaignStep3Payload> => {
   const { campaignType } = formValues;
 
   return {
