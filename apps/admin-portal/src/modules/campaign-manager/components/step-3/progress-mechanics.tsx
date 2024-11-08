@@ -19,17 +19,17 @@ type ProgressMechanicsProps = {
 
 const ProgressMechanics: React.FC<ProgressMechanicsProps> = ({ className, form }) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [editIndex, setEditIndex] = useState<number | undefined>(undefined);
+  const [editingIndex, setEditingIndex] = useState(-1);
   const { fields, remove, append } = useFieldArray({ control: form.control, name: 'rules' });
   const rules = form.watch('rules');
 
   const handleAddProgressMechanics = () => {
-    setEditIndex(undefined);
+    setEditingIndex(-1);
     setIsModalVisible(true);
   };
 
   const handleEditProgressMechanic = (index: number) => {
-    setEditIndex(index);
+    setEditingIndex(index);
     setIsModalVisible(true);
   };
 
@@ -132,7 +132,7 @@ const ProgressMechanics: React.FC<ProgressMechanicsProps> = ({ className, form }
       <ModalProgressMechanics
         form={form}
         visible={isModalVisible}
-        editIndex={editIndex}
+        editIndex={editingIndex}
         onSave={handleSaveProgressMechanics}
         onClose={() => setIsModalVisible(false)}
       />

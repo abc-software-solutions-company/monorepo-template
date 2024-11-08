@@ -27,14 +27,14 @@ import { progressMechanicSchema } from '../../validators/campaign-step-3.validat
 type ModalProgressMechanicsProps = {
   form: UseFormReturn<CampaignStep3FormValues>;
   visible: boolean;
-  editIndex?: number;
+  editIndex: number;
   onSave: (data: ProgressMechanicFormValues, index?: number) => void;
   onClose: () => void;
 };
 
 const ModalProgressMechanics: React.FC<ModalProgressMechanicsProps> = ({ form, visible, editIndex, onClose, onSave }) => {
   const rules = form.watch('rules');
-  const isEditMode = editIndex !== undefined;
+  const isEditMode = editIndex !== -1;
 
   const defaultValues: ProgressMechanicFormValues = {
     ruleName: isEditMode ? rules[editIndex]?.ruleName : '',
