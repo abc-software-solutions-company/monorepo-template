@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import classNames from 'classnames';
-import { PenSquareIcon, PlusIcon, Trash2Icon } from 'lucide-react';
+import { PenIcon, PlusIcon, Trash2Icon } from 'lucide-react';
 import { useFieldArray, UseFormReturn } from 'react-hook-form';
 import { ColumnDef, getCoreRowModel, useReactTable } from '@tanstack/react-table';
 import { Button } from '~react-web-ui-shadcn/components/ui/button';
@@ -98,10 +98,10 @@ const ProgressMechanics: React.FC<ProgressMechanicsProps> = ({ className, form }
           return (
             <div className="flex gap-3">
               <Button type="button" size="icon-sm" variant="secondary" onClick={() => handleEditProgressMechanic(index)}>
-                <PenSquareIcon size={20} />
+                <PenIcon size={20} className="text-green-500" />
               </Button>
-              <Button type="button" size="icon-sm" variant="destructive" onClick={() => handleRemoveProgressMechanic(index)}>
-                <Trash2Icon size={20} />
+              <Button type="button" size="icon-sm" variant="secondary" onClick={() => handleRemoveProgressMechanic(index)}>
+                <Trash2Icon size={20} className="text-destructive" />
               </Button>
             </div>
           );

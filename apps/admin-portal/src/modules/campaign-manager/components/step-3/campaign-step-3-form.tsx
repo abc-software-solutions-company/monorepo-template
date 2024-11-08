@@ -4,6 +4,7 @@ import { Form } from '~react-web-ui-shadcn/components/ui/form';
 import FormFieldRadioBlock from '@/components/form-fields-ahua/form-field-radio-block';
 import ModalLoading from '@/components/modals/modal-loading';
 
+import MilestoneLevelAndRewards from './milestone-levels-and-rewards';
 import ProgressMechanics from './progress-mechanics';
 
 import { CAMPAIGN_TYPE_LIST } from '../../constants/campaign.constant';
@@ -24,6 +25,7 @@ const CampaignStep3Form: React.FC<CampaignStep3FormProps> = ({ form, onSubmit })
             <FormFieldRadioBlock form={form} formLabel="Campaign type" fieldName="campaignType" options={CAMPAIGN_TYPE_LIST} />
           </div>
           <ProgressMechanics className="mt-4" form={form} />
+          <MilestoneLevelAndRewards className="mt-4" form={form} />
           <div className="mt-4 space-y-4">
             <div className="w-full space-y-4">
               <h2 className="text-lg font-semibold">Form data</h2>

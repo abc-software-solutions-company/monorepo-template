@@ -61,6 +61,28 @@ const CampaignRoot: React.FC = () => {
             },
           ],
         },
+        {
+          ruleName: 'Rule Name 2',
+          campaignRule: 'custom',
+          trackerType: CAMPAIGN_TRACKER_TYPE.FIXED,
+          trackerValue: '4',
+          triggers: [
+            {
+              property: CAMPAIGN_TRIGGER_PROPERTY.TRANSACTION_TYPE,
+              condition: CAMPAIGN_TRIGGER_CONDITION.EQUALS_TO,
+            },
+          ],
+        },
+      ],
+      milestoneLevelsAndRewards: [
+        {
+          title: 'Level 1',
+          goals: ['4', '2'],
+        },
+        {
+          title: 'Level 2',
+          goals: ['3', '1'],
+        },
       ],
     },
   });
