@@ -15,11 +15,8 @@ export const progressMechanicSchema = z.object({
 
 export const campaignStep3Schema = z.object({
   campaignType: z.string().min(1, 'Campaign Type is mandatory'),
-  progressMechanics: z
-    .array(progressMechanicSchema)
-    .min(1, 'At least one progress mechanic is mandatory')
-    .max(3, 'Maximum of three progress mechanics allowed'),
-  milestoneLevelsAndRewards: z
+  rules: z.array(progressMechanicSchema).min(1, 'At least one progress mechanic is mandatory').max(3, 'Maximum of three progress mechanics allowed'),
+  milestones: z
     .array(
       z.object({
         title: z.string(),

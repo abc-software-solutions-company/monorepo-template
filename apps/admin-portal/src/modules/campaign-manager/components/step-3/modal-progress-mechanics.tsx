@@ -33,16 +33,16 @@ type ModalProgressMechanicsProps = {
 };
 
 const ModalProgressMechanics: React.FC<ModalProgressMechanicsProps> = ({ form, visible, editIndex, onClose, onSave }) => {
-  const progressMechanics = form.watch('progressMechanics');
+  const rules = form.watch('rules');
   const isEditMode = editIndex !== undefined;
 
   const defaultValues: ProgressMechanicFormValues = {
-    ruleName: isEditMode ? progressMechanics[editIndex]?.ruleName : '',
-    campaignRule: isEditMode ? progressMechanics[editIndex]?.campaignRule : CAMPAIGN_RULE.PRODUCT_SALES_OR_PURCHASE,
-    trackerType: isEditMode ? progressMechanics[editIndex]?.trackerType : CAMPAIGN_TRACKER_TYPE.PRORATED,
-    trackerValue: isEditMode ? progressMechanics[editIndex]?.trackerValue : '',
+    ruleName: isEditMode ? rules[editIndex]?.ruleName : '',
+    campaignRule: isEditMode ? rules[editIndex]?.campaignRule : CAMPAIGN_RULE.PRODUCT_SALES_OR_PURCHASE,
+    trackerType: isEditMode ? rules[editIndex]?.trackerType : CAMPAIGN_TRACKER_TYPE.PRORATED,
+    trackerValue: isEditMode ? rules[editIndex]?.trackerValue : '',
     triggers: isEditMode
-      ? progressMechanics[editIndex]?.triggers
+      ? rules[editIndex]?.triggers
       : [
           {
             property: CAMPAIGN_TRIGGER_PROPERTY.TRANSACTION_TYPE,
@@ -55,7 +55,7 @@ const ModalProgressMechanics: React.FC<ModalProgressMechanicsProps> = ({ form, v
 
   useEffect(() => {
     if (isEditMode) {
-      const editData = progressMechanics[editIndex];
+      const editData = rules[editIndex];
 
       modalForm.reset({
         ruleName: editData.ruleName,

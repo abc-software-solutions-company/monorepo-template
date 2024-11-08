@@ -30,10 +30,10 @@ const MilestoneLevelAndRewards: React.FC<MilestoneLevelAndRewardsProps> = ({ cla
     update,
   } = useFieldArray({
     control: form.control,
-    name: 'milestoneLevelsAndRewards',
+    name: 'milestones',
   });
 
-  const trackers = form.watch('progressMechanics');
+  const trackers = form.watch('rules');
 
   const validateGoalValue = (value: string, milestoneIndex: number, goalIndex: number): ValidationResult => {
     if (!value?.trim()) {
@@ -124,7 +124,7 @@ const MilestoneLevelAndRewards: React.FC<MilestoneLevelAndRewardsProps> = ({ cla
     handleCancelEditing();
 
     editingValues.forEach((_, goalIndex) => {
-      form.trigger(`milestoneLevelsAndRewards.${index}.goals.${goalIndex}`);
+      form.trigger(`milestones.${index}.goals.${goalIndex}`);
     });
   };
 

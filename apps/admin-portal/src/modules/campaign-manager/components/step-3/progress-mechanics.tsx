@@ -20,8 +20,8 @@ type ProgressMechanicsProps = {
 const ProgressMechanics: React.FC<ProgressMechanicsProps> = ({ className, form }) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [editIndex, setEditIndex] = useState<number | undefined>(undefined);
-  const { fields, remove, append } = useFieldArray({ control: form.control, name: 'progressMechanics' });
-  const progressMechanics = form.watch('progressMechanics');
+  const { fields, remove, append } = useFieldArray({ control: form.control, name: 'rules' });
+  const rules = form.watch('rules');
 
   const handleAddProgressMechanics = () => {
     setEditIndex(undefined);
@@ -39,11 +39,11 @@ const ProgressMechanics: React.FC<ProgressMechanicsProps> = ({ className, form }
 
   const handleSaveProgressMechanics = (data: ProgressMechanicFormValues, index?: number) => {
     if (index !== undefined) {
-      form.setValue(`progressMechanics.${index}.ruleName`, data.ruleName);
-      form.setValue(`progressMechanics.${index}.campaignRule`, data.campaignRule);
-      form.setValue(`progressMechanics.${index}.trackerType`, data.trackerType);
-      form.setValue(`progressMechanics.${index}.trackerValue`, data.trackerValue);
-      form.setValue(`progressMechanics.${index}.triggers`, data.triggers);
+      form.setValue(`rules.${index}.ruleName`, data.ruleName);
+      form.setValue(`rules.${index}.campaignRule`, data.campaignRule);
+      form.setValue(`rules.${index}.trackerType`, data.trackerType);
+      form.setValue(`rules.${index}.trackerValue`, data.trackerValue);
+      form.setValue(`rules.${index}.triggers`, data.triggers);
     } else {
       append({
         ruleName: data.ruleName,
@@ -65,7 +65,7 @@ const ProgressMechanics: React.FC<ProgressMechanicsProps> = ({ className, form }
         cell: ({ row }) => {
           const index = parseInt(row.id);
 
-          return <p className="flex items-center">{progressMechanics[index]?.campaignRule}</p>;
+          return <p className="flex items-center">{rules[index]?.campaignRule}</p>;
         },
       },
       {
@@ -75,7 +75,7 @@ const ProgressMechanics: React.FC<ProgressMechanicsProps> = ({ className, form }
         cell: ({ row }) => {
           const index = parseInt(row.id);
 
-          return <p className="flex items-center">{progressMechanics[index]?.ruleName}</p>;
+          return <p className="flex items-center">{rules[index]?.ruleName}</p>;
         },
       },
       {
@@ -85,7 +85,7 @@ const ProgressMechanics: React.FC<ProgressMechanicsProps> = ({ className, form }
         cell: ({ row }) => {
           const index = parseInt(row.id);
 
-          return <p className="flex items-center">{progressMechanics[index]?.trackerValue}</p>;
+          return <p className="flex items-center">{rules[index]?.trackerValue}</p>;
         },
       },
       {
@@ -108,7 +108,7 @@ const ProgressMechanics: React.FC<ProgressMechanicsProps> = ({ className, form }
         },
       },
     ],
-    [progressMechanics]
+    [rules]
   );
 
   const table = useReactTable({

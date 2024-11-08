@@ -48,7 +48,7 @@ const CampaignRoot: React.FC = () => {
     },
     step3: {
       campaignType: 'milestone',
-      progressMechanics: [
+      rules: [
         {
           ruleName: 'Rule Name 1',
           campaignRule: 'custom',
@@ -74,7 +74,7 @@ const CampaignRoot: React.FC = () => {
           ],
         },
       ],
-      milestoneLevelsAndRewards: [
+      milestones: [
         {
           title: 'Level 1',
           goals: ['4', '2'],
