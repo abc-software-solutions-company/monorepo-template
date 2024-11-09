@@ -59,7 +59,7 @@ export function DataTable<TData, TValue, T>({ tableClassName, rowClassName, colu
                 ))
               ) : (
                 <TableRow>
-                  <TableCell colSpan={columns.length} className="h-24 border-l first:border-none">
+                  <TableCell colSpan={columns.length} className="h-14 border-l first:border-none">
                     <div className="flex items-center justify-center">{isFetching ? <Loading className="mx-auto" /> : <NoData />}</div>
                   </TableCell>
                 </TableRow>
