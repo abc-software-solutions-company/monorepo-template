@@ -1,17 +1,20 @@
 import React, { useEffect, useState } from 'react';
+import { useAtom } from 'jotai';
 import { CheckIcon, InfoIcon, PenIcon, PlusIcon, Trash2Icon, XIcon } from 'lucide-react';
-import { useFieldArray, UseFormReturn } from 'react-hook-form';
+import { useFieldArray, useForm } from 'react-hook-form';
 import { toast } from 'sonner';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { Input } from '~react-web-ui-shadcn/components/ahua/input';
 import { Button } from '~react-web-ui-shadcn/components/ui/button';
 import { Label } from '~react-web-ui-shadcn/components/ui/label';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '~react-web-ui-shadcn/components/ui/tooltip';
 
-import { CampaignStep3FormValues } from '../../interfaces/campaign.interface';
+import { MilestonesFormValues } from '../../interfaces/campaign.interface';
+import { milestonesAtom, rulesAtom } from '../../states/campaign.state';
+import { milestoneLevelsSchema } from '../../validators/campaign-step-3.validator';
 
-type MilestoneLevelAndRewardsProps = {
+type MilestonesProps = {
   className?: string;
-  form: UseFormReturn<CampaignStep3FormValues>;
 };
 
 type ValidationResult = {
@@ -19,21 +22,25 @@ type ValidationResult = {
   message: string;
 };
 
-const MilestoneLevelAndRewards: React.FC<MilestoneLevelAndRewardsProps> = ({ className, form }) => {
+const Milestones: React.FC<MilestonesProps> = () => {
   const [editingIndex, setEditingIndex] = useState(-1);
   const [editingValues, setEditingValues] = useState<string[]>([]);
+  const [rules] = useAtom(rulesAtom);
+  const [milestoneItems, setMilestoneItems] = useAtom(milestonesAtom);
 
-  const {
-    fields: milestones,
-    remove,
-    append,
-    update,
-  } = useFieldArray({
+  const form = useForm<MilestonesFormValues>({
+    resolver: zodResolver(milestoneLevelsSchema),
+    defaultValues: {
+      milestones: milestoneItems,
+    },
+  });
+
+  const { remove, append, update } = useFieldArray({
     control: form.control,
     name: 'milestones',
   });
 
-  const trackers = form.watch('rules');
+  const milestones = form.watch('milestones') ?? [];
 
   const validateGoalValue = (value: string, milestoneIndex: number, goalIndex: number): ValidationResult => {
     if (!value?.trim()) {
@@ -66,7 +73,7 @@ const MilestoneLevelAndRewards: React.FC<MilestoneLevelAndRewardsProps> = ({ cla
       if (!validation.isValid) {
         validationResults.push({
           isValid: false,
-          message: `${trackers[goalIndex].ruleName}: ${validation.message}`,
+          message: `${rules[goalIndex].ruleName}: ${validation.message}`,
         });
       }
     });
@@ -89,17 +96,39 @@ const MilestoneLevelAndRewards: React.FC<MilestoneLevelAndRewardsProps> = ({ cla
     });
   };
 
-  const handleStartEditing = (index: number) => {
+  const handleAdd = () => {
+    setMilestoneItems(prev => [
+      ...prev,
+      {
+        goals: Array(rules.length).fill(''),
+      },
+    ]);
+    append({ goals: Array(rules.length).fill('') });
+  };
+
+  const handleEdit = (index: number) => {
     setEditingValues([...milestones[index].goals]);
     setEditingIndex(index);
   };
 
-  const handleCancelEditing = () => {
+  const handleCancel = () => {
     setEditingIndex(-1);
     setEditingValues([]);
   };
 
-  const handleSaveEditing = (index: number) => {
+  const handleRemove = (index: number) => {
+    setMilestoneItems(prev => {
+      const newItems = [...prev];
+
+      newItems.splice(index, 1);
+
+      return newItems;
+    });
+
+    remove(index);
+  };
+
+  const handleSave = (index: number) => {
     const validationResults = validateMilestone(index, editingValues);
 
     if (validationResults.length > 0) {
@@ -121,17 +150,10 @@ const MilestoneLevelAndRewards: React.FC<MilestoneLevelAndRewardsProps> = ({ cla
     }
 
     update(index, { ...milestones[index], goals: editingValues });
-    handleCancelEditing();
+    handleCancel();
 
     editingValues.forEach((_, goalIndex) => {
       form.trigger(`milestones.${index}.goals.${goalIndex}`);
-    });
-  };
-
-  const handleAddLevel = () => {
-    append({
-      title: `Level ${milestones.length + 1}`,
-      goals: Array(trackers.length).fill(''),
     });
   };
 
@@ -139,19 +161,23 @@ const MilestoneLevelAndRewards: React.FC<MilestoneLevelAndRewardsProps> = ({ cla
     milestones.forEach((field, index) => {
       const currentGoals = field.goals || [];
 
-      if (currentGoals.length !== trackers.length) {
+      if (currentGoals.length !== rules.length) {
         update(index, {
           ...field,
-          goals: Array(trackers.length)
+          goals: Array(rules.length)
             .fill('')
             .map((_, i) => currentGoals[i] || ''),
         });
       }
     });
-  }, [trackers.length]);
+  }, [rules.length]);
+
+  useEffect(() => {
+    form.reset({ milestones: milestoneItems });
+  }, [milestoneItems, form]);
 
   return (
-    <div className={`rounded-lg border p-4 ${className || ''}`}>
+    <div className="rounded-lg border p-4">
       <div className="flex items-center justify-between">
         <div>
           <Label>Milestone levels and rewards</Label>
@@ -159,14 +185,14 @@ const MilestoneLevelAndRewards: React.FC<MilestoneLevelAndRewardsProps> = ({ cla
             <p className="mb-4">Define goals for each level and configure rewards such as physical rewards, discount coupons, and Yara Points</p>
           )}
         </div>
-        <Button type="button" disabled={milestones.length >= 5} onClick={handleAddLevel}>
+        <Button type="button" disabled={milestones.length >= 5} onClick={handleAdd}>
           <PlusIcon className="mr-2" /> Add level
         </Button>
       </div>
 
       <div className="mt-4 space-y-8">
         {milestones.map((field, milestoneIndex) => (
-          <div key={field.id}>
+          <div key={milestoneIndex}>
             <div className="grid gap-2">
               <h1 className="text-md font-semibold">{`Milestone Level ${(milestoneIndex + 1).toString().padStart(2, '0')}`}</h1>
               <p className="font-medium">Total campaign trackers required to complete this milestone</p>
@@ -177,22 +203,22 @@ const MilestoneLevelAndRewards: React.FC<MilestoneLevelAndRewardsProps> = ({ cla
             </div>
             <div className="flex items-center space-x-4">
               <div className="flex grow items-center space-x-4">
-                {trackers.map((tracker, trackerIndex) => {
+                {rules.map((rule, ruleIndex) => {
                   const currentValues = editingIndex === milestoneIndex ? editingValues : field.goals;
-                  const validation = validateGoalValue(currentValues[trackerIndex], milestoneIndex, trackerIndex);
+                  const validation = validateGoalValue(currentValues[ruleIndex], milestoneIndex, ruleIndex);
 
                   return (
-                    <div key={trackerIndex} className="relative w-1/3">
+                    <div key={ruleIndex} className="relative w-1/3">
                       <Input
                         required
                         type="text"
                         inputMode="decimal"
                         pattern="[0-9]*\.?[0-9]*"
-                        label={`Enter tracker goal for ${tracker.ruleName}`}
-                        value={currentValues[trackerIndex]}
+                        label={`Enter tracker goal for ${rule.ruleName}`}
+                        value={currentValues[ruleIndex]}
                         error={!validation.isValid}
                         disabled={editingIndex !== milestoneIndex}
-                        onChange={e => handleGoalChange(trackerIndex, e.target.value)}
+                        onChange={e => handleGoalChange(ruleIndex, e.target.value)}
                       />
                       {!validation.isValid && (
                         <TooltipProvider>
@@ -215,19 +241,19 @@ const MilestoneLevelAndRewards: React.FC<MilestoneLevelAndRewardsProps> = ({ cla
               <div className="flex w-20 items-end">
                 {editingIndex === milestoneIndex ? (
                   <div className="ml-auto flex space-x-2">
-                    <Button size="icon-sm" variant="secondary" onClick={handleCancelEditing}>
+                    <Button size="icon-sm" variant="secondary" onClick={handleCancel}>
                       <XIcon size={20} className="text-destructive" />
                     </Button>
-                    <Button size="icon-sm" variant="secondary" onClick={() => handleSaveEditing(milestoneIndex)}>
+                    <Button size="icon-sm" variant="secondary" onClick={() => handleSave(milestoneIndex)}>
                       <CheckIcon size={20} className="text-green-500" />
                     </Button>
                   </div>
                 ) : (
                   <div className="ml-auto flex space-x-2">
-                    <Button size="icon-sm" variant="secondary" disabled={editingIndex !== -1} onClick={() => handleStartEditing(milestoneIndex)}>
+                    <Button size="icon-sm" variant="secondary" disabled={editingIndex !== -1} onClick={() => handleEdit(milestoneIndex)}>
                       <PenIcon size={20} className="text-primary" />
                     </Button>
-                    <Button size="icon-sm" variant="secondary" onClick={() => remove(milestoneIndex)}>
+                    <Button size="icon-sm" variant="secondary" onClick={() => handleRemove(milestoneIndex)}>
                       <Trash2Icon size={20} className="text-destructive" />
                     </Button>
                   </div>
@@ -237,8 +263,9 @@ const MilestoneLevelAndRewards: React.FC<MilestoneLevelAndRewardsProps> = ({ cla
           </div>
         ))}
       </div>
+      <pre>{JSON.stringify(form.watch(), null, 2)}</pre>
     </div>
   );
 };
 
-export default MilestoneLevelAndRewards;
+export default Milestones;

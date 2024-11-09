@@ -8,7 +8,7 @@ import { Label } from '~react-web-ui-shadcn/components/ui/label';
 import FormFieldSelect from '@/components/form-fields-ahua/form-field-select';
 
 import { CAMPAIGN_TRIGGER_CONDITION, CAMPAIGN_TRIGGER_PROPERTY } from '../../constants/campaign.constant';
-import { ProgressMechanicFormValues } from '../../interfaces/campaign.interface';
+import { RuleFormValues } from '../../interfaces/campaign.interface';
 
 const propertyOptions = [
   { id: CAMPAIGN_TRIGGER_PROPERTY.TRANSACTION_TYPE, name: 'Transaction type' },
@@ -25,7 +25,7 @@ const conditionOptions = [
   { id: CAMPAIGN_TRIGGER_CONDITION.LESS_THAN, name: 'Less than' },
 ];
 
-const ConfigureTriggers = ({ form }: { form: UseFormReturn<ProgressMechanicFormValues> }) => {
+const ConfigureTriggers = ({ form }: { form: UseFormReturn<RuleFormValues> }) => {
   const { fields, append, remove } = useFieldArray({
     control: form.control,
     name: 'triggers',

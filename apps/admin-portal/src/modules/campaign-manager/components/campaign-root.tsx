@@ -5,7 +5,7 @@ import { Separator } from '~react-web-ui-shadcn/components/ui/separator';
 
 import { CampaignStep1FormValues, CampaignStep2FormValues, CampaignStep3FormValues } from '../interfaces/campaign.interface';
 
-import { CAMPAIGN_STEP, CAMPAIGN_TRACKER_TYPE, CAMPAIGN_TRIGGER_CONDITION, CAMPAIGN_TRIGGER_PROPERTY, locales } from '../constants/campaign.constant';
+import { CAMPAIGN_STEP, locales } from '../constants/campaign.constant';
 
 import CampaignStep1Form from './step-1/campaign-step-1-form';
 import CampaignStep2Form from './step-2/campaign-step-2-form';
@@ -48,42 +48,6 @@ const CampaignRoot: React.FC = () => {
     },
     step3: {
       campaignType: 'milestone',
-      rules: [
-        {
-          ruleName: 'Rule Name 1',
-          campaignRule: 'custom',
-          trackerType: CAMPAIGN_TRACKER_TYPE.PRORATED,
-          trackerValue: '1',
-          triggers: [
-            {
-              property: CAMPAIGN_TRIGGER_PROPERTY.TRANSACTION_TYPE,
-              condition: CAMPAIGN_TRIGGER_CONDITION.EQUALS_TO,
-            },
-          ],
-        },
-        {
-          ruleName: 'Rule Name 2',
-          campaignRule: 'custom',
-          trackerType: CAMPAIGN_TRACKER_TYPE.FIXED,
-          trackerValue: '4',
-          triggers: [
-            {
-              property: CAMPAIGN_TRIGGER_PROPERTY.TRANSACTION_TYPE,
-              condition: CAMPAIGN_TRIGGER_CONDITION.EQUALS_TO,
-            },
-          ],
-        },
-      ],
-      milestones: [
-        {
-          title: 'Level 1',
-          goals: ['4', '2'],
-        },
-        {
-          title: 'Level 2',
-          goals: ['3', '1'],
-        },
-      ],
     },
   });
   const [isFormValid, setIsFormValid] = useState(false);

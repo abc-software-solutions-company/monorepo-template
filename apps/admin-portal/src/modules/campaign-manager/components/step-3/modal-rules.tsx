@@ -21,22 +21,22 @@ import {
   CAMPAIGN_TRIGGER_CONDITION,
   CAMPAIGN_TRIGGER_PROPERTY,
 } from '../../constants/campaign.constant';
-import { CampaignStep3FormValues, ProgressMechanicFormValues } from '../../interfaces/campaign.interface';
-import { progressMechanicSchema } from '../../validators/campaign-step-3.validator';
+import { RuleFormValues } from '../../interfaces/campaign.interface';
+import { ruleSchema } from '../../validators/campaign-step-3.validator';
 
-type ModalProgressMechanicsProps = {
-  form: UseFormReturn<CampaignStep3FormValues>;
+type ModalRulesProps = {
+  form: UseFormReturn<{ rules: RuleFormValues[] }>;
   visible: boolean;
   editIndex: number;
-  onSave: (data: ProgressMechanicFormValues, index?: number) => void;
+  onSave: (data: RuleFormValues, index: number) => void;
   onClose: () => void;
 };
 
-const ModalProgressMechanics: React.FC<ModalProgressMechanicsProps> = ({ form, visible, editIndex, onClose, onSave }) => {
+const ModalRules: React.FC<ModalRulesProps> = ({ form, visible, editIndex, onClose, onSave }) => {
   const rules = form.watch('rules');
   const isEditMode = editIndex !== -1;
 
-  const defaultValues: ProgressMechanicFormValues = {
+  const defaultValues: RuleFormValues = {
     ruleName: isEditMode ? rules[editIndex]?.ruleName : '',
     campaignRule: isEditMode ? rules[editIndex]?.campaignRule : CAMPAIGN_RULE.PRODUCT_SALES_OR_PURCHASE,
     trackerType: isEditMode ? rules[editIndex]?.trackerType : CAMPAIGN_TRACKER_TYPE.PRORATED,
@@ -51,7 +51,7 @@ const ModalProgressMechanics: React.FC<ModalProgressMechanicsProps> = ({ form, v
         ],
   };
 
-  const modalForm = useForm<ProgressMechanicFormValues>({ resolver: zodResolver(progressMechanicSchema), defaultValues });
+  const modalForm = useForm<RuleFormValues>({ resolver: zodResolver(ruleSchema), defaultValues });
 
   useEffect(() => {
     if (isEditMode) {
@@ -69,8 +69,8 @@ const ModalProgressMechanics: React.FC<ModalProgressMechanicsProps> = ({ form, v
     }
   }, [form, isEditMode, editIndex, modalForm]);
 
-  const onSubmit: SubmitHandler<ProgressMechanicFormValues> = async data => {
-    onSave(data, isEditMode ? editIndex : undefined);
+  const onSubmit: SubmitHandler<RuleFormValues> = async data => {
+    onSave(data, isEditMode ? editIndex : -1);
     onClose();
   };
 
@@ -150,4 +150,4 @@ const ModalProgressMechanics: React.FC<ModalProgressMechanicsProps> = ({ form, v
   );
 };
 
-export default ModalProgressMechanics;
+export default ModalRules;

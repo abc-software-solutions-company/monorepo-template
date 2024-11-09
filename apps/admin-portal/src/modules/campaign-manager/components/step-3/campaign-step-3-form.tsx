@@ -4,11 +4,10 @@ import { Form } from '~react-web-ui-shadcn/components/ui/form';
 import FormFieldRadioBlock from '@/components/form-fields-ahua/form-field-radio-block';
 import ModalLoading from '@/components/modals/modal-loading';
 
-import MilestoneLevelAndRewards from './milestone-levels-and-rewards';
-import ProgressMechanics from './progress-mechanics';
+import Milestones from './milestones';
+import Rules from './rules';
 
 import { CAMPAIGN_TYPE_LIST } from '../../constants/campaign.constant';
-import { campaignStep3Dto } from '../../dtos/campaign-step-3.dto';
 import { CampaignStep3FormValues } from '../../interfaces/campaign.interface';
 
 type CampaignStep3FormProps = {
@@ -20,25 +19,13 @@ const CampaignStep3Form: React.FC<CampaignStep3FormProps> = ({ form, onSubmit })
   return (
     <>
       <Form {...form}>
-        <form className="frm-campaign-mechanism" onSubmit={form.handleSubmit(onSubmit)}>
-          <div className="max-w-md space-y-4">
-            <FormFieldRadioBlock form={form} formLabel="Campaign type" fieldName="campaignType" options={CAMPAIGN_TYPE_LIST} />
-          </div>
-          <ProgressMechanics className="mt-4" form={form} />
-          <MilestoneLevelAndRewards className="mt-4" form={form} />
-          <div className="mt-4 space-y-4">
-            <div className="w-full space-y-4">
-              <h2 className="text-lg font-semibold">Form data</h2>
-              <pre className="overflow-hidden rounded-md border-slate-200 bg-slate-100 p-2">{JSON.stringify(form.watch(), null, 2)}</pre>
-              <h2 className="text-lg font-semibold">Data send to API</h2>
-              <pre className="overflow-hidden rounded-md border-green-200 bg-green-100 p-2">
-                {JSON.stringify(campaignStep3Dto(form.watch()), null, 2)}
-              </pre>
-            </div>
-          </div>
-          <ModalLoading visible={form.formState.isSubmitting} />
+        <form className="max-w-md space-y-4" onSubmit={form.handleSubmit(onSubmit)}>
+          <FormFieldRadioBlock form={form} formLabel="Campaign type" fieldName="campaignType" options={CAMPAIGN_TYPE_LIST} />
         </form>
       </Form>
+      <Rules className="mt-4" />
+      <Milestones className="mt-4" />
+      <ModalLoading visible={form.formState.isSubmitting} />
     </>
   );
 };
