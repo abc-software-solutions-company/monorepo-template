@@ -163,8 +163,8 @@ const Rules: React.FC<RulesProps> = ({ className }) => {
             onSave={handleSaveRule}
             onClose={() => setIsModalVisible(false)}
           />
-          <pre>{JSON.stringify(form.watch(), null, 2)}</pre>
         </div>
+        <pre className="overflow-hidden rounded-md border-slate-200 bg-slate-100 p-2">{JSON.stringify(form.watch(), null, 2)}</pre>
       </form>
     </Form>
   );
