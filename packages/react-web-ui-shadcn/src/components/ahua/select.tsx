@@ -7,6 +7,7 @@ import { Separator } from '~react-web-ui-shadcn/components/ui/separator';
 import { Tooltip, TooltipArrow, TooltipContent, TooltipProvider, TooltipTrigger } from '~react-web-ui-shadcn/components/ui/tooltip';
 import { cn } from '~react-web-ui-shadcn/lib/utils';
 import { InputLabel } from './input-base';
+import { Button } from '../ui/button';
 
 const formControlVariants = cva('h-6 relative rounded-md border border-input bg-background ring-input', {
   variants: {
@@ -441,9 +442,9 @@ const Select = forwardRef(
                     <>
                       <Separator />
                       <CommandGroup>
-                        <CommandItem className={cn('justify-center text-center', commandItemVariants({ size: 'default' }))} onSelect={handleClearAll}>
+                        <Button className="w-full" size="sm" variant="secondary" onClick={handleClearAll}>
                           Clear all
-                        </CommandItem>
+                        </Button>
                       </CommandGroup>
                     </>
                   )}

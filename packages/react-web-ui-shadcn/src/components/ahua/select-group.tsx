@@ -1,4 +1,4 @@
-import React, { FC, ForwardedRef, forwardRef, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { FC, ForwardedRef, forwardRef, Fragment, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { ChevronDownIcon, CheckIcon, XIcon } from 'lucide-react';
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
 import { cn } from '~react-web-ui-shadcn/lib/utils';
@@ -6,6 +6,7 @@ import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, Command
 import { cva, type VariantProps } from 'class-variance-authority';
 import { Separator } from '../ui/separator';
 import { InputLabel } from './input-base';
+import { Button } from '../ui/button';
 
 const formControlVariants = cva('relative rounded-md border border-input bg-background ring-offset-background', {
   variants: {
@@ -80,7 +81,7 @@ const commandInputVariants = cva('', {
   },
 });
 
-const commandItemVariants = cva('flex items-center justify-between rounded-none', {
+const commandItemVariants = cva('flex items-center pl-6 justify-between rounded-none', {
   variants: {
     size: {
       default: 'h-9',
@@ -97,21 +98,15 @@ const commandItemVariants = cva('flex items-center justify-between rounded-none'
   },
 });
 
-const groupHeaderVariants = cva('flex items-center justify-between px-3 py-2 text-sm font-semibold', {
+const groupHeaderVariants = cva('flex items-center justify-between px-2 py-2 text-sm font-semibold', {
   variants: {
     size: {
       default: 'h-9',
       sm: 'h-8 text-xs',
     },
-    selected: {
-      all: 'bg-primary/10',
-      partial: 'bg-primary/5',
-      none: 'bg-muted/50',
-    },
   },
   defaultVariants: {
     size: 'default',
-    selected: 'none',
   },
 });
 
@@ -123,13 +118,36 @@ const checkboxVariants = cva('flex items-center justify-center rounded-sm border
     },
     selected: {
       all: 'bg-primary text-primary-foreground',
-      partial: 'bg-primary/50',
+      partial: 'bg-primary/50 !border-primary/30',
       none: 'opacity-50',
     },
   },
   defaultVariants: {
     size: 'default',
-    selected: 'none',
+  },
+});
+
+const tagVariants = cva('whitespace-nowrap py-1 px-1.5 flex items-center rounded-full border border-primary font-medium bg-primary/10 text-primary', {
+  variants: {
+    size: {
+      default: 'text-xs',
+      sm: 'text-[10px]',
+    },
+  },
+  defaultVariants: {
+    size: 'default',
+  },
+});
+
+const tagIconVariants = cva('ml-1 cursor-pointer', {
+  variants: {
+    size: {
+      default: 'size-3',
+      sm: 'size-2.5',
+    },
+  },
+  defaultVariants: {
+    size: 'default',
   },
 });
 
@@ -148,6 +166,7 @@ interface SelectGroupProps<T extends BaseOption> extends VariantProps<typeof for
   placeholder?: string;
   label?: string;
   labelClassName?: string;
+  tagListClassName?: string;
   required?: boolean;
   disabled?: boolean;
   valueField?: keyof T;
@@ -156,8 +175,9 @@ interface SelectGroupProps<T extends BaseOption> extends VariantProps<typeof for
   showSearch?: boolean;
   showClearAll?: boolean;
   showSelectAll?: boolean;
-  error?: boolean;
+  showSelectedTags?: boolean;
   showGroupNameWhenEmpty?: boolean;
+  error?: boolean;
   onChange: (value: T[]) => void;
   onBlur?: React.FocusEventHandler<HTMLButtonElement>;
 }
@@ -167,11 +187,11 @@ export const SelectGroup = forwardRef(
     {
       className,
       value = [],
-      onChange,
       options,
       placeholder = 'Select items...',
       label,
       labelClassName,
+      tagListClassName,
       required = false,
       disabled = false,
       valueField = 'id' as keyof T,
@@ -180,7 +200,9 @@ export const SelectGroup = forwardRef(
       error = false,
       showSearch = true,
       showClearAll = true,
+      showSelectedTags = true,
       showGroupNameWhenEmpty = false,
+      onChange,
       onBlur,
     }: SelectGroupProps<T>,
     ref: ForwardedRef<HTMLDivElement>
@@ -192,6 +214,17 @@ export const SelectGroup = forwardRef(
     const triggerRef = useRef<HTMLButtonElement>(null);
 
     const selectedIds = useMemo(() => new Set(value.map(v => v[valueField])), [value, valueField]);
+
+    const groupedTags = useMemo(() => {
+      return options.map(group => {
+        const selected = value.filter(v => group.children.some(child => child[valueField] === v[valueField]));
+        return {
+          group,
+          selected,
+          showAllTag: selected.length === 0,
+        };
+      });
+    }, [options, value, valueField]);
 
     const getGroupSelectedState = useCallback(
       (group: GroupOption<T>) => {
@@ -225,6 +258,9 @@ export const SelectGroup = forwardRef(
       const displayParts = groupedSelections.map(({ group, selected }) => {
         if (selected.length === 0) {
           return `${group.name} (All)`;
+        }
+        if (selected.length === group.children.length) {
+          return `${group.name} (All)`; // Changed this line to show (All) instead of count
         }
         if (selected.length <= 2) {
           return selected.map(item => String(item[displayField])).join(', ');
@@ -327,6 +363,12 @@ export const SelectGroup = forwardRef(
       }
     };
 
+    const handleRemoveTag = (option: T, e: React.MouseEvent) => {
+      e.stopPropagation();
+      if (disabled) return;
+      onChange(value.filter(v => v[valueField] !== option[valueField]));
+    };
+
     useEffect(() => {
       document.addEventListener('mousedown', handleClickOutside);
       return () => document.removeEventListener('mousedown', handleClickOutside);
@@ -376,27 +418,22 @@ export const SelectGroup = forwardRef(
                     {options.map(group => {
                       const groupState = getGroupSelectedState(group);
                       return (
-                        <CommandGroup key={group.id}>
-                          <div className={groupHeaderVariants({ size, selected: groupState })}>
+                        <CommandGroup key={group.id} className="p-0">
+                          <div className={groupHeaderVariants({ size })}>
                             <div className="flex flex-1 items-center justify-between">
                               <span>{group.name}</span>
-                              <div className="text-muted-foreground hover:text-foreground flex gap-2 text-xs">
-                                <span className="cursor-pointer" onClick={e => handleSelectAllInGroup(group, e)}>
+                              <div className="text-muted-foreground flex gap-2 text-xs">
+                                <span className="hover:text-primary cursor-pointer" onClick={e => handleSelectAllInGroup(group, e)}>
                                   Select all
                                 </span>
                                 <span>|</span>
-                                <span className="cursor-pointer" onClick={e => handleDeselectAllInGroup(group, e)}>
+                                <span className="hover:text-primary cursor-pointer" onClick={e => handleDeselectAllInGroup(group, e)}>
                                   Deselect all
                                 </span>
                               </div>
                             </div>
                             <div className={cn(checkboxVariants({ size, selected: groupState }), 'ml-2')} onClick={() => handleGroupSelect(group)}>
-                              <CheckIcon
-                                className={cn('text-primary-foreground h-3 w-3', {
-                                  'opacity-0': groupState === 'none',
-                                  'opacity-50': groupState === 'partial',
-                                })}
-                              />
+                              <CheckIcon className={cn('text-primary-foreground h-3 w-3')} />
                             </div>
                           </div>
                           {group.children.map(option => (
@@ -424,9 +461,9 @@ export const SelectGroup = forwardRef(
                     <>
                       <Separator />
                       <CommandGroup>
-                        <CommandItem className={cn('justify-center text-center', commandItemVariants({ size: 'default' }))} onSelect={handleClearAll}>
+                        <Button className="w-full" size="sm" variant="secondary" onClick={handleClearAll}>
                           Clear all
-                        </CommandItem>
+                        </Button>
                       </CommandGroup>
                     </>
                   )}
@@ -435,6 +472,27 @@ export const SelectGroup = forwardRef(
             </Popover>
           </div>
         </div>
+
+        {showSelectedTags && (
+          <div className={cn('mt-2 flex flex-wrap gap-1', tagListClassName)}>
+            {groupedTags.map(({ group, selected, showAllTag }) => (
+              <Fragment key={group.id}>
+                {showAllTag ? (
+                  <span className={tagVariants({ size: 'default' })}>
+                    <span>{`${group.name} (All)`}</span>
+                  </span>
+                ) : (
+                  selected.map(item => (
+                    <span key={String(item[valueField])} className={tagVariants({ size: 'default' })}>
+                      <span>{String(item[displayField])}</span>
+                      <XIcon className={tagIconVariants({ size })} strokeWidth={2} onClick={e => handleRemoveTag(item, e)} />
+                    </span>
+                  ))
+                )}
+              </Fragment>
+            ))}
+          </div>
+        )}
       </div>
     );
   }

@@ -6,6 +6,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '~react-web-ui-shadcn/co
 import { Separator } from '~react-web-ui-shadcn/components/ui/separator';
 import { cn } from '~react-web-ui-shadcn/lib/utils';
 import { InputLabel } from './input-base';
+import { Button } from '../ui/button';
 
 const formControlVariants = cva('h-6 relative rounded-md border border-input bg-background ring-input', {
   variants: {
@@ -378,21 +379,11 @@ const SelectTag = forwardRef(
                         <CommandItem
                           tabIndex={index}
                           key={option[valueField]}
-                          className={cn(
-                            commandItemVariants({
-                              size: 'default',
-                              selected: isSelected,
-                            })
-                          )}
+                          className={cn(commandItemVariants({ size: 'default', selected: isSelected }))}
                           onSelect={() => handleToggleOption(option)}
                         >
                           <span>{option[displayField]}</span>
-                          <div
-                            className={commandIconVariants({
-                              size: 'default',
-                              selected: isSelected,
-                            })}
-                          >
+                          <div className={commandIconVariants({ size: 'default', selected: isSelected })}>
                             <CheckIcon />
                           </div>
                         </CommandItem>
@@ -404,9 +395,9 @@ const SelectTag = forwardRef(
                   <>
                     <Separator />
                     <CommandGroup>
-                      <CommandItem className={cn('justify-center text-center', commandItemVariants({ size: 'default' }))} onSelect={handleClearAll}>
+                      <Button className="w-full" size="sm" variant="secondary" onClick={handleClearAll}>
                         Clear all
-                      </CommandItem>
+                      </Button>
                     </CommandGroup>
                   </>
                 )}

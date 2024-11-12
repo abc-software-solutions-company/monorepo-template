@@ -74,4 +74,7 @@ export const locales: Locale[] = [
 export const countries = [
   { id: 'vi-vn', name: 'Vietnam' },
   { id: 'th-th', name: 'Thailand' },
+  { id: 'en-us', name: 'English' },
+  { id: 'de-de', name: 'Germany' },
+  { id: 'in-hi', name: 'India' },
 ];

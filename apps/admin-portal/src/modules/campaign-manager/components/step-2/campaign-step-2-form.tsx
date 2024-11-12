@@ -17,6 +17,29 @@ type CampaignStep2FormProps = {
 };
 
 const CampaignStep2Form: React.FC<CampaignStep2FormProps> = ({ form, onSubmit }) => {
+  const districtsItems = [
+    {
+      id: 'region-a',
+      name: 'Region A',
+      children: [
+        { id: 'd-a-1', name: 'District A1' },
+        { id: 'd-a-2', name: 'District A2' },
+        { id: 'd-a-3', name: 'District A3' },
+        { id: 'd-a-4', name: 'District A4' },
+      ],
+    },
+    {
+      id: 'region-b',
+      name: 'Region B',
+      children: [
+        { id: 'd-b-1', name: 'District B1' },
+        { id: 'd-b-2', name: 'District B2' },
+        { id: 'd-b-3', name: 'District B3' },
+        { id: 'd-b-4', name: 'District B4' },
+      ],
+    },
+  ];
+
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)}>
@@ -25,34 +48,7 @@ const CampaignStep2Form: React.FC<CampaignStep2FormProps> = ({ form, onSubmit })
             <FormFieldSelect required form={form} fieldName="nation" formLabel="Nation" options={countries} />
             <FormFieldSelect multiple form={form} fieldName="country" formLabel="Country" placeholder="Select country" options={countries} />
             <FormFieldSelectTag form={form} fieldName="country" formLabel="Country" placeholder="Select country" options={countries} />
-            <FormFieldSelectGroup
-              form={form}
-              fieldName="district"
-              formLabel="District"
-              placeholder="Select district"
-              options={[
-                {
-                  id: 'region-a',
-                  name: 'Region A',
-                  children: [
-                    { id: 'd-a-1', name: 'District A1' },
-                    { id: 'd-a-2', name: 'District A2' },
-                    { id: 'd-a-3', name: 'District A3' },
-                    { id: 'd-a-4', name: 'District A4' },
-                  ],
-                },
-                {
-                  id: 'region-b',
-                  name: 'Region B',
-                  children: [
-                    { id: 'd-b-1', name: 'District B1' },
-                    { id: 'd-b-2', name: 'District B2' },
-                    { id: 'd-b-3', name: 'District B3' },
-                    { id: 'd-b-4', name: 'District B4' },
-                  ],
-                },
-              ]}
-            />
+            <FormFieldSelectGroup form={form} fieldName="district" formLabel="District" placeholder="Select district" options={districtsItems} />
             <FormFieldInput form={form} fieldName="keyword" formLabel="Keyword" placeholder="Keyword" />
           </div>
           <div className="w-full max-w-md space-y-4">
