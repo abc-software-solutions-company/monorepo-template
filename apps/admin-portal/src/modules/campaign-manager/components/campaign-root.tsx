@@ -25,7 +25,7 @@ type CampaignFormData = {
 };
 
 const CampaignRoot: React.FC = () => {
-  const [currentStep, setCurrentStep] = useState<CAMPAIGN_STEP>(CAMPAIGN_STEP.STEP_3);
+  const [currentStep, setCurrentStep] = useState<CAMPAIGN_STEP>(CAMPAIGN_STEP.STEP_2);
   const [stepCompleted, setStepCompleted] = useState({
     [CAMPAIGN_STEP.STEP_1]: false,
     [CAMPAIGN_STEP.STEP_2]: false,
@@ -44,6 +44,7 @@ const CampaignRoot: React.FC = () => {
     step2: {
       nation: 'vi-vn',
       country: [{ id: 'vi-vn', name: 'Vietnam' }],
+      district: [],
       keyword: 'key1',
     },
     step3: {

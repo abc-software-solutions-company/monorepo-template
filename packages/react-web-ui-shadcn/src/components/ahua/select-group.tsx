@@ -1,0 +1,445 @@
+import React, { FC, ForwardedRef, forwardRef, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { ChevronDownIcon, CheckIcon, XIcon } from 'lucide-react';
+import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
+import { cn } from '~react-web-ui-shadcn/lib/utils';
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '../ui/command';
+import { cva, type VariantProps } from 'class-variance-authority';
+import { Separator } from '../ui/separator';
+import { InputLabel } from './input-base';
+
+const formControlVariants = cva('relative rounded-md border border-input bg-background ring-offset-background', {
+  variants: {
+    size: {
+      default: 'h-14',
+      sm: 'h-10',
+    },
+    state: {
+      default: '',
+      focused: 'ring-2 ring-ring ring-offset-2 ring-offset-background',
+      disabled: 'cursor-not-allowed bg-muted',
+      error: 'border-destructive bg-destructive/10',
+      errorFocused: 'bg-destructive/10 ring-2 ring-destructive ring-offset-2',
+    },
+  },
+  defaultVariants: {
+    size: 'default',
+    state: 'default',
+  },
+});
+
+const contentVariants = cva('px-3 text-sm overflow-hidden truncate text-ellipsis whitespace-nowrap font-medium', {
+  variants: {
+    size: {
+      default: '!leading-[24px] h-[28px]',
+      sm: '!leading-[22px] h-[22px]',
+    },
+  },
+  defaultVariants: {
+    size: 'default',
+  },
+});
+
+const triggerVariants = cva('grid w-full justify-between focus:outline-none text-left', {
+  variants: {
+    size: {
+      default: '',
+      sm: '',
+    },
+  },
+  defaultVariants: {
+    size: 'default',
+  },
+});
+
+const triggerIconVariants = cva('absolute -translate-y-1/2', {
+  variants: {
+    size: {
+      default: 'top-1/2 h-4 w-4 right-2',
+      sm: 'top-1/2 h-3 w-3 right-2',
+    },
+    state: {
+      default: '',
+      disabled: 'opacity-50',
+    },
+  },
+  defaultVariants: {
+    size: 'default',
+    state: 'default',
+  },
+});
+
+const commandInputVariants = cva('', {
+  variants: {
+    size: {
+      default: '',
+      sm: 'h-8',
+    },
+  },
+  defaultVariants: {
+    size: 'default',
+  },
+});
+
+const commandItemVariants = cva('flex items-center justify-between rounded-none', {
+  variants: {
+    size: {
+      default: 'h-9',
+      sm: 'h-8 text-xs',
+    },
+    selected: {
+      true: 'bg-primary/10',
+      false: '',
+    },
+  },
+  defaultVariants: {
+    size: 'default',
+    selected: false,
+  },
+});
+
+const groupHeaderVariants = cva('flex items-center justify-between px-3 py-2 text-sm font-semibold', {
+  variants: {
+    size: {
+      default: 'h-9',
+      sm: 'h-8 text-xs',
+    },
+    selected: {
+      all: 'bg-primary/10',
+      partial: 'bg-primary/5',
+      none: 'bg-muted/50',
+    },
+  },
+  defaultVariants: {
+    size: 'default',
+    selected: 'none',
+  },
+});
+
+const checkboxVariants = cva('flex items-center justify-center rounded-sm border border-primary', {
+  variants: {
+    size: {
+      default: 'h-4 w-4',
+      sm: 'h-3 w-3',
+    },
+    selected: {
+      all: 'bg-primary text-primary-foreground',
+      partial: 'bg-primary/50',
+      none: 'opacity-50',
+    },
+  },
+  defaultVariants: {
+    size: 'default',
+    selected: 'none',
+  },
+});
+
+type BaseOption = Record<string, string>;
+
+export interface GroupOption<T extends BaseOption> {
+  id: string;
+  name: string;
+  children: T[];
+}
+
+interface SelectGroupProps<T extends BaseOption> extends VariantProps<typeof formControlVariants> {
+  className?: string;
+  value: T[];
+  options: GroupOption<T>[];
+  placeholder?: string;
+  label?: string;
+  labelClassName?: string;
+  required?: boolean;
+  disabled?: boolean;
+  valueField?: keyof T;
+  displayField?: keyof T;
+  size?: 'default' | 'sm';
+  showSearch?: boolean;
+  showClearAll?: boolean;
+  showSelectAll?: boolean;
+  error?: boolean;
+  showGroupNameWhenEmpty?: boolean;
+  onChange: (value: T[]) => void;
+  onBlur?: React.FocusEventHandler<HTMLButtonElement>;
+}
+
+export const SelectGroup = forwardRef(
+  <T extends BaseOption>(
+    {
+      className,
+      value = [],
+      onChange,
+      options,
+      placeholder = 'Select items...',
+      label,
+      labelClassName,
+      required = false,
+      disabled = false,
+      valueField = 'id' as keyof T,
+      displayField = 'name' as keyof T,
+      size = 'default',
+      error = false,
+      showSearch = true,
+      showClearAll = true,
+      showGroupNameWhenEmpty = false,
+      onBlur,
+    }: SelectGroupProps<T>,
+    ref: ForwardedRef<HTMLDivElement>
+  ) => {
+    const [isOpen, setIsOpen] = useState(false);
+    const [isFocused, setIsFocused] = useState(false);
+    const selectRef = useRef<HTMLDivElement>(null);
+    const popoverRef = useRef<HTMLDivElement>(null);
+    const triggerRef = useRef<HTMLButtonElement>(null);
+
+    const selectedIds = useMemo(() => new Set(value.map(v => v[valueField])), [value, valueField]);
+
+    const getGroupSelectedState = useCallback(
+      (group: GroupOption<T>) => {
+        const childIds = new Set(group.children.map(child => child[valueField]));
+        const intersection = new Set([...selectedIds].filter(x => childIds.has(x)));
+
+        if (intersection.size === 0) return 'none';
+        if (intersection.size === group.children.length) return 'all';
+        return 'partial';
+      },
+      [selectedIds, valueField]
+    );
+
+    const getSelectedInGroup = useCallback(
+      (group: GroupOption<T>) => {
+        return value.filter(v => group.children.some(child => child[valueField] === v[valueField]));
+      },
+      [value, valueField]
+    );
+
+    const displayValue = useMemo(() => {
+      if (value.length === 0) {
+        return showGroupNameWhenEmpty ? options.map(group => `${group.name} (All)`).join(', ') : placeholder;
+      }
+
+      const groupedSelections = options.map(group => ({
+        group,
+        selected: getSelectedInGroup(group),
+      }));
+
+      const displayParts = groupedSelections.map(({ group, selected }) => {
+        if (selected.length === 0) {
+          return `${group.name} (All)`;
+        }
+        if (selected.length <= 2) {
+          return selected.map(item => String(item[displayField])).join(', ');
+        }
+        return `${group.name} (${selected.length})`;
+      });
+
+      return displayParts.join(', ') || placeholder;
+    }, [value, options, getSelectedInGroup, placeholder, showGroupNameWhenEmpty, displayField]);
+
+    const handleOpenChange = (open: boolean) => {
+      if (disabled) {
+        setIsOpen(false);
+        return;
+      }
+      setIsOpen(open);
+      if (open) setIsFocused(true);
+    };
+
+    const handleBlur = (e: React.FocusEvent<HTMLButtonElement>) => {
+      const relatedTarget = e.relatedTarget as Node | null;
+      const isInsidePopover = popoverRef.current?.contains(relatedTarget);
+      const isInsideCommandInput = relatedTarget instanceof Element && relatedTarget.closest('[cmdk-input-wrapper]');
+
+      if (!isInsidePopover && !isInsideCommandInput) {
+        setIsFocused(false);
+        onBlur?.(e);
+      }
+    };
+
+    const handleFocus = () => {
+      if (!disabled) {
+        setIsFocused(true);
+      }
+    };
+
+    const handleClearAll = () => {
+      if (disabled) return;
+      onChange([]);
+      setIsFocused(true);
+    };
+
+    const handleClickOutside = useCallback((event: MouseEvent) => {
+      const target = event.target as Node;
+      const isInsideSelect = selectRef.current?.contains(target);
+      const isInsidePopover = popoverRef.current?.contains(target);
+      const isInsideCommandInput = target instanceof Element && target.closest('[cmdk-input-wrapper]');
+
+      if (!isInsideSelect && !isInsidePopover && !isInsideCommandInput) {
+        setIsFocused(false);
+      }
+    }, []);
+
+    const getFormControlState = () => {
+      if (disabled) return 'disabled';
+      if (error) return isFocused ? 'errorFocused' : 'error';
+      if (isFocused) return 'focused';
+      return 'default';
+    };
+
+    const handleSelectAllInGroup = (group: GroupOption<T>, e?: React.MouseEvent) => {
+      e?.stopPropagation();
+      if (disabled) return;
+
+      const currentSelection = new Set(value);
+      group.children.forEach(child => {
+        if (!selectedIds.has(child[valueField])) {
+          currentSelection.add(child);
+        }
+      });
+      onChange([...currentSelection]);
+    };
+
+    const handleDeselectAllInGroup = (group: GroupOption<T>, e?: React.MouseEvent) => {
+      e?.stopPropagation();
+      if (disabled) return;
+
+      const groupIds = new Set(group.children.map(child => child[valueField]));
+      onChange(value.filter(v => !groupIds.has(v[valueField])));
+    };
+
+    const handleGroupSelect = (group: GroupOption<T>) => {
+      if (disabled) return;
+
+      const groupState = getGroupSelectedState(group);
+      if (groupState === 'all') {
+        handleDeselectAllInGroup(group);
+      } else {
+        handleSelectAllInGroup(group);
+      }
+    };
+
+    const handleOptionSelect = (option: T) => {
+      if (disabled) return;
+
+      if (selectedIds.has(option[valueField])) {
+        onChange(value.filter(v => v[valueField] !== option[valueField]));
+      } else {
+        onChange([...value, option]);
+      }
+    };
+
+    useEffect(() => {
+      document.addEventListener('mousedown', handleClickOutside);
+      return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, [handleClickOutside]);
+
+    return (
+      <div>
+        <div
+          ref={ref}
+          className={cn(
+            formControlVariants({
+              size,
+              state: getFormControlState(),
+              className,
+            })
+          )}
+        >
+          <div ref={selectRef}>
+            <Popover open={isOpen && !disabled} onOpenChange={handleOpenChange}>
+              <PopoverTrigger asChild>
+                <button
+                  ref={triggerRef}
+                  className={cn(triggerVariants({ size }), disabled && 'cursor-not-allowed')}
+                  aria-expanded={isOpen}
+                  disabled={disabled}
+                  type="button"
+                  onClick={() => !disabled && setIsFocused(true)}
+                  onFocus={handleFocus}
+                  onBlur={handleBlur}
+                >
+                  <ChevronDownIcon className={triggerIconVariants({ size, state: disabled ? 'disabled' : 'default' })} />
+                  {label && <InputLabel label={label} required={required} size={size} className={cn(labelClassName)} />}
+                  <p className={cn(contentVariants({ size }), !value.length && 'text-muted-foreground', disabled && 'opacity-50')}>{displayValue}</p>
+                </button>
+              </PopoverTrigger>
+              <PopoverContent ref={popoverRef} className="w-[--radix-popover-trigger-width] p-0">
+                <Command>
+                  {showSearch && (
+                    <CommandInput
+                      placeholder={placeholder}
+                      className={commandInputVariants({ size: 'default' })}
+                      onFocus={() => setIsFocused(true)}
+                    />
+                  )}
+                  <CommandList className="scrollbar max-h-[300px] overflow-auto">
+                    <CommandEmpty>No results found.</CommandEmpty>
+                    {options.map(group => {
+                      const groupState = getGroupSelectedState(group);
+                      return (
+                        <CommandGroup key={group.id}>
+                          <div className={groupHeaderVariants({ size, selected: groupState })}>
+                            <div className="flex flex-1 items-center justify-between">
+                              <span>{group.name}</span>
+                              <div className="text-muted-foreground hover:text-foreground flex gap-2 text-xs">
+                                <span className="cursor-pointer" onClick={e => handleSelectAllInGroup(group, e)}>
+                                  Select all
+                                </span>
+                                <span>|</span>
+                                <span className="cursor-pointer" onClick={e => handleDeselectAllInGroup(group, e)}>
+                                  Deselect all
+                                </span>
+                              </div>
+                            </div>
+                            <div className={cn(checkboxVariants({ size, selected: groupState }), 'ml-2')} onClick={() => handleGroupSelect(group)}>
+                              <CheckIcon
+                                className={cn('text-primary-foreground h-3 w-3', {
+                                  'opacity-0': groupState === 'none',
+                                  'opacity-50': groupState === 'partial',
+                                })}
+                              />
+                            </div>
+                          </div>
+                          {group.children.map(option => (
+                            <CommandItem
+                              key={String(option[valueField])}
+                              onSelect={() => handleOptionSelect(option)}
+                              className={commandItemVariants({ size, selected: selectedIds.has(option[valueField]) })}
+                            >
+                              <span>{String(option[displayField])}</span>
+                              <div className={checkboxVariants({ size, selected: selectedIds.has(option[valueField]) ? 'all' : 'none' })}>
+                                <CheckIcon
+                                  className={cn('text-primary-foreground h-3 w-3', {
+                                    'opacity-0': !selectedIds.has(option[valueField]),
+                                  })}
+                                />
+                              </div>
+                            </CommandItem>
+                          ))}
+                          <Separator />
+                        </CommandGroup>
+                      );
+                    })}
+                  </CommandList>
+                  {showClearAll && selectedIds.size > 0 && (
+                    <>
+                      <Separator />
+                      <CommandGroup>
+                        <CommandItem className={cn('justify-center text-center', commandItemVariants({ size: 'default' }))} onSelect={handleClearAll}>
+                          Clear all
+                        </CommandItem>
+                      </CommandGroup>
+                    </>
+                  )}
+                </Command>
+              </PopoverContent>
+            </Popover>
+          </div>
+        </div>
+      </div>
+    );
+  }
+);
+
+SelectGroup.displayName = 'SelectGroup';
+
+export { type SelectGroupProps };

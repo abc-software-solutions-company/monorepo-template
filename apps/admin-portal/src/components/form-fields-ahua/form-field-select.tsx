@@ -19,6 +19,8 @@ type FormFieldSelectProps<T extends FieldValues, O extends OptionType> = {
   required?: boolean;
   multiple?: boolean;
   showSearch?: boolean;
+  showClearAll?: boolean;
+  showSelectAll?: boolean;
   showSelectedTags?: boolean;
 };
 
@@ -36,8 +38,10 @@ export default function FormFieldSelect<T extends FieldValues, O extends OptionT
   size = 'default',
   required,
   multiple = false,
-  showSearch = false,
-  showSelectedTags = false,
+  showSearch = true,
+  showClearAll = true,
+  showSelectAll = true,
+  showSelectedTags = true,
 }: FormFieldSelectProps<T, O>) {
   if (!visibled) return null;
 
@@ -61,8 +65,10 @@ export default function FormFieldSelect<T extends FieldValues, O extends OptionT
                 value={field.value}
                 disabled={disabled}
                 size={size}
-                showSelectedTags={showSelectedTags}
                 showSearch={showSearch}
+                showClearAll={showClearAll}
+                showSelectAll={showSelectAll}
+                showSelectedTags={showSelectedTags}
                 error={!!error}
                 onChange={field.onChange}
               />

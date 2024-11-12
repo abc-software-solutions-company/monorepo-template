@@ -1,30 +1,32 @@
 import { FieldValues, Path, UseFormReturn } from 'react-hook-form';
-import { SelectTag } from '~react-web-ui-shadcn/components/ahua/select-tag';
+import { GroupOption, SelectGroup } from '~react-web-ui-shadcn/components/ahua/select-group';
 import { FormControl, FormField, FormItem, FormMessage } from '~react-web-ui-shadcn/components/ui/form';
 
-type OptionType = Record<string, string>;
+type BaseOption = Record<string, string>;
 
-type FormFieldSelectTagProps<T extends FieldValues, O extends OptionType> = {
+type StringKeyOf<T> = Extract<keyof T, string>;
+
+type FormFieldSelectGroupProps<T extends FieldValues, O extends BaseOption> = {
   className?: string;
   form: UseFormReturn<T>;
   formLabel?: string;
   fieldName: Path<T>;
-  options: O[];
+  options: GroupOption<O>[];
   placeholder?: string;
   disabled?: boolean;
   visibled?: boolean;
-  valueField?: Extract<keyof O, string>;
-  displayField?: Extract<keyof O, string>;
+  valueField?: StringKeyOf<O>;
+  displayField?: StringKeyOf<O>;
   size?: 'default' | 'sm';
-  maxVisible?: number;
   showSearch?: boolean;
   showClearAll?: boolean;
   showSelectAll?: boolean;
-  multiple?: boolean;
   required?: boolean;
+  showGroupNameWhenEmpty?: boolean;
+  labelClassName?: string;
 };
 
-export default function FormFieldSelectTag<T extends FieldValues, O extends OptionType>({
+export default function FormFieldSelectGroup<T extends FieldValues, O extends BaseOption>({
   className,
   form,
   formLabel,
@@ -33,15 +35,16 @@ export default function FormFieldSelectTag<T extends FieldValues, O extends Opti
   placeholder = '',
   visibled = true,
   disabled,
-  valueField = 'id' as Extract<keyof O, string>,
-  displayField = 'name' as Extract<keyof O, string>,
+  valueField = 'id' as StringKeyOf<O>,
+  displayField = 'name' as StringKeyOf<O>,
   size = 'default',
-  maxVisible,
   showSearch = true,
   showClearAll = true,
   showSelectAll = true,
   required,
-}: FormFieldSelectTagProps<T, O>) {
+  showGroupNameWhenEmpty,
+  labelClassName,
+}: FormFieldSelectGroupProps<T, O>) {
   if (!visibled) return null;
 
   return (
@@ -52,23 +55,25 @@ export default function FormFieldSelectTag<T extends FieldValues, O extends Opti
         return (
           <FormItem>
             <FormControl>
-              <SelectTag
-                required={required}
+              <SelectGroup
                 className={className}
                 placeholder={placeholder}
                 label={formLabel}
+                labelClassName={labelClassName}
                 valueField={valueField}
                 displayField={displayField}
                 options={options}
                 value={field.value}
                 disabled={disabled}
                 size={size}
-                maxVisible={maxVisible}
                 showSearch={showSearch}
                 showClearAll={showClearAll}
                 showSelectAll={showSelectAll}
+                required={required}
                 error={!!error}
+                showGroupNameWhenEmpty={showGroupNameWhenEmpty}
                 onChange={field.onChange}
+                onBlur={field.onBlur}
               />
             </FormControl>
             <FormMessage />
