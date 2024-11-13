@@ -23,20 +23,17 @@ type RulesProps = {
 
 const Rules: React.FC<RulesProps> = ({ className }) => {
   const [ruleItems, setRuleItems] = useAtom(rulesAtom);
-
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [editingIndex, setEditingIndex] = useState(-1);
-
-  const form = useForm<RulesFormValues>({
-    resolver: zodResolver(rulesSchema),
-    defaultValues: { rules: ruleItems },
-  });
+  const form = useForm<RulesFormValues>({ resolver: zodResolver(rulesSchema), defaultValues: { rules: ruleItems } });
   const { fields, remove, append } = useFieldArray({ control: form.control, name: 'rules' });
+
   const rules = form.watch('rules') ?? [];
 
   const handleAddRule = () => {
     setEditingIndex(-1);
     setIsModalVisible(true);
+    form.reset({ rules: ruleItems });
   };
 
   const handleEditRule = (index: number) => {
@@ -52,7 +49,6 @@ const Rules: React.FC<RulesProps> = ({ className }) => {
 
       return newItems;
     });
-
     remove(index);
   };
 

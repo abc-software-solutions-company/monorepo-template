@@ -18,6 +18,7 @@ type FormFieldRadioBlockProps<T extends FieldValues> = {
   disabled?: boolean;
   visibled?: boolean;
   required?: boolean;
+  showErrorMessage?: boolean;
   defaultValue?: string;
 };
 
@@ -29,6 +30,7 @@ export default function FormFieldRadioBlock<T extends FieldValues>({
   disabled,
   visibled = true,
   required,
+  showErrorMessage = true,
   defaultValue,
 }: FormFieldRadioBlockProps<T>) {
   if (!visibled) return null;
@@ -70,7 +72,7 @@ export default function FormFieldRadioBlock<T extends FieldValues>({
               ))}
             </RadioGroup>
           </FormControl>
-          <FormMessage />
+          {showErrorMessage && <FormMessage />}
         </FormItem>
       )}
     />

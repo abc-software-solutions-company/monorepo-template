@@ -1,3 +1,4 @@
+import { Locale } from 'date-fns';
 import { FieldValues, Path, UseFormReturn } from 'react-hook-form';
 import { InputDateRange } from '~react-web-ui-shadcn/components/ahua/input-date-range';
 import { FormControl, FormField, FormItem, FormMessage } from '~react-web-ui-shadcn/components/ui/form';
@@ -12,7 +13,10 @@ interface IFormFieldDateRangePickerProps<T extends FieldValues> {
   visibled?: boolean;
   size?: 'default' | 'sm';
   required?: boolean;
+  showErrorMessage?: boolean;
   disableBefore?: Date;
+  dateFormat?: string;
+  locale?: Locale;
 }
 
 const FormFieldDateRangePicker = <T extends FieldValues>({
@@ -25,7 +29,10 @@ const FormFieldDateRangePicker = <T extends FieldValues>({
   visibled = true,
   size = 'default',
   required = false,
+  showErrorMessage = true,
   disableBefore,
+  dateFormat,
+  locale,
 }: IFormFieldDateRangePickerProps<T>) => {
   if (!visibled) return null;
 
@@ -38,6 +45,7 @@ const FormFieldDateRangePicker = <T extends FieldValues>({
           <FormItem className={className}>
             <FormControl>
               <InputDateRange
+                locale={locale}
                 label={formLabel}
                 value={field.value}
                 placeholder={placeholder}
@@ -46,10 +54,11 @@ const FormFieldDateRangePicker = <T extends FieldValues>({
                 required={required}
                 error={!!error}
                 disableBefore={disableBefore}
+                dateFormat={dateFormat}
                 onChange={field.onChange}
               />
             </FormControl>
-            <FormMessage />
+            {showErrorMessage && <FormMessage />}
           </FormItem>
         );
       }}

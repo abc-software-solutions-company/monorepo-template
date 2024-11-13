@@ -49,6 +49,7 @@ interface IFormFieldUploaderMultiLanguageProps<T extends FieldValues> {
   maxFiles?: number;
   previews: Record<string, FilePreview[]>;
   isUploading?: boolean;
+  showErrorMessage?: boolean;
   onSelectFile: (field: ControllerRenderProps<T, Path<T>>, lang: string, files: File[], filenames: string[]) => void;
   onRemoveFile: (field: ControllerRenderProps<T, Path<T>>, lang: string) => void;
 }
@@ -68,6 +69,7 @@ export default function FormFieldUploaderMultiLanguage<T extends FieldValues>({
   maxFiles = 1,
   previews,
   isUploading = false,
+  showErrorMessage = true,
   onSelectFile,
   onRemoveFile,
 }: IFormFieldUploaderMultiLanguageProps<T>) {
@@ -329,7 +331,7 @@ export default function FormFieldUploaderMultiLanguage<T extends FieldValues>({
             </div>
           </FormControl>
 
-          <FormMessage />
+          {showErrorMessage && <FormMessage />}
           <ModalConfirm
             visible={isConfirmOpen}
             title="Are you sure?"

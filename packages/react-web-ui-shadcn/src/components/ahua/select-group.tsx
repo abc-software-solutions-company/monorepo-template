@@ -423,13 +423,13 @@ export const SelectGroup = forwardRef(
                             <div className="flex flex-1 items-center justify-between">
                               <span>{group.name}</span>
                               <div className="text-muted-foreground flex gap-2 text-xs">
-                                <span className="hover:text-primary cursor-pointer" onClick={e => handleSelectAllInGroup(group, e)}>
+                                <button type="button" className="hover:text-primary cursor-pointer" onClick={e => handleSelectAllInGroup(group, e)}>
                                   Select all
-                                </span>
+                                </button>
                                 <span>|</span>
-                                <span className="hover:text-primary cursor-pointer" onClick={e => handleDeselectAllInGroup(group, e)}>
+                                <button type="button" className="hover:text-primary cursor-pointer" onClick={e => handleDeselectAllInGroup(group, e)}>
                                   Deselect all
-                                </span>
+                                </button>
                               </div>
                             </div>
                             <div className={cn(checkboxVariants({ size, selected: groupState }), 'ml-2')} onClick={() => handleGroupSelect(group)}>
@@ -438,7 +438,7 @@ export const SelectGroup = forwardRef(
                           </div>
                           {group.children.map(option => (
                             <CommandItem
-                              key={String(option[valueField])}
+                              key={`${group.id}-${String(option[valueField])}`}
                               onSelect={() => handleOptionSelect(option)}
                               className={commandItemVariants({ size, selected: selectedIds.has(option[valueField]) })}
                             >
@@ -483,7 +483,7 @@ export const SelectGroup = forwardRef(
                   </span>
                 ) : (
                   selected.map(item => (
-                    <span key={String(item[valueField])} className={tagVariants({ size: 'default' })}>
+                    <span key={`${group.id}-${String(item[valueField])}`} className={tagVariants({ size: 'default' })}>
                       <span>{String(item[displayField])}</span>
                       <XIcon className={tagIconVariants({ size })} strokeWidth={2} onClick={e => handleRemoveTag(item, e)} />
                     </span>

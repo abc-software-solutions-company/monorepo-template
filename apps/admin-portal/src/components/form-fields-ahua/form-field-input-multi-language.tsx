@@ -76,6 +76,7 @@ interface IFormFieldInputMultiLanguageProps<T extends FieldValues> extends Varia
   disabled?: boolean;
   visibled?: boolean;
   required?: boolean;
+  showErrorMessage?: boolean;
   maxVisible?: number;
   minLength?: number;
   maxLength?: number;
@@ -92,6 +93,7 @@ export default function FormFieldInputMultiLanguage<T extends FieldValues>({
   visibled = true,
   disabled,
   required,
+  showErrorMessage = true,
   maxVisible = 4,
   maxLength = 255,
   multiline = false,
@@ -257,7 +259,7 @@ export default function FormFieldInputMultiLanguage<T extends FieldValues>({
                 {getCharCount(field.value, activeLocale)}/{maxLength}
               </p>
             )}
-            <FormMessage />
+            {showErrorMessage && <FormMessage />}
           </FormItem>
         );
       }}

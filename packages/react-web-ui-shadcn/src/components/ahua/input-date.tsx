@@ -1,13 +1,12 @@
-import { FC, ForwardedRef, forwardRef, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { ForwardedRef, forwardRef, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { cva } from 'class-variance-authority';
-import { format, isValid } from 'date-fns';
+import { format, isValid, Locale } from 'date-fns';
 import { CalendarDaysIcon } from 'lucide-react';
 import { Calendar } from '~react-web-ui-shadcn/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '~react-web-ui-shadcn/components/ui/popover';
 import { cn } from '~react-web-ui-shadcn/lib/utils';
 import { Matcher } from 'react-day-picker';
 import { InputLabel } from './input-base';
-
 const CURRENT_YEAR = new Date().getFullYear();
 
 const formControlVariants = cva(
@@ -88,6 +87,7 @@ type InputDateProps = {
   disableBefore?: Date;
   dateFormat?: string;
   error?: boolean;
+  locale?: Locale;
   onChange: (date: Date | undefined) => void;
   onBlur?: React.FocusEventHandler<HTMLButtonElement>;
 };
@@ -108,6 +108,7 @@ const InputDate = forwardRef(
       disableBefore,
       dateFormat = 'dd/MM/yyyy',
       error,
+      locale,
       onChange,
       onBlur,
     }: InputDateProps,
@@ -147,7 +148,7 @@ const InputDate = forwardRef(
     const handleBlur = (e: React.FocusEvent<HTMLButtonElement>) => {
       const relatedTarget = e.relatedTarget as Node | null;
       const isInsidePopover = popoverRef.current?.contains(relatedTarget);
-      const isInsideCalendar = relatedTarget instanceof Element && relatedTarget.closest('rdp');
+      const isInsideCalendar = relatedTarget instanceof Element && relatedTarget.closest('.rdp');
 
       if (!isInsidePopover && !isInsideCalendar) {
         setIsFocused(false);
@@ -219,6 +220,7 @@ const InputDate = forwardRef(
             </PopoverTrigger>
             <PopoverContent ref={popoverRef} className="w-auto p-0" align="end">
               <Calendar
+                locale={locale}
                 initialFocus
                 mode="single"
                 captionLayout="dropdown-buttons"

@@ -77,6 +77,7 @@ interface IFormFieldEditorMultiLanguageProps<T extends FieldValues> extends Vari
   disabled?: boolean;
   visibled?: boolean;
   required?: boolean;
+  showErrorMessage?: boolean;
   maxVisible?: number;
   minLength?: number;
   maxLength?: number;
@@ -92,6 +93,7 @@ export default function FormFieldEditorMultiLanguage<T extends FieldValues>({
   visibled = true,
   disabled,
   required,
+  showErrorMessage = true,
   maxVisible = 4,
   maxLength = 255,
 }: IFormFieldEditorMultiLanguageProps<T>) {
@@ -258,7 +260,7 @@ export default function FormFieldEditorMultiLanguage<T extends FieldValues>({
               {getCharCount(field.value, activeLocale)}/{maxLength}
             </p>
           )}
-          <FormMessage />
+          {showErrorMessage && <FormMessage />}
         </FormItem>
       )}
     />

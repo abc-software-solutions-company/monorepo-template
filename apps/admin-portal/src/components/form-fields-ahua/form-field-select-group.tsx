@@ -21,8 +21,10 @@ type FormFieldSelectGroupProps<T extends FieldValues, O extends BaseOption> = {
   showSearch?: boolean;
   showClearAll?: boolean;
   showSelectAll?: boolean;
-  required?: boolean;
+  showSelectedTags?: boolean;
   showGroupNameWhenEmpty?: boolean;
+  showErrorMessage?: boolean;
+  required?: boolean;
   labelClassName?: string;
 };
 
@@ -39,11 +41,12 @@ export default function FormFieldSelectGroup<T extends FieldValues, O extends Ba
   displayField = 'name' as StringKeyOf<O>,
   size = 'default',
   showSearch = true,
-  showClearAll = true,
-  showSelectAll = true,
+  showClearAll = false,
+  showSelectAll = false,
+  showSelectedTags = false,
+  showErrorMessage = true,
   required,
   showGroupNameWhenEmpty,
-  labelClassName,
 }: FormFieldSelectGroupProps<T, O>) {
   if (!visibled) return null;
 
@@ -59,7 +62,6 @@ export default function FormFieldSelectGroup<T extends FieldValues, O extends Ba
                 className={className}
                 placeholder={placeholder}
                 label={formLabel}
-                labelClassName={labelClassName}
                 valueField={valueField}
                 displayField={displayField}
                 options={options}
@@ -69,14 +71,15 @@ export default function FormFieldSelectGroup<T extends FieldValues, O extends Ba
                 showSearch={showSearch}
                 showClearAll={showClearAll}
                 showSelectAll={showSelectAll}
+                showSelectedTags={showSelectedTags}
+                showGroupNameWhenEmpty={showGroupNameWhenEmpty}
                 required={required}
                 error={!!error}
-                showGroupNameWhenEmpty={showGroupNameWhenEmpty}
                 onChange={field.onChange}
                 onBlur={field.onBlur}
               />
             </FormControl>
-            <FormMessage />
+            {showErrorMessage && <FormMessage />}
           </FormItem>
         );
       }}

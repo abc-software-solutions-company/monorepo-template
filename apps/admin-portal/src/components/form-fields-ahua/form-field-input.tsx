@@ -13,6 +13,7 @@ type FormFieldInputProps<T extends FieldValues> = {
   size?: 'default' | 'sm';
   multiple?: boolean;
   required?: boolean;
+  showErrorMessage?: boolean;
 };
 
 export default function FormFieldInput<T extends FieldValues>({
@@ -26,6 +27,7 @@ export default function FormFieldInput<T extends FieldValues>({
   size = 'default',
   multiple,
   required,
+  showErrorMessage = true,
 }: FormFieldInputProps<T>) {
   if (!visibled) return null;
 
@@ -50,7 +52,7 @@ export default function FormFieldInput<T extends FieldValues>({
                 onChange={field.onChange}
               />
             </FormControl>
-            <FormMessage />
+            {showErrorMessage && <FormMessage />}
           </FormItem>
         );
       }}

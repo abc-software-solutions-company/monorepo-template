@@ -178,7 +178,12 @@ const DropZone: React.FC<DropZoneProps> = ({
       accept={acceptedFileTypes.join(',')}
       className="hidden"
       disabled={disabled}
-      onChange={onInputChange}
+      onChange={e => {
+        onInputChange(e);
+        if (inputRef.current) {
+          inputRef.current.value = '';
+        }
+      }}
       onFocus={onFocus}
       onBlur={onBlur}
     />

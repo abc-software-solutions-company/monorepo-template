@@ -1,6 +1,6 @@
 import { FC, ForwardedRef, forwardRef, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { cva } from 'class-variance-authority';
-import { format, isValid } from 'date-fns';
+import { format, isValid, Locale } from 'date-fns';
 import { CalendarDaysIcon } from 'lucide-react';
 import { DateRange, Matcher } from 'react-day-picker';
 import { InputLabel } from './input-base';
@@ -90,6 +90,7 @@ type InputDateRangeProps = {
   disableBefore?: Date;
   dateFormat?: string;
   error?: boolean;
+  locale?: Locale;
   onChange: (dateRange: DateRangeValue) => void;
   onBlur?: React.FocusEventHandler<HTMLButtonElement>;
 };
@@ -110,6 +111,7 @@ const InputDateRange = forwardRef(
       disableBefore,
       dateFormat = 'dd/MM/yyyy',
       error,
+      locale,
       onChange,
       onBlur,
     }: InputDateRangeProps,
@@ -154,7 +156,7 @@ const InputDateRange = forwardRef(
     const handleBlur = (e: React.FocusEvent<HTMLButtonElement>) => {
       const relatedTarget = e.relatedTarget as Node | null;
       const isInsidePopover = popoverRef.current?.contains(relatedTarget);
-      const isInsideCalendar = relatedTarget instanceof Element && relatedTarget.closest('rdp');
+      const isInsideCalendar = relatedTarget instanceof Element && relatedTarget.closest('.rdp');
 
       if (!isInsidePopover && !isInsideCalendar) {
         setIsFocused(false);
@@ -226,6 +228,7 @@ const InputDateRange = forwardRef(
             </PopoverTrigger>
             <PopoverContent ref={popoverRef} className="w-auto p-0" align="end">
               <Calendar
+                locale={locale}
                 initialFocus
                 mode="range"
                 numberOfMonths={2}

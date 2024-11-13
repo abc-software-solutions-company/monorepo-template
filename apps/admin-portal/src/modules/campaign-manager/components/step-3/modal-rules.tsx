@@ -32,24 +32,22 @@ type ModalRulesProps = {
   onClose: () => void;
 };
 
+const defaultValues: RuleFormValues = {
+  ruleName: '',
+  campaignRule: CAMPAIGN_RULE.PRODUCT_SALES_OR_PURCHASE,
+  trackerType: CAMPAIGN_TRACKER_TYPE.PRORATED,
+  trackerValue: '',
+  triggers: [
+    {
+      property: CAMPAIGN_TRIGGER_PROPERTY.TRANSACTION_TYPE,
+      condition: CAMPAIGN_TRIGGER_CONDITION.EQUALS_TO,
+    },
+  ],
+};
+
 const ModalRules: React.FC<ModalRulesProps> = ({ form, visible, editIndex, onClose, onSave }) => {
   const rules = form.watch('rules');
   const isEditMode = editIndex !== -1;
-
-  const defaultValues: RuleFormValues = {
-    ruleName: isEditMode ? rules[editIndex]?.ruleName : '',
-    campaignRule: isEditMode ? rules[editIndex]?.campaignRule : CAMPAIGN_RULE.PRODUCT_SALES_OR_PURCHASE,
-    trackerType: isEditMode ? rules[editIndex]?.trackerType : CAMPAIGN_TRACKER_TYPE.PRORATED,
-    trackerValue: isEditMode ? rules[editIndex]?.trackerValue : '',
-    triggers: isEditMode
-      ? rules[editIndex]?.triggers
-      : [
-          {
-            property: CAMPAIGN_TRIGGER_PROPERTY.TRANSACTION_TYPE,
-            condition: CAMPAIGN_TRIGGER_CONDITION.EQUALS_TO,
-          },
-        ],
-  };
 
   const modalForm = useForm<RuleFormValues>({ resolver: zodResolver(ruleSchema), defaultValues });
 
@@ -67,7 +65,7 @@ const ModalRules: React.FC<ModalRulesProps> = ({ form, visible, editIndex, onClo
     } else {
       modalForm.reset(defaultValues);
     }
-  }, [form, isEditMode, editIndex, modalForm]);
+  }, [isEditMode, editIndex, modalForm, visible]);
 
   const onSubmit: SubmitHandler<RuleFormValues> = async data => {
     onSave(data, isEditMode ? editIndex : -1);
@@ -78,7 +76,7 @@ const ModalRules: React.FC<ModalRulesProps> = ({ form, visible, editIndex, onClo
     <Dialog open={visible} modal={true} onOpenChange={onClose}>
       <DialogContent className="w-full max-w-7xl">
         <Form {...modalForm}>
-          <form className="grow">
+          <form>
             <DialogHeader>
               <DialogTitle>Configure progress mechanics</DialogTitle>
               <VisuallyHidden>
@@ -120,6 +118,7 @@ const ModalRules: React.FC<ModalRulesProps> = ({ form, visible, editIndex, onClo
                   fieldName="trackerType"
                   formLabel="Tracker type"
                   placeholder="Select type"
+                  showErrorMessage={false}
                   options={CAMPAIGN_TRACKER_TYPE_LIST}
                 />
                 <FormFieldInput
@@ -130,6 +129,7 @@ const ModalRules: React.FC<ModalRulesProps> = ({ form, visible, editIndex, onClo
                   fieldName="trackerValue"
                   formLabel="Tracker value"
                   placeholder="Enter tracker value"
+                  showErrorMessage={false}
                 />
               </div>
             </div>

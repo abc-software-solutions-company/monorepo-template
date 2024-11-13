@@ -1,4 +1,3 @@
-import React from 'react';
 import { PlusIcon, Trash2Icon } from 'lucide-react';
 import { useFieldArray, UseFormReturn } from 'react-hook-form';
 import { toast } from 'sonner';
@@ -86,6 +85,7 @@ const ConfigureTriggers = ({ form }: { form: UseFormReturn<RuleFormValues> }) =>
                   fieldName={`triggers.${index}.property`}
                   formLabel="Property"
                   options={getAvailableProperties(index)}
+                  showErrorMessage={false}
                 />
                 <FormFieldSelect
                   className="min-w-40"
@@ -94,6 +94,7 @@ const ConfigureTriggers = ({ form }: { form: UseFormReturn<RuleFormValues> }) =>
                   fieldName={`triggers.${index}.condition`}
                   formLabel="Condition"
                   options={conditionOptions}
+                  showErrorMessage={false}
                 />
               </div>
               <Button
