@@ -1,6 +1,7 @@
 import { UseFormReturn } from 'react-hook-form';
 import { Form } from '~react-web-ui-shadcn/components/ui/form';
 
+import FormFieldDateRangePicker from '@/components/form-fields-ahua/form-field-date-range-picker';
 import FormFieldInput from '@/components/form-fields-ahua/form-field-input';
 import FormFieldSelect from '@/components/form-fields-ahua/form-field-select';
 import FormFieldSelectGroup from '@/components/form-fields-ahua/form-field-select-group';
@@ -50,6 +51,7 @@ const CampaignStep2Form: React.FC<CampaignStep2FormProps> = ({ form, onSubmit })
             <FormFieldSelectTag form={form} fieldName="country" formLabel="Country" placeholder="Select country" options={countries} />
             <FormFieldSelectGroup form={form} fieldName="district" formLabel="District" placeholder="Select district" options={districtsItems} />
             <FormFieldInput form={form} fieldName="keyword" formLabel="Keyword" placeholder="Keyword" />
+            <FormFieldDateRangePicker form={form} fieldName="dateRange" formLabel="Date Range" />
           </div>
           <div className="w-full max-w-md space-y-4">
             <div className="w-full space-y-4">

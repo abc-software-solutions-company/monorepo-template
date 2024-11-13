@@ -46,6 +46,10 @@ const CampaignRoot: React.FC = () => {
       country: [{ id: 'vi-vn', name: 'Vietnam' }],
       district: [],
       keyword: 'key1',
+      dateRange: {
+        from: new Date('2024-11-28T17:00:00.000Z'),
+        to: new Date('2024-11-30T16:59:59.999Z'),
+      },
     },
     step3: {
       campaignType: 'milestone',

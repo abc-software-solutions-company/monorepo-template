@@ -2,11 +2,11 @@ import { FC, ForwardedRef, forwardRef, useCallback, useEffect, useMemo, useRef, 
 import { cva } from 'class-variance-authority';
 import { format, isValid } from 'date-fns';
 import { CalendarDaysIcon } from 'lucide-react';
-import { Calendar } from '~react-web-ui-shadcn/components/ui/calendar';
-import { Popover, PopoverContent, PopoverTrigger } from '~react-web-ui-shadcn/components/ui/popover';
-import { cn } from '~react-web-ui-shadcn/lib/utils';
-import { Matcher } from 'react-day-picker';
+import { DateRange, Matcher } from 'react-day-picker';
 import { InputLabel } from './input-base';
+import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
+import { cn } from '~react-web-ui-shadcn/lib/utils';
+import { Calendar } from '../ui/calendar';
 
 const CURRENT_YEAR = new Date().getFullYear();
 
@@ -74,8 +74,10 @@ const triggerIconVariants = cva('text-muted-foreground absolute -translate-y-1/2
   },
 });
 
-type InputDateProps = {
-  value: Date | undefined;
+type DateRangeValue = DateRange | undefined;
+
+type InputDateRangeProps = {
+  value: DateRangeValue;
   label?: string;
   required?: boolean;
   disabled?: boolean;
@@ -88,11 +90,11 @@ type InputDateProps = {
   disableBefore?: Date;
   dateFormat?: string;
   error?: boolean;
-  onChange: (date: Date | undefined) => void;
+  onChange: (dateRange: DateRangeValue) => void;
   onBlur?: React.FocusEventHandler<HTMLButtonElement>;
 };
 
-const InputDate = forwardRef(
+const InputDateRange = forwardRef(
   (
     {
       value,
@@ -102,7 +104,7 @@ const InputDate = forwardRef(
       size = 'default',
       className,
       labelClassName,
-      placeholder = 'Pick a date',
+      placeholder = 'From date - To date',
       fromYear = CURRENT_YEAR,
       toYear = CURRENT_YEAR + 10,
       disableBefore,
@@ -110,7 +112,7 @@ const InputDate = forwardRef(
       error,
       onChange,
       onBlur,
-    }: InputDateProps,
+    }: InputDateRangeProps,
     ref: ForwardedRef<HTMLDivElement>
   ) => {
     const [isOpen, setIsOpen] = useState(false);
@@ -119,10 +121,13 @@ const InputDate = forwardRef(
     const popoverRef = useRef<HTMLDivElement>(null);
     const triggerRef = useRef<HTMLButtonElement>(null);
 
-    const formattedDate = useMemo(() => {
-      if (!value || !isValid(value)) return '';
+    const formattedDateRange = useMemo(() => {
+      if (!value?.from || !isValid(value.from)) return '';
       try {
-        return format(value, dateFormat);
+        const fromStr = format(value.from, dateFormat);
+        if (!value.to || !isValid(value.to)) return fromStr;
+        const toStr = format(value.to, dateFormat);
+        return `${fromStr} - ${toStr}`;
       } catch (e) {
         return '';
       }
@@ -132,15 +137,17 @@ const InputDate = forwardRef(
       if (disabled) return 'disabled';
       if (error) return isFocused ? 'errorFocused' : 'error';
       if (isFocused) return 'focused';
-
       return 'default';
     };
 
-    const handleSelect = (date: Date | undefined) => {
+    const handleSelect = (dateRange: DateRange | undefined) => {
       if (disabled) return;
+      onChange(dateRange);
 
-      onChange(date);
-      setIsOpen(false);
+      // Only close the popover if both dates are selected
+      if (dateRange?.from && dateRange?.to) {
+        setIsOpen(false);
+      }
       setIsFocused(true);
     };
 
@@ -209,8 +216,8 @@ const InputDate = forwardRef(
                 />
                 {label && <InputLabel label={label} required={required} size={size} className={cn(labelClassName)} />}
                 <p className={cn(contentVariants({ size }), disabled && 'opacity-50')}>
-                  {formattedDate ? (
-                    <span className="text-foreground">{formattedDate}</span>
+                  {formattedDateRange ? (
+                    <span className="text-foreground">{formattedDateRange}</span>
                   ) : (
                     <span className="text-muted-foreground">{placeholder}</span>
                   )}
@@ -220,12 +227,13 @@ const InputDate = forwardRef(
             <PopoverContent ref={popoverRef} className="w-auto p-0" align="end">
               <Calendar
                 initialFocus
-                mode="single"
+                mode="range"
+                numberOfMonths={2}
+                selected={value}
+                defaultMonth={value?.from}
                 captionLayout="dropdown-buttons"
                 fromYear={fromYear}
                 toYear={toYear}
-                defaultMonth={value}
-                selected={value}
                 disabled={{ before: disableBefore } as Matcher}
                 onSelect={handleSelect}
               />
@@ -237,6 +245,6 @@ const InputDate = forwardRef(
   }
 );
 
-InputDate.displayName = 'InputDate';
+InputDateRange.displayName = 'InputDateRange';
 
-export { InputDate };
+export { InputDateRange };
