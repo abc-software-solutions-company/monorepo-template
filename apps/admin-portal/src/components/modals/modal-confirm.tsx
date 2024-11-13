@@ -32,8 +32,8 @@ const ModalConfirm: FC<ModalConfirmProps> = ({ visible = false, title, content, 
           <AlertDialogDescription>{content}</AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel onClick={onNo}>{btnYes ?? t('btn_no')}</AlertDialogCancel>
-          <AlertDialogAction onClick={onYes}>{btnNo ?? t('btn_yes')}</AlertDialogAction>
+          <AlertDialogCancel onClick={onNo}>{btnNo ?? t('btn_no')}</AlertDialogCancel>
+          <AlertDialogAction onClick={onYes}>{btnYes ?? t('btn_yes')}</AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
