@@ -40,6 +40,7 @@
     "@artsy/fresnel": "^7.1.4",
     "@hookform/resolvers": "^3.9.0",
     "@react-native-async-storage/async-storage": "^1.23.1",
+    "@reduxjs/toolkit": "^2.3.0",
     "@repo/react-web-ui-shadcn": "*",
     "@repo/shared-universal": "*",
     "@repo/shared-web": "*",
