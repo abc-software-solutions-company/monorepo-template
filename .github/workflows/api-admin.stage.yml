@@ -74,3 +74,7 @@ jobs:
             sudo docker load --input ${{ env.APP_NAME }}.tar
             sudo docker-compose -f ${{ env.DOCKER_COMPOSE_PATH }} up -d ${{ env.DOCKER_COMPOSE_SERVICE }} --force-recreate --no-build
             rm -rf ${{ env.APP_NAME }}.tar
+            # Wait for 5 seconds to allow container to start
+            sleep 5
+            # Ping the application to verify it's running
+            curl -f http://localhost:${DOCKER_MAP_PORT#*:} || exit 1
