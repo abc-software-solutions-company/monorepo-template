@@ -143,3 +143,47 @@ sudo apt update && sudo apt upgrade -y
    - **Database:** `postgres`
 
 ---
+
+## **7. Set Up Swap Memory**
+
+Swap memory is crucial for server stability and performance. Here's why:
+
+- Prevents Out of Memory (OOM) crashes by providing a safety buffer
+- Helps manage memory-intensive Docker containers like PostgreSQL and Nginx
+- Acts as an early warning system for memory issues
+- Provides system stability during unexpected memory spikes
+- Critical for production environments where uptime is important
+
+> **Note**: We recommend setting swap to half of your RAM size as a best practice. Too little swap risks system crashes, while too much can impact
+> performance if heavily used.
+
+1. **Check current memory and swap:**
+
+   ```bash
+   free -h
+   ```
+
+2. **Create a swap file with half of your RAM size:**
+
+   ```bash
+   # Get total RAM in GB and calculate half (rounded down)
+   total_ram=$(free -g | awk '/^Mem:/{print $2}')
+   swap_size=$((total_ram / 2))
+
+   # Create and set up swap file
+   sudo fallocate -l ${swap_size}G /swapfile
+   sudo chmod 600 /swapfile
+   sudo mkswap /swapfile
+   sudo swapon /swapfile
+   ```
+
+3. **Make swap permanent:**
+
+   ```bash
+   echo '/swapfile none swap sw 0 0' | sudo tee -a /etc/fstab
+   ```
+
+4. **Verify swap is active:**
+   ```bash
+   swapon --show
+   ```
