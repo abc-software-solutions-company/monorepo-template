@@ -4,9 +4,9 @@ on:
   push:
     #TODO: Change branch deploy when using it in your project
     branches:
-      - "setup-deploy"
+      - 'main'
     paths:
-      - "apps/website/**"
+      - 'apps/website/**'
 
 env:
   APP_ENV: ${{ secrets.WEBSITE_STAGE }}
@@ -59,8 +59,8 @@ jobs:
           username: ${{secrets.STAGE_SERVER_USER_NAME}}
           port: 22
           password: ${{ secrets.STAGE_SERVER_PASSWORD }}
-          source: "${{ env.APP_NAME }}.tar,${{ env.DOCKER_COMPOSE_PATH }},${{ env.ENV_FILE_PATH }}"
-          target: "~/${{ env.APP_NAME }}"
+          source: '${{ env.APP_NAME }}.tar,${{ env.DOCKER_COMPOSE_PATH }},${{ env.ENV_FILE_PATH }}'
+          target: '~/${{ env.APP_NAME }}'
 
       - name: Executing remote ssh commands using SSH Key
         uses: appleboy/ssh-action@v1.0.0
