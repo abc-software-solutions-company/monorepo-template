@@ -15,7 +15,7 @@ env:
   DOCKERFILE_PATH: apps/website/Dockerfile
   DOCKER_COMPOSE_PATH: apps/website/docker-compose.yml
   ENV_FILE_PATH: apps/website/.env
-  DOCKER_MAP_PORT: 3000:3000
+  DOCKER_MAP_PORT: 3000:3001
 
 jobs:
   build-and-deploy:
