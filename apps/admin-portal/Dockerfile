@@ -1,49 +1,40 @@
-FROM node:21-alpine AS base
-
-# Install dependencies only when needed
-FROM base AS deps
-# Check https://github.com/nodejs/docker-node/tree/b4117f9333da4138b03a546ec926ef50a31506c3#nodealpine to understand why libc6-compat might be needed.
-RUN apk add --no-cache libc6-compat
-WORKDIR /app
-
-# Install dependencies based on the preferred package manager
-COPY package.json yarn.lock* package-lock.json* pnpm-lock.yaml* ./
-RUN \
-  if [ -f yarn.lock ]; then yarn --frozen-lockfile; \
-  elif [ -f package-lock.json ]; then npm ci; \
-  elif [ -f pnpm-lock.yaml ]; then yarn global add pnpm && pnpm i --frozen-lockfile; \
-  else echo "Lockfile not found." && exit 1; \
-  fi
-
-
-# Rebuild the source code only when needed
+# Base stage
+FROM node:20-alpine AS base
+RUN apk update && apk add --no-cache libc6-compat
+ 
+# Builder stage
 FROM base AS builder
 WORKDIR /app
-COPY --from=deps /app/node_modules ./node_modules
+RUN yarn global add turbo
 COPY . .
-
-RUN yarn build
-
-# If using npm comment out above and use below instead
-# RUN npm run build
-
-# Production image, copy all the files and run next
+RUN turbo prune admin-portal --docker
+ 
+# Installer stage
+FROM base AS installer
+WORKDIR /app
+ 
+# Copy pruned lockfile and package.json's
+COPY --from=builder /app/out/json/ .
+COPY --from=builder /app/out/yarn.lock ./yarn.lock
+COPY turbo.json turbo.json
+RUN yarn install
+ 
+# Build the project
+COPY --from=builder /app/out/full/ .
+COPY turbo.json turbo.json
+ 
+# Uncomment and use build args to enable remote caching
+# ARG TURBO_TEAM
+# ENV TURBO_TEAM=$TURBO_TEAM
+# ARG TURBO_TOKEN
+# ENV TURBO_TOKEN=$TURBO_TOKEN
+ 
+RUN yarn turbo build --filter=admin-portal
+ 
 FROM base AS runner
 WORKDIR /app
 
-ENV NODE_ENV production
+COPY --from=installer /app .
 
-RUN addgroup --system --gid 1001 frontend
-RUN adduser --system --uid 1001 vitejs
-
-COPY --from=builder /app/public ./public
-
-COPY --from=builder --chown=vitejs:frontend /app/dist ./
-
-USER vitejs
-
-EXPOSE 3020
-
-ENV PORT 3020
-
-CMD ["node", "server.js"]
+# Start web application
+CMD ["/bin/sh", "-c", "cd apps/admin-portal && yarn preview"]

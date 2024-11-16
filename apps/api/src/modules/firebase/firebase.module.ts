@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Logger, Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import * as admin from 'firebase-admin';
 
@@ -12,11 +12,16 @@ const FirebaseProvider = {
   inject: [ConfigService],
   useFactory: async (configService: ConfigService<IConfigs>) => {
     const firebaseConfig = configService.get<IConfigs['firebase']>('firebase');
+    const logger = new Logger('FirebaseProvider');
 
-    return admin.initializeApp({
-      credential: admin.credential.cert(firebaseConfig as admin.ServiceAccount),
-      databaseURL: `https://${firebaseConfig.project_id}.firebaseio.com`,
-    });
+    try {
+      return await admin.initializeApp({
+        credential: admin.credential.cert(firebaseConfig as admin.ServiceAccount),
+        databaseURL: `https://${firebaseConfig.project_id}.firebaseio.com`,
+      });
+    } catch (error) {
+      logger.error('Error initializing Firebase app:', error);
+    }
   },
 };
 

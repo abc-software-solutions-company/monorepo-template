@@ -1,90 +1,56 @@
-#============================================
-# 🧑‍💻 Development
-#============================================
-FROM node:21-alpine as dev
-# add the missing shared libraries from alpine base image
+FROM node:21-alpine AS base
+
+# The web Dockerfile is copy-pasted into our main docs at /docs/handbook/deploying-with-docker.
+# Make sure you update this Dockerfile, the Dockerfile in the web workspace and copy that over to Dockerfile in the docs.
+
+FROM base AS builder
+# Check https://github.com/nodejs/docker-node/tree/b4117f9333da4138b03a546ec926ef50a31506c3#nodealpine to understand why libc6-compat might be needed.
+RUN apk update
 RUN apk add --no-cache libc6-compat
-# Create app folder
-WORKDIR /usr/app
+# Install dependencies required for bcrypt
+RUN apk add --no-cache python3 make g++
+# Set working directory
+WORKDIR /app
+RUN yarn global add turbo
+COPY . .
+RUN turbo prune api --docker
 
-COPY start.sh /usr/app/
-COPY tsconfig.json /usr/app/
-
-RUN chmod +x /usr/app/start.sh
-
-# Set to dev environment
-ENV NODE_ENV development
-
-# Create non-root user for Docker
-RUN addgroup --system --gid 1001 nodejs
-RUN adduser --system --uid 1001 nestjs
-
-# Copy source code into app folder
-COPY --chown=node:node . .
-
-# Install dependencies
-RUN yarn --frozen-lockfile
-
-# Set Docker as a non-root user
-USER nestjs
-
-#============================================
-# 🏡 Production Build
-#============================================
-FROM node:21-alpine as build
-
-WORKDIR /usr/app
+# Add lockfile and package.json's of isolated subworkspace
+FROM base AS installer
+RUN apk update
 RUN apk add --no-cache libc6-compat
+WORKDIR /app
 
-# Set to production environment
-ENV NODE_ENV production
+# First install dependencies (as they change less often)
+COPY .gitignore .gitignore
+COPY --from=builder /app/out/json/ .
+COPY --from=builder /app/out/yarn.lock ./yarn.lock
+RUN yarn set version berry
+RUN yarn install
 
-# Re-create non-root user for Docker
-RUN addgroup --system --gid 1001 nodejs
+# Build the project and its dependencies
+COPY --from=builder /app/out/full/ .
+COPY turbo.json turbo.json
+
+# Uncomment and use build args to enable remote caching
+# ARG TURBO_TEAM
+# ENV TURBO_TEAM=$TURBO_TEAM
+
+# ARG TURBO_TOKEN
+# ENV TURBO_TOKEN=$TURBO_TOKEN
+
+RUN yarn turbo build --filter=api
+
+FROM base AS runner
+WORKDIR /app
+
+# Don't run production as root
+RUN addgroup --system --gid 1001 nestjs
 RUN adduser --system --uid 1001 nestjs
-
-# In order to run `yarn build` we need access to the Nest CLI.
-# Nest CLI is a dev dependency.
-COPY --chown=nestjs:nodejs --from=dev /usr/app/node_modules ./node_modules
-# Copy source code
-COPY --chown=nestjs:nodejs . .
-
-# Generate the production build. The build script runs "nest build" to compile the application.
-RUN yarn build
-
-# Install only the production dependencies and clean cache to optimize image size.
-RUN yarn --frozen-lockfile --production && yarn cache clean
-
-# Set Docker as a non-root user
 USER nestjs
+COPY --from=installer --chown=nestjs:nodejs /app .
+COPY --from=installer --chown=nestjs:nodejs /app/node_modules /app/apps/api/node_modules
 
-#
-# 🚀 Production Server
-#
-FROM node:21-alpine as prod
 
-WORKDIR /usr/app
-RUN apk add --no-cache libc6-compat
-
-# Set to production environment
-ENV NODE_ENV production
-
-# Re-create non-root user for Docker
-RUN addgroup --system --gid 1001 nodejs
-RUN adduser --system --uid 1001 nestjs
-
-# Copy only the necessary files
-COPY --chown=nestjs:nodejs --from=build /usr/app/.env ./.env
-COPY --chown=nestjs:nodejs --from=build /usr/app/dist dist
-COPY --chown=nestjs:nodejs --from=build /usr/app/uploads uploads
-COPY --chown=nestjs:nodejs --from=build /usr/app/node_modules node_modules
-COPY --chown=nestjs:nodejs --from=build /usr/app/package.json package.json
-COPY --chown=nestjs:nodejs --from=build /usr/app/yarn.lock yarn.lock
-COPY --chown=nestjs:nodejs --from=build /usr/app/tsconfig.json tsconfig.json
-
-# Set Docker as non-root user
-USER nestjs
-
-EXPOSE 3500
-
-CMD ["sh","-c","yarn typeorm migration:run -d ./dist/database/data-source.js && node dist/main.js"]
+# Correct the path to the entry point
+CMD ["/bin/sh", "-c", "cd apps/api && yarn migration:run && node dist/main.js"]
