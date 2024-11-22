@@ -5,6 +5,26 @@ Docker containers.
 
 ---
 
+## **0. Prerequisites**
+
+Before proceeding with the setup, ensure you have the following installed on your Ubuntu server:
+
+- **Docker**
+- **Docker Compose**
+- **Nginx Proxy Manager**
+
+Run this command to check if Docker and Nginx Proxy Manager already installed
+
+```bash
+   sudo docker ps
+```
+
+Run this command to check if Docker-Compose
+
+If you already have these installed, you can skip this step.
+
+---
+
 ## **1. Connect to Your Ubuntu Server via SSH**
 
 To connect to your Ubuntu server:
