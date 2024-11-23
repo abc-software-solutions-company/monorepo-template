@@ -58,7 +58,7 @@ jobs:
           else
               echo "❌ Error: New container is $HEALTH_STATUS"
               echo "Fetching logs from the error container..."
-              docker logs temp_test_container  # Retrieve logs from the test container
+              docker logs ${{ env.APP_NAME }}  # Retrieve logs from the test container
               exit 1
           fi
 
