@@ -56,7 +56,9 @@ jobs:
           if [[ "$HEALTH_STATUS" == "\"healthy\"" ]]; then
               echo "✅ New container is healthy. Replacing old container..."
           else
-              echo "❌ Error: New container is $HEALTH_STATUS. Cleaning up..."
+              echo "❌ Error: New container is $HEALTH_STATUS"
+              echo "Fetching logs from the error container..."
+              docker logs temp_test_container  # Retrieve logs from the test container
               exit 1
           fi
 
