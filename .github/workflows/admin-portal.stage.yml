@@ -42,13 +42,13 @@ jobs:
           # Run the new container temporarily
           docker run -d --name ${{ env.APP_NAME }} \
           --health-cmd="curl -f http://localhost:${{ env.DOCKER_CONTAINER_PORT}} || exit 1" \
-          --health-interval=10s \
+          --health-interval=5s \
           --health-timeout=5s \
           --health-retries=3 \
           ${{ env.APP_NAME}}:latest
 
           # Wait for health check
-          sleep 30  # Adjust based on your health-check settings
+          sleep 50  # Adjust based on your health-check settings
 
           # Check health status
           HEALTH_STATUS=$(docker inspect --format='{{json .State.Health.Status}}' ${{ env.APP_NAME }})
