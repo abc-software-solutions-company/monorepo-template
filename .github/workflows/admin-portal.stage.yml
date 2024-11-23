@@ -45,7 +45,7 @@ jobs:
           --health-interval=10s \
           --health-timeout=5s \
           --health-retries=3 \
-          my-image:latest
+          ${{ env.APP_NAME}}:latest
 
           # Wait for health check
           sleep 30  # Adjust based on your health-check settings
