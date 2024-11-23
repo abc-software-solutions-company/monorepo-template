@@ -1,8 +1,15 @@
-export const FAQ_GET_FIELDS = [['faq.id faq.title faq.content faq.status faq.createdAt faq.updatedAt']]
-  .flat()
-  .flatMap(item => item.trim().split(/\s+/));
+import { createEntityField } from '@/common/utils/entity-field.util';
 
-export const FAQ_FIELDS_TO_CREATE_OR_UPDATE = ['title', 'content'] as const;
+import { Faq } from '../entities/faq.entity';
+
+const faqField = createEntityField(Faq, {
+  fields: ['id', 'title', 'content', 'status', 'createdAt', 'updatedAt'],
+  alias: 'faq',
+});
+
+export const FAQ_GET_FIELDS = [...faqField].flat().flatMap(item => item.trim().split(/\s+/));
+
+export const FAQ_FIELDS_TO_CREATE_OR_UPDATE: (keyof Faq)[] = ['title', 'content'];
 
 export enum FAQ_STATUS {
   PUBLISHED = 'published',

@@ -1,6 +1,13 @@
-export const CONTACT_GET_FIELDS = [['contact.id contact.name contact.email contact.message contact.status contact.isRead contact.createdAt']]
-  .flat()
-  .flatMap(item => item.trim().split(/\s+/));
+import { createEntityField } from '@/common/utils/entity-field.util';
+
+import { Contact } from '../entities/contact.entity';
+
+const contactFields = createEntityField(Contact, {
+  fields: ['id', 'name', 'email', 'message', 'status', 'isRead', 'createdAt'],
+  alias: 'contact',
+});
+
+export const CONTACT_GET_FIELDS = [...contactFields].flat().flatMap(item => item.trim().split(/\s+/));
 
 export const CONTACT_FIELDS_TO_CREATE_OR_UPDATE = ['name', 'email', 'message'] as const;
 

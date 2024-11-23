@@ -1,23 +1,26 @@
-export const USER_GET_FIELDS = [
-  [
-    'user.id user.avatar user.name user.email user.phoneNumber user.lastLogin user.dateOfBirth user.country user.bio user.role user.status user.gender user.createdAt',
-  ],
-]
-  .flat()
-  .flatMap(item => item.trim().split(/\s+/));
+import { createEntityField } from '@/common/utils/entity-field.util';
 
-export const USER_FIELDS_TO_CREATE_OR_UPDATE = [
+import { User } from '../entities/user.entity';
+
+const userFeilds = createEntityField(User, {
+  fields: ['id', 'name', 'email', 'phoneNumber', 'lastLogin', 'dateOfBirth', 'country', 'bio', 'role', 'status', 'gender', 'createdAt'],
+  alias: 'user',
+});
+
+export const USER_GET_FIELDS = [...userFeilds].flat().flatMap(item => item.trim().split(/\s+/));
+
+export const USER_FIELDS_TO_CREATE_OR_UPDATE: (keyof User)[] = [
   'name',
   'email',
   'avatar',
   'phoneNumber',
   'country',
-  'dayOfBirth',
+  'dateOfBirth',
   'bio',
   'gender',
   'status',
   'role',
-] as const;
+];
 
 export enum USER_GENDER {
   MALE = 'male',

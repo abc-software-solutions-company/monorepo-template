@@ -1,12 +1,37 @@
-export const CATEGORY_GET_FIELDS = [
-  [
-    'category.id category.name category.slug category.description category.body category.type category.parent category.status category.cover category.seoMeta category.createdAt',
-  ],
-  ['user.id user.name user.email'],
-  ['parent.id parent.name'],
-  ['categoryFile.fileId categoryFile.position'],
-  ['image.id image.uniqueName'],
-]
+import { createEntityField } from '@/common/utils/entity-field.util';
+
+import { File } from '@/modules/files/entities/file.entity';
+import { User } from '@/modules/users/entities/user.entity';
+
+import { Category } from '../entities/category.entity';
+import { CategoryFile } from '../entities/category-file.entity';
+
+const categoryFields = createEntityField(Category, {
+  fields: ['id', 'name', 'slug', 'description', 'body', 'type', 'parent', 'status', 'cover', 'seoMeta', 'createdAt'],
+  alias: 'category',
+});
+
+const categoryUserFields = createEntityField(User, {
+  fields: ['id', 'name', 'email'],
+  alias: 'category',
+});
+
+const categoryParentFields = createEntityField(Category, {
+  fields: ['id', 'name'],
+  alias: 'parent',
+});
+
+const categoryFileFields = createEntityField(CategoryFile, {
+  fields: ['fileId', 'position'],
+  alias: 'categoryFile',
+});
+
+const categoryImageFields = createEntityField(File, {
+  fields: ['id', 'uniqueName'],
+  alias: 'image',
+});
+
+export const CATEGORY_GET_FIELDS = [...categoryFields, ...categoryUserFields, ...categoryParentFields, ...categoryFileFields, ...categoryImageFields]
   .flat()
   .flatMap(item => item.trim().split(/\s+/));
 

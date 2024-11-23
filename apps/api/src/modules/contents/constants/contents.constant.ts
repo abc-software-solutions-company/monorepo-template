@@ -1,10 +1,13 @@
-export const CONTENT_GET_FIELDS = [
-  [
-    'content.id content.name content.slug content.description content.body content.status content.type content.seoMeta content.createdAt content.updatedAt',
-  ],
-]
-  .flat()
-  .flatMap(item => item.trim().split(/\s+/));
+import { createEntityField } from '@/common/utils/entity-field.util';
+
+import { Content } from '../entities/content.entity';
+
+const contentFields = createEntityField(Content, {
+  fields: ['id', 'name', 'slug', 'description', 'body', 'status', 'type', 'seoMeta', 'createdAt', 'updatedAt'],
+  alias: 'content',
+});
+
+export const CONTENT_GET_FIELDS = [...contentFields].flat().flatMap(item => item.trim().split(/\s+/));
 
 export const CONTENT_FIELDS_TO_CREATE_OR_UPDATE = ['name', 'slug', 'description', 'body', 'type'] as const;
 

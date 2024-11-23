@@ -1,11 +1,22 @@
 import path from 'path';
 
-export const FILE_GET_FIELDS = [
-  ['file.id file.caption file.uniqueName file.mime file.ext file.size file.isTemp file.status file.createdAt'],
-  ['category.id category.name'],
-]
-  .flat()
-  .flatMap(item => item.trim().split(/\s+/));
+import { createEntityField } from '@/common/utils/entity-field.util';
+
+import { Category } from '@/modules/categories/entities/category.entity';
+
+import { File } from '../entities/file.entity';
+
+const fileFields = createEntityField(File, {
+  fields: ['id', 'uniqueName'],
+  alias: 'file',
+});
+
+const fileCategoryFields = createEntityField(Category, {
+  fields: ['id', 'name'],
+  alias: 'category',
+});
+
+export const FILE_GET_FIELDS = [...fileFields, ...fileCategoryFields].flat().flatMap(item => item.trim().split(/\s+/));
 
 export const FILE_ROOT_PATH = path.resolve(process.cwd(), 'uploads');
 export const THUMBNAIL_PATH = path.join(FILE_ROOT_PATH, 'thumbnails');
