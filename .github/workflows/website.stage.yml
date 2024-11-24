@@ -3,7 +3,7 @@ name: Deploy Website (Stage)
 on:
   push:
     branches:
-      - 'main'
+      - 'create-reusable-deploy'
     paths:
       - 'apps/website/**'
 

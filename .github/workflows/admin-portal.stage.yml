@@ -3,7 +3,7 @@ name: Deploy Admin Portal (Stage)
 on:
   push:
     branches:
-      - 'main'
+      - 'create-reusable-deploy'
     paths:
       - 'apps/admin-portal/**'
 
