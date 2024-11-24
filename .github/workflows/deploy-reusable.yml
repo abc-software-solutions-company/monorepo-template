@@ -1,0 +1,110 @@
+name: Reusable Deploy Workflow
+
+on:
+  workflow_call:
+    inputs:
+      app_name:
+        required: true
+        type: string
+      dockerfile_path:
+        required: true
+        type: string
+      docker_compose_path:
+        required: true
+        type: string
+      env_file_path:
+        required: true
+        type: string
+      docker_host_port:
+        required: true
+        type: number
+      docker_container_port:
+        required: true
+        type: number
+      docker_compose_service:
+        required: true
+        type: string
+      app_env:
+        required: true
+        type: string
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Pull code
+        uses: actions/checkout@v3
+
+      - name: Extract env file multi line.
+        run: |
+          rm -r -f ${{ inputs.env_file_path }}
+          touch ${{ inputs.env_file_path }}_temp
+          echo ${{ inputs.app_env }} | tee ${{ inputs.env_file_path }}_temp
+          sed 's/ /\n/g' ${{ inputs.env_file_path }}_temp >> ${{ inputs.env_file_path }}
+          rm -r -f ${{ inputs.env_file_path }}_temp
+
+      - name: Build Docker Image
+        run: |
+          docker build -f ${{ inputs.dockerfile_path }} -t ${{ inputs.app_name }} .
+          docker save -o ${{ inputs.app_name }}.tar ${{ inputs.app_name }}
+
+      - name: Test Docker Image
+        run: |
+          docker run -d --name ${{ inputs.app_name }} \
+          --health-cmd="curl -f http://127.0.0.1:${{ inputs.docker_container_port }} || exit 1" \
+          --health-interval=5s \
+          --health-timeout=5s \
+          --health-retries=3 \
+          ${{ inputs.app_name }}:latest
+
+          sleep 50
+
+          HEALTH_STATUS=$(docker inspect --format='{{json .State.Health.Status}}' ${{ inputs.app_name }})
+
+          if [[ "$HEALTH_STATUS" == "\"healthy\"" ]]; then
+              echo "✅ Test container is healthy. Ready to copy and deploy this image to your server..."
+          else
+              echo "❌ Error: Test container is $HEALTH_STATUS"
+              echo "Fetching logs from the test container..."
+              docker logs ${{ inputs.app_name }}
+              exit 1
+          fi
+
+      - name: Create docker-compose file
+        run: |
+          rm -f ${{ inputs.docker_compose_path }}
+          cat << EOF > ${{ inputs.docker_compose_path }}
+          version: '3.8'
+
+          services:
+            ${{ inputs.docker_compose_service }}:
+              image: ${{ inputs.app_name }}
+              container_name: ${{ inputs.app_name }}
+              restart: always
+              ports:
+                - "${{ inputs.docker_host_port }}:${{ inputs.docker_container_port }}"
+          EOF
+
+      - name: Copy Docker image to server use SSH Key
+        uses: appleboy/scp-action@v0.1.4
+        with:
+          host: ${{ secrets.STAGE_SERVER_HOST }}
+          username: ${{ secrets.STAGE_SERVER_USER_NAME }}
+          port: 22
+          password: ${{ secrets.STAGE_SERVER_PASSWORD }}
+          source: '${{ inputs.app_name }}.tar,${{ inputs.docker_compose_path }},${{ inputs.env_file_path }}'
+          target: '~/${{ inputs.app_name }}'
+
+      - name: Executing remote ssh commands using SSH Key
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.STAGE_SERVER_HOST }}
+          username: ${{ secrets.STAGE_SERVER_USER_NAME }}
+          port: 22
+          password: ${{ secrets.STAGE_SERVER_PASSWORD }}
+          script_stop: true
+          script: |
+            cd ~/${{ inputs.app_name }}
+            sudo docker load --input ${{ inputs.app_name }}.tar
+            sudo docker-compose -f ${{ inputs.docker_compose_path }} up -d ${{ inputs.docker_compose_service }} --force-recreate --no-build
+            rm -rf ${{ inputs.app_name }}.tar
