@@ -37,10 +37,11 @@ jobs:
           docker build -f ${{ env.DOCKERFILE_PATH }} -t ${{ env.APP_NAME }} .
           docker save -o ${{ env.APP_NAME }}.tar ${{ env.APP_NAME }}
 
+      # For API, please choose suitable health check api route, for example http://127.0.0.1/api/v1
       - name: Test Docker Image
         run: |
           docker run -d --name ${{ env.APP_NAME }} \
-          --health-cmd="curl -f http://127.0.0.1:${{ env.DOCKER_CONTAINER_PORT}} || exit 1" \
+          --health-cmd="curl -f http://127.0.0.1:${{ env.DOCKER_CONTAINER_PORT}}/api/v1 || exit 1" \ 
           --health-interval=5s \
           --health-timeout=5s \
           --health-retries=3 \

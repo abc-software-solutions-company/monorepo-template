@@ -16,7 +16,7 @@ RUN yarn global add turbo
 COPY . .
 RUN turbo prune api --docker
 
-# Add lockfile and package.json's of isolated subworkspace
+# Add lockfile and package.json's of isolated sub workspace
 FROM base AS installer
 RUN apk update
 RUN apk add --no-cache libc6-compat
