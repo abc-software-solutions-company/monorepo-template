@@ -5,7 +5,7 @@
 
 ## Description
 
-NestJS Template for Startup
+Admin Portal Template for Startup
 
 - [x] 100% Typescript
 - [x] Authentication with Firebase or Non-Firebase (Google, Facebook, Apple)
