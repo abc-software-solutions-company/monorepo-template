@@ -3,7 +3,7 @@ name: Deploy Admin Portal (Stage)
 on:
   push:
     branches:
-      - 'devops-verify-health-docker-before-deploy'
+      - 'main'
     paths:
       - 'apps/admin-portal/**'
 
