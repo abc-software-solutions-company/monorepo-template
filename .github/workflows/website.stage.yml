@@ -2,7 +2,6 @@ name: Deploy Website (Stage)
 
 on:
   push:
-    #TODO: Change branch deploy when using it in your project
     branches:
       - 'main'
     paths:
@@ -15,7 +14,8 @@ env:
   DOCKERFILE_PATH: apps/website/Dockerfile
   DOCKER_COMPOSE_PATH: apps/website/docker-compose.yml
   ENV_FILE_PATH: apps/website/.env
-  DOCKER_MAP_PORT: 3000:3001
+  DOCKER_HOST_PORT: 3000 # Change this value if your server is already run docker container with this port, using command docker ps to check it
+  DOCKER_CONTAINER_PORT: 3001 # This is the app port, which command yarn start run and provided
 
 jobs:
   build-and-deploy:
@@ -37,6 +37,28 @@ jobs:
           docker build -f ${{ env.DOCKERFILE_PATH }} -t ${{ env.APP_NAME }} .
           docker save -o ${{ env.APP_NAME }}.tar ${{ env.APP_NAME }}
 
+      - name: Test Docker Image
+        run: |
+          docker run -d --name ${{ env.APP_NAME }} \
+          --health-cmd="curl -f http://localhost:${{ env.DOCKER_CONTAINER_PORT}} || exit 1" \
+          --health-interval=5s \
+          --health-timeout=5s \
+          --health-retries=3 \
+          ${{ env.APP_NAME}}:latest
+
+          sleep 50
+
+          HEALTH_STATUS=$(docker inspect --format='{{json .State.Health.Status}}' ${{ env.APP_NAME }})
+
+          if [[ "$HEALTH_STATUS" == "\"healthy\"" ]]; then
+              echo "✅ Test container is healthy. Ready to copy and deploy this image to your server..."
+          else
+              echo "❌ Error: Test container is $HEALTH_STATUS"
+              echo "Fetching logs from the test container..."
+              docker logs ${{ env.APP_NAME }}
+              exit 1
+          fi
+
       - name: Create docker-compose file
         run: |
           rm -f ${{ env.DOCKER_COMPOSE_PATH }}
@@ -49,10 +71,10 @@ jobs:
               container_name: ${{ env.APP_NAME }}
               restart: always
               ports:
-                - "${{ env.DOCKER_MAP_PORT }}"
+                - "${{ env.DOCKER_HOST_PORT }}:${{ env.DOCKER_CONTAINER_PORT }}"
           EOF
 
-      - name: Copy Docker image to ec2 use SSH Key
+      - name: Copy Docker image to server use SSH Key
         uses: appleboy/scp-action@v0.1.4
         with:
           host: ${{ secrets.STAGE_SERVER_HOST }}
@@ -75,7 +97,3 @@ jobs:
             sudo docker load --input ${{ env.APP_NAME }}.tar
             sudo docker-compose -f ${{ env.DOCKER_COMPOSE_PATH }} up -d ${{ env.DOCKER_COMPOSE_SERVICE }} --force-recreate --no-build
             rm -rf ${{ env.APP_NAME }}.tar
-            # Wait for 5 seconds to allow container to start
-            sleep 5
-            # Ping the application to verify it's running
-            curl -f http://localhost:${DOCKER_MAP_PORT#*:} || exit 1
