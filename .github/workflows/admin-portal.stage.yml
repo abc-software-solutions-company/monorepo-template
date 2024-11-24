@@ -54,10 +54,10 @@ jobs:
           HEALTH_STATUS=$(docker inspect --format='{{json .State.Health.Status}}' ${{ env.APP_NAME }})
 
           if [[ "$HEALTH_STATUS" == "\"healthy\"" ]]; then
-              echo "✅ New container is healthy. Replacing old container..."
+              echo "✅ Test container is healthy. Ready to copy and deploy this image to your server..."
           else
-              echo "❌ Error: New container is $HEALTH_STATUS"
-              echo "Fetching logs from the error container..."
+              echo "❌ Error: Test container is $HEALTH_STATUS"
+              echo "Fetching logs from the test container..."
               docker logs ${{ env.APP_NAME }}  # Retrieve logs from the test container
               exit 1
           fi
@@ -78,7 +78,7 @@ jobs:
                 - "${{ env.DOCKER_HOST_PORT }}:${{ env.DOCKER_CONTAINER_PORT }}"
           EOF
 
-      - name: Copy Docker Image to ec2 use SSH Key
+      - name: Copy Docker Image to server use SSH Key
         uses: appleboy/scp-action@v0.1.4
         with:
           host: ${{ secrets.STAGE_SERVER_HOST }}
