@@ -1,4 +1,5 @@
 FROM node:21-alpine AS base
+RUN apk update && apk add --no-cache curl
 
 # The web Dockerfile is copy-pasted into our main docs at /docs/handbook/deploying-with-docker.
 # Make sure you update this Dockerfile, the Dockerfile in the web workspace and copy that over to Dockerfile in the docs.
@@ -6,7 +7,7 @@ FROM node:21-alpine AS base
 FROM base AS builder
 # Check https://github.com/nodejs/docker-node/tree/b4117f9333da4138b03a546ec926ef50a31506c3#nodealpine to understand why libc6-compat might be needed.
 RUN apk update
-RUN apk add --no-cache libc6-compat curl
+RUN apk add --no-cache libc6-compat
 # Install dependencies required for bcrypt
 RUN apk add --no-cache python3 make g++
 # Set working directory
