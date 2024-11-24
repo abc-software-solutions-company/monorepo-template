@@ -21,6 +21,10 @@ Run this command to check if Docker and Nginx Proxy Manager already installed
 
 Run this command to check if Docker-Compose
 
+```bash
+sudo docker-compose
+```
+
 If you already have these installed, you can skip this step.
 
 ---
