@@ -18,4 +18,4 @@ jobs:
       docker_host_port: 3500
       docker_container_port: 3500
       docker_compose_service: monorepo-api
-      app_env: ${{ secrets.API_STAGE }}
+      app_env: ${{ github.secrets.API_STAGE }}
