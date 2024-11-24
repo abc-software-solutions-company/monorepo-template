@@ -14,8 +14,8 @@ env:
   DOCKERFILE_PATH: apps/api/Dockerfile
   DOCKER_COMPOSE_PATH: apps/api/docker-compose.yml
   ENV_FILE_PATH: apps/api/.env
-  DOCKER_HOST_PORT: 3500
-  DOCKER_CONTAINER_PORT: 3500
+  DOCKER_HOST_PORT: 3500 # Change this value if your server is already run docker container with this port, using command docker ps to check it
+  DOCKER_CONTAINER_PORT: 3500 # This is the app port, which command yarn start run and provided
 
 jobs:
   build-and-deploy:
