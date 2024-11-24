@@ -42,7 +42,6 @@ jobs:
           # Run the new container temporarily
           docker run -d --name ${{ env.APP_NAME }} \
           --health-cmd="curl -f http://localhost:${{ env.DOCKER_CONTAINER_PORT}} || exit 1" \
-          --health-start-period=30s
           --health-interval=5s \
           --health-timeout=5s \
           --health-retries=3 \
