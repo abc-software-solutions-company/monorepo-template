@@ -75,26 +75,26 @@ jobs:
                 - "${{ env.DOCKER_HOST_PORT }}:${{ env.DOCKER_CONTAINER_PORT }}"
           EOF
 
-      - name: Copy Docker image to server use SSH Key
-        uses: appleboy/scp-action@v0.1.4
-        with:
-          host: ${{ secrets.STAGE_SERVER_HOST }}
-          username: ${{secrets.STAGE_SERVER_USER_NAME}}
-          port: 22
-          password: ${{ secrets.STAGE_SERVER_PASSWORD }}
-          source: '${{ env.APP_NAME }}.tar,${{ env.DOCKER_COMPOSE_PATH }},${{ env.ENV_FILE_PATH }}'
-          target: '~/${{ env.APP_NAME }}'
+      # - name: Copy Docker image to server use SSH Key
+      #   uses: appleboy/scp-action@v0.1.4
+      #   with:
+      #     host: ${{ secrets.STAGE_SERVER_HOST }}
+      #     username: ${{secrets.STAGE_SERVER_USER_NAME}}
+      #     port: 22
+      #     password: ${{ secrets.STAGE_SERVER_PASSWORD }}
+      #     source: '${{ env.APP_NAME }}.tar,${{ env.DOCKER_COMPOSE_PATH }},${{ env.ENV_FILE_PATH }}'
+      #     target: '~/${{ env.APP_NAME }}'
 
-      - name: Executing remote ssh commands using SSH Key
-        uses: appleboy/ssh-action@v1.0.0
-        with:
-          host: ${{ secrets.STAGE_SERVER_HOST }}
-          username: ${{secrets.STAGE_SERVER_USER_NAME}}
-          port: 22
-          password: ${{ secrets.STAGE_SERVER_PASSWORD }}
-          script_stop: true
-          script: |
-            cd ~/${{ env.APP_NAME }}
-            sudo docker load --input ${{ env.APP_NAME }}.tar
-            sudo docker-compose -f ${{ env.DOCKER_COMPOSE_PATH }} up -d ${{ env.DOCKER_COMPOSE_SERVICE }} --force-recreate --no-build
-            rm -rf ${{ env.APP_NAME }}.tar
+      # - name: Executing remote ssh commands using SSH Key
+      #   uses: appleboy/ssh-action@v1.0.0
+      #   with:
+      #     host: ${{ secrets.STAGE_SERVER_HOST }}
+      #     username: ${{secrets.STAGE_SERVER_USER_NAME}}
+      #     port: 22
+      #     password: ${{ secrets.STAGE_SERVER_PASSWORD }}
+      #     script_stop: true
+      #     script: |
+      #       cd ~/${{ env.APP_NAME }}
+      #       sudo docker load --input ${{ env.APP_NAME }}.tar
+      #       sudo docker-compose -f ${{ env.DOCKER_COMPOSE_PATH }} up -d ${{ env.DOCKER_COMPOSE_SERVICE }} --force-recreate --no-build
+      #       rm -rf ${{ env.APP_NAME }}.tar
