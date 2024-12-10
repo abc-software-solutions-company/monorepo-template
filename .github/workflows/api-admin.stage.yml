@@ -3,7 +3,7 @@ name: Deploy Admin API (Stage)
 on:
   push:
     branches:
-      - 'main'
+      - 'test-docker-cache'
     paths:
       - 'apps/api/**'
 

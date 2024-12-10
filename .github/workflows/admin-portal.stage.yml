@@ -14,8 +14,8 @@ env:
   DOCKERFILE_PATH: apps/admin-portal/Dockerfile
   DOCKER_COMPOSE_PATH: apps/admin-portal/docker-compose.yml
   ENV_FILE_PATH: apps/admin-portal/.env
-  DOCKER_HOST_PORT: 3001 # Change this value if your server is already run docker container with this port, using command docker ps to check it
-  DOCKER_CONTAINER_PORT: 3001 # This is the app port, which command yarn start run and provided
+  DOCKER_HOST_PORT: 3001
+  DOCKER_CONTAINER_PORT: 3001
 
 jobs:
   build-and-deploy:
@@ -24,7 +24,7 @@ jobs:
       - name: Pull code
         uses: actions/checkout@v3
 
-      - name: Extract env file multi line.
+      - name: Extract env file multi line
         run: |
           rm -r -f ${{ env.ENV_FILE_PATH }}
           touch ${{ env.ENV_FILE_PATH }}_temp
@@ -32,14 +32,30 @@ jobs:
           sed 's/ /\n/g' ${{ env.ENV_FILE_PATH }}_temp >> ${{ env.ENV_FILE_PATH }}
           rm -r -f ${{ env.ENV_FILE_PATH }}_temp
 
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Cache Docker layers
+        uses: actions/cache@v3
+        with:
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-buildx-${{ hashFiles(env.DOCKERFILE_PATH) }}
+          restore-keys: |
+            ${{ runner.os }}-buildx-
+
       - name: Build Docker Image
         run: |
-          docker build -f ${{ env.DOCKERFILE_PATH }} -t ${{ env.APP_NAME }} .
+          docker buildx create --use
+          docker buildx build \
+            --cache-from=type=local,src=/tmp/.buildx-cache \
+            --cache-to=type=local,dest=/tmp/.buildx-cache \
+            --load \
+            -f ${{ env.DOCKERFILE_PATH }} \
+            -t ${{ env.APP_NAME }} .
           docker save -o ${{ env.APP_NAME }}.tar ${{ env.APP_NAME }}
 
       - name: Test Docker Image
         run: |
-          # Run the new container temporarily
           docker run -d --name ${{ env.APP_NAME }} \
           --health-cmd="curl -f http://127.0.0.1:${{ env.DOCKER_CONTAINER_PORT}} || exit 1" \
           --health-interval=5s \
@@ -47,10 +63,8 @@ jobs:
           --health-retries=3 \
           ${{ env.APP_NAME}}:latest
 
-          # Wait for health check
-          sleep 50  # Adjust based on your health-check settings
+          sleep 50
 
-          # Check health status
           HEALTH_STATUS=$(docker inspect --format='{{json .State.Health.Status}}' ${{ env.APP_NAME }})
 
           if [[ "$HEALTH_STATUS" == "\"healthy\"" ]]; then
@@ -58,13 +72,12 @@ jobs:
           else
               echo "❌ Error: Test container is $HEALTH_STATUS"
               echo "Fetching logs from the test container..."
-              docker logs ${{ env.APP_NAME }}  # Retrieve logs from the test container
+              docker logs ${{ env.APP_NAME }}
               exit 1
           fi
 
       - name: Create docker-compose file
         run: |
-          # Remove old docker-compose file if it exists
           rm -f ${{ env.DOCKER_COMPOSE_PATH }}
           cat << EOF > ${{ env.DOCKER_COMPOSE_PATH }}
           version: '3.8'
