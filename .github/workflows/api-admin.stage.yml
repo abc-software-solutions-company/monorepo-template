@@ -14,8 +14,8 @@ env:
   DOCKERFILE_PATH: apps/api/Dockerfile
   DOCKER_COMPOSE_PATH: apps/api/docker-compose.yml
   ENV_FILE_PATH: apps/api/.env
-  DOCKER_HOST_PORT: 3500 # Change this value if your server is already run docker container with this port, using command docker ps to check it
-  DOCKER_CONTAINER_PORT: 3500 # This is the app port, which command yarn start run and provided
+  DOCKER_HOST_PORT: 3500
+  DOCKER_CONTAINER_PORT: 3500
 
 jobs:
   build-and-deploy:
@@ -24,7 +24,7 @@ jobs:
       - name: Pull code
         uses: actions/checkout@v3
 
-      - name: Extract env file multi line.
+      - name: Extract env file multi line
         run: |
           rm -r -f ${{ env.ENV_FILE_PATH }}
           touch ${{ env.ENV_FILE_PATH }}_temp
@@ -32,12 +32,28 @@ jobs:
           sed 's/ /\n/g' ${{ env.ENV_FILE_PATH }}_temp >> ${{ env.ENV_FILE_PATH }}
           rm -r -f ${{ env.ENV_FILE_PATH }}_temp
 
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Cache Docker layers
+        uses: actions/cache@v3
+        with:
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-buildx-api-${{ hashFiles(env.DOCKERFILE_PATH) }}
+          restore-keys: |
+            ${{ runner.os }}-buildx-api-
+
       - name: Build Docker Image
         run: |
-          docker build -f ${{ env.DOCKERFILE_PATH }} -t ${{ env.APP_NAME }} .
+          docker buildx create --use
+          docker buildx build \
+            --cache-from=type=local,src=/tmp/.buildx-cache \
+            --cache-to=type=local,dest=/tmp/.buildx-cache \
+            --load \
+            -f ${{ env.DOCKERFILE_PATH }} \
+            -t ${{ env.APP_NAME }} .
           docker save -o ${{ env.APP_NAME }}.tar ${{ env.APP_NAME }}
 
-      # For API, please choose suitable health check api route, for example http://127.0.0.1/api/v1
       - name: Test Docker Image
         run: |
           docker run -d --name ${{ env.APP_NAME }} \
