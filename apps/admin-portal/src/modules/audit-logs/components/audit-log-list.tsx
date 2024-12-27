@@ -133,7 +133,7 @@ export const AuditLogList: FC<AuditLogListProps> = ({ className }) => {
         ),
       },
     ],
-    [items]
+    [locale, t]
   );
   const table = useReactTable({
     data: items,
@@ -148,7 +148,7 @@ export const AuditLogList: FC<AuditLogListProps> = ({ className }) => {
     <div className={classNames('audit-logs-list flex grow flex-col rounded-lg border bg-card p-4 text-card-foreground shadow-sm', className)}>
       <div className="relative flex h-full grow flex-col">
         <AuditLogListFilter filter={filter} setFilter={setFilter} />
-        <DataTable table={table} columns={columns} isFetching={isFetching} />
+        <DataTable containerClassName="mt-4" table={table} columns={columns} isFetching={isFetching} />
       </div>
       <div className="mt-3 flex justify-between">
         <div className="flex items-center space-x-2">

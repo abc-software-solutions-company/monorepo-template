@@ -20,7 +20,8 @@ function usePostToast() {
     if (!postsState.isFetching && postsState.error) {
       toast(t('post_list_toast_title'), { description: t('post_list_failure') + '<br />' + postsState.message });
     }
-  }, [postsState.isFetching, postsState.error]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [postsState.isFetching, postsState.error, postsState.message]);
 
   /*****************************************************************
   CREATE
@@ -40,7 +41,8 @@ function usePostToast() {
       toast(t('post_create_toast_title'), { description: t('post_create_failure') + '<br />' + postsState.message });
       postsState.reset();
     }
-  }, [postsState.createdAt, postsState.error]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [postsState.createdAt, postsState.error, postsState.message]);
 
   /*****************************************************************
   UPDATE
@@ -59,7 +61,8 @@ function usePostToast() {
       toast(t('post_update_toast_title'), { description: t('post_update_failure') + '<br />' + postsState.message });
       postsState.reset();
     }
-  }, [postsState.updatedAt, postsState.error]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [postsState.updatedAt, postsState.error, postsState.message]);
 
   /*****************************************************************
   DELETE
@@ -79,7 +82,8 @@ function usePostToast() {
       toast(t('post_delete_toast_title'), { description: t('post_delete_failure') + '<br />' + postsState.message });
       postsState.reset();
     }
-  }, [postsState.deletedAt, postsState.error]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [postsState.deletedAt, postsState.error, postsState.message]);
 }
 
 export default usePostToast;

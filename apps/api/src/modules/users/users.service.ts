@@ -61,7 +61,10 @@ export class UsersService {
     const queryBuilder = this.userRepository.createQueryBuilder('user');
 
     queryBuilder.select(USER_GET_FIELDS);
-    if (status) queryBuilder.where('user.status in (:...status)', { status });
+
+    if (status) {
+      queryBuilder.where('user.status in (:...status)', { status });
+    }
     if (q) {
       queryBuilder
         .andWhere('LOWER(user.name) LIKE LOWER(:name)', { name: `%${q}%` })

@@ -201,11 +201,12 @@ const Milestones: React.FC<MilestonesProps> = () => {
         });
       }
     });
-  }, [rulesItems.length, update, setMilestoneItems]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [rulesItems, milestones]);
 
   useEffect(() => {
     form.reset({ milestones: milestoneItems });
-  }, [milestoneItems, form]);
+  }, [form, milestoneItems]);
 
   return (
     <Form {...form}>

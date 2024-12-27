@@ -117,6 +117,7 @@ const ContentForm: FC<ContentFormProps> = ({ isEdit }) => {
 
   useEffect(() => {
     form.reset(defaultValues);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [form, content]);
 
   return (

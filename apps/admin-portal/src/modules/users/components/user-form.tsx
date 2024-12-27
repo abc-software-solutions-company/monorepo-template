@@ -75,6 +75,7 @@ const UserForm: FC<UserFormProps> = ({ isEdit }) => {
 
   useEffect(() => {
     form.reset(defaultValues);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [form, user]);
 
   return (

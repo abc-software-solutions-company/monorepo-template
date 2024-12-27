@@ -65,10 +65,12 @@ const FileDialog: FC<FileDialogProps> = ({ type = 'single', mime, visible, onCan
 
   useEffect(() => {
     fileDialogState.clear();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [visible]);
 
   useEffect(() => {
     fileDialogState.setType(type);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [type]);
 
   useDeepCompareEffect(() => {

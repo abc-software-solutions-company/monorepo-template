@@ -35,7 +35,7 @@ function ChildWrapper({ isEnabled, ignoreDelay, hideClose, onClosePress, onEnter
     } else {
       opacityValue.value = withTiming(0, { duration: CHILD_ANIM_DURATION, easing: Easing.ease });
     }
-  }, [isEnabled, ignoreDelay]);
+  }, [isEnabled, ignoreDelay, opacityValue, onEnterAnimationFinished]);
 
   return (
     <Animated.View

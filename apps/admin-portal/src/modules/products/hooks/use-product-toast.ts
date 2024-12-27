@@ -22,7 +22,8 @@ function useProductToast() {
         description: t('product_list_failure') + '<br />' + productsState.message,
       });
     }
-  }, [productsState.isFetching, productsState.error]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [productsState.isFetching, productsState.error, productsState.message]);
 
   /*****************************************************************
   CREATE
@@ -44,7 +45,8 @@ function useProductToast() {
       });
       productsState.reset();
     }
-  }, [productsState.createdAt, productsState.error]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [productsState.createdAt, productsState.error, productsState.message]);
 
   /*****************************************************************
   UPDATE
@@ -65,7 +67,8 @@ function useProductToast() {
       });
       productsState.reset();
     }
-  }, [productsState.updatedAt, productsState.error]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [productsState.updatedAt, productsState.error, productsState.message]);
 
   /*****************************************************************
   DELETE
@@ -86,7 +89,8 @@ function useProductToast() {
       });
       productsState.reset();
     }
-  }, [productsState.deletedAt, productsState.error]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [productsState.deletedAt, productsState.error, productsState.message]);
 }
 
 export default useProductToast;

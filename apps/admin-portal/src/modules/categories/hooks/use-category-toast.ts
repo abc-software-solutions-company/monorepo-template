@@ -22,7 +22,8 @@ function useCategoryToast() {
         description: t('category_list_failure') + '<br />' + categoriesState.message,
       });
     }
-  }, [categoriesState.isFetching, categoriesState.error]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [categoriesState.isFetching, categoriesState.error, categoriesState.message]);
 
   /*****************************************************************
   CREATE
@@ -46,7 +47,8 @@ function useCategoryToast() {
       });
       categoriesState.reset();
     }
-  }, [categoriesState.createdAt, categoriesState.error]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [categoriesState.createdAt, categoriesState.error, categoriesState.message]);
 
   /*****************************************************************
   UPDATE
@@ -69,7 +71,8 @@ function useCategoryToast() {
       });
       categoriesState.reset();
     }
-  }, [categoriesState.updatedAt, categoriesState.error]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [categoriesState.updatedAt, categoriesState.error, categoriesState.message]);
 
   /*****************************************************************
   DELETE
@@ -92,7 +95,8 @@ function useCategoryToast() {
       });
       categoriesState.reset();
     }
-  }, [categoriesState.deletedAt, categoriesState.error]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [categoriesState.deletedAt, categoriesState.error, categoriesState.message]);
 }
 
 export default useCategoryToast;

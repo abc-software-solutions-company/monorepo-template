@@ -25,10 +25,7 @@ const conditionOptions = [
 ];
 
 const ConfigureTriggers = ({ form }: { form: UseFormReturn<RuleFormValues> }) => {
-  const { fields, append, remove } = useFieldArray({
-    control: form.control,
-    name: 'triggers',
-  });
+  const { fields, append, remove } = useFieldArray({ control: form.control, name: 'triggers' });
 
   const triggers = form.watch('triggers');
 
@@ -38,7 +35,7 @@ const ConfigureTriggers = ({ form }: { form: UseFormReturn<RuleFormValues> }) =>
 
       return;
     }
-    append({ property: '', condition: '' });
+    append({ property: '', condition: '' }, { shouldFocus: true, focusName: 'triggers.0.property' });
   };
 
   const removeTrigger = (index: number) => {
@@ -79,6 +76,7 @@ const ConfigureTriggers = ({ form }: { form: UseFormReturn<RuleFormValues> }) =>
               <div className="flex items-center space-x-4">
                 <Label>{String(index + 1).padStart(2, '0')}</Label>
                 <FormFieldSelect
+                  required
                   className="min-w-40"
                   size="sm"
                   form={form}
@@ -88,6 +86,7 @@ const ConfigureTriggers = ({ form }: { form: UseFormReturn<RuleFormValues> }) =>
                   showErrorMessage={false}
                 />
                 <FormFieldSelect
+                  required
                   className="min-w-40"
                   size="sm"
                   form={form}

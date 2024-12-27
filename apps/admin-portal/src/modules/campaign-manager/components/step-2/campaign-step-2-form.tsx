@@ -18,6 +18,8 @@ type CampaignStep2FormProps = {
 };
 
 const CampaignStep2Form: React.FC<CampaignStep2FormProps> = ({ form, onSubmit }) => {
+  const locale = form.watch('nation');
+
   const districtsItems = [
     {
       id: 'region-a',
@@ -47,10 +49,19 @@ const CampaignStep2Form: React.FC<CampaignStep2FormProps> = ({ form, onSubmit })
         <div className="flex space-x-10">
           <div className="w-full max-w-md space-y-4">
             <FormFieldSelect required form={form} fieldName="nation" formLabel="Nation" options={countries} />
-            <FormFieldSelect multiple form={form} fieldName="country" formLabel="Country" placeholder="Select country" options={countries} />
+            {locale === 'vi-vn' && (
+              <FormFieldSelect multiple form={form} fieldName="country" formLabel="Country" placeholder="Select country" options={countries} />
+            )}
+            {locale !== 'vi-vn' && <FormFieldInput form={form} fieldName="keyword" formLabel="Keyword" placeholder="Keyword" />}
             <FormFieldSelectTag form={form} fieldName="country" formLabel="Country" placeholder="Select country" options={countries} />
-            <FormFieldSelectGroup form={form} fieldName="district" formLabel="District" placeholder="Select district" options={districtsItems} />
-            <FormFieldInput form={form} fieldName="keyword" formLabel="Keyword" placeholder="Keyword" />
+            <FormFieldSelectGroup
+              showSelectedTags
+              form={form}
+              fieldName="district"
+              formLabel="District"
+              placeholder="Select district"
+              options={districtsItems}
+            />
             <FormFieldDateRangePicker form={form} fieldName="dateRange" formLabel="Date Range" />
           </div>
           <div className="w-full max-w-md space-y-4">

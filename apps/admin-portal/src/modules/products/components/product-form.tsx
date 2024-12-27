@@ -80,7 +80,8 @@ const ProductForm: FC<ProductFormProps> = ({ isEdit }) => {
 
   useEffect(() => {
     form.reset(defaultValues);
-  }, [form, product, categories]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [form, product]);
 
   return (
     <div data-testid="frm-product">

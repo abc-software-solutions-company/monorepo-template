@@ -154,6 +154,7 @@ const ContentList: FC<ComponentBaseProps> = ({ className }) => {
         ),
       },
     ],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [items]
   );
   const table = useReactTable({
@@ -230,7 +231,7 @@ const ContentList: FC<ComponentBaseProps> = ({ className }) => {
     <div className={classNames('contents-list flex grow flex-col rounded-lg border bg-card p-4 text-card-foreground shadow-sm', className)}>
       <div className="relative flex h-full grow flex-col">
         <ContentListToolbar table={table} onBulkDelete={() => setAction({ name: CONTENT_ACTION.BULK_DELETE })} />
-        <DataTable table={table} columns={columns} isFetching={isFetching} />
+        <DataTable containerClassName="mt-4" table={table} columns={columns} isFetching={isFetching} />
       </div>
       <div className="mt-3 flex justify-between">
         <div className="flex items-center space-x-2">

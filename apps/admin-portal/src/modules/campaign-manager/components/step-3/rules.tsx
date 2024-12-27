@@ -125,6 +125,7 @@ const Rules: React.FC<RulesProps> = ({ className }) => {
         },
       },
     ],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [rules]
   );
 

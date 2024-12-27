@@ -84,7 +84,7 @@ module.exports = {
         ],
       },
     ],
-    'react-hooks/exhaustive-deps': 'off',
+    'react-hooks/exhaustive-deps': 'warn',
     'react/prop-types': 'off',
     'react/jsx-sort-props': [
       'warn',

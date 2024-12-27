@@ -37,6 +37,7 @@ const FilterStatus = ({ title, value = [], options, onChange, onClose }: IFilter
 
   useEffect(() => {
     onChange?.(selectedItems);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedItems]);
 
   return (

@@ -28,6 +28,7 @@ const SplashScreen: FC<SplashScreenProps> = ({ onAnimationEnd }) => {
         })
       );
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

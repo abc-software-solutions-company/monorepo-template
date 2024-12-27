@@ -34,7 +34,9 @@ export type FileValidationError = {
 };
 
 interface IFormFieldUploaderMultiLanguageProps<T extends FieldValues> {
+  dataTestId?: string;
   className?: string;
+  messageClassName?: string;
   form: UseFormReturn<T>;
   formLabel?: string;
   fieldName: Path<T>;
@@ -55,7 +57,9 @@ interface IFormFieldUploaderMultiLanguageProps<T extends FieldValues> {
 }
 
 export default function FormFieldUploaderMultiLanguage<T extends FieldValues>({
+  dataTestId,
   className,
+  messageClassName,
   form,
   formLabel,
   fieldName,
@@ -230,7 +234,7 @@ export default function FormFieldUploaderMultiLanguage<T extends FieldValues>({
             </FormLabel>
           )}
           <FormControl>
-            <div className={cn('space-y-4', className)}>
+            <div data-testid={dataTestId} className={cn('space-y-4', className)}>
               <div className="flex h-10 items-center justify-between border-b border-input">
                 <div className="flex h-full items-center">
                   {visibleLocales.map(locale => (
@@ -331,7 +335,7 @@ export default function FormFieldUploaderMultiLanguage<T extends FieldValues>({
             </div>
           </FormControl>
 
-          {showErrorMessage && <FormMessage />}
+          {showErrorMessage && <FormMessage className={messageClassName} />}
           <ModalConfirm
             visible={isConfirmOpen}
             title="Are you sure?"

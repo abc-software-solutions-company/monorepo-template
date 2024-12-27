@@ -80,7 +80,7 @@ const SidebarNavigation: FC<SidebarNavigationProps> = ({ className, isExpand }) 
       profile: pathname.includes(`/${locale}/profile`),
       documentation: pathname.includes(`/${locale}/documentation`),
     }));
-  }, [pathname]);
+  }, [locale, pathname]);
 
   useEffect(() => {}, [isExpand]);
 

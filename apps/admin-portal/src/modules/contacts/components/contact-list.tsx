@@ -88,6 +88,7 @@ export const ContactList: FC<ContactListProps> = ({ className }) => {
         ),
       },
     ],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [items]
   );
   const table = useReactTable({
@@ -103,6 +104,7 @@ export const ContactList: FC<ContactListProps> = ({ className }) => {
     if (viewDetailId) {
       table.getRow(viewDetailId).original.isRead = true;
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [viewDetailId]);
 
   return (
@@ -110,6 +112,7 @@ export const ContactList: FC<ContactListProps> = ({ className }) => {
       <div className="relative flex h-full grow flex-col">
         <ContactListFilter filter={filter} setFilter={setFilter} />
         <DataTable
+          containerClassName="mt-4"
           table={table}
           columns={columns}
           isFetching={isFetching}

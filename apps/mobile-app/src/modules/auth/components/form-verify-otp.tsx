@@ -16,7 +16,7 @@ const VerifyOtpForm = () => {
     if (isPinReady) {
       navigation.navigate('ResetPassword');
     }
-  }, [isPinReady]);
+  }, [navigation, isPinReady]);
 
   return (
     <View>

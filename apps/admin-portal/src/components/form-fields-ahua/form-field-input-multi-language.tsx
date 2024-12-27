@@ -67,7 +67,9 @@ const label = cva('text-xs font-medium', {
 });
 
 interface IFormFieldInputMultiLanguageProps<T extends FieldValues> extends VariantProps<typeof container> {
+  dataTestId?: string;
   className?: string;
+  messageClassName?: string;
   form: UseFormReturn<T>;
   formLabel?: string;
   fieldName: Path<T>;
@@ -84,7 +86,9 @@ interface IFormFieldInputMultiLanguageProps<T extends FieldValues> extends Varia
 }
 
 export default function FormFieldInputMultiLanguage<T extends FieldValues>({
+  dataTestId,
   className,
+  messageClassName,
   form,
   formLabel,
   fieldName,
@@ -173,7 +177,7 @@ export default function FormFieldInputMultiLanguage<T extends FieldValues>({
               </FormLabel>
             )}
             <FormControl>
-              <div className={cn(container({ state: getFormControlState(!!error) }), className)}>
+              <div data-testid={dataTestId} className={cn(container({ state: getFormControlState(!!error) }), className)}>
                 <div className="flex h-10 items-center border-b border-input">
                   {visibleLocales.map(locale => {
                     const isTooLong = isOverMaxLength(field.value, locale.languageName);
@@ -259,7 +263,7 @@ export default function FormFieldInputMultiLanguage<T extends FieldValues>({
                 {getCharCount(field.value, activeLocale)}/{maxLength}
               </p>
             )}
-            {showErrorMessage && <FormMessage />}
+            {showErrorMessage && <FormMessage className={messageClassName} />}
           </FormItem>
         );
       }}

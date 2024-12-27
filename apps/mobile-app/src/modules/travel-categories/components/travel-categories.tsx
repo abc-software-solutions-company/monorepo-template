@@ -24,7 +24,7 @@ function TravelCategories({ defaultValue, children, onChange }: ITravelCategorie
 
   useEffect(() => {
     if (active) onChange?.(active);
-  }, [active]);
+  }, [active, onChange]);
 
   return <Context.Provider value={{ active, setActive }}>{children}</Context.Provider>;
 }

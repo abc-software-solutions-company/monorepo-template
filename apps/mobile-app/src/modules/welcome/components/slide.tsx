@@ -97,7 +97,7 @@ const Dots: FC<{ data: ISlideItem[]; activeIndex: number }> = ({ data, activeInd
     animatedList.forEach(item => item.width.setValue(10));
 
     Animated.timing(animatedList[activeIndex].width, { toValue: 20, duration: 250, useNativeDriver: false }).start();
-  }, [data, activeIndex]);
+  }, [data, activeIndex, animatedList]);
 
   return (
     <FlatList

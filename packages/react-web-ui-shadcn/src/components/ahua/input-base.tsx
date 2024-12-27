@@ -1,5 +1,5 @@
 import { cva } from 'class-variance-authority';
-import { FC } from 'react';
+import { FC, LabelHTMLAttributes } from 'react';
 import { cn } from '~react-web-ui-shadcn/lib/utils';
 
 const inputLabelVariants = cva('block text-muted-foreground px-3 font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70', {
@@ -14,15 +14,14 @@ const inputLabelVariants = cva('block text-muted-foreground px-3 font-medium pee
   },
 });
 
-interface IInputLabelProps {
-  className?: string;
+interface IInputLabelProps extends LabelHTMLAttributes<HTMLLabelElement> {
   label: string;
   required?: boolean;
   size?: 'default' | 'sm';
 }
 
-export const InputLabel: FC<IInputLabelProps> = ({ className, label, required, size = 'default' }) => (
-  <label className={cn(inputLabelVariants({ size }), className)}>
+export const InputLabel: FC<IInputLabelProps> = ({ className, label, required, size = 'default', ...rest }) => (
+  <label className={cn(inputLabelVariants({ size }), className)} {...rest}>
     {label}
     {required && <span className="text-destructive ml-0.5">*</span>}
   </label>

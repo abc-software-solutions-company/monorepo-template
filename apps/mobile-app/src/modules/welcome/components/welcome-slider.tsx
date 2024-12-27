@@ -64,7 +64,7 @@ export default function WelcomeSlider() {
         }
       ),
 
-    []
+    [positionAnimatedValue, scrollOffsetAnimatedValue]
   );
 
   const inputRange = [0, slides.length];

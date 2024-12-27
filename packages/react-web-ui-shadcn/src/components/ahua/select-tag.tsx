@@ -7,6 +7,7 @@ import { Separator } from '~react-web-ui-shadcn/components/ui/separator';
 import { cn } from '~react-web-ui-shadcn/lib/utils';
 import { InputLabel } from './input-base';
 import { Button } from '../ui/button';
+import { Loading } from '../ui/loading';
 
 const formControlVariants = cva('h-6 relative rounded-md border border-input bg-background ring-input', {
   variants: {
@@ -18,6 +19,7 @@ const formControlVariants = cva('h-6 relative rounded-md border border-input bg-
       default: '',
       focused: 'ring-2 ring-ring ring-offset-2 ring-offset-background',
       disabled: 'cursor-not-allowed bg-muted',
+      readOnly: 'cursor-not-allowed bg-muted',
       error: 'border-destructive bg-destructive/10',
       errorFocused: 'bg-destructive/10 ring-2 ring-destructive ring-offset-2',
     },
@@ -157,6 +159,7 @@ const Tag: FC<TagProps> = ({ className, label, value, size = 'default', onRemove
 type OptionType = Record<string, string>;
 
 type SelectTagProps<T extends OptionType> = {
+  dataTestId?: string;
   className?: string;
   options: T[];
   value: T[];
@@ -166,20 +169,27 @@ type SelectTagProps<T extends OptionType> = {
   maxVisible?: number;
   required?: boolean;
   disabled?: boolean;
+  readOnly?: boolean;
   valueField: keyof T;
   displayField: keyof T;
   size?: 'default' | 'sm';
+  error?: boolean;
+  searchText?: string;
   showSearch?: boolean;
   showClearAll?: boolean;
   showSelectAll?: boolean;
-  error?: boolean;
+  loading?: boolean;
   onChange: (value: T[]) => void;
+  onFocus?: React.FocusEventHandler<HTMLButtonElement>;
   onBlur?: React.FocusEventHandler<HTMLButtonElement>;
+  onSearch?: (value: string) => void;
+  onLoadMore?: () => void;
 } & VariantProps<typeof formControlVariants>;
 
 const SelectTag = forwardRef(
   <T extends OptionType>(
     {
+      dataTestId,
       className,
       labelClassName,
       options,
@@ -189,15 +199,21 @@ const SelectTag = forwardRef(
       placeholder = 'Select items...',
       maxVisible = 2,
       disabled = false,
+      readOnly = false,
       label,
       required = false,
       size = 'default',
+      error = false,
+      searchText = 'Enter search text...',
       showSearch = false,
       showClearAll = false,
       showSelectAll = true,
-      error,
+      loading = false,
       onChange,
       onBlur,
+      onFocus,
+      onSearch,
+      onLoadMore,
     }: SelectTagProps<T>,
     ref: ForwardedRef<HTMLDivElement>
   ) => {
@@ -217,6 +233,7 @@ const SelectTag = forwardRef(
 
     const getFormControlState = () => {
       if (disabled) return 'disabled';
+      if (readOnly) return 'readOnly';
       if (error) return isFocused ? 'errorFocused' : 'error';
       if (isFocused) return 'focused';
 
@@ -254,9 +271,10 @@ const SelectTag = forwardRef(
       }
     };
 
-    const handleFocus = () => {
-      if (!disabled) {
+    const handleFocus = (e: React.FocusEvent<HTMLButtonElement>) => {
+      if (!readOnly || !disabled) {
         setIsFocused(true);
+        onFocus?.(e);
       }
     };
 
@@ -311,6 +329,15 @@ const SelectTag = forwardRef(
       onChange(value.filter(item => item[valueField] !== tagValue));
     };
 
+    const handleScroll = (event: React.UIEvent<HTMLDivElement>) => {
+      const target = event.target as HTMLDivElement;
+      const isAtBottom = target.scrollHeight - target.scrollTop === target.clientHeight;
+
+      if (isAtBottom) {
+        onLoadMore?.();
+      }
+    };
+
     useEffect(() => {
       document.addEventListener('mousedown', handleClickOutside);
 
@@ -319,6 +346,7 @@ const SelectTag = forwardRef(
 
     return (
       <div
+        data-testid={dataTestId}
         ref={ref}
         className={cn(
           formControlVariants({
@@ -344,7 +372,6 @@ const SelectTag = forwardRef(
               >
                 <ChevronDownIcon className={triggerIconVariants({ size: 'default', state: disabled ? 'disabled' : 'default' })} />
                 {label && <InputLabel label={label} required={required} size={size} className={cn(labelClassName)} />}
-
                 <p className={cn(contentVariants({ size }), selectedItems.length === 0 && 'text-muted-foreground', disabled && 'opacity-50')}>
                   {selectedItems.length === 0 && placeholder}
                   {selectedItems.length > 0 && renderSelectedTags()}
@@ -354,11 +381,15 @@ const SelectTag = forwardRef(
             <PopoverContent ref={popoverRef} className="w-[--radix-popover-trigger-width] p-0">
               <Command>
                 {showSearch && (
-                  <CommandInput placeholder={placeholder} className={commandInputVariants({ size: 'default' })} onFocus={() => setIsFocused(true)} />
+                  <CommandInput
+                    placeholder={searchText}
+                    className={commandInputVariants({ size: 'default' })}
+                    onFocus={() => setIsFocused(true)}
+                    onValueChange={value => onSearch?.(value)}
+                  />
                 )}
-                <CommandList>
+                <CommandList className="scrollbar max-h-[300px] overflow-auto" onScroll={handleScroll}>
                   <CommandEmpty>No results found.</CommandEmpty>
-
                   {showSelectAll && (
                     <CommandGroup className="p-0">
                       <CommandItem className={cn(commandItemVariants({ size: 'default', selected: isAllSelected }))} onSelect={handleSelectAll}>
@@ -370,7 +401,6 @@ const SelectTag = forwardRef(
                       <Separator />
                     </CommandGroup>
                   )}
-
                   <CommandGroup className="p-0">
                     {options.map((option, index) => {
                       const isSelected = selectedValues.has(option[valueField]);
@@ -390,6 +420,11 @@ const SelectTag = forwardRef(
                       );
                     })}
                   </CommandGroup>
+                  {loading && (
+                    <div className="flex items-center justify-center p-2">
+                      <Loading size="xs" />
+                    </div>
+                  )}
                 </CommandList>
                 {showClearAll && selectedValues.size > 0 && (
                   <>

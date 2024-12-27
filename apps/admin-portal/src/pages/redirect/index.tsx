@@ -18,7 +18,7 @@ const PageRedirect = () => {
       pathname: `/${language}/${isAuthenticated ? 'dashboard' : 'login'}`,
       search: `?${createSearchParams(searchParams)}`,
     });
-  }, [isAuthenticated]);
+  }, [isAuthenticated, language, searchParams, navigate]);
 
   return (
     <div className="redirect-page flex grow items-center justify-center p-4">

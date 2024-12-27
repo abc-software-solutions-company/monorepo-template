@@ -21,6 +21,7 @@ const PostDialogDetail: FC<PostDialogDetailProps> = ({ id, visible, onCancel }) 
     if (visible) {
       postsState.readRequest(id);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [visible, id]);
 
   return (
@@ -48,7 +49,7 @@ const PostDialogDetail: FC<PostDialogDetailProps> = ({ id, visible, onCancel }) 
                 <DialogDescription></DialogDescription>
               </VisuallyHidden>
             </DialogHeader>
-            <div className="wysiwyg prose-sm">
+            <div className="wysiwyg prose-sm p-4">
               <div>
                 <ContentRenderer data={postsState.detail.description} />
               </div>

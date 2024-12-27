@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 
 interface ITimerProps {
   disabled?: boolean;
@@ -12,33 +12,33 @@ const Timer: React.FC<ITimerProps> = ({ disabled = false, countDownValue, onTick
   const timeRef = useRef(countDownValue || 0);
   const isPaused = useRef(true);
 
-  function pause() {
+  const pause = useCallback(() => {
     if (!isPaused.current) {
       clearInterval(timeHandle.current);
       isPaused.current = true;
     }
-  }
+  }, []);
 
-  function update() {
+  const update = useCallback(() => {
     if (timeRef.current === 0) {
       onComplete?.();
       pause();
     }
     if (timeRef.current > 0) onTick?.(--timeRef.current);
-  }
+  }, [onComplete, onTick, pause]);
 
-  function start() {
+  const start = useCallback(() => {
     if (isPaused.current) {
       isPaused.current = false;
       timeHandle.current = setInterval(update, 1000);
     }
-  }
+  }, [update]);
 
-  function reset() {
+  const reset = useCallback(() => {
     clearInterval(timeHandle.current);
     isPaused.current = true;
     timeRef.current = countDownValue || 0;
-  }
+  }, [countDownValue]);
 
   useEffect(() => {
     reset();
@@ -46,7 +46,7 @@ const Timer: React.FC<ITimerProps> = ({ disabled = false, countDownValue, onTick
     if (disabled) {
       pause();
     }
-  }, [disabled, countDownValue]);
+  }, [disabled, countDownValue, reset, start, pause]);
 
   return null;
 };

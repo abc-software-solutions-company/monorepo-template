@@ -91,23 +91,29 @@ export function toDateTime(date: Date, locale = 'en-us', showTime = true): strin
 }
 
 export const setUTCStartOfDay = (date: Date): Date => {
-  const year = date.getUTCFullYear();
-  const month = date.getUTCMonth();
-  const day = date.getUTCDate();
-
+  const year = date.getFullYear();
+  const month = date.getMonth();
+  const day = date.getDate();
   const newDate = new Date(Date.UTC(year, month, day, 0, 0, 0, 0));
 
   return newDate;
 };
 
 export const setUTCEndOfDay = (date: Date): Date => {
-  const year = date.getUTCFullYear();
-  const month = date.getUTCMonth();
-  const day = date.getUTCDate();
-
+  const year = date.getFullYear();
+  const month = date.getMonth();
+  const day = date.getDate();
   const newDate = new Date(Date.UTC(year, month, day, 23, 59, 59, 999));
 
   return newDate;
+};
+
+export const getDateWithoutTimeZone = (date: Date | undefined): Date => {
+  if (!date) return new Date();
+
+  const dateString = date.toISOString().replace('Z', '');
+
+  return new Date(dateString);
 };
 
 export const convertToUTCISO = (date: Date): string => {

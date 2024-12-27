@@ -89,6 +89,7 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
       toggleSelectAll,
       clearSelection,
     }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [filter, isFetching, isError, error, data, selected]
   );
 

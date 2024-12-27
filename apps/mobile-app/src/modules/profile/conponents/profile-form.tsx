@@ -62,7 +62,7 @@ const ProfileForm: FC<ProfileFormProps> = ({ data }) => {
 
   useEffect(() => {
     form.reset(data);
-  }, [data]);
+  }, [form, data]);
 
   return (
     <Form {...form}>

@@ -189,6 +189,7 @@ const PostList: FC<ComponentBaseProps> = ({ className }) => {
         ),
       },
     ],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [items]
   );
   const table = useReactTable({
@@ -236,17 +237,19 @@ const PostList: FC<ComponentBaseProps> = ({ className }) => {
     } else {
       postsState.setFilter(currentFilter);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filteredAt]);
 
   useEffect(() => {
     if (postsState.deletedAt) table.resetRowSelection(false);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [deletedAt]);
 
   return (
     <div className={classNames('posts-list flex grow flex-col rounded-lg border bg-card p-4 text-card-foreground shadow-sm', className)}>
       <div className="relative flex h-full grow flex-col">
         <PostListToolbar table={table} onBulkDelete={() => setAction({ name: POST_ACTION.BULK_DELETE })} />
-        <DataTable table={table} columns={columns} isFetching={isFetching || !fetchedAt} />
+        <DataTable containerClassName="mt-4" table={table} columns={columns} isFetching={isFetching || !fetchedAt} />
       </div>
       <div className="mt-3 flex justify-between">
         <div className="flex items-center space-x-2">
