@@ -2,7 +2,7 @@ import { Colors } from '~react-native-design-system';
 import { ThemeConfigs } from '~react-native-ui-core/interfaces/theme.interface';
 
 export const defaultLightTheme: ThemeConfigs = {
-  background: Colors.stone[200],
+  background: Colors.white,
   foreground: Colors.stone[600],
   card: Colors.stone[100],
   cardForeground: Colors.stone[900],

@@ -7,10 +7,14 @@ interface IViewProps extends ViewProps, ICoreUIBaseProps {
   children?: ReactNode;
 }
 
-const View: FC<IViewProps> = ({ children, visible = true, ...rest }) => {
+const View: FC<IViewProps> = ({ children, visible = true, style, ...rest }) => {
   if (!visible) return null;
 
-  return <RNView {...rest}>{children}</RNView>;
+  return (
+    <RNView style={style} {...rest}>
+      {children}
+    </RNView>
+  );
 };
 
 export default View;

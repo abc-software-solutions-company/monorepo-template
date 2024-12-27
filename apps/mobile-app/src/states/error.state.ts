@@ -43,6 +43,6 @@ export const useErrorState = create<IErrorState>()(
         );
       },
     })),
-    { enabled: process.env.NODE_ENV === 'development' }
+    { enabled: true }
   )
 );

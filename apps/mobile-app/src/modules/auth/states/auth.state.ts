@@ -63,9 +63,12 @@ export const useAuthState = create<State & Actions>()(
             });
           },
         }),
-        { name: '@auth', storage: createJSONStorage(() => MMKVStorage) }
+        {
+          name: '@auth',
+          storage: createJSONStorage(() => MMKVStorage),
+        }
       )
     ),
-    { enabled: process.env.NODE_ENV === 'development' }
+    { enabled: true }
   )
 );

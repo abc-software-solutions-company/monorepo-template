@@ -4,6 +4,8 @@ export function getHeaderTitle(routeName: string) {
       return 'screen_profile';
     case 'ProfileEdit':
       return 'screen_profile_edit';
+    case 'SettingTheme':
+      return 'screen_setting_theme';
     default:
       return routeName;
   }

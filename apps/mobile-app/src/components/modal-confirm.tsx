@@ -32,14 +32,14 @@ const ModalConfirm: FC<IModalConfirmProps> = ({ title, message, btnConfirmText, 
       </View>
       <Separator />
       <View style={ds.row}>
-        <Pressable style={ds.grow} onPress={onCancel}>
-          <Text fontWeight="Bold" style={[ds.textCenter, ds.p20]}>
+        <Pressable style={[ds.grow, ds.minW144]} onPress={onCancel}>
+          <Text fontWeight="Bold" style={[ds.textCenter, ds.px20, ds.py16]}>
             {btnCancelText || t('cancel')}
           </Text>
         </Pressable>
         <Separator orientation="vertical" />
-        <Pressable style={ds.grow} onPress={onConfirm}>
-          <Text fontWeight="Bold" color={configs.primary[500]} style={[ds.textCenter, ds.p20]}>
+        <Pressable style={[ds.grow, ds.minW144]} onPress={onConfirm}>
+          <Text fontWeight="Bold" color={configs.primary[500]} style={[ds.textCenter, ds.px20, ds.py16]}>
             {btnConfirmText || t('confirm')}
           </Text>
         </Pressable>

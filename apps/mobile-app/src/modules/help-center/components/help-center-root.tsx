@@ -1,12 +1,13 @@
 import React, { FC } from 'react';
+import { ds } from '~react-native-design-system';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '~react-native-ui-core/components/accordion';
 import Text from '~react-native-ui-core/components/text';
 
-type HelpCenterProps = {};
+type HelpCenterRootProps = {};
 
-const HelpCenter: FC<HelpCenterProps> = () => {
+const HelpCenterRoot: FC<HelpCenterRootProps> = () => {
   return (
-    <Accordion collapsible type="multiple">
+    <Accordion collapsible style={[ds.column, ds.gap10]}>
       <AccordionItem value="item-1">
         <AccordionTrigger>Lorem ipsum dolor sit.</AccordionTrigger>
         <AccordionContent>
@@ -42,4 +43,4 @@ const HelpCenter: FC<HelpCenterProps> = () => {
   );
 };
 
-export default HelpCenter;
+export default HelpCenterRoot;

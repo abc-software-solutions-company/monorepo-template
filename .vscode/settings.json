@@ -32,6 +32,11 @@
       "iconColour": "#e63205",
       "background": "#e6320566"
     },
+    "REMOVEME": {
+      "foreground": "#ef40c3",
+      "iconColour": "#ef40c3",
+      "background": "#6a1d57"
+    },
     "CHANGEME": {
       "foreground": "#fcba03",
       "iconColour": "#fcba03",

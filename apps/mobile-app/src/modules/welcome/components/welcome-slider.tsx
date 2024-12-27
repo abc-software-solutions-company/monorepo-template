@@ -74,11 +74,11 @@ export default function WelcomeSlider() {
   });
 
   return (
-    <View style={[ds.grow, ds.relative]}>
-      <AnimatedPagerView ref={ref} initialPage={0} style={[ds.grow, ds.row, ds.absolute, ds.wFull, ds.hFull]} onPageScroll={onPageScroll}>
+    <View style={ds.flex1}>
+      <AnimatedPagerView ref={ref} initialPage={0} style={[ds.absolute, ds.wFull, ds.hFull]} onPageScroll={onPageScroll}>
         {slides.map(item => (
           <View key={item.id} style={[ds.relative]}>
-            <FastImage source={item.image} resizeMode="cover" style={[ds.absolute, ds.wFull, ds.hFull] as ImageStyle} />
+            <FastImage source={item.image} resizeMode="cover" style={[ds.absolute, ds.left0, ds.top0, ds.wFull, ds.hFull] as ImageStyle} />
             <View style={[ds.wFull, ds.hFull, ds.absolute, ds.left0, ds.top0, ds.bgBlack, ds.opacity30]} />
             <View style={[ds.flex1]}>
               <View style={[ds.grow]} />
@@ -92,7 +92,6 @@ export default function WelcomeSlider() {
                       <Heading fontWeight="Bold" color={Colors.white} text={item.title} style={[ds.textCenter, ds.opacity0]} />
                     </LinearGradient>
                   </MaskedView>
-
                   <Text fontWeight="Medium" color={Colors.white} text={item.content} style={[ds.textCenter, ds.text18, ds.mt20]} />
                 </View>
               </LinearGradient>

@@ -14,4 +14,7 @@ export const MMKVStorage = {
   removeItem: (name: string) => {
     return storage.delete(name);
   },
+  clear: () => {
+    return storage.clearAll();
+  },
 };

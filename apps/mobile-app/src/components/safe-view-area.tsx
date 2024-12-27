@@ -1,19 +1,19 @@
 import React, { FC, ReactNode } from 'react';
-import { View, ViewProps, ViewStyle } from 'react-native';
+import { ViewProps, ViewStyle } from 'react-native';
 import { EdgeInsets, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { ds } from '~react-native-design-system';
 import { createStyle } from '~react-native-design-system/utils/style.util';
+import View from '~react-native-ui-core/components/view';
 
 interface ISafeViewAreaProps extends ViewProps {
   children: ReactNode;
-  backgroundColor?: string;
   spacingTop?: boolean;
   spacingRight?: boolean;
   spacingBottom?: boolean;
   spacingLeft?: boolean;
 }
 
-const SafeViewArea: FC<ISafeViewAreaProps> = ({ children, spacingTop, spacingRight, spacingBottom, spacingLeft, ...rest }) => {
+const SafeViewArea: FC<ISafeViewAreaProps> = ({ children, spacingTop, spacingRight, spacingBottom, spacingLeft, style, ...rest }) => {
   const insets = useSafeAreaInsets();
 
   return (
@@ -24,6 +24,7 @@ const SafeViewArea: FC<ISafeViewAreaProps> = ({ children, spacingTop, spacingRig
         spacingRight && styles.spacingRight(insets),
         spacingBottom && styles.spacingBottom(insets),
         spacingLeft && styles.spacingLeft(insets),
+        style,
       ]}
       {...rest}
     >

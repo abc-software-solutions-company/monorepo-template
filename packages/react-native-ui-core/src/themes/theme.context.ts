@@ -9,7 +9,7 @@ export const useCoreUITheme = () => {
     throw new Error('useCoreUITheme must be used within a CoreUIThemeProvider');
   }
 
-  const { theme, configs, setTheme } = context;
+  const { theme, configs, setTheme, setConfigs } = context;
 
-  return { theme, configs, setTheme };
+  return { theme, configs, setTheme, setConfigs };
 };

@@ -4,9 +4,12 @@ import { KeyboardAvoidingView, Platform } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import { ds } from '~react-native-design-system';
 import Heading from '~react-native-ui-core/components/heading';
+import Icon from '~react-native-ui-core/components/icon';
 import StatusBar from '~react-native-ui-core/components/statusbar';
 import Text from '~react-native-ui-core/components/text';
-import View from '~react-native-ui-core/components/view';
+
+import Box from '@/components/box';
+import SafeViewArea from '@/components/safe-view-area';
 
 import ForgotPasswordForm from '@/modules/auth/components/form-forgot-password';
 import NavigationHeader from '@/modules/navigation/components/navigation-header';
@@ -16,19 +19,21 @@ function ForgotPasswordScreen({ navigation }: UnauthenticatedStackProps<'ForgotP
   const { t } = useTranslation();
 
   return (
-    <View style={ds.flex1}>
-      <StatusBar background="transparent" />
-      <NavigationHeader backgroundColor="transparent" borderColor="transparent" leftFunc={() => navigation.goBack()} />
+    <SafeViewArea spacingBottom={true}>
+      <StatusBar />
+      <NavigationHeader leftFunc={() => navigation.goBack()} leftComponent={<Icon name="ChevronLeft" />} borderColor="transparent" />
       <KeyboardAvoidingView enabled style={ds.flex1} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
-        <ScrollView showsVerticalScrollIndicator={false} style={ds.px14}>
-          <Heading text={t('forgot_password_title')} style={ds.textCenter} />
-          <Text fontWeight="Medium" style={ds.my32}>
-            {t('forgot_password_desc')}
-          </Text>
-          <ForgotPasswordForm />
+        <ScrollView showsVerticalScrollIndicator={false}>
+          <Box>
+            <Heading text={t('forgot_password_title')} style={ds.textCenter} />
+            <Text fontWeight="Medium" style={ds.my32}>
+              {t('forgot_password_desc')}
+            </Text>
+            <ForgotPasswordForm />
+          </Box>
         </ScrollView>
       </KeyboardAvoidingView>
-    </View>
+    </SafeViewArea>
   );
 }
 

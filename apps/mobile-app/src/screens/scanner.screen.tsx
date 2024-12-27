@@ -5,8 +5,11 @@ import { PERMISSIONS, request } from 'react-native-permissions';
 import { useNavigation } from '@react-navigation/native';
 import { ds } from '~react-native-design-system';
 import Button from '~react-native-ui-core/components/button';
+import Icon from '~react-native-ui-core/components/icon';
 import StatusBar from '~react-native-ui-core/components/statusbar';
 import View from '~react-native-ui-core/components/view';
+
+import SafeViewArea from '@/components/safe-view-area';
 
 import NavigationHeader from '@/modules/navigation/components/navigation-header';
 import { AuthenticatedStackProps } from '@/modules/navigation/interfaces/navigation.interface';
@@ -25,14 +28,14 @@ function ScanCodeScreen({ route }: AuthenticatedStackProps<'ScanCode'>) {
   }, []);
 
   return (
-    <View style={ds.flex1}>
+    <SafeViewArea>
       <StatusBar />
-      <NavigationHeader title={t(getHeaderTitle(route.name))} />
+      <NavigationHeader title={t(getHeaderTitle(route.name))} leftFunc={() => navigation.goBack()} leftComponent={<Icon name="ChevronLeft" />} />
       <View style={ds.flex1}>
         {permissionResult === 'granted' && <View style={ds.grow}>{/* <GoogleMLKitScanner /> */}</View>}
         {permissionResult === 'blocked' && <Button onPress={() => navigation.goBack()}>Back</Button>}
       </View>
-    </View>
+    </SafeViewArea>
   );
 }
 

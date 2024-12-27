@@ -19,6 +19,7 @@
     "ChakrounAnas.turbo-console-log",
     "Codium.codium",
     "vscode-icons-team.vscode-icons",
-    "GitHub.github-vscode-theme"
+    "GitHub.github-vscode-theme",
+    "epivision.vscode-file-header"
   ]
 }

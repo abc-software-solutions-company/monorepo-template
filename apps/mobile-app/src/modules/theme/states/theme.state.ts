@@ -34,6 +34,6 @@ export const useThemeState = create<States & Actions>()(
         }
       )
     ),
-    { enabled: process.env.NODE_ENV === 'development' }
+    { enabled: true }
   )
 );

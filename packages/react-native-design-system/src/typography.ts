@@ -1,3 +1,4 @@
+import { calculateLineHeight } from './utils/font.util';
 import { createStyleProp } from './utils/style.util';
 
 export const TEXT_SIZE = {
@@ -105,7 +106,3 @@ export const TYPOGRAPHY_STYLE = {
   ...createStyleProp(TEXT_TRANSFORM_VALUE, undefined, value => ({ textTransform: value })),
   ...createStyleProp(FONT_VARIANT_VALUE, undefined, value => ({ fontVariant: value })),
 };
-
-export function calculateLineHeight(fontSize: number, ratio = 1.5) {
-  return Math.ceil(fontSize * ratio);
-}

@@ -1,3 +1,4 @@
+import Config from 'react-native-config';
 import rudderClient from '@rudderstack/rudder-sdk-react-native';
 
 import { IAnalyticsService, IRudderStackConfig } from '../interfaces/analytics.interface';
@@ -14,7 +15,7 @@ export class RudderStackAnalyticsService implements IAnalyticsService {
 
   trackEvent(event: string, properties?: Record<string, unknown>): void {
     try {
-      log.debug(`RudderStack trackEvent: ${event}`, properties);
+      log.debug(`RudderStack trackEvent: ${event} from ${Config.RUDDER_STACK_WRITE_KEY}:${Config.RUDDER_STACK_DATA_PLANE_URL}`, properties);
       rudderClient.track(event, properties, {});
     } catch (error) {
       log.error('RudderStack trackEvent', error);
