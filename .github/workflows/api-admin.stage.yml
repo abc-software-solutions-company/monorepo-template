@@ -14,7 +14,7 @@ env:
   DOCKERFILE_PATH: apps/api/Dockerfile
   DOCKER_COMPOSE_PATH: apps/api/docker-compose.yml
   ENV_FILE_PATH: apps/api/.env
-  DOCKER_HOST_PORT: 3500 # Change this value if your server is already run docker container with this port, using command docker ps to check it
+  DOCKER_HOST_PORT: 3501 # Change this value if your server is already run docker container with this port, using command docker ps to check it
   DOCKER_CONTAINER_PORT: 3500 # This is the app port, which command yarn start run and provided
 
 jobs:
@@ -98,5 +98,5 @@ jobs:
           script: |
             cd ~/${{ env.APP_NAME }}
             sudo docker load --input ${{ env.APP_NAME }}.tar
-            sudo docker-compose -f ${{ env.DOCKER_COMPOSE_PATH }} up -d ${{ env.DOCKER_COMPOSE_SERVICE }} --force-recreate --no-build
+            sudo docker compose -f ${{ env.DOCKER_COMPOSE_PATH }} up -d ${{ env.DOCKER_COMPOSE_SERVICE }} --force-recreate --no-build
             rm -rf ${{ env.APP_NAME }}.tar
