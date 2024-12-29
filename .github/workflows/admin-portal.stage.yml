@@ -95,7 +95,8 @@ jobs:
           host: ${{ secrets.STAGE_SERVER_HOST }}
           username: ${{secrets.STAGE_SERVER_USER_NAME}}
           port: 22
-          password: ${{ secrets.STAGE_SERVER_PASSWORD }}
+          # password: ${{ secrets.STAGE_SERVER_PASSWORD }} //NOTE: Uncomment if your VPS Server using SSH connection with password
+          key: ${{ secrets.STAGE_SERVER_KEY }}
           script_stop: true
           script: |
             cd ~/${{ env.APP_NAME }}
