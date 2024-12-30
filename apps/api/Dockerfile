@@ -1,57 +1,58 @@
-FROM node:21-alpine AS base
-RUN apk update && apk add --no-cache curl
-
-# The web Dockerfile is copy-pasted into our main docs at /docs/handbook/deploying-with-docker.
-# Make sure you update this Dockerfile, the Dockerfile in the web workspace and copy that over to Dockerfile in the docs.
-
-FROM base AS builder
-# Check https://github.com/nodejs/docker-node/tree/b4117f9333da4138b03a546ec926ef50a31506c3#nodealpine to understand why libc6-compat might be needed.
-RUN apk update
-RUN apk add --no-cache libc6-compat
-# Install dependencies required for bcrypt
-RUN apk add --no-cache python3 make g++
-# Set working directory
-WORKDIR /app
-RUN yarn global add turbo
-COPY . .
-RUN turbo prune api --docker
-
-# Add lockfile and package.json's of isolated sub workspace
-FROM base AS installer
-RUN apk update
-RUN apk add --no-cache libc6-compat
+# Stage 1: Dependencies
+FROM node:21-alpine AS deps
 WORKDIR /app
 
-# First install dependencies (as they change less often)
+# Install essential build dependencies
+RUN apk add --no-cache python3 make g++ libc6-compat
+
+# Copy only package files needed for installation
 COPY .gitignore .gitignore
-COPY --from=builder /app/out/json/ .
-COPY --from=builder /app/out/yarn.lock ./yarn.lock
+COPY package.json yarn.lock ./
+COPY apps/api/package.json ./apps/api/package.json
+
+# Install dependencies
 RUN yarn set version berry
-RUN yarn install
+RUN yarn install --frozen-lockfile --production
 
-# Build the project and its dependencies
-COPY --from=builder /app/out/full/ .
-COPY turbo.json turbo.json
+# Stage 2: Builder
+FROM node:21-alpine AS builder
+WORKDIR /app
 
-# Uncomment and use build args to enable remote caching
-# ARG TURBO_TEAM
-# ENV TURBO_TEAM=$TURBO_TEAM
+# Install build essentials
+RUN apk add --no-cache python3 make g++ libc6-compat
+RUN yarn global add turbo
 
-# ARG TURBO_TOKEN
-# ENV TURBO_TOKEN=$TURBO_TOKEN
+# Copy source files
+COPY . .
+# Copy dependencies from deps stage
+COPY --from=deps /app/node_modules ./node_modules
+COPY --from=deps /app/apps/api/node_modules ./apps/api/node_modules
 
+# Build the application
 RUN yarn turbo build --filter=api
 
-FROM base AS runner
+# Stage 3: Production
+FROM node:21-alpine AS runner
 WORKDIR /app
 
-# Don't run production as root
-RUN addgroup --system --gid 1001 nestjs
-RUN adduser --system --uid 1001 nestjs
+# Install only the necessary runtime packages
+RUN apk add --no-cache curl
+
+# Create non-root user
+RUN addgroup --system --gid 1001 nestjs && \
+    adduser --system --uid 1001 nestjs
+
+# Copy only necessary files from builder
+COPY --from=builder --chown=nestjs:nestjs /app/apps/api/dist ./apps/api/dist
+COPY --from=builder --chown=nestjs:nestjs /app/apps/api/package.json ./apps/api/
+COPY --from=deps --chown=nestjs:nestjs /app/apps/api/node_modules ./apps/api/node_modules
+COPY --from=builder --chown=nestjs:nestjs /app/apps/api/migrations ./apps/api/migrations
+
+# Switch to non-root user
 USER nestjs
-COPY --from=installer --chown=nestjs:nodejs /app .
-COPY --from=installer --chown=nestjs:nodejs /app/node_modules /app/apps/api/node_modules
 
+# Set the working directory to the api folder
+WORKDIR /app/apps/api
 
-# Correct the path to the entry point
-CMD ["/bin/sh", "-c", "cd apps/api && yarn migration:run && node dist/main.js"]
+# Start the application
+CMD ["sh", "-c", "yarn migration:run && node dist/main.js"]
