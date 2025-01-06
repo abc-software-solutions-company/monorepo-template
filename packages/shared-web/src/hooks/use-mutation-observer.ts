@@ -3,12 +3,7 @@ import { MutableRefObject, useEffect } from 'react';
 export const useMutationObserver = (
   ref: MutableRefObject<HTMLElement | null>,
   callback: MutationCallback,
-  options = {
-    attributes: true,
-    characterData: true,
-    childList: true,
-    subtree: true
-  }
+  options = { attributes: true, characterData: true, childList: true, subtree: true }
 ) => {
   useEffect(() => {
     if (ref.current) {

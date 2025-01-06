@@ -6,6 +6,10 @@ import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { toast } from 'sonner';
 import { useLocale, useTranslations } from 'use-intl';
 import { zodResolver } from '@hookform/resolvers/zod';
+import FormFieldCKEditor from '~react-web-ui-shadcn/components/form-fields/form-field-ckeditor';
+import FormFieldInput from '~react-web-ui-shadcn/components/form-fields/form-field-input';
+import FormFieldInputSlug from '~react-web-ui-shadcn/components/form-fields/form-field-input-slug';
+import ModalLoading from '~react-web-ui-shadcn/components/modals/modal-loading';
 import { Card, CardContent } from '~react-web-ui-shadcn/components/ui/card';
 import { Form } from '~react-web-ui-shadcn/components/ui/form';
 import { objectToQueryString } from '~shared-universal/utils/string.util';
@@ -16,16 +20,11 @@ import { CONTENT_STATUS, CONTENT_STATUSES, CONTENT_TYPE } from '../constants/con
 
 import { useCreateContentMutation, useGetContentQuery, useUpdateContentMutation } from '../hooks/use-content-queries';
 
-import EditorFileDialog from '@/components/editors/editor-file-dialog';
+import EditorFileDialog from '@/components/editor-file-dialog';
 import FormFieldCardInputType from '@/components/form-fields/form-field-card-input-type';
 import FormFieldCardSelectStatus from '@/components/form-fields/form-field-card-select-status';
 import FormFieldCardSeoMeta from '@/components/form-fields/form-field-card-seo-meta';
-import FormFieldCKEditorFull from '@/components/form-fields/form-field-ckeditor-full';
-import FormFieldCKEditorSimple from '@/components/form-fields/form-field-ckeditor-simple';
-import FormFieldInputName from '@/components/form-fields/form-field-input-name';
-import FormFieldInputSlug from '@/components/form-fields/form-field-input-slug';
 import FormToolbar from '@/components/form-toolbar';
-import ModalLoading from '@/components/modals/modal-loading';
 
 import { contentFormValidator } from '../validators/content-form.validator';
 
@@ -128,10 +127,23 @@ const ContentForm: FC<ContentFormProps> = ({ isEdit }) => {
           <div className="flex gap-4">
             <Card className="grow">
               <CardContent className="grid gap-4 pt-4">
-                <FormFieldInputName form={form} />
+                <FormFieldInput form={form} fieldName="name" formLabel={t('form_field_name')} />
                 <FormFieldInputSlug form={form} />
-                <FormFieldCKEditorSimple form={form} editorRef={editorRef} setVisible={setIsFileManagerVisible} />
-                <FormFieldCKEditorFull form={form} editorRef={editorRef} setVisible={setIsFileManagerVisible} />
+                <FormFieldCKEditor
+                  form={form}
+                  fieldName="description"
+                  formLabel={t('form_field_description')}
+                  editorRef={editorRef}
+                  minHeight={120}
+                  toolbar={['bold', 'italic', 'underline', 'strikethrough']}
+                />
+                <FormFieldCKEditor
+                  form={form}
+                  fieldName="body"
+                  formLabel={t('form_field_content')}
+                  editorRef={editorRef}
+                  setVisible={setIsFileManagerVisible}
+                />
               </CardContent>
               <CardContent className="grid gap-4 pt-4">
                 <FormFieldCardSeoMeta form={form} />

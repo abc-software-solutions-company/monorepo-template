@@ -3,6 +3,7 @@ import { Trash2Icon } from 'lucide-react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { type Edge, Handle, type Node, type NodeProps, Position, useReactFlow } from '@xyflow/react';
+import ModalConfirm from '~react-web-ui-shadcn/components/modals/modal-confirm';
 import { Block } from '~react-web-ui-shadcn/components/ui/block';
 import { Button } from '~react-web-ui-shadcn/components/ui/button';
 import { Collapsible, CollapsibleContent } from '~react-web-ui-shadcn/components/ui/collapsible';
@@ -11,8 +12,6 @@ import { Label } from '~react-web-ui-shadcn/components/ui/label';
 import { Separator } from '~react-web-ui-shadcn/components/ui/separator';
 import { cn } from '~react-web-ui-shadcn/lib/utils';
 import { usePrevious } from '~shared-universal/hooks/use-previous';
-
-import ModalConfirm from '@/components/modals/modal-confirm';
 
 import RuleButtonAdd from './rule-button-add';
 import RuleToolbar from './rule-button-toolbar';

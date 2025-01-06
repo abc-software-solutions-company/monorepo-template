@@ -1,12 +1,11 @@
 import { z } from 'zod';
-
-import { locales } from '../constants/campaign.constant';
+import { LANGUAGES } from '~shared-universal/constants/language.constant';
 
 import { campaignStep1LocalizeSchema } from '../validators/campaign-step-1.validator';
 import { campaignStep2Schema } from '../validators/campaign-step-2.validator';
 import { campaignStep3Schema, milestoneLevelSchema, milestoneLevelsSchema, ruleSchema, rulesSchema } from '../validators/campaign-step-3.validator';
 
-const campaignStep1Schema = campaignStep1LocalizeSchema(locales);
+const campaignStep1Schema = campaignStep1LocalizeSchema(LANGUAGES);
 
 export type CampaignStep1FormValues = z.infer<typeof campaignStep1Schema>;
 

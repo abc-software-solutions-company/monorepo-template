@@ -3,7 +3,7 @@ export default function useScrollTo() {
     top: toTop,
     bottom: toBottom,
     element: toElement,
-    elementWithOffset: toElementWithOffset
+    elementWithOffset: toElementWithOffset,
   };
 }
 
@@ -22,7 +22,7 @@ function toElementWithOffset(selector: string, offset = 0) {
 
   window.scroll({
     behavior: 'smooth',
-    top: targetRect.top + window.scrollY + offset
+    top: targetRect.top + window.scrollY + offset,
   });
 }
 
@@ -34,6 +34,6 @@ function toBottom() {
   window.scroll({
     behavior: 'smooth',
     top: document.documentElement.scrollHeight,
-    left: 0
+    left: 0,
   });
 }

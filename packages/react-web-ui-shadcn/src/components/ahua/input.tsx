@@ -15,7 +15,7 @@ const formControlVariants = cva(
         default: '',
         focused: 'ring-2 ring-ring ring-offset-2',
         disabled: 'cursor-not-allowed bg-muted',
-        readOnly: 'cursor-not-allowed bg-muted',
+        readOnly: 'cursor-not-allowed bg-muted text-foreground',
         error: 'border-destructive bg-destructive/10',
         errorFocused: 'bg-destructive/10 ring-2 ring-destructive ring-offset-2',
       },
@@ -51,8 +51,6 @@ interface IInputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 
   labelClassName?: string;
 }
 
-const ID = new Date().getTime();
-
 const Input = React.forwardRef<HTMLInputElement, IInputProps>(
   (
     {
@@ -74,7 +72,7 @@ const Input = React.forwardRef<HTMLInputElement, IInputProps>(
     ref
   ) => {
     const [isFocused, setIsFocused] = useState(false);
-    const [inputValue, setInputValue] = useState(defaultValue?.toString() || value?.toString() || '');
+    const ID = new Date().getTime();
 
     const getFormControlState = () => {
       if (disabled) return 'disabled';
@@ -85,7 +83,6 @@ const Input = React.forwardRef<HTMLInputElement, IInputProps>(
     };
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-      setInputValue(e.target.value);
       props.onChange?.(e);
     };
 
@@ -102,7 +99,7 @@ const Input = React.forwardRef<HTMLInputElement, IInputProps>(
             disabled={disabled}
             readOnly={readOnly}
             maxLength={maxLength}
-            value={value || inputValue}
+            value={value}
             className={cn(inputContentVariants({ size }), 'peer', disabled && 'opacity-50')}
             onFocus={() => setIsFocused(true)}
             onBlur={() => setIsFocused(false)}

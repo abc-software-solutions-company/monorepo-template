@@ -4,10 +4,7 @@ interface ISmoothDragToScrollOptions {
   sensitivity?: number;
 }
 
-export const useSmoothDragToScroll = (
-  ref: React.RefObject<HTMLDivElement>,
-  options: ISmoothDragToScrollOptions = {}
-): void => {
+export const useSmoothDragToScroll = (ref: React.RefObject<HTMLDivElement>, options: ISmoothDragToScrollOptions = {}): void => {
   const { sensitivity = 1 } = options;
   const startXRef = useRef<number>(0);
   const startYRef = useRef<number>(0);

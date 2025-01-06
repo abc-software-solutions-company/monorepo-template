@@ -3,7 +3,8 @@ import ReactDOM from 'react-dom/client';
 
 import App from './App';
 
-import '@/globals.scss';
+import '~react-web-ui-shadcn/globals.scss';
+// import '@/globals.scss';
 
 const domElementId = 'root';
 const rootElement = document.getElementById(domElementId);

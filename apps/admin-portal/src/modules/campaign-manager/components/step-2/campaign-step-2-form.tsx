@@ -1,14 +1,13 @@
 import { UseFormReturn } from 'react-hook-form';
+import FormFieldDateRangePicker from '~react-web-ui-shadcn/components/form-fields-ahua/form-field-date-range-picker';
+import FormFieldInput from '~react-web-ui-shadcn/components/form-fields-ahua/form-field-input';
+import FormFieldSelect from '~react-web-ui-shadcn/components/form-fields-ahua/form-field-select';
+import FormFieldSelectGroup from '~react-web-ui-shadcn/components/form-fields-ahua/form-field-select-group';
+import FormFieldSelectTag from '~react-web-ui-shadcn/components/form-fields-ahua/form-field-select-tag';
+import ModalLoading from '~react-web-ui-shadcn/components/modals/modal-loading';
 import { Form } from '~react-web-ui-shadcn/components/ui/form';
+import { LANGUAGES } from '~shared-universal/constants/language.constant';
 
-import FormFieldDateRangePicker from '@/components/form-fields-ahua/form-field-date-range-picker';
-import FormFieldInput from '@/components/form-fields-ahua/form-field-input';
-import FormFieldSelect from '@/components/form-fields-ahua/form-field-select';
-import FormFieldSelectGroup from '@/components/form-fields-ahua/form-field-select-group';
-import FormFieldSelectTag from '@/components/form-fields-ahua/form-field-select-tag';
-import ModalLoading from '@/components/modals/modal-loading';
-
-import { countries } from '../../constants/campaign.constant';
 import { campaignStep2Dto } from '../../dtos/campaign-step-2.dto';
 import { CampaignStep2FormValues } from '../../interfaces/campaign.interface';
 
@@ -43,17 +42,19 @@ const CampaignStep2Form: React.FC<CampaignStep2FormProps> = ({ form, onSubmit })
     },
   ];
 
+  const languages = LANGUAGES.map(item => ({ id: item.code, name: item.name }));
+
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)}>
         <div className="flex space-x-10">
           <div className="w-full max-w-md space-y-4">
-            <FormFieldSelect required form={form} fieldName="nation" formLabel="Nation" options={countries} />
+            <FormFieldSelect required form={form} fieldName="nation" formLabel="Nation" options={languages} />
             {locale === 'vi-vn' && (
-              <FormFieldSelect multiple form={form} fieldName="country" formLabel="Country" placeholder="Select country" options={countries} />
+              <FormFieldSelect multiple form={form} fieldName="country" formLabel="Country" placeholder="Select country" options={languages} />
             )}
             {locale !== 'vi-vn' && <FormFieldInput form={form} fieldName="keyword" formLabel="Keyword" placeholder="Keyword" />}
-            <FormFieldSelectTag form={form} fieldName="country" formLabel="Country" placeholder="Select country" options={countries} />
+            <FormFieldSelectTag form={form} fieldName="country" formLabel="Country" placeholder="Select country" options={languages} />
             <FormFieldSelectGroup
               showSelectedTags
               form={form}

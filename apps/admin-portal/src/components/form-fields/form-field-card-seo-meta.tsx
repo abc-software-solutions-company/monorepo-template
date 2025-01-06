@@ -7,12 +7,10 @@ import { InputTag } from '~react-web-ui-shadcn/components/ui/input-tag';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '~react-web-ui-shadcn/components/ui/tabs';
 import { Textarea } from '~react-web-ui-shadcn/components/ui/textarea';
 
-import { ComponentBaseProps } from '@/interfaces/component.interface';
-
 type FormFieldCardSeoMetaProps<T extends FieldValues> = {
   form: UseFormReturn<T>;
   fieldName?: Path<T>;
-} & ComponentBaseProps;
+};
 
 export default function FormFieldCardSeoMeta<T extends FieldValues>({ form, fieldName = 'seoMeta' as Path<T> }: FormFieldCardSeoMetaProps<T>) {
   const t = useTranslations();

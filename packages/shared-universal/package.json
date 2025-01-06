@@ -9,15 +9,16 @@
     "lint:fix": "eslint . --fix"
   },
   "exports": {
-    "./datas/*": "./src/datas/*.json",
-    "./utils/*": "./src/utils/*.ts",
+    "./constants/*": "./src/constants/*.ts",
     "./hooks/*": "./src/hooks/*.ts",
+    "./utils/*": "./src/utils/*.ts",
+    "./interfaces/*": "./src/interfaces/*.ts",
     "./validators/*": "./src/validators/*.ts"
   },
   "devDependencies": {
     "@repo/config-typescript": "*",
     "@repo/eslint-config": "*",
-    "@types/node": "^20.12.11",
+    "@types/node": "^22.10.2",
     "@types/react": "^18.3.3",
     "eslint": "8.57.0",
     "eslint-import-resolver-typescript": "^3.6.1",
@@ -30,6 +31,8 @@
     "typescript": "^5.4.5"
   },
   "dependencies": {
+    "date-fns": "^3.6.0",
+    "dayjs": "^1.11.11",
     "slugify": "^1.6.6"
   }
 }

@@ -5,7 +5,6 @@ import { Card, CardContent, CardHeader, CardTitle } from '~react-web-ui-shadcn/c
 import { FormControl, FormField, FormItem, FormMessage } from '~react-web-ui-shadcn/components/ui/form';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '~react-web-ui-shadcn/components/ui/select';
 
-import { ComponentBaseProps } from '@/interfaces/component.interface';
 import { OptionType } from '@/interfaces/status.interface';
 
 type FormFieldCardSelectCategoryTypeProps<T extends FieldValues> = {
@@ -14,7 +13,7 @@ type FormFieldCardSelectCategoryTypeProps<T extends FieldValues> = {
   fieldName?: Path<T>;
   items: OptionType[];
   onChange?: (value: string) => void;
-} & ComponentBaseProps;
+};
 
 export default function FormFieldCardSelectCategoryType<T extends FieldValues>({
   form,

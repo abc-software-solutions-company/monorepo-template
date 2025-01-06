@@ -1,29 +1,50 @@
 import { FC, useState } from 'react';
 import classNames from 'classnames';
 import { CameraIcon } from 'lucide-react';
+import { toast } from 'sonner';
+import { useTranslations } from 'use-intl';
+import { useMutation } from '@tanstack/react-query';
+import ModalCropImage from '~react-web-ui-shadcn/components/modals/modal-crop-image';
 import { Avatar, AvatarFallback, AvatarImage } from '~react-web-ui-shadcn/components/ui/avatar';
 import { getShortName } from '~shared-universal/utils/string.util';
 
-import { ComponentBaseProps } from '@/interfaces/component.interface';
-
-import ModalCropImage from '@/components/modals/modal-crop-image';
 import Uploader from '@/components/uploader';
 
-import { UserEntity } from '@/modules/users/interfaces/users.interface';
+import { useAuthState } from '@/modules/auth/states/auth.state';
+import UserApi from '@/modules/users/api/users.api';
 
 type ProfileAvatarProps = {
-  user: UserEntity;
-} & ComponentBaseProps;
+  className?: string;
+};
 
-const ProfileAvatar: FC<ProfileAvatarProps> = ({ className, user }) => {
+const ProfileAvatar: FC<ProfileAvatarProps> = ({ className }) => {
+  const { user, setUser } = useAuthState();
+  const t = useTranslations();
+
   const [isVisibleCropper, setIsVisibleCropper] = useState(false);
   const shortName = getShortName(user?.name);
   const [imageSrc, setImageSrc] = useState<string | ArrayBuffer | null>(null);
 
+  const mutation = useMutation({
+    mutationFn: async (blob: Blob) => await UserApi.changeAvatar(blob),
+    onSuccess: resp => {
+      if (!user) return;
+      setUser({ ...user, avatar: resp.data.data.avatar + '?v=' + new Date().getTime() });
+      toast(t('profile_change_avatar'), {
+        description: t('profile_change_avatar_success'),
+      });
+    },
+    onError: error => {
+      toast(t('profile_change_avatar'), {
+        description: t('profile_change_avatar_failure') + `<br />${error.message}`,
+      });
+    },
+  });
+
   return (
     <div className={classNames(className)}>
       <Avatar className="size-32 overflow-hidden rounded-full border-3 border-white">
-        <AvatarImage src={`${import.meta.env.VITE_PUBLIC_API_URL}/${user.avatar}`} alt={shortName} />
+        <AvatarImage src={`${import.meta.env.VITE_PUBLIC_API_URL}/${user?.avatar}`} alt={shortName} />
         <AvatarFallback
           className={classNames(
             'rounded-full text-5xl font-bold text-white',
@@ -48,7 +69,12 @@ const ProfileAvatar: FC<ProfileAvatarProps> = ({ className, user }) => {
           }}
         />
       </Avatar>
-      <ModalCropImage visible={isVisibleCropper} image={imageSrc as string} onClose={() => setIsVisibleCropper(false)} />
+      <ModalCropImage
+        visible={isVisibleCropper}
+        image={imageSrc as string}
+        onClose={() => setIsVisibleCropper(false)}
+        onCropComplete={blob => mutation.mutate(blob)}
+      />
     </div>
   );
 };

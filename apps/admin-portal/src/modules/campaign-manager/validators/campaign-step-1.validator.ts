@@ -1,23 +1,21 @@
 import { z } from 'zod';
+import { Language } from '~shared-universal/interfaces/language.interface';
+import { createLocalizedField } from '~shared-universal/validators/zod';
 
-import { Locale } from '@/interfaces/language.interface';
+export const campaignStep1LocalizeSchema = (languages: Language[]) => {
+  const defaultlanguage = languages.find(x => x.isDefault);
 
-import { createLocalizedField, createLocalizedFieldAndValidateMaxLength } from './campaign-base.validator';
-
-export const campaignStep1LocalizeSchema = (locales: Locale[]) => {
-  const defaultLocale = locales.find(locale => locale.isDefault);
-
-  if (!defaultLocale) {
-    throw new Error('No default locale specified. At least one locale must have isDefault set to true.');
+  if (!defaultlanguage) {
+    throw new Error('No default language specified. At least one language must have isDefault set to true.');
   }
 
-  const localizedField = createLocalizedField(defaultLocale);
+  const localizedField = createLocalizedField(defaultlanguage);
 
   return z
     .object({
-      name: localizedField('Name', 50),
-      description: localizedField('Description', 300),
-      tnc: createLocalizedFieldAndValidateMaxLength(300),
+      name: localizedField({ min: 1, max: 255, required: true }),
+      description: localizedField({ min: 1, max: 255, required: true }),
+      tnc: localizedField({ min: 1, max: 255, required: false }),
       imageUrl: localizedField(),
       startDate: z.date().optional(),
       endDate: z.date().optional(),

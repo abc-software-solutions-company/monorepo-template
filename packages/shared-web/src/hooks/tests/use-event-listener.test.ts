@@ -1,5 +1,4 @@
 import { act, renderHook } from '@testing-library/react';
-
 import useEventListener from '../use-event-listener';
 
 describe('useEventListener Hook', () => {

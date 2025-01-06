@@ -6,6 +6,7 @@ import { ColumnDef, getCoreRowModel, useReactTable } from '@tanstack/react-table
 import { Badge } from '~react-web-ui-shadcn/components/ui/badge';
 import { Button } from '~react-web-ui-shadcn/components/ui/button';
 import Pagination from '~react-web-ui-shadcn/components/ui/pagination-custom';
+import { toDateTime } from '~shared-universal/utils/date.util';
 
 import { ComponentBaseProps } from '@/interfaces/component.interface';
 import { AuditLogEntity } from '../interfaces/audit-logs.interface';
@@ -19,9 +20,7 @@ import DataTableRowStatus from '@/components/data-table/data-table-row-status';
 import ItemsPerPage from '@/components/item-per-page';
 import PaginationInfo from '@/components/pagination-info';
 
-import { toDateTime } from '@/utils/date.util';
-
-import AuditLogDialogDetail from './audit-log-dialog-detail';
+import AuditLogDetailModal from './audit-log-detail-modal';
 import AuditLogListFilter from './audit-log-list-filter';
 
 type AuditLogListProps = {
@@ -162,7 +161,7 @@ export const AuditLogList: FC<AuditLogListProps> = ({ className }) => {
           onChange={page => setFilter({ ...filter, page })}
         />
       </div>
-      <AuditLogDialogDetail id={viewDetailId} visible={!!viewDetailId} onCancel={() => setViewDetailId('')} />
+      <AuditLogDetailModal id={viewDetailId} visible={!!viewDetailId} onCancel={() => setViewDetailId('')} />
     </div>
   );
 };

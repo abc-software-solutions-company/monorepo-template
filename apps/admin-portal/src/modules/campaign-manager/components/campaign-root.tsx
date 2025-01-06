@@ -2,10 +2,11 @@ import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Separator } from '~react-web-ui-shadcn/components/ui/separator';
+import { LANGUAGES } from '~shared-universal/constants/language.constant';
 
 import { CampaignStep1FormValues, CampaignStep2FormValues, CampaignStep3FormValues } from '../interfaces/campaign.interface';
 
-import { CAMPAIGN_STEP, locales } from '../constants/campaign.constant';
+import { CAMPAIGN_STEP } from '../constants/campaign.constant';
 
 import CampaignStep1Form from './step-1/campaign-step-1-form';
 import CampaignStep2Form from './step-2/campaign-step-2-form';
@@ -57,9 +58,20 @@ const CampaignRoot: React.FC = () => {
   });
   const [isFormValid, setIsFormValid] = useState(false);
 
-  const step1Form = useForm<CampaignStep1FormValues>({ resolver: zodResolver(campaignStep1LocalizeSchema(locales)), defaultValues: formData.step1 });
-  const step2Form = useForm<CampaignStep2FormValues>({ resolver: zodResolver(campaignStep2Schema), defaultValues: formData.step2 });
-  const step3Form = useForm<CampaignStep3FormValues>({ resolver: zodResolver(campaignStep3Schema), defaultValues: formData.step3 });
+  const step1Form = useForm<CampaignStep1FormValues>({
+    resolver: zodResolver(campaignStep1LocalizeSchema(LANGUAGES)),
+    defaultValues: formData.step1,
+  });
+
+  const step2Form = useForm<CampaignStep2FormValues>({
+    resolver: zodResolver(campaignStep2Schema),
+    defaultValues: formData.step2,
+  });
+
+  const step3Form = useForm<CampaignStep3FormValues>({
+    resolver: zodResolver(campaignStep3Schema),
+    defaultValues: formData.step3,
+  });
 
   const handleStep1Submit = (data: CampaignStep1FormValues) => {
     setFormData(prev => ({ ...prev, campaignStep1: data }));

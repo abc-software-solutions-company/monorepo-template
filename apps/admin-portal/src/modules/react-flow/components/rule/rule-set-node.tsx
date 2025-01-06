@@ -2,20 +2,18 @@ import { useCallback, useEffect, useState } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { type Edge, Handle, type NodeProps, Position, useReactFlow } from '@xyflow/react';
+import FormFieldDateRangePicker from '~react-web-ui-shadcn/components/form-fields-ahua/form-field-date-range-picker';
+import FormFieldInputNumber from '~react-web-ui-shadcn/components/form-fields-ahua/form-field-input-number';
+import FormFieldRadio from '~react-web-ui-shadcn/components/form-fields-ahua/form-field-radio';
+import FormFieldSelect from '~react-web-ui-shadcn/components/form-fields-ahua/form-field-select';
+import FormFieldSelectTag from '~react-web-ui-shadcn/components/form-fields-ahua/form-field-select-tag';
 import { Block } from '~react-web-ui-shadcn/components/ui/block';
 import { Collapsible, CollapsibleContent } from '~react-web-ui-shadcn/components/ui/collapsible';
 import { Form } from '~react-web-ui-shadcn/components/ui/form';
 import { Label } from '~react-web-ui-shadcn/components/ui/label';
 import { Separator } from '~react-web-ui-shadcn/components/ui/separator';
 import { cn } from '~react-web-ui-shadcn/lib/utils';
-
-import FormFieldDateRangePicker from '@/components/form-fields-ahua/form-field-date-range-picker';
-import FormFieldInputNumber from '@/components/form-fields-ahua/form-field-input-number';
-import FormFieldRadio from '@/components/form-fields-ahua/form-field-radio';
-import FormFieldSelect from '@/components/form-fields-ahua/form-field-select';
-import FormFieldSelectTag from '@/components/form-fields-ahua/form-field-select-tag';
-
-import { getDateWithoutTimeZone } from '@/utils/date.util';
+import { getDateWithoutTimeZone } from '~shared-universal/utils/date.util';
 
 import RuleButtonAdd from './rule-button-add';
 import RuleToolbar from './rule-button-toolbar';

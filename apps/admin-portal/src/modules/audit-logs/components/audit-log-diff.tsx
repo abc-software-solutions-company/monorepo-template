@@ -9,11 +9,39 @@ type AuditLogDiffProps = {
 
 const AuditLogDiff: React.FC<AuditLogDiffProps> = ({ oldData, newData }) => {
   const t = useTranslations();
-  const fields = useMemo(() => Object.keys({ ...oldData, ...newData }), [oldData, newData]);
+
+  const getNestedValue = (data: Record<string, unknown>, path: string): unknown => {
+    const parts = path.split('.');
+    let value: unknown = data;
+
+    for (const part of parts) {
+      value = (value as Record<string, unknown>)?.[part];
+    }
+
+    return value;
+  };
+
+  const fields = useMemo(() => {
+    const baseFields = Object.keys({ ...oldData, ...newData }).filter(key => key !== 'seoMeta');
+    const seoMetaFields = Object.keys({
+      ...((oldData.seoMeta as Record<string, unknown>) || {}),
+      ...((newData.seoMeta as Record<string, unknown>) || {}),
+    }).map(key => `seoMeta.${key}`);
+
+    const allFields = [...baseFields, ...seoMetaFields];
+
+    // Only return fields that have different values
+    return allFields.filter(field => {
+      const oldValue = getNestedValue(oldData, field);
+      const newValue = getNestedValue(newData, field);
+
+      return String(oldValue ?? '') !== String(newValue ?? '');
+    });
+  }, [oldData, newData]);
 
   const highlightDifference = (oldValue: unknown, newValue: unknown, isOld: boolean) => {
-    const oldStr = String(oldValue);
-    const newStr = String(newValue);
+    const oldStr = String(oldValue ?? '');
+    const newStr = String(newValue ?? '');
 
     if (oldStr === newStr) return oldStr;
 
@@ -31,13 +59,12 @@ const AuditLogDiff: React.FC<AuditLogDiffProps> = ({ oldData, newData }) => {
       } else {
         if (diffStart !== -1) {
           const diffWords = (isOld ? words1 : words2).slice(diffStart, i).join(' ');
-          const className = isOld ? 'bg-red-200' : 'bg-green-200';
+          const className = isOld ? 'bg-red-200 text-black' : 'bg-green-200 text-black';
 
           result.push(
             <span key={diffStart} className={className}>
               {diffWords}
-            </span>,
-            ' '
+            </span>
           );
           diffStart = -1;
         }
@@ -59,6 +86,14 @@ const AuditLogDiff: React.FC<AuditLogDiffProps> = ({ oldData, newData }) => {
     return result;
   };
 
+  const formatValue = (value: unknown): string => {
+    if (value === null || value === undefined) return '';
+    if (Array.isArray(value)) return JSON.stringify(value);
+    if (typeof value === 'object') return JSON.stringify(value);
+
+    return String(value);
+  };
+
   return (
     <div className="scrollbar overflow-auto rounded border">
       <Table>
@@ -76,15 +111,32 @@ const AuditLogDiff: React.FC<AuditLogDiffProps> = ({ oldData, newData }) => {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {fields.map(field => (
-            <TableRow key={field}>
-              <TableCell className="w-40">
-                <strong>{field}</strong>
+          {fields.length > 0 ? (
+            fields.map(field => {
+              const oldValue = getNestedValue(oldData, field);
+              const newValue = getNestedValue(newData, field);
+
+              return (
+                <TableRow key={field}>
+                  <TableCell className="w-40">
+                    <strong>{field}</strong>
+                  </TableCell>
+                  <TableCell className="w-1/2 p-2">
+                    <div className="break-all">{highlightDifference(formatValue(oldValue), formatValue(newValue), true)}</div>
+                  </TableCell>
+                  <TableCell className="w-1/2 p-2">
+                    <div className="break-all">{highlightDifference(formatValue(oldValue), formatValue(newValue), false)}</div>
+                  </TableCell>
+                </TableRow>
+              );
+            })
+          ) : (
+            <TableRow>
+              <TableCell colSpan={3} className="py-4 text-center">
+                {t('no_changes_found')}
               </TableCell>
-              <TableCell className="w-1/2 p-2">{highlightDifference(oldData[field] ?? '', newData[field] ?? '', true)}</TableCell>
-              <TableCell className="w-1/2 p-2">{highlightDifference(oldData[field] ?? '', newData[field] ?? '', false)}</TableCell>
             </TableRow>
-          ))}
+          )}
         </TableBody>
       </Table>
     </div>

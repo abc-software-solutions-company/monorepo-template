@@ -4,8 +4,14 @@ import { SubmitHandler, useForm } from 'react-hook-form';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { useLocale, useTranslations } from 'use-intl';
 import { zodResolver } from '@hookform/resolvers/zod';
+import Debugger from '~react-web-ui-shadcn/components/debugger';
+import FormFieldCKEditor from '~react-web-ui-shadcn/components/form-fields/form-field-ckeditor';
+import FormFieldInput from '~react-web-ui-shadcn/components/form-fields/form-field-input';
+import FormFieldInputSlug from '~react-web-ui-shadcn/components/form-fields/form-field-input-slug';
+import ModalLoading from '~react-web-ui-shadcn/components/modals/modal-loading';
 import { Card, CardContent } from '~react-web-ui-shadcn/components/ui/card';
 import { Form } from '~react-web-ui-shadcn/components/ui/form';
+import { LANGUAGES } from '~shared-universal/constants/language.constant';
 import { objectToQueryString } from '~shared-universal/utils/string.util';
 
 import { PostFormData } from '../interfaces/posts.interface';
@@ -14,23 +20,18 @@ import { POST_STATUS, POST_STATUSES } from '../constants/posts.constant';
 
 import usePosts from '../hooks/use-posts';
 
-import EditorFileDialog from '@/components/editors/editor-file-dialog';
+import EditorFileDialog from '@/components/editor-file-dialog';
 import FormFieldCardCover from '@/components/form-fields/form-field-card-cover';
 import FormFieldCardImages from '@/components/form-fields/form-field-card-images';
 import FormFieldCardSelectCategory from '@/components/form-fields/form-field-card-select-category';
 import FormFieldCardSelectStatus from '@/components/form-fields/form-field-card-select-status';
 import FormFieldCardSeoMeta from '@/components/form-fields/form-field-card-seo-meta';
-import FormFieldCKEditorFull from '@/components/form-fields/form-field-ckeditor-full';
-import FormFieldCKEditorSimple from '@/components/form-fields/form-field-ckeditor-simple';
-import FormFieldInputName from '@/components/form-fields/form-field-input-name';
-import FormFieldInputSlug from '@/components/form-fields/form-field-input-slug';
 import FormToolbar from '@/components/form-toolbar';
-import ModalLoading from '@/components/modals/modal-loading';
 
 import { FileEntity } from '@/modules/files/interfaces/files.interface';
 
 import { usePostsState } from '../states/posts.state';
-import { postFormValidator } from '../validators/post-form.validator';
+import { postFormLocalizeSchema } from '../validators/post-form.validator';
 
 type PostFormProps = {
   isEdit: boolean;
@@ -59,10 +60,13 @@ const PostForm: FC<PostFormProps> = ({ isEdit }) => {
     seoMeta: post?.seoMeta ?? { title: '', description: '', keywords: '' },
   };
 
-  const form = useForm<PostFormData>({ resolver: zodResolver(postFormValidator), defaultValues });
+  const form = useForm<PostFormData>({
+    resolver: zodResolver(postFormLocalizeSchema(LANGUAGES)),
+    defaultValues,
+  });
 
   const onSubmit: SubmitHandler<PostFormData> = async formData => {
-    formData.images = formData.images.map(item => ({ id: item.id }) as FileEntity);
+    formData.images = formData.images.map(item => ({ id: item.id }));
 
     if (isEdit) {
       postsState.updateRequest({ id: params.id as string, data: formData });
@@ -91,10 +95,24 @@ const PostForm: FC<PostFormProps> = ({ isEdit }) => {
           <div className="flex gap-4">
             <Card className="grow">
               <CardContent className="grid gap-4 pt-4">
-                <FormFieldInputName form={form} />
+                <FormFieldInput form={form} fieldName="name" formLabel={t('form_field_name')} minLength={1} maxLength={255} />
                 <FormFieldInputSlug form={form} />
-                <FormFieldCKEditorSimple form={form} editorRef={editorRef} setVisible={setIsFileManagerVisible} />
-                <FormFieldCKEditorFull form={form} editorRef={editorRef} setVisible={setIsFileManagerVisible} />
+                <FormFieldCKEditor
+                  form={form}
+                  fieldName="description"
+                  formLabel={t('form_field_description')}
+                  editorRef={editorRef}
+                  minHeight={120}
+                  toolbar={['bold', 'italic', 'underline', 'strikethrough']}
+                />
+                <FormFieldCKEditor
+                  form={form}
+                  fieldName="body"
+                  formLabel={t('form_field_content')}
+                  toolbar={undefined}
+                  editorRef={editorRef}
+                  setVisible={setIsFileManagerVisible}
+                />
               </CardContent>
               <CardContent className="grid gap-4 pt-4">
                 <FormFieldCardSeoMeta form={form} />
@@ -109,6 +127,7 @@ const PostForm: FC<PostFormProps> = ({ isEdit }) => {
               </div>
             </div>
           </div>
+          <Debugger text={JSON.stringify(form.watch(), null, 2)} />
         </form>
       </Form>
       <EditorFileDialog editorRef={editorRef} visible={isFileManagerVisible} setVisible={setIsFileManagerVisible} />

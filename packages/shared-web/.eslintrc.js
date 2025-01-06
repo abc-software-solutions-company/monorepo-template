@@ -10,17 +10,11 @@ module.exports = {
   parserOptions: { project },
   settings: {
     'import/resolver': {
-      typescript: { project }
-    }
+      typescript: { project },
+    },
   },
-  ignorePatterns: [
-    'playwright.config.ts',
-    'postcss.config.mjs',
-    'prettier.config.js',
-    'tailwind.config.ts',
-    'vitest.config.ts'
-  ],
+  ignorePatterns: ['postcss.config.mjs', 'prettier.config.mjs', 'tailwind.config.ts', 'vitest.config.mts'],
   rules: {
-    'no-redeclare': 'off'
-  }
+    'no-redeclare': 'off',
+  },
 };

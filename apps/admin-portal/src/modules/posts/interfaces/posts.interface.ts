@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { LANGUAGES } from '~shared-universal/constants/language.constant';
 
 import { ResponseFormat } from '@/interfaces/api-response.interface';
 import { BaseFilter } from '@/interfaces/filter.interface';
@@ -10,7 +11,7 @@ import { CategoryEntity } from '@/modules/categories/interfaces/categories.inter
 import { FileEntity } from '@/modules/files/interfaces/files.interface';
 import { UserEntity } from '@/modules/users/interfaces/users.interface';
 
-import { postFormValidator } from '../validators/post-form.validator';
+import { postFormLocalizeSchema } from '../validators/post-form.validator';
 
 export type PostEntity = {
   id: string;
@@ -28,10 +29,10 @@ export type PostEntity = {
   seoMeta: SeoMeta;
 };
 
-export type PostFormData = z.infer<typeof postFormValidator>;
+const postSchema = postFormLocalizeSchema(LANGUAGES);
 
+export type PostFormData = z.infer<typeof postSchema>;
 export type PostsResponse = ResponseFormat<PostEntity[]>;
 export type PostResponse = ResponseFormat<PostEntity>;
 export type BulkDeletePostResponse = PostResponse;
-
 export type PostFilter = BaseFilter;

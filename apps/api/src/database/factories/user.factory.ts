@@ -24,6 +24,8 @@ const users = [
     provider: AUTH_PROVIDER.CREDENTIALS,
     authType: AUTH_TYPE.CREDENTIALS,
     country: 'US',
+    createdAt: faker.date.past(),
+    updatedAt: faker.date.recent(),
   },
   {
     id: '5bc778a0-2675-45c5-8294-3dadd79e3b53',
@@ -36,6 +38,8 @@ const users = [
     provider: AUTH_PROVIDER.CREDENTIALS,
     authType: AUTH_TYPE.CREDENTIALS,
     country: 'US',
+    createdAt: faker.date.past(),
+    updatedAt: faker.date.recent(),
   },
 ] as unknown as User[];
 
@@ -55,6 +59,8 @@ function createRandomUser() {
     provider: AUTH_PROVIDER.CREDENTIALS,
     authType: AUTH_TYPE.CREDENTIALS,
     country: countries[Math.floor(Math.random() * countries.length)].code,
+    createdAt: faker.date.past(),
+    updatedAt: faker.date.recent(),
   } as unknown as User;
 }
 

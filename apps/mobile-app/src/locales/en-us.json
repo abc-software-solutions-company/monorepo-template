@@ -77,7 +77,7 @@
   "travel_accommodations": "Hotels",
   "travel_tours": "Tours",
 
-  "validator_at_least_n_character": "Please enter at least {{count}} character",
+  "validator_minimum_n_characters_allowed": "Please enter at least {{count}} character",
   "validator_at_least_n_character_plural": "Please enter at least {{count}} characters",
   "validator_maximum_n_characters_allowed": "Maximum {{max}} characters allowed",
   "validator_email_invalid": "Email is invalid",

@@ -1,10 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // TODO: Add typesafe
 import { type Edge, type Node } from '@xyflow/react';
+import { getDateWithoutTimeZone, setUTCEndOfDay, setUTCStartOfDay } from '~shared-universal/utils/date.util';
 
 import { FLOW_NODE_WIDTH } from '../constants/rule.constant';
-
-import { getDateWithoutTimeZone, setUTCEndOfDay, setUTCStartOfDay } from '@/utils/date.util';
 
 import { convertConditionToPayload, convertPayloadToCondition } from './expression.dto';
 

@@ -9,10 +9,12 @@
     "./interfaces/*": "./src/interfaces/*.ts",
     "./utils/*": "./src/utils/*.ts"
   },
+  "dependencies": {
+    "@repo/shared-universal": "*"
+  },
   "devDependencies": {
     "@repo/config-typescript": "*",
     "@repo/eslint-config": "*",
-    "@repo/shared-universal": "*",
     "typescript": "^5.4.5"
   }
 }
