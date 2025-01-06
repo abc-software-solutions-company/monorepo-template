@@ -6,8 +6,6 @@ import { Card, CardContent, CardHeader, CardTitle } from '~react-web-ui-shadcn/c
 import { FormControl, FormField, FormItem, FormMessage } from '~react-web-ui-shadcn/components/ui/form';
 import { Input } from '~react-web-ui-shadcn/components/ui/input';
 
-import { ComponentBaseProps } from '@/interfaces/component.interface';
-
 import ButtonRemoveFile from '@/components/button-remove-file';
 import ButtonSelectFile from '@/components/button-select-file';
 
@@ -18,7 +16,7 @@ type FormFieldCardImagesProps<T extends FieldValues> = {
   form: UseFormReturn<T>;
   formLabel?: string;
   fieldName?: FieldArrayPath<T>;
-} & ComponentBaseProps;
+};
 
 export default function FormFieldCardImages<T extends FieldValues>({
   form,

@@ -360,8 +360,10 @@
   "push_notification_send_success": "Đã gửi thông báo.",
   "push_notification_send_failure": "Không thể gửi thông báo.",
 
-  "validator_at_least_n_character": "Bạn hãy nhập ít nhất {min} ký tự",
+  "validator_required": "Trường này là bắt buộc",
+  "validator_minimum_n_characters_allowed": "Bạn hãy nhập ít nhất {min} ký tự",
   "validator_maximum_n_characters_allowed": "Bạn chỉ được nhập tối đa {max} ký tự",
+  "validator_default_language_required": "Bạn phải nhập ngôn ngữ mặc định",
   "validator_phone_number_invalid": "Số điện thoại không hợp lệ",
 
   "validator_category_name": "Bạn chưa nhập tên",

@@ -1,0 +1,66 @@
+import { lazy, Suspense } from 'react';
+import { type Editor } from 'ckeditor5';
+import { FieldValues, Path, UseFormReturn } from 'react-hook-form';
+import { useTranslations } from 'use-intl';
+import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '~react-web-ui-shadcn/components/ui/form';
+import { Loading } from '~react-web-ui-shadcn/components/ui/loading';
+
+const CKEditor = lazy(() => import('~react-web-ui-shadcn/components/editors/ck-editor'));
+
+type FormFieldCKEditorFullProps<T extends FieldValues> = {
+  form: UseFormReturn<T>;
+  formLabel?: string;
+  fieldName?: Path<T>;
+  minLength?: number;
+  maxLength?: number;
+  editorRef?: React.MutableRefObject<Editor | null>;
+  minHeight?: number;
+  toolbar?: string[];
+  setVisible?: React.Dispatch<React.SetStateAction<boolean>>;
+};
+
+export default function FormFieldCKEditor<T extends FieldValues>({
+  form,
+  formLabel,
+  fieldName,
+  minLength = 1,
+  maxLength = Infinity,
+  editorRef,
+  minHeight = 360,
+  toolbar,
+  setVisible,
+}: FormFieldCKEditorFullProps<T>) {
+  const t = useTranslations();
+
+  return (
+    <FormField
+      control={form.control}
+      name={fieldName as Path<T>}
+      render={({ field, fieldState: { error } }) => (
+        <FormItem>
+          <FormLabel>{formLabel}</FormLabel>
+          <FormControl>
+            <Suspense
+              fallback={
+                <div className="flex items-center justify-center p-3">
+                  <Loading />
+                </div>
+              }
+            >
+              <CKEditor
+                {...field}
+                toolbar={toolbar}
+                minHeight={minHeight}
+                value={field.value}
+                onChange={field.onChange}
+                onFocus={editorRef ? (_event, editor) => (editorRef.current = editor) : undefined}
+                onShowFileManager={() => setVisible?.(true)}
+              />
+            </Suspense>
+          </FormControl>
+          {error?.message && <FormMessage message={t(error.message, { min: minLength, max: maxLength })} />}
+        </FormItem>
+      )}
+    />
+  );
+}

@@ -16,8 +16,10 @@ import {
   useReactTable,
   VisibilityState,
 } from '@tanstack/react-table';
+import ModalConfirm from '~react-web-ui-shadcn/components/modals/modal-confirm';
 import { Checkbox } from '~react-web-ui-shadcn/components/ui/checkbox';
 import Pagination from '~react-web-ui-shadcn/components/ui/pagination-custom';
+import { toDateTime } from '~shared-universal/utils/date.util';
 import { objectToQueryString } from '~shared-universal/utils/string.util';
 
 import { ComponentBaseProps } from '@/interfaces/component.interface';
@@ -33,10 +35,8 @@ import { DataTableColumnHeader } from '@/components/data-table/data-table-column
 import DataTableRowAction from '@/components/data-table/data-table-row-action';
 import DataTableRowStatus from '@/components/data-table/data-table-row-status';
 import ItemsPerPage from '@/components/item-per-page';
-import ModalConfirm from '@/components/modals/modal-confirm';
 import PaginationInfo from '@/components/pagination-info';
 
-import { toDateTime } from '@/utils/date.util';
 import { getQueryClient } from '@/utils/query-client.util';
 
 import FaqListToolbar from './faq-list-toolbar';

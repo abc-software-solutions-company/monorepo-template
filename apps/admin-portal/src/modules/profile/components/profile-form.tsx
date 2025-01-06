@@ -7,6 +7,10 @@ import { toast } from 'sonner';
 import { useLocale, useTranslations } from 'use-intl';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from '@tanstack/react-query';
+import FormFieldInputDatePicker from '~react-web-ui-shadcn/components/form-fields/form-field-input-date-picker';
+import FormFieldInputPhoneNumber from '~react-web-ui-shadcn/components/form-fields/form-field-input-phone-number';
+import FormFieldInputUserName from '~react-web-ui-shadcn/components/form-fields/form-field-input-user-name';
+import FormFieldTextAreaContent from '~react-web-ui-shadcn/components/form-fields/form-field-text-area-content';
 import { Button } from '~react-web-ui-shadcn/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '~react-web-ui-shadcn/components/ui/card';
 import { Form } from '~react-web-ui-shadcn/components/ui/form';
@@ -16,11 +20,7 @@ import { objectToQueryString } from '~shared-universal/utils/string.util';
 import { ComponentBaseProps } from '@/interfaces/component.interface';
 import { ProfileFormData } from '../interfaces/profile.interface';
 
-import FormFieldInputDatePicker from '@/components/form-fields/form-field-input-date-picker';
-import FormFieldInputPhoneNumber from '@/components/form-fields/form-field-input-phone-number';
-import FormFieldInputUserName from '@/components/form-fields/form-field-input-user-name';
 import FormFieldSelectCountry from '@/components/form-fields/form-field-select-country';
-import FormFieldTextAreaContent from '@/components/form-fields/form-field-text-area-content';
 
 import { UserEntity } from '@/modules/users/interfaces/users.interface';
 

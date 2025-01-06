@@ -1,5 +1,3 @@
-import { Locale } from '@/interfaces/language.interface';
-
 export enum CAMPAIGN_STEP {
   STEP_1 = 'step_1',
   STEP_2 = 'step_2',
@@ -60,21 +58,4 @@ export enum CAMPAIGN_TRIGGER_CONDITION {
 export const CAMPAIGN_TYPE_LIST = [
   { label: 'Milestone', value: CAMPAIGN_TYPE.MILESTONE, description: 'Rewards can be configured for each completed level.' },
   { label: 'Stamp', value: CAMPAIGN_TYPE.STAMP, description: 'Rewards can be configured for each completed level.' },
-];
-
-export const locales: Locale[] = [
-  { languageLabel: 'English', languageName: 'en-us', isDefault: true },
-  { languageLabel: 'Vietnam', languageName: 'vi-vn', isDefault: false },
-  { languageLabel: 'Germany', languageName: 'de-de', isDefault: false },
-  { languageLabel: 'Thailand', languageName: 'th-th', isDefault: false },
-  { languageLabel: 'India', languageName: 'in-hi', isDefault: false },
-  { languageLabel: 'Indonesia', languageName: 'id-id', isDefault: false },
-];
-
-export const countries = [
-  { id: 'vi-vn', name: 'Vietnam' },
-  { id: 'th-th', name: 'Thailand' },
-  { id: 'en-us', name: 'English' },
-  { id: 'de-de', name: 'Germany' },
-  { id: 'in-hi', name: 'India' },
 ];

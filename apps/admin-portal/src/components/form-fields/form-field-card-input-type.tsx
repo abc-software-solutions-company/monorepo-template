@@ -4,15 +4,13 @@ import { Card, CardContent, CardHeader, CardTitle } from '~react-web-ui-shadcn/c
 import { FormControl, FormField, FormItem, FormMessage } from '~react-web-ui-shadcn/components/ui/form';
 import { Input } from '~react-web-ui-shadcn/components/ui/input';
 
-import { ComponentBaseProps } from '@/interfaces/component.interface';
-
 type FormFieldCardInputTypeProps<T extends FieldValues> = {
   form: UseFormReturn<T>;
   formLabel?: string;
   fieldName?: Path<T>;
   minLength?: number;
   maxLength?: number;
-} & ComponentBaseProps;
+};
 
 export default function FormFieldCardInputType<T extends FieldValues>({
   form,

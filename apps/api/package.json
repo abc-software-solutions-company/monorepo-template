@@ -64,7 +64,8 @@
     "postinstall": "patch-package",
     "prepare": "husky",
     "setup": "yarn docker:up && yarn data:init && yarn data:inite2e",
-    "gen:random32": "node -e \"console.log(require('crypto').randomBytes(32).toString('hex'))\""
+    "gen:random32": "node -e \"console.log(require('crypto').randomBytes(32).toString('hex'))\"",
+    "knip": "knip"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.637.0",
@@ -143,7 +144,7 @@
     "@types/jest": "^29.5.12",
     "@types/lodash-es": "^4.17.12",
     "@types/multer": "^1.4.11",
-    "@types/node": "^20.12.11",
+    "@types/node": "^22.10.2",
     "@types/nodemailer": "^6.4.14",
     "@types/passport-jwt": "^4.0.1",
     "@types/supertest": "^2.0.11",
@@ -156,6 +157,7 @@
     "eslint-plugin-simple-import-sort": "^12.1.0",
     "husky": "^9.0.11",
     "jest": "^29.7.0",
+    "knip": "^5.41.1",
     "lint-staged": "^15.2.4",
     "prettier": "^3.2.5",
     "source-map-support": "^0.5.20",

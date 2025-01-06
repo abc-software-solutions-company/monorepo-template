@@ -4,13 +4,12 @@ import { parseISO } from 'date-fns';
 import { useLocale, useTranslations } from 'use-intl';
 import { Card, CardContent, CardHeader, CardTitle } from '~react-web-ui-shadcn/components/ui/card';
 import { Separator } from '~react-web-ui-shadcn/components/ui/separator';
+import { toDateTime } from '~shared-universal/utils/date.util';
 
 import { ComponentBaseProps } from '@/interfaces/component.interface';
 
 import { useAppData } from '@/modules/app-data/hooks/use-app-data';
 import { UserEntity } from '@/modules/users/interfaces/users.interface';
-
-import { toDateTime } from '@/utils/date.util';
 
 type ProfileAboutMeProps = ComponentBaseProps & {
   user: UserEntity;

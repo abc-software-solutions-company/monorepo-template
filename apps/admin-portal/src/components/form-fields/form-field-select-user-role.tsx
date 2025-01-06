@@ -5,7 +5,6 @@ import { useTranslations } from 'use-intl';
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '~react-web-ui-shadcn/components/ui/form';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '~react-web-ui-shadcn/components/ui/select';
 
-import { ComponentBaseProps } from '@/interfaces/component.interface';
 import { OptionType } from '@/interfaces/status.interface';
 
 const roleOptions: OptionType[] = [
@@ -45,7 +44,7 @@ type FormFieldSelectUserRoleProps<T extends FieldValues> = {
   form: UseFormReturn<T>;
   formLabel?: string;
   fieldName?: Path<T>;
-} & ComponentBaseProps;
+};
 
 export default function FormFieldSelectUserRole<T extends FieldValues>({
   form,

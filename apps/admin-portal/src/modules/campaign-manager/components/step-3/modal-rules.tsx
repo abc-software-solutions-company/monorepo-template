@@ -2,15 +2,14 @@ import React, { useEffect } from 'react';
 import { SubmitHandler, useForm, UseFormReturn } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
+import FormFieldInput from '~react-web-ui-shadcn/components/form-fields-ahua/form-field-input';
+import FormFieldRadioBlock from '~react-web-ui-shadcn/components/form-fields-ahua/form-field-radio-block';
+import FormFieldSelect from '~react-web-ui-shadcn/components/form-fields-ahua/form-field-select';
 import { Button } from '~react-web-ui-shadcn/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '~react-web-ui-shadcn/components/ui/dialog';
 import { Form } from '~react-web-ui-shadcn/components/ui/form';
 import { Label } from '~react-web-ui-shadcn/components/ui/label';
 import { Separator } from '~react-web-ui-shadcn/components/ui/separator';
-
-import FormFieldInput from '@/components/form-fields-ahua/form-field-input';
-import FormFieldRadioBlock from '@/components/form-fields-ahua/form-field-radio-block';
-import FormFieldSelect from '@/components/form-fields-ahua/form-field-select';
 
 import ConfigureTriggers from './configure-triggers';
 

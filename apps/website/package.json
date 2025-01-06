@@ -34,7 +34,8 @@
     "clean": "rimraf .next",
     "app:down": "docker-compose stop app",
     "app:log": "docker-compose logs -f app",
-    "app:up": "docker-compose up -d app"
+    "app:up": "docker-compose up -d app",
+    "knip": "knip"
   },
   "dependencies": {
     "@artsy/fresnel": "^7.1.4",
@@ -86,7 +87,7 @@
     "@testing-library/jest-dom": "^6.4.6",
     "@testing-library/react": "^16.0.1",
     "@types/eslint": "^8.56.10",
-    "@types/node": "^20.12.11",
+    "@types/node": "^22.10.2",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.2.0",
     "@typescript-eslint/eslint-plugin": "^7.10.0",
@@ -109,6 +110,7 @@
     "eslint-plugin-simple-import-sort": "^12.1.0",
     "husky": "^9.0.11",
     "jsdom": "^24.1.1",
+    "knip": "^5.41.1",
     "lint-staged": "^15.2.4",
     "msw": "^2.3.0",
     "patch-package": "^8.0.0",

@@ -6,8 +6,6 @@ import { FormControl, FormField, FormItem, FormMessage } from '~react-web-ui-sha
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '~react-web-ui-shadcn/components/ui/select';
 import { repeatStr } from '~shared-universal/utils/string.util';
 
-import { ComponentBaseProps } from '@/interfaces/component.interface';
-
 import { CategoryEntity } from '@/modules/categories/interfaces/categories.interface';
 
 const renderCategories = (cates: CategoryEntity[], depth = 0) => {
@@ -28,7 +26,7 @@ type FormFieldCardSelectCategoryProps<T extends FieldValues> = {
   fieldName?: Path<T>;
   categories: CategoryEntity[];
   onChange?: (value?: string) => void;
-} & ComponentBaseProps;
+};
 
 export default function FormFieldCardSelectCategory<T extends FieldValues>({
   form,
@@ -55,7 +53,7 @@ export default function FormFieldCardSelectCategory<T extends FieldValues>({
                 <Select
                   value={field.value}
                   onValueChange={value => {
-                    const val = value === 'root' ? '' : value;
+                    const val = value === 'root' ? undefined : value;
 
                     field.onChange(val);
                     onChange?.(val);

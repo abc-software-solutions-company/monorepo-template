@@ -1,17 +1,17 @@
-import { TranslationValue } from '@/interfaces/language.interface';
-import { CampaignStep1FormValues } from '../interfaces/campaign.interface';
+import { Translation } from '~shared-universal/interfaces/language.interface';
+import { setUTCEndOfDay, setUTCStartOfDay } from '~shared-universal/utils/date.util';
 
-import { setUTCEndOfDay, setUTCStartOfDay } from '@/utils/date.util';
+import { CampaignStep1FormValues } from '../interfaces/campaign.interface';
 
 export type CampaignStep1Payload = {
   name: string;
-  name_localized: TranslationValue[];
+  name_localized: Translation[];
   description: string;
-  description_localized: TranslationValue[];
+  description_localized: Translation[];
   tnc: string;
-  tnc_localized: TranslationValue[];
+  tnc_localized: Translation[];
   image_url: string;
-  image_url_localized: TranslationValue[];
+  image_url_localized: Translation[];
   start_date: Date;
   end_date: Date;
 };

@@ -5,6 +5,7 @@ import { useLocale, useTranslations } from 'use-intl';
 import { ColumnDef, getCoreRowModel, useReactTable } from '@tanstack/react-table';
 import { Button } from '~react-web-ui-shadcn/components/ui/button';
 import Pagination from '~react-web-ui-shadcn/components/ui/pagination-custom';
+import { toDateTime } from '~shared-universal/utils/date.util';
 
 import { ComponentBaseProps } from '@/interfaces/component.interface';
 import { ContactEntity } from '../interfaces/contacts.interface';
@@ -15,9 +16,7 @@ import { DataTable } from '@/components/data-table/data-table';
 import ItemsPerPage from '@/components/item-per-page';
 import PaginationInfo from '@/components/pagination-info';
 
-import { toDateTime } from '@/utils/date.util';
-
-import ContactDialogDetail from './contact-dialog-detail';
+import ContactDetailModal from './contact-detail-modal';
 import ContactListFilter from './contact-list-filter';
 
 type ContactListProps = {
@@ -131,7 +130,7 @@ export const ContactList: FC<ContactListProps> = ({ className }) => {
           onChange={page => setFilter({ ...filter, page })}
         />
       </div>
-      <ContactDialogDetail id={viewDetailId} visible={!!viewDetailId} onCancel={() => setViewDetailId('')} />
+      <ContactDetailModal id={viewDetailId} visible={!!viewDetailId} onCancel={() => setViewDetailId('')} />
     </div>
   );
 };

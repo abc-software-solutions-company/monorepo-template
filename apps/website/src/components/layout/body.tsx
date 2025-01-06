@@ -6,7 +6,8 @@ import { ComponentBaseProps } from '@/interfaces/component.interface';
 
 import AllTheProviders from '../all-the-providers';
 
-import '@/globals.scss';
+import '~react-web-ui-shadcn/globals.scss';
+// import '@/globals.scss';
 import 'lightgallery.js/dist/css/lightgallery.css';
 
 import 'swiper/scss';

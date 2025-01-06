@@ -1,8 +1,8 @@
 import { useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ReactFlowProvider } from '@xyflow/react';
+import ModalConfirm from '~react-web-ui-shadcn/components/modals/modal-confirm';
 
-import ModalConfirm from '@/components/modals/modal-confirm';
 import PageWrapper from '@/components/pages/page-wrapper';
 
 import RuleBuilder from '@/modules/react-flow/components/rule/rule-builder';

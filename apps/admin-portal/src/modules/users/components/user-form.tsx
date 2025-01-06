@@ -4,6 +4,11 @@ import { SubmitHandler, useForm } from 'react-hook-form';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { useLocale, useTranslations } from 'use-intl';
 import { zodResolver } from '@hookform/resolvers/zod';
+import FormFieldInputEmail from '~react-web-ui-shadcn/components/form-fields/form-field-input-email';
+import FormFieldInputPassword from '~react-web-ui-shadcn/components/form-fields/form-field-input-password';
+import FormFieldInputPhoneNumber from '~react-web-ui-shadcn/components/form-fields/form-field-input-phone-number';
+import FormFieldInputUserName from '~react-web-ui-shadcn/components/form-fields/form-field-input-user-name';
+import ModalLoading from '~react-web-ui-shadcn/components/modals/modal-loading';
 import { Card, CardContent } from '~react-web-ui-shadcn/components/ui/card';
 import { Checkbox } from '~react-web-ui-shadcn/components/ui/checkbox';
 import { Form, FormLabel } from '~react-web-ui-shadcn/components/ui/form';
@@ -16,13 +21,8 @@ import { USER_ROLE, USER_STATUS, USER_STATUSES } from '../constants/users.consta
 import useUsers from '../hooks/use-users';
 
 import FormFieldCardSelectStatus from '@/components/form-fields/form-field-card-select-status';
-import FormFieldInputEmail from '@/components/form-fields/form-field-input-email';
-import FormFieldInputPassword from '@/components/form-fields/form-field-input-password';
-import FormFieldInputPhoneNumber from '@/components/form-fields/form-field-input-phone-number';
-import FormFieldInputUserName from '@/components/form-fields/form-field-input-user-name';
 import FormFieldSelectUserRole from '@/components/form-fields/form-field-select-user-role';
 import FormToolbar from '@/components/form-toolbar';
-import ModalLoading from '@/components/modals/modal-loading';
 import TooltipInfo from '@/components/tooltip-info';
 
 import { useUsersState } from '../states/users.state';

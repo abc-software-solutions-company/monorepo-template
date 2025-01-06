@@ -6,6 +6,9 @@ import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { toast } from 'sonner';
 import { useLocale, useTranslations } from 'use-intl';
 import { zodResolver } from '@hookform/resolvers/zod';
+import FormFieldCKEditor from '~react-web-ui-shadcn/components/form-fields/form-field-ckeditor';
+import FormFieldInputName from '~react-web-ui-shadcn/components/form-fields/form-field-input-name';
+import ModalLoading from '~react-web-ui-shadcn/components/modals/modal-loading';
 import { Card, CardContent } from '~react-web-ui-shadcn/components/ui/card';
 import { Form } from '~react-web-ui-shadcn/components/ui/form';
 import { objectToQueryString } from '~shared-universal/utils/string.util';
@@ -16,12 +19,9 @@ import { FAQ_STATUS, FAQ_STATUSES } from '../constants/faqs.constant';
 
 import { useCreateFaqMutation, useGetFaqQuery, useUpdateFaqMutation } from '../hooks/use-faq-queries';
 
-import EditorFileDialog from '@/components/editors/editor-file-dialog';
+import EditorFileDialog from '@/components/editor-file-dialog';
 import FormFieldCardSelectStatus from '@/components/form-fields/form-field-card-select-status';
-import FormFieldCKEditorFull from '@/components/form-fields/form-field-ckeditor-full';
-import FormFieldInputName from '@/components/form-fields/form-field-input-name';
 import FormToolbar from '@/components/form-toolbar';
-import ModalLoading from '@/components/modals/modal-loading';
 
 import { faqFormValidator } from '../validators/faq-form.validator';
 
@@ -121,7 +121,7 @@ const FaqForm: FC<FaqFormProps> = ({ isEdit }) => {
             <Card className="grow">
               <CardContent className="grid gap-4 pt-4">
                 <FormFieldInputName form={form} fieldName={'title'} />
-                <FormFieldCKEditorFull form={form} editorRef={editorRef} setVisible={setIsFileManagerVisible} fieldName={'content'} />
+                <FormFieldCKEditor form={form} editorRef={editorRef} setVisible={setIsFileManagerVisible} fieldName={'content'} />
               </CardContent>
             </Card>
             <div className="w-72 shrink-0">

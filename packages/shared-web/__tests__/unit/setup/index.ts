@@ -1,5 +1,4 @@
 import * as matchers from '@testing-library/jest-dom/matchers';
-
 import { server } from '../libs/msw/server';
 
 expect.extend(matchers);
@@ -16,7 +15,7 @@ class IntersectionObserver {
 Object.defineProperty(global, 'IntersectionObserver', {
   writable: true,
   configurable: true,
-  value: IntersectionObserver
+  value: IntersectionObserver,
 });
 
 Object.defineProperty(global.navigator, 'geolocation', {
@@ -25,8 +24,8 @@ Object.defineProperty(global.navigator, 'geolocation', {
   value: {
     clearWatch: vi.fn(),
     getCurrentPosition: vi.fn(),
-    watchPosition: vi.fn()
-  }
+    watchPosition: vi.fn(),
+  },
 });
 
 beforeAll(() => server.listen());

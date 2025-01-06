@@ -1,16 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { ControllerRenderProps, Path, UseFormReturn } from 'react-hook-form';
+import FormFieldDatePicker from '~react-web-ui-shadcn/components/form-fields-ahua/form-field-date-picker';
+import FormFieldInputMultiLanguage from '~react-web-ui-shadcn/components/form-fields-ahua/form-field-input-multi-language';
+import FormFieldQuillMultiLanguage from '~react-web-ui-shadcn/components/form-fields-ahua/form-field-quill-multi-language';
+import FormFieldUploaderMultiLanguage, { FilePreview } from '~react-web-ui-shadcn/components/form-fields-ahua/form-field-uploader-multi-language';
+import ModalLoading from '~react-web-ui-shadcn/components/modals/modal-loading';
 import { Form } from '~react-web-ui-shadcn/components/ui/form';
+import { LANGUAGES } from '~shared-universal/constants/language.constant';
+import { Translation } from '~shared-universal/interfaces/language.interface';
 
-import { TranslationValue } from '@/interfaces/language.interface';
-
-import FormFieldDatePicker from '@/components/form-fields-ahua/form-field-date-picker';
-import FormFieldEditorMultiLanguage from '@/components/form-fields-ahua/form-field-editor-multi-language';
-import FormFieldInputMultiLanguage from '@/components/form-fields-ahua/form-field-input-multi-language';
-import FormFieldUploaderMultiLanguage, { FilePreview } from '@/components/form-fields-ahua/form-field-uploader-multi-language';
-import ModalLoading from '@/components/modals/modal-loading';
-
-import { locales } from '../../constants/campaign.constant';
 import { campaignStep1Dto } from '../../dtos/campaign-step-1.dto';
 import { CampaignStep1FormValues } from '../../interfaces/campaign.interface';
 
@@ -43,7 +41,7 @@ const CampaignStep1Form: React.FC<CampaignStep1FormProps> = ({ form, onSubmit })
   ) => {
     setIsUploading(true);
 
-    const values: TranslationValue[] = Array.isArray(field.value) ? [...field.value] : [];
+    const values: Translation[] = Array.isArray(field.value) ? [...field.value] : [];
     const index = values.findIndex(v => v.lang === locale);
 
     const fileInfos: FilePreview[] = filenames.map((filename, idx) => ({
@@ -84,7 +82,7 @@ const CampaignStep1Form: React.FC<CampaignStep1FormProps> = ({ form, onSubmit })
       return newPreviews;
     });
 
-    const values: TranslationValue[] = Array.isArray(field.value) ? [...field.value] : [];
+    const values: Translation[] = Array.isArray(field.value) ? [...field.value] : [];
     const valueIndex = values.findIndex(v => v.lang === locale);
 
     if (valueIndex >= 0) {
@@ -98,11 +96,11 @@ const CampaignStep1Form: React.FC<CampaignStep1FormProps> = ({ form, onSubmit })
       <form onSubmit={form.handleSubmit(onSubmit)}>
         <div className="flex space-x-10">
           <div className="w-full max-w-md space-y-4">
-            <FormFieldInputMultiLanguage required form={form} fieldName="name" formLabel="Name" locales={locales} maxLength={50} />
-            <FormFieldInputMultiLanguage required form={form} fieldName="description" formLabel="Description" locales={locales} maxLength={300} />
+            <FormFieldInputMultiLanguage required form={form} fieldName="name" formLabel="Name" locales={LANGUAGES} maxLength={50} />
+            <FormFieldInputMultiLanguage required form={form} fieldName="description" formLabel="Description" locales={LANGUAGES} maxLength={300} />
             <FormFieldDatePicker required form={form} fieldName="startDate" formLabel="Start Date" disableBefore={NEXT_DAY} />
             <FormFieldDatePicker required form={form} fieldName="endDate" formLabel="End Date" disableBefore={form.watch('startDate') ?? NEXT_DAY} />
-            <FormFieldEditorMultiLanguage form={form} fieldName="tnc" formLabel="Terms and conditions" locales={locales} maxLength={300} />
+            <FormFieldQuillMultiLanguage form={form} fieldName="tnc" formLabel="Terms and conditions" locales={LANGUAGES} maxLength={300} />
           </div>
           <div className="w-full max-w-md space-y-4">
             <FormFieldUploaderMultiLanguage
@@ -110,7 +108,7 @@ const CampaignStep1Form: React.FC<CampaignStep1FormProps> = ({ form, onSubmit })
               form={form}
               fieldName="imageUrl"
               formLabel="Campaign image"
-              locales={locales}
+              locales={LANGUAGES}
               previews={previews}
               isUploading={isUploading}
               maxSize={5242880}

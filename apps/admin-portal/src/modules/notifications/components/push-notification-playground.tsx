@@ -2,15 +2,14 @@ import { SubmitHandler, useForm } from 'react-hook-form';
 import { useTranslations } from 'use-intl';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from '@tanstack/react-query';
+import FormFieldInputName from '~react-web-ui-shadcn/components/form-fields/form-field-input-name';
+import FormFieldTextAreaContent from '~react-web-ui-shadcn/components/form-fields/form-field-text-area-content';
 import { Button } from '~react-web-ui-shadcn/components/ui/button';
 import { Form } from '~react-web-ui-shadcn/components/ui/form';
 import { Loading } from '~react-web-ui-shadcn/components/ui/loading';
 import { useToast } from '~react-web-ui-shadcn/components/ui/use-toast';
 
 import { SendNotificationDto } from '../interfaces/notifications.interface';
-
-import FormFieldInputName from '@/components/form-fields/form-field-input-name';
-import FormFieldTextAreaContent from '@/components/form-fields/form-field-text-area-content';
 
 import NotificationApi from '../api/notifications.api';
 import { sendPushNotificationValidator } from '../validators/send-push-notification.validator';

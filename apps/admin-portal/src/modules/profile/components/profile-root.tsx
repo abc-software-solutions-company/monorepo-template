@@ -69,7 +69,7 @@ const ProfileRoot: FC<ComponentBaseProps> = ({ className }) => {
         <ProfileCover user={authState.user} />
         <div className="relative flex items-center justify-between px-4">
           <div className="flex items-end gap-3">
-            <ProfileAvatar className="-mt-14" user={authState.user} />
+            <ProfileAvatar className="-mt-14" />
             <ProfileName user={authState.user} />
           </div>
           <div className="ml-auto mt-6">

@@ -5,7 +5,6 @@ import { Card, CardContent, CardHeader, CardTitle } from '~react-web-ui-shadcn/c
 import { FormControl, FormField, FormItem, FormMessage } from '~react-web-ui-shadcn/components/ui/form';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '~react-web-ui-shadcn/components/ui/select';
 
-import { ComponentBaseProps } from '@/interfaces/component.interface';
 import { OptionType } from '@/interfaces/status.interface';
 
 type FormFieldCardSelectStatusProps<T extends FieldValues> = {
@@ -13,7 +12,7 @@ type FormFieldCardSelectStatusProps<T extends FieldValues> = {
   formLabel?: string;
   fieldName?: Path<T>;
   statuses: OptionType[];
-} & ComponentBaseProps;
+};
 
 export default function FormFieldCardSelectStatus<T extends FieldValues>({
   form,

@@ -7,6 +7,7 @@ import { useMutation } from '@tanstack/react-query';
 import { Button } from '~react-web-ui-shadcn/components/ui/button';
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '~react-web-ui-shadcn/components/ui/form';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '~react-web-ui-shadcn/components/ui/select';
+import { LANGUAGES } from '~shared-universal/constants/language.constant';
 import useDeepCompareEffect from '~shared-universal/hooks/use-deep-compare-effect';
 import { objectToQueryString } from '~shared-universal/utils/string.util';
 
@@ -73,8 +74,13 @@ export function SettingFormAccount() {
                       <SelectValue placeholder="" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="en-us">United States</SelectItem>
-                      <SelectItem value="vi-vn">Vietnamese</SelectItem>
+                      {LANGUAGES.map(x => {
+                        return (
+                          <SelectItem key={x.code} value={x.code}>
+                            {x.name}
+                          </SelectItem>
+                        );
+                      })}
                     </SelectContent>
                   </Select>
                 </FormControl>
