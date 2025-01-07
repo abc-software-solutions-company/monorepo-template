@@ -52,6 +52,10 @@ USER nestjs
 
 # Automatically leverage output traces to reduce image size
 COPY --from=installer --chown=nestjs:nodejs /app/apps/api/dist ./
+COPY --from=installer --chown=nestjs:nodejs /app/apps/api/package.json ./package.json
+COPY --from=installer --chown=nestjs:nodejs /app/apps/api/tsconfig.json ./tsconfig.json
+COPY --from=installer --chown=nestjs:nodejs /app/apps/api/.env ./.env
+COPY --from=installer --chown=nestjs:nodejs /app/apps/api/node_modules ./node_modules
 
 # Correct the path to the entry point
 CMD ["/bin/sh", "-c", "yarn migration:run && node dist/main.js"]
