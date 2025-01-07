@@ -55,4 +55,4 @@ COPY --from=installer --chown=nextjs:nodejs /app/apps/website/.next/static ./app
 COPY --from=installer --chown=nextjs:nodejs /app/apps/website/public ./apps/web/public
 
 # Start web application
-CMD ["/bin/sh", "-c", "cd apps/website && yarn start"]
+CMD ["/bin/sh", "-c", "cd apps/website && node server.js"]
