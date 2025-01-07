@@ -27,6 +27,7 @@ declare module '@goongmaps/goong-js' {
     export class Popup {
       constructor(options?: { offset?: number });
       setHTML(html: string): this;
+      setDOMContent(element: HTMLElement): this;
       remove(): void;
       addTo(map: Map | null): this;
     }

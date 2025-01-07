@@ -1,6 +1,6 @@
 export const MAP_INITIAL_CENTER_COORDINATE = [107.68994474874137, 15.91334589532885];
 export const MAP_INITIAL_ZOOM = 5;
-export const MAP_MAKER_OFFET = 32;
+export const MAP_MARKER_OFFET = 32;
 export const MAP_CUSTOM_MARKER = `
   <style>
     .goong-map svg {transition: transform 0.3s ease;}

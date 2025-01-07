@@ -4,14 +4,16 @@
  */
 
 import { FC, useEffect, useRef, useState } from 'react';
+import { createRoot } from 'react-dom/client';
 import goongjs from '@goongmaps/goong-js';
 import { cn } from '~react-web-ui-shadcn/lib/utils';
 
 import { ShopStore } from '../interfaces/shop-stores.interface';
 
-import { MAP_CUSTOM_MARKER, MAP_INITIAL_CENTER_COORDINATE, MAP_INITIAL_ZOOM, MAP_MAKER_OFFET } from '../constants/shop-stores.constant';
+import { MAP_CUSTOM_MARKER, MAP_INITIAL_CENTER_COORDINATE, MAP_INITIAL_ZOOM, MAP_MARKER_OFFET } from '../constants/shop-stores.constant';
 
 import ShopStoreList from './shop-store-list';
+import ShopStorePopup from './shop-store-popup';
 
 import '@goongmaps/goong-js/dist/goong-js.css';
 
@@ -93,17 +95,11 @@ const ShopStoreGoongJs: FC<ShopStoreGoongJsProps> = ({ className, stores, apiKey
 
           el.innerHTML = MAP_CUSTOM_MARKER;
 
-          const popup = new goongjs.Popup({ offset: MAP_MAKER_OFFET }).setHTML(`
-            <div class="mt-1.5">
-              <h3>${store.address}</h3>
-              <p class="my-3">ĐT: ${store.phoneNumber}</p>
-              <button type="button" class="px-3 py-1.5 text-sm font-medium border rounded hover:bg-primary/10 flex items-center gap-1"
-                onclick="window.open('https://www.google.com/maps/search/?api=1&query=${store.position.lat},${store.position.lng}', '_blank')">
-                Chỉ đường
-                <svg class="rotate-90" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-mouse-pointer-2"><path d="M4.037 4.688a.495.495 0 0 1 .651-.651l16 6.5a.5.5 0 0 1-.063.947l-6.124 1.58a2 2 0 0 0-1.438 1.435l-1.579 6.126a.5.5 0 0 1-.947.063z"/></svg>
-              </button>
-            </div>
-          `);
+          const popupNode = document.createElement('div');
+
+          createRoot(popupNode).render(<ShopStorePopup address={store.address} phoneNumber={store.phoneNumber} position={store.position} />);
+
+          const popup = new goongjs.Popup({ offset: MAP_MARKER_OFFET }).setDOMContent(popupNode);
 
           const marker = new goongjs.Marker(el).setLngLat([store.position.lng, store.position.lat]).setPopup(popup).addTo(newMap);
 
