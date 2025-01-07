@@ -54,5 +54,7 @@ COPY --from=installer --chown=nextjs:nodejs /app/apps/website/.next/standalone .
 COPY --from=installer --chown=nextjs:nodejs /app/apps/website/.next/static ./apps/website/.next/static
 COPY --from=installer --chown=nextjs:nodejs /app/apps/website/public ./apps/web/public
 
+ENV HOSTNAME "0.0.0.0"
+
 # Start web application
 CMD ["/bin/sh", "-c", "cd apps/website && node server.js"]
