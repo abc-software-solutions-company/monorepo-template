@@ -4,6 +4,7 @@ import path from 'path';
 
 const nextConfig = {
   reactStrictMode: true,
+  output: 'standalone',
   transpilePackages: ['@repo/react-web-ui-shadcn', '@repo/shared-web', '@repo/shared-universal'],
   images: {
     remotePatterns: [

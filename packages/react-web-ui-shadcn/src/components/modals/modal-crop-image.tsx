@@ -1,5 +1,5 @@
 import { FC, useCallback, useState } from 'react';
-import Cropper, { Area } from 'react-easy-crop';
+import Cropper, { type Area } from 'react-easy-crop';
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
 import { useTranslations } from 'use-intl';
 import { Button } from '~react-web-ui-shadcn/components/ui/button';
