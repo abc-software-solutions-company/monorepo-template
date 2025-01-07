@@ -10,7 +10,7 @@ RUN apk update
 RUN apk add --no-cache libc6-compat
 # Set working directory
 WORKDIR /app
-RUN yarn global add turbo
+RUN yarn global add turbo@2.3.3
 COPY . .
 RUN turbo prune website --docker
 
@@ -43,7 +43,16 @@ RUN yarn turbo build --filter=website
 FROM base AS runner
 WORKDIR /app
 
-COPY --from=installer /app .
+# Don't run production as root
+RUN addgroup --system --gid 1001 nodejs
+RUN adduser --system --uid 1001 nextjs
+USER nextjs
+
+# Automatically leverage output traces to reduce image size
+# https://nextjs.org/docs/advanced-features/output-file-tracing
+COPY --from=installer --chown=nextjs:nodejs /app/apps/website/.next/standalone ./
+COPY --from=installer --chown=nextjs:nodejs /app/apps/website/.next/static ./apps/website/.next/static
+COPY --from=installer --chown=nextjs:nodejs /app/apps/website/public ./apps/web/public
 
 # Start web application
 CMD ["/bin/sh", "-c", "cd apps/website && yarn start"]
