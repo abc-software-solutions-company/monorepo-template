@@ -75,7 +75,7 @@ const ShopStoreGoongJs: FC<ShopStoreGoongJsProps> = ({ className, stores, apiKey
 
       const newMap = new goongjs.Map({
         container: mapContainer.current,
-        style: 'https://tiles.goong.io/assets/goong_map_web.json', //goong_map_dark// map.setStyle(styleURL);
+        style: 'https://tiles.goong.io/assets/goong_map_web.json',
         center: MAP_INITIAL_CENTER_COORDINATE,
         zoom: MAP_INITIAL_ZOOM,
       });
@@ -85,10 +85,10 @@ const ShopStoreGoongJs: FC<ShopStoreGoongJsProps> = ({ className, stores, apiKey
       newMap.on('load', () => {
         if (!newMap) return;
 
-        // newMap.addControl(new goongjs.GeolocateControl(), 'top-left');
+        newMap.addControl(new goongjs.GeolocateControl(), 'top-left');
         newMap.addControl(new goongjs.FullscreenControl(), 'top-left');
         newMap.addControl(new goongjs.NavigationControl(), 'top-left');
-        // newMap.addControl(new goongjs.ScaleControl(), 'bottom-left');
+        newMap.addControl(new goongjs.ScaleControl(), 'bottom-left');
 
         stores.forEach(store => {
           const el = document.createElement('div');
@@ -125,8 +125,8 @@ const ShopStoreGoongJs: FC<ShopStoreGoongJsProps> = ({ className, stores, apiKey
   }, [apiKey, stores]);
 
   return (
-    <div className={cn('shop-stores z-1 relative overflow-hidden rounded-lg', className)}>
-      <div className="relative lg:absolute lg:bottom-0 lg:right-0 lg:top-0 lg:z-[1] lg:order-2 lg:w-96 lg:p-4">
+    <div className={cn('shop-stores relative overflow-hidden rounded-lg', className)}>
+      <div className="relative lg:absolute lg:bottom-0 lg:right-0 lg:top-0 lg:order-2 lg:w-96 lg:p-4">
         <ShopStoreList stores={stores} selectedStore={selectedStore} onStoreClick={handleStoreClick} />
       </div>
       <div ref={mapContainer} className="goong-map h-[500px] lg:h-[700px]" />

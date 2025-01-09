@@ -10,7 +10,9 @@ import { cn } from '~react-web-ui-shadcn/lib/utils';
 
 import { ShopStore } from '../interfaces/shop-stores.interface';
 
-import ShopStoreGoongJs from './shop-store-goong';
+// import ShopStoreGoongJs from './shop-store-goong';
+// import ShopStoreGoogle from './shop-store-google';
+import ShopStoreLeaflet from './shop-store-leaflet';
 
 type ShopStoreRootProps = {
   className?: string;
@@ -1043,7 +1045,9 @@ const ShopStoreRoot: FC<ShopStoreRootProps> = ({ className }) => {
 
   return (
     <div className={cn(className)}>
-      <ShopStoreGoongJs stores={stores} apiKey={process.env.NEXT_PUBLIC_MAP_API_KEY ?? ''} />
+      {/* <ShopStoreGoongJs stores={stores} apiKey={process.env.NEXT_PUBLIC_GOONG_MAP_API_KEY ?? ''} /> */}
+      <ShopStoreLeaflet stores={stores} />
+      {/* <ShopStoreGoogle stores={stores} apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAP_API_KEY ?? ''} /> */}
     </div>
   );
 };

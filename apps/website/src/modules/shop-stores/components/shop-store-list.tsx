@@ -63,7 +63,7 @@ const ShopStoreList: React.FC<ShopStoreListProps> = ({ className, showCounter = 
                 <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
               </Button>
             </PopoverTrigger>
-            <PopoverContent className="p-0" side="bottom" align="end">
+            <PopoverContent className="p-0 lg:hidden" side="bottom" align="end">
               <Command>
                 <CommandInput placeholder={t('search_store')} />
                 <CommandList className="scrollbar p-0">
@@ -95,7 +95,7 @@ const ShopStoreList: React.FC<ShopStoreListProps> = ({ className, showCounter = 
         </div>
       </div>
       {/* Desktop View */}
-      <div className={cn('hidden h-full flex-col rounded-lg border border-primary bg-muted lg:flex', className)}>
+      <div className={cn('relative z-10 hidden h-full flex-col rounded-lg border border-primary bg-muted lg:flex', className)}>
         <div className="border-b border-foreground/50 p-4">
           <h2 className="font-bold uppercase">{t('list_of_stores')}</h2>
         </div>

@@ -14,12 +14,12 @@ type ShopStorePopupProps = {
 };
 
 const ShopStorePopup: FC<ShopStorePopupProps> = ({ address, phoneNumber, position }) => (
-  <div className="mt-1.5">
+  <div className="mt-1.5 text-slate-800">
     <h3>{address}</h3>
     <p className="my-3">ĐT: {phoneNumber}</p>
     <Button
       type="button"
-      variant="ghost"
+      variant="outline-primary"
       onClick={() => window.open(`https://www.google.com/maps/search/?api=1&query=${position.lat},${position.lng}`, '_blank')}
     >
       Chỉ đường

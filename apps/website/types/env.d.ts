@@ -12,5 +12,7 @@ declare namespace NodeJS {
     AUTH_FACEBOOK_SECRET: string;
     AUTH_GOOGLE_ID: string;
     AUTH_GOOGLE_SECRET: string;
+    NEXT_PUBLIC_GOONG_MAP_API_KEY: string;
+    NEXT_PUBLIC_GOOGLE_MAP_API_KEY: string;
   }
 }
