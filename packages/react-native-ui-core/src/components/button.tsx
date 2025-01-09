@@ -37,6 +37,7 @@ const Button: React.FC<IButtonProps> = ({
   style,
   textStyle,
   onPress,
+  ...rest
 }) => {
   const [isFocused, setIsFocused] = useState(false);
   const [isLoading, setIsLoading] = useState(loading);
@@ -122,6 +123,7 @@ const Button: React.FC<IButtonProps> = ({
 
   return (
     <Pressable
+      {...rest}
       style={[ds.itemsCenter, ds.justifyCenter, ds.row, ds.gap10, buttonStyle, isDisabled && ds.opacity50, style]}
       disabled={isDisabled}
       onPress={handlePress}
@@ -129,7 +131,7 @@ const Button: React.FC<IButtonProps> = ({
       onPressOut={() => setIsFocused(false)}
     >
       {isLoading && <Loading size={getComponentSizes('button')[size].iconSize} color="white" trackColor={Colors.gray[300]} />}
-      <Text fontWeight="Bold" style={[ds.uppercase, buttonTextStyle, textStyle]}>
+      <Text testID={`${rest.testID}.label`} fontWeight="Bold" style={[ds.uppercase, buttonTextStyle, textStyle]}>
         {getButtonText()}
       </Text>
     </Pressable>
