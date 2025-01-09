@@ -1,6 +1,5 @@
 import { Metadata } from 'next';
 
-import { LayoutProps } from '@/interfaces/layout.interface';
 import { PageBaseProps } from '@/interfaces/page.interface';
 
 import AdminPortalRoot from '@/modules/admin-portal/components/admin-portal-root';
@@ -13,7 +12,7 @@ export default async function PageAdminPortal(_pageProps: PageBaseProps) {
   );
 }
 
-export async function generateMetadata({ params: { locale } }: LayoutProps): Promise<Metadata> {
+export async function generateMetadata({ params: { locale } }: PageBaseProps): Promise<Metadata> {
   return {
     title: 'Admin Portal',
     description: 'Admin Portal Description',

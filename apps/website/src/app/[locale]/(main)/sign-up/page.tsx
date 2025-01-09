@@ -1,6 +1,5 @@
 import { Metadata } from 'next';
 
-import { LayoutProps } from '@/interfaces/layout.interface';
 import { PageBaseProps } from '@/interfaces/page.interface';
 
 import FormSignUp from '@/modules/auth/components/form-sign-up';
@@ -13,7 +12,7 @@ export default async function PageSignUp(_pageProps: PageBaseProps) {
   );
 }
 
-export async function generateMetadata({ params: { locale } }: LayoutProps): Promise<Metadata> {
+export async function generateMetadata({ params: { locale } }: PageBaseProps): Promise<Metadata> {
   return {
     title: 'Sign Up',
     description: 'Sign Up Description',

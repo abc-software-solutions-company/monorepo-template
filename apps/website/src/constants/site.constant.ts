@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 export const WEBSITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
 export const WEBSITE_NAME = 'NextJs Template';
 export const WEBSITE_DESCRIPTION =
@@ -13,4 +14,4 @@ export const COMPANY_SOCIAL = {
 };
 export const COMPANY_PRODUCTS = [...Object.values(COMPANY_SOCIAL), 'https://tintranfs.com'];
 
-export const IS_ENABLE_SEO = process.env.NEXT_PUBLIC_APP_ENV === 'production';
+export const SEO_ENABLED = process.env.NEXT_PUBLIC_APP_ENV === 'production';

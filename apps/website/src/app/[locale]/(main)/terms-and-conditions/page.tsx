@@ -1,6 +1,5 @@
 import { Metadata } from 'next';
 
-import { LayoutProps } from '@/interfaces/layout.interface';
 import { PageBaseProps } from '@/interfaces/page.interface';
 
 import PrivacyPolicyApi from '@/modules/contents/api/contents.api';
@@ -16,7 +15,7 @@ export default async function PageTermsAndConditions(_pageProps: PageBaseProps) 
   );
 }
 
-export async function generateMetadata({ params: { locale } }: LayoutProps): Promise<Metadata> {
+export async function generateMetadata({ params: { locale } }: PageBaseProps): Promise<Metadata> {
   return {
     title: 'Terms and Conditions',
     description: 'Terms and Conditions Description',
