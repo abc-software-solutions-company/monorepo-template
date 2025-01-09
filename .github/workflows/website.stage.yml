@@ -15,7 +15,7 @@ env:
   DOCKER_COMPOSE_PATH: apps/website/docker-compose.yml
   ENV_FILE_PATH: apps/website/.env
   DOCKER_HOST_PORT: 3004 # Change this value if your server is already run docker container with this port, using command docker ps to check it
-  DOCKER_CONTAINER_PORT: 3001 # This is the app port, which command yarn start run and provided
+  DOCKER_CONTAINER_PORT: 3000
 
 jobs:
   build-and-deploy:
