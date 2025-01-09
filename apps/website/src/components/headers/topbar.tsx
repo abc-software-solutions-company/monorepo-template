@@ -36,7 +36,10 @@ const TopBar: FC<ITopBarProps> = ({ userSession }) => {
   }, []);
 
   return (
-    <div className={classNames('sticky top-0 z-30 py-3 transition-all duration-300', isSticky && 'bg-background shadow-md')} data-testid="topbar">
+    <div
+      className={classNames('sticky top-0 z-30 py-1.5 transition-all duration-300 lg:py-3', isSticky && 'bg-background shadow-md')}
+      data-testid="topbar"
+    >
       <div className="container">
         <div className="flex flex-wrap items-center justify-between">
           <Logo />
