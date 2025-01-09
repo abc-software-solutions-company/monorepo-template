@@ -1,3 +1,5 @@
+import { Metadata } from 'next';
+
 import { PageBaseProps } from '@/interfaces/page.interface';
 
 import PrivacyPolicyApi from '@/modules/contents/api/contents.api';
@@ -11,4 +13,14 @@ export default async function PagePrivacyPolicy(_pageProps: PageBaseProps) {
       <PrivacyPolicy data={response.data} />
     </div>
   );
+}
+
+export async function generateMetadata({ params: { locale } }: PageBaseProps): Promise<Metadata> {
+  return {
+    title: 'Privacy Policy',
+    description: 'Privacy Policy Description',
+    alternates: {
+      canonical: `/${locale}/privacy-policy`,
+    },
+  };
 }

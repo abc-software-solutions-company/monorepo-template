@@ -13,9 +13,12 @@ export default async function GamePage(_pageProps: PageBaseProps) {
   );
 }
 
-export async function generateMetadata(_pageProps: PageBaseProps): Promise<Metadata> {
+export async function generateMetadata({ params: { locale } }: PageBaseProps): Promise<Metadata> {
   return {
     title: 'Game',
     description: 'Game Description',
+    alternates: {
+      canonical: `/${locale}/game`,
+    },
   };
 }

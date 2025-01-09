@@ -34,9 +34,12 @@ export default async function BlogPage(pageProps: PageBaseProps) {
   );
 }
 
-export async function generateMetadata(_pageProps: PageBaseProps): Promise<Metadata> {
+export async function generateMetadata({ params: { locale } }: PageBaseProps): Promise<Metadata> {
   return {
     title: 'Blog',
     description: 'Blog Description',
+    alternates: {
+      canonical: `/${locale}/blog`,
+    },
   };
 }

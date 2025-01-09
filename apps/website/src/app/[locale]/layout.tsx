@@ -6,7 +6,7 @@ import { locales } from '@/config';
 
 import { LayoutProps } from '@/interfaces/layout.interface';
 
-import { COMPANY_NAME, COMPANY_URL, isEnableSEO, WEBSITE_DESCRIPTION, WEBSITE_KEYWORD, WEBSITE_NAME, WEBSITE_URL } from '@/constants/site.constant';
+import { COMPANY_NAME, COMPANY_URL, SEO_ENABLED, WEBSITE_DESCRIPTION, WEBSITE_KEYWORD, WEBSITE_NAME, WEBSITE_URL } from '@/constants/site.constant';
 
 export default async function RootLayout({ children, params: { locale } }: LayoutProps) {
   unstable_setRequestLocale(locale);
@@ -125,12 +125,12 @@ export async function generateMetadata(_layoutProps: LayoutProps): Promise<Metad
       },
     ],
     robots: {
-      index: isEnableSEO,
-      follow: isEnableSEO,
+      index: SEO_ENABLED,
+      follow: SEO_ENABLED,
       nocache: true,
       googleBot: {
-        index: isEnableSEO,
-        follow: isEnableSEO,
+        index: SEO_ENABLED,
+        follow: SEO_ENABLED,
       },
     },
     other: {

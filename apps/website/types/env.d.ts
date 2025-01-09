@@ -1,5 +1,6 @@
 declare namespace NodeJS {
   export interface ProcessEnv {
+    NEXT_PUBLIC_APP_ENV: string;
     NEXT_PUBLIC_API_URL: string;
     NEXT_PUBLIC_SITE_URL: string;
     NEXT_PUBLIC_MESSENGER_PAGE_ID: string;
