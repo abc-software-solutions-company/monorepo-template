@@ -1,0 +1,20 @@
+import React from 'react';
+import { StyleProp, ViewStyle } from 'react-native';
+import { ds } from '~react-native-design-system';
+
+import { useCoreUITheme } from '../themes/theme.context';
+import View from './view';
+
+interface ISeparatorProps {
+  orientation?: 'vertical' | 'horizontal';
+  style?: StyleProp<ViewStyle>;
+}
+function Separator({ orientation = 'horizontal', style, ...rest }: ISeparatorProps) {
+  const { configs } = useCoreUITheme();
+
+  const bgColor: ViewStyle = { backgroundColor: configs.border };
+
+  return <View style={[orientation === 'horizontal' ? [ds.wFull, { height: 1 }] : [ds.hFull, { width: 1 }], bgColor, style]} {...rest} />;
+}
+
+export default Separator;

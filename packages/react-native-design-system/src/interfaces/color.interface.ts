@@ -1,0 +1,43 @@
+export type ColorShades = {
+  '50': string;
+  '100': string;
+  '200': string;
+  '300': string;
+  '400': string;
+  '500': string;
+  '600': string;
+  '700': string;
+  '800': string;
+  '900': string;
+  '950': string;
+};
+
+export type Colors = {
+  transparent: string;
+  black: string;
+  white: string;
+  primary: ColorShades;
+  secondary: ColorShades;
+  slate: ColorShades;
+  gray: ColorShades;
+  zinc: ColorShades;
+  neutral: ColorShades;
+  stone: ColorShades;
+  red: ColorShades;
+  orange: ColorShades;
+  amber: ColorShades;
+  yellow: ColorShades;
+  lime: ColorShades;
+  green: ColorShades;
+  emerald: ColorShades;
+  teal: ColorShades;
+  cyan: ColorShades;
+  sky: ColorShades;
+  blue: ColorShades;
+  indigo: ColorShades;
+  violet: ColorShades;
+  purple: ColorShades;
+  fuchsia: ColorShades;
+  pink: ColorShades;
+  rose: ColorShades;
+};

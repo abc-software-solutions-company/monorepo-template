@@ -1,0 +1,40 @@
+{
+  "name": "@repo/react-native-ui-core",
+  "version": "0.0.0",
+  "private": true,
+  "description": "React Native Core UI",
+  "license": "MIT",
+  "exports": {
+    "./components/*": [
+      "./src/components/*.tsx",
+      "./src/components/*.ts"
+    ]
+  },
+  "dependencies": {
+    "@repo/react-native-design-system": "*",
+    "lucide-react-native": "^0.438.0",
+    "react": "^18.2.0",
+    "react-native": "0.73.9",
+    "react-native-gesture-handler": "2.17.1",
+    "react-native-safe-area-context": "^4.11.0"
+  },
+  "devDependencies": {
+    "@repo/config-tailwindcss": "*",
+    "@repo/config-typescript": "*",
+    "@repo/eslint-config": "*",
+    "@repo/shared-universal": "*",
+    "@testing-library/jest-dom": "^6.4.6",
+    "@testing-library/react": "^16.0.1",
+    "@types/node": "^22.10.2",
+    "@types/react": "^18.3.3",
+    "eslint": "8.57.0",
+    "eslint-import-resolver-typescript": "^3.6.1",
+    "eslint-plugin-import": "^2.29.1",
+    "eslint-plugin-only-warn": "^1.1.0",
+    "eslint-plugin-prettier": "^5.1.3",
+    "eslint-plugin-react": "^7.34.1",
+    "eslint-plugin-react-hooks": "^4.6.2",
+    "eslint-plugin-simple-import-sort": "^12.1.0",
+    "typescript": "^5.4.5"
+  }
+}
