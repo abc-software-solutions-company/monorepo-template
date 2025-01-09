@@ -42,6 +42,7 @@
     "@googlemaps/react-wrapper": "^1.1.42",
     "@goongmaps/goong-js": "^1.0.9",
     "@hookform/resolvers": "^3.9.0",
+    "@radix-ui/react-visually-hidden": "^1.1.1",
     "@react-native-async-storage/async-storage": "^1.23.1",
     "@reduxjs/toolkit": "^2.3.0",
     "@repo/react-web-ui-shadcn": "*",
