@@ -15,8 +15,8 @@ const GetStarted: FC<GetStartedProps> = () => {
   const navigation = useNavigation<UnauthenticatedNavigationProps>();
 
   return (
-    <View style={[ds.absolute, ds.bottom40, ds.wFull, ds.px14]}>
-      <Button size="lg" style={ds.wFull} onPress={() => navigation.navigate('Login')}>
+    <View style={[ds.absolute, ds.bottom40, ds.wFull, ds.px14]} testID="get_started">
+      <Button size="lg" style={ds.wFull} testID="get_started.button" onPress={() => navigation.navigate('Login')}>
         {t('get_started')}
       </Button>
       <Text color={Colors.white} style={[ds.wFull, ds.textCenter, ds.mt20]} onPress={() => navigation.navigate('Login')}>

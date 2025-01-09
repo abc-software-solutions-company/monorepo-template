@@ -4,11 +4,12 @@ import { FontStyle, FontWeight } from '~react-native-design-system/interfaces/fo
 import { fontMaker, FontMakerOptions } from '~react-native-design-system/utils/font.util';
 import { createStyle } from '~react-native-design-system/utils/style.util';
 
-import { useCoreUITheme } from '../themes/theme.context';
-
 import { ICoreUIBaseProps } from '../interfaces/component.interface';
 
+import { useCoreUITheme } from '../themes/theme.context';
+
 interface ITextProps extends ICoreUIBaseProps {
+  testID?: string;
   text?: string;
   fontName?: string;
   fontWeight?: FontWeight;
@@ -22,7 +23,10 @@ interface ITextProps extends ICoreUIBaseProps {
 }
 
 const Text = forwardRef<RNText, ITextProps>(
-  ({ text, children, style, color, fontName, fontStyle, fontWeight = 'Regular', fontSize = 18, lineHeight = 22, visible = true, onPress }, ref) => {
+  (
+    { text, children, style, color, fontName, fontStyle, fontWeight = 'Regular', fontSize = 18, lineHeight = 22, visible = true, onPress, ...rest },
+    ref
+  ) => {
     const { configs } = useCoreUITheme();
 
     const textColor = color ?? configs.foreground;
@@ -32,6 +36,7 @@ const Text = forwardRef<RNText, ITextProps>(
 
     return (
       <RNText
+        {...rest}
         ref={ref}
         style={[
           styles.font({
