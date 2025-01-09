@@ -3,7 +3,7 @@
 import { FC, useEffect, useState } from 'react';
 import { Session } from 'next-auth';
 import classNames from 'classnames';
-import { debounce } from 'lodash-es';
+import { throttle } from 'lodash-es';
 
 import Authenticated from '@/modules/auth/components/authenticated';
 import Unauthenticated from '@/modules/auth/components/unauthenticated';
@@ -20,7 +20,7 @@ const TopBar: FC<ITopBarProps> = ({ userSession }) => {
   const [isSticky, setIsSticky] = useState(false);
 
   useEffect(() => {
-    const handleScroll = debounce(() => {
+    const handleScroll = throttle(() => {
       if (window.scrollY > 0) {
         setIsSticky(true);
       } else {
@@ -36,7 +36,7 @@ const TopBar: FC<ITopBarProps> = ({ userSession }) => {
   }, []);
 
   return (
-    <div className={classNames('sticky top-0 z-10 py-3 transition-all duration-300', isSticky && 'bg-background shadow-md')} data-testid="topbar">
+    <div className={classNames('sticky top-0 z-30 py-3 transition-all duration-300', isSticky && 'bg-background shadow-md')} data-testid="topbar">
       <div className="container">
         <div className="flex flex-wrap items-center justify-between">
           <Logo />

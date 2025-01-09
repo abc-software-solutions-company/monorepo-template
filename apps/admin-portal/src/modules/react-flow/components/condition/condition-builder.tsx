@@ -262,7 +262,7 @@ const ConditionBuilder = ({ initialValue, onSave, onClose }: ConditionBuilderPro
                             <Card className="relative">
                               {!isView && (
                                 <DeleteButton
-                                  className="z-1 absolute -right-3 -top-3 flex size-6 items-center justify-center rounded-full border bg-white"
+                                  className="absolute -right-3 -top-3 z-10 flex size-6 items-center justify-center rounded-full border bg-white"
                                   disabled={subsets.length <= 1}
                                   onDelete={() => removeSubset(setIndex, subsetIndex)}
                                 />
@@ -276,7 +276,7 @@ const ConditionBuilder = ({ initialValue, onSave, onClose }: ConditionBuilderPro
                                 <Button
                                   variant="transparent"
                                   className={cn(
-                                    'z-1 absolute -left-3 -top-3 flex size-6 items-center justify-center rounded-full border bg-white p-0',
+                                    'absolute -left-3 -top-3 z-10 flex size-6 items-center justify-center rounded-full border bg-white p-0',
                                     isOpen && 'rotate-180'
                                   )}
                                   disabled={!hasFacts}
