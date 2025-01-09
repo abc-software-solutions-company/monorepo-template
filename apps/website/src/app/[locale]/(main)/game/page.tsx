@@ -1,5 +1,6 @@
 import { Metadata } from 'next';
 
+import { LayoutProps } from '@/interfaces/layout.interface';
 import { PageBaseProps } from '@/interfaces/page.interface';
 
 import Game from '@/modules/game/components/game';
@@ -13,9 +14,12 @@ export default async function GamePage(_pageProps: PageBaseProps) {
   );
 }
 
-export async function generateMetadata(_pageProps: PageBaseProps): Promise<Metadata> {
+export async function generateMetadata({ params: { locale } }: LayoutProps): Promise<Metadata> {
   return {
     title: 'Game',
     description: 'Game Description',
+    alternates: {
+      canonical: `/${locale}/game`,
+    },
   };
 }

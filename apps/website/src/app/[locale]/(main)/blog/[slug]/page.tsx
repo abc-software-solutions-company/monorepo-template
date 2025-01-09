@@ -31,11 +31,14 @@ export async function generateStaticParams() {
   return postsResponse.data.map(post => ({ slug: post.slug }));
 }
 
-export async function generateMetadata(pageProps: PageProps): Promise<Metadata> {
-  const response = await PostApi.getServerPost(pageProps.params.slug);
+export async function generateMetadata({ params: { locale, slug } }: PageProps): Promise<Metadata> {
+  const response = await PostApi.getServerPost(slug);
 
   return {
     title: response.data?.name,
     description: response.data?.description,
+    alternates: {
+      canonical: `/${locale}/${slug}`,
+    },
   };
 }

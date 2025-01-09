@@ -13,4 +13,4 @@ export const COMPANY_SOCIAL = {
 };
 export const COMPANY_PRODUCTS = [...Object.values(COMPANY_SOCIAL), 'https://tintranfs.com'];
 
-export const isEnableSEO = process.env.NEXT_PUBLIC_APP_ENV === 'production';
+export const IS_ENABLE_SEO = process.env.NEXT_PUBLIC_APP_ENV === 'production';
