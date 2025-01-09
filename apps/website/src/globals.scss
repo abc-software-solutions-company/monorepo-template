@@ -78,3 +78,25 @@
     right: 160px;
   }
 }
+
+/* GOONG MAP */
+.mapboxgl-popup {
+  @apply max-w-72 #{!important};
+}
+.mapboxgl-popup-content {
+  @apply rounded-lg bg-primary-50 text-sm text-gray-800 shadow-lg lg:text-base #{!important};
+}
+.mapboxgl-popup-anchor-bottom .mapboxgl-popup-tip {
+  @apply border-t-primary-50 drop-shadow-lg #{!important};
+}
+.mapboxgl-popup-close-button {
+  @apply size-6 text-base;
+}
+
+/* GOOGLE MAP */
+.gm-ui-hover-effect {
+  @apply flex size-6 items-center justify-center #{!important};
+  span {
+    @apply m-0 size-5 p-0 #{!important};
+  }
+}

@@ -17,5 +17,11 @@
   "contact_email": "Email",
   "contact_message": "Nội dung",
   "contact_message_success": "Tin nhắn của bạn đã được gửi thành công",
-  "contact_message_failure": "Không thể gửi tin nhắn của bạn"
+  "contact_message_failure": "Không thể gửi tin nhắn của bạn",
+
+  "list_of_stores": "Danh sách cửa hàng",
+  "select_store": "Chọn cửa hàng",
+  "search_store": "Tìm kiếm cửa hàng",
+  "no_store_found": "Không tìm thấy cửa hàng",
+  "no_stores_available": "Không có cửa hàng khả dụng cho {{defaultMessage}}"
 }
