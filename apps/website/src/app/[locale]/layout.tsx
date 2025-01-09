@@ -30,6 +30,11 @@ export default async function RootLayout({ children, params: { locale } }: Layou
 }
 
 export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: true,
+  colorScheme: 'dark',
   themeColor: [
     { media: '(prefers-color-scheme: dark)', color: '#000000' },
     { media: '(prefers-color-scheme: light)', color: '#ffffff' },
@@ -70,12 +75,6 @@ export async function generateMetadata(_layoutProps: LayoutProps): Promise<Metad
       type: 'website',
       images: [{ alt: WEBSITE_NAME, url: `${WEBSITE_URL}/og-img.jpg`, width: 1200, height: 630 }],
     },
-    colorScheme: 'light',
-    themeColor: [
-      { media: '(prefers-color-scheme: dark)', color: '#000000' },
-      { media: '(prefers-color-scheme: light)', color: '#ffffff' },
-    ],
-    viewport: 'width=device-width, initial-scale=1',
     manifest: '/manifest.json',
     alternates: {
       canonical: WEBSITE_URL,
