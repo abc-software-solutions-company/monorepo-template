@@ -96,6 +96,22 @@ jobs:
           script_stop: true
           script: |
             cd ~/${{ env.APP_NAME }}
+            # Load new image
             sudo docker load --input ${{ env.APP_NAME }}.tar
+
+            # Store current running image ID if exists
+            OLD_IMAGE_ID=$(sudo docker inspect --format='{{.Image}}' ${{ env.APP_NAME }} 2>/dev/null || echo "")
+
+            # Deploy new version
             sudo docker compose -f ${{ env.DOCKER_COMPOSE_PATH }} up -d ${{ env.DOCKER_COMPOSE_SERVICE }} --force-recreate --no-build
+
+            # Remove old image if it exists and is different from current
+            if [ ! -z "$OLD_IMAGE_ID" ]; then
+              NEW_IMAGE_ID=$(sudo docker inspect --format='{{.Image}}' ${{ env.APP_NAME }})
+              if [ "$OLD_IMAGE_ID" != "$NEW_IMAGE_ID" ]; then
+                sudo docker rmi $OLD_IMAGE_ID || true
+              fi
+            fi
+
+            # Cleanup
             rm -rf ${{ env.APP_NAME }}.tar
