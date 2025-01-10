@@ -27,6 +27,9 @@ export type PostEntity = {
   updatedAt: string;
   category: CategoryEntity;
   seoMeta: SeoMeta;
+  nameLocalized?: Translation[];
+  descriptionLocalized?: Translation[];
+  bodyLocalized?: Translation[];
 };
 
 const postSchema = postFormLocalizeSchema(LANGUAGES);

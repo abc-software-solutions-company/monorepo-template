@@ -15,11 +15,7 @@
     "test:uicov": "vitest --ui --coverage.enabled"
   },
   "exports": {
-    "./constants/*": "./src/constants/*.ts",
-    "./hooks/*": "./src/hooks/*.ts",
-    "./utils/*": "./src/utils/*.ts",
-    "./interfaces/*": "./src/interfaces/*.ts",
-    "./validators/*": "./src/validators/*.ts"
+    ".": "./src/index.ts"
   },
   "devDependencies": {
     "@repo/config-prettier": "*",

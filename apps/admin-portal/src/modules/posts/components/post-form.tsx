@@ -58,6 +58,9 @@ const PostForm: FC<PostFormProps> = ({ isEdit }) => {
     body: post?.body ?? '',
     categoryId: post?.category?.id ?? undefined,
     seoMeta: post?.seoMeta ?? { title: '', description: '', keywords: '' },
+    nameLocalized: post?.nameLocalized ?? [],
+    descriptionLocalized: post?.descriptionLocalized ?? [],
+    bodyLocalized: post?.bodyLocalized ?? [],
   };
 
   const form = useForm<PostFormData>({
@@ -95,7 +98,8 @@ const PostForm: FC<PostFormProps> = ({ isEdit }) => {
           <div className="flex gap-4">
             <Card className="grow">
               <CardContent className="grid gap-4 pt-4">
-                <FormFieldInput form={form} fieldName="name" formLabel={t('form_field_name')} minLength={1} maxLength={255} />
+                <FormFieldInput form={form} fieldName="name" formLabel={t('form_field_name')} minLength={1} maxLength={255} visibled={true} />
+                <FormFieldInputMultiLanguage form={form} fieldName="nameLocalized" formLabel={t('form_field_name')} locales={LANGUAGES} />
                 <FormFieldInputSlug form={form} />
                 <FormFieldCKEditor
                   form={form}
@@ -104,13 +108,31 @@ const PostForm: FC<PostFormProps> = ({ isEdit }) => {
                   editorRef={editorRef}
                   minHeight={120}
                   toolbar={['bold', 'italic', 'underline', 'strikethrough']}
+                  visibled={true}
+                />
+                <FormFieldCKEditorMultiLanguage
+                  form={form}
+                  fieldName="descriptionLocalized"
+                  formLabel={t('form_field_description')}
+                  editorRef={editorRef}
+                  minHeight={120}
+                  toolbar={['bold', 'italic', 'underline', 'strikethrough']}
+                  locales={LANGUAGES}
                 />
                 <FormFieldCKEditor
                   form={form}
                   fieldName="body"
                   formLabel={t('form_field_content')}
-                  toolbar={undefined}
                   editorRef={editorRef}
+                  setVisible={setIsFileManagerVisible}
+                  visibled={true}
+                />
+                <FormFieldCKEditorMultiLanguage
+                  form={form}
+                  fieldName="bodyLocalized"
+                  formLabel={t('form_field_content')}
+                  editorRef={editorRef}
+                  locales={LANGUAGES}
                   setVisible={setIsFileManagerVisible}
                 />
               </CardContent>
@@ -127,6 +149,7 @@ const PostForm: FC<PostFormProps> = ({ isEdit }) => {
               </div>
             </div>
           </div>
+          <Debugger text={JSON.stringify(form.formState.errors, null, 2)} />
           <Debugger text={JSON.stringify(form.watch(), null, 2)} />
         </form>
       </Form>

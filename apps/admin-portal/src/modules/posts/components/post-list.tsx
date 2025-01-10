@@ -98,7 +98,7 @@ const PostList: FC<ComponentBaseProps> = ({ className }) => {
                   })
                 }
               >
-                {row.getValue('name')}
+                {row.original.nameLocalized?.[0]?.value ?? row.getValue('name')}
               </button>
               <button className="p-1.5" onClick={() => setViewDetailId(row.original.id)}>
                 <span className="text-primary">({t('view_detail')})</span>

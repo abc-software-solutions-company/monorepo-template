@@ -2,7 +2,10 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import { IsArray, IsEnum, IsNotEmpty, IsOptional, IsString, IsUUID, MaxLength, ValidateNested } from 'class-validator';
 
+import { createTranslationDto } from '@/common/dtos/language.dto';
 import { SeoMetaDto } from '@/common/dtos/seo-meta.dto';
+
+import { Translation } from '@/common/interfaces/language.interface';
 
 import { toSlug } from '@/common/utils/string.util';
 
@@ -14,9 +17,15 @@ import { POST_STATUS } from '../constants/posts.constant';
 export class CreatePostDto {
   @ApiProperty({ example: 'Post Name' })
   @IsString()
-  @IsNotEmpty()
+  @IsOptional()
   @MaxLength(255)
   name: string;
+
+  @IsOptional()
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => createTranslationDto(255))
+  nameLocalized?: Translation[];
 
   @ApiProperty({ example: toSlug('Post Name') })
   @IsString()
@@ -30,10 +39,22 @@ export class CreatePostDto {
   @MaxLength(2000)
   description: string;
 
+  @IsOptional()
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => createTranslationDto(2000))
+  descriptionLocalized?: Translation[];
+
   @ApiPropertyOptional({ example: '<p>body</p>' })
   @IsString()
   @IsOptional()
   body: string;
+
+  @IsOptional()
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => createTranslationDto(Infinity))
+  bodyLocalized?: Translation[];
 
   @ApiPropertyOptional({ example: POST_STATUS.DRAFT })
   @IsEnum(POST_STATUS)

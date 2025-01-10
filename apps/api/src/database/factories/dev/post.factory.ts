@@ -14,7 +14,8 @@ export function createRandomPost() {
 
   return {
     id: faker.string.uuid(),
-    name,
+    name: null,
+    nameLocalized: [{ lang: 'en-us', value: name }],
     slug: toSlug(name),
     description: `<p>${faker.lorem.words(20)}</p>`,
     body: `<p>${faker.lorem.words(120)}</p>`,
