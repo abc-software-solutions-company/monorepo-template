@@ -16,6 +16,9 @@ type FormFieldCKEditorFullProps<T extends FieldValues> = {
   editorRef?: React.MutableRefObject<Editor | null>;
   minHeight?: number;
   toolbar?: string[];
+  disabled?: boolean;
+  readOnly?: boolean;
+  visibled?: boolean;
   setVisible?: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
@@ -28,9 +31,14 @@ export default function FormFieldCKEditor<T extends FieldValues>({
   editorRef,
   minHeight = 360,
   toolbar,
+  visibled = true,
+  disabled,
+  readOnly,
   setVisible,
 }: FormFieldCKEditorFullProps<T>) {
   const t = useTranslations();
+
+  if (!visibled) return null;
 
   return (
     <FormField
@@ -52,6 +60,8 @@ export default function FormFieldCKEditor<T extends FieldValues>({
                 toolbar={toolbar}
                 minHeight={minHeight}
                 value={field.value}
+                disabled={disabled}
+                readOnly={readOnly}
                 onChange={field.onChange}
                 onFocus={editorRef ? (_event, editor) => (editorRef.current = editor) : undefined}
                 onShowFileManager={() => setVisible?.(true)}

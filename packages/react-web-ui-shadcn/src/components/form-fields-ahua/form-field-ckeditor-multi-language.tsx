@@ -75,9 +75,11 @@ interface IFormFieldCKEditorMultiLanguageProps<T extends FieldValues> extends Va
   maxVisible?: number;
   minLength?: number;
   maxLength?: number;
+  minHeight?: number;
+  toolbar?: string[];
   editorRef: React.MutableRefObject<Editor | null>;
   onFocus?: React.FocusEventHandler<HTMLDivElement>;
-  setVisible: React.Dispatch<React.SetStateAction<boolean>>;
+  setVisible?: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export default function FormFieldCKEditorMultiLanguage<T extends FieldValues>({
@@ -97,6 +99,8 @@ export default function FormFieldCKEditorMultiLanguage<T extends FieldValues>({
   maxVisible = 4,
   minLength = 1,
   maxLength = 255,
+  minHeight = 360,
+  toolbar,
   editorRef,
   setVisible,
 }: IFormFieldCKEditorMultiLanguageProps<T>) {
@@ -169,7 +173,7 @@ export default function FormFieldCKEditorMultiLanguage<T extends FieldValues>({
           {formLabel && (
             <FormLabel className={label({ state: error ? 'error' : 'default' })}>
               {formLabel}
-              {required && <span className="text-destructive ml-0.5">*</span>}
+              {required && <span className="ml-0.5 text-destructive">*</span>}
             </FormLabel>
           )}
           <FormControl>
@@ -186,7 +190,8 @@ export default function FormFieldCKEditorMultiLanguage<T extends FieldValues>({
                     <CKEditor
                       {...field}
                       className="borderless backgroundless"
-                      minHeight={308}
+                      toolbar={toolbar}
+                      minHeight={minHeight}
                       disabled={disabled}
                       readOnly={readOnly}
                       placeholder={placeholder}
@@ -197,11 +202,11 @@ export default function FormFieldCKEditorMultiLanguage<T extends FieldValues>({
                         setIsFocused(true);
                       }}
                       onBlur={() => setIsFocused(false)}
-                      onShowFileManager={() => setVisible(true)}
+                      onShowFileManager={() => setVisible?.(true)}
                     />
                   </Suspense>
                 </div>
-                <div className="border-input order-1 flex items-center border-b">
+                <div className="order-1 flex items-center border-b border-input">
                   {visibleLocales.map(locale => {
                     const isTooLong = isOverMaxLength(field.value, locale.code);
                     const isActive = activeLocale === locale.code;
@@ -227,7 +232,7 @@ export default function FormFieldCKEditorMultiLanguage<T extends FieldValues>({
                   {dropdownLocales.length > 0 && (
                     <Popover open={isOpenDropdown} onOpenChange={setIsOpenDropdown}>
                       <PopoverTrigger asChild>
-                        <Button variant="ghost" disabled={disabled} className="hover:bg-secondary/30 h-10 px-2">
+                        <Button variant="ghost" disabled={disabled} className="h-10 px-2 hover:bg-secondary/30">
                           <ChevronDown className="h-4 w-4" />
                         </Button>
                       </PopoverTrigger>
