@@ -1,12 +1,12 @@
 import React, { FC, ReactNode } from 'react';
 import { Pressable } from 'react-native';
 import FastImage from 'react-native-fast-image';
-import { ds } from '~react-native-design-system';
-import { dynamicStyles } from '~react-native-design-system/utils/style.util';
-import Heading from '~react-native-ui-core/components/heading';
-import Text from '~react-native-ui-core/components/text';
-import View from '~react-native-ui-core/components/view';
-import { useCoreUITheme } from '~react-native-ui-core/themes/theme.context';
+import { ds } from '@repo/react-native-design-system';
+import { dynamicStyles } from '@repo/react-native-design-system/utils/style.util';
+import Heading from '@repo/react-native-ui-core/components/heading';
+import Text from '@repo/react-native-ui-core/components/text';
+import View from '@repo/react-native-ui-core/components/view';
+import { useCoreUITheme } from '@repo/react-native-ui-core/themes/theme.context';
 
 type NavigationHeaderProps = {
   title?: string;

@@ -6,11 +6,11 @@
 import { useEffect, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { Check, ChevronRightIcon, ChevronsUpDown } from 'lucide-react';
-import { Button } from '~react-web-ui-shadcn/components/ui/button';
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '~react-web-ui-shadcn/components/ui/collapsible';
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '~react-web-ui-shadcn/components/ui/command';
-import { Popover, PopoverContent, PopoverTrigger } from '~react-web-ui-shadcn/components/ui/popover';
-import { cn } from '~react-web-ui-shadcn/lib/utils';
+import { Button } from '@repo/react-web-ui-shadcn/components/ui/button';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@repo/react-web-ui-shadcn/components/ui/collapsible';
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@repo/react-web-ui-shadcn/components/ui/command';
+import { Popover, PopoverContent, PopoverTrigger } from '@repo/react-web-ui-shadcn/components/ui/popover';
+import { cn } from '@repo/react-web-ui-shadcn/lib/utils';
 
 import { Region, ShopStore } from '../interfaces/shop-stores.interface';
 

@@ -1,5 +1,5 @@
-import { Translation } from '~shared-universal/interfaces/language.interface';
-import { setUTCEndOfDay, setUTCStartOfDay } from '~shared-universal/utils/date.util';
+import { Translation } from '@repo/shared-universal/interfaces/language.interface';
+import { setUTCEndOfDay, setUTCStartOfDay } from '@repo/shared-universal/utils/date.util';
 
 import { CampaignStep1FormValues } from '../interfaces/campaign.interface';
 

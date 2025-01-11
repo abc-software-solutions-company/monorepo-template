@@ -1,9 +1,9 @@
 import React, { FC, ReactNode } from 'react';
 import { ViewProps, ViewStyle } from 'react-native';
 import { EdgeInsets, useSafeAreaInsets } from 'react-native-safe-area-context';
-import { ds } from '~react-native-design-system';
-import { createStyle } from '~react-native-design-system/utils/style.util';
-import View from '~react-native-ui-core/components/view';
+import { ds } from '@repo/react-native-design-system';
+import { createStyle } from '@repo/react-native-design-system/utils/style.util';
+import View from '@repo/react-native-ui-core/components/view';
 
 interface ISafeViewAreaProps extends ViewProps {
   children: ReactNode;

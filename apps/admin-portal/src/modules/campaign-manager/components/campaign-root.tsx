@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Separator } from '~react-web-ui-shadcn/components/ui/separator';
-import { LANGUAGES } from '~shared-universal/constants/language.constant';
+import { Separator } from '@repo/react-web-ui-shadcn/components/ui/separator';
+import { LANGUAGES } from '@repo/shared-universal/constants/language.constant';
 
 import { CampaignStep1FormValues, CampaignStep2FormValues, CampaignStep3FormValues } from '../interfaces/campaign.interface';
 

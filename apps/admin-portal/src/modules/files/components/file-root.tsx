@@ -2,10 +2,10 @@ import { FC, useEffect, useState } from 'react';
 import classNames from 'classnames';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useLocale, useTranslations } from 'use-intl';
-import { Loading } from '~react-web-ui-shadcn/components/ui/loading';
-import Pagination from '~react-web-ui-shadcn/components/ui/pagination-custom';
-import { useToast } from '~react-web-ui-shadcn/components/ui/use-toast';
-import { objectToQueryString } from '~shared-universal/utils/string.util';
+import { Loading } from '@repo/react-web-ui-shadcn/components/ui/loading';
+import Pagination from '@repo/react-web-ui-shadcn/components/ui/pagination-custom';
+import { useToast } from '@repo/react-web-ui-shadcn/components/ui/use-toast';
+import { objectToQueryString } from '@repo/shared-universal/utils/string.util';
 
 import { ComponentBaseProps } from '@/interfaces/component.interface';
 import { FileEntity, FileFilter } from '../interfaces/files.interface';

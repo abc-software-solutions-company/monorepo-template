@@ -1,7 +1,7 @@
 import React, { FC } from 'react';
 import classNames from 'classnames';
 import { CheckIcon } from 'lucide-react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '~react-web-ui-shadcn/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@repo/react-web-ui-shadcn/components/ui/card';
 
 import { ComponentBaseProps } from '@/interfaces/component.interface';
 

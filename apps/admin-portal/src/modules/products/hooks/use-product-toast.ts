@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { toast } from 'sonner';
 import { useLocale, useTranslations } from 'use-intl';
-import { objectToQueryString } from '~shared-universal/utils/string.util';
+import { objectToQueryString } from '@repo/shared-universal/utils/string.util';
 
 import { useProductsState } from '../states/products.state';
 

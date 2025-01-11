@@ -5,11 +5,11 @@ import FastImage, { ImageStyle, Source } from 'react-native-fast-image';
 import LinearGradient from 'react-native-linear-gradient';
 import PagerView, { PagerViewOnPageScrollEventData } from 'react-native-pager-view';
 import MaskedView from '@react-native-masked-view/masked-view';
-import { Colors, ds } from '~react-native-design-system';
-import Heading from '~react-native-ui-core/components/heading';
-import Text from '~react-native-ui-core/components/text';
-import View from '~react-native-ui-core/components/view';
-import { useCoreUITheme } from '~react-native-ui-core/themes/theme.context';
+import { Colors, ds } from '@repo/react-native-design-system';
+import Heading from '@repo/react-native-ui-core/components/heading';
+import Text from '@repo/react-native-ui-core/components/text';
+import View from '@repo/react-native-ui-core/components/view';
+import { useCoreUITheme } from '@repo/react-native-ui-core/themes/theme.context';
 
 const AnimatedPagerView = Animated.createAnimatedComponent(PagerView);
 

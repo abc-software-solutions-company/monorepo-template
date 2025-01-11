@@ -1,7 +1,7 @@
 import React, { FC, useEffect, useRef } from 'react';
 import { Animated, Easing, ViewStyle } from 'react-native';
-import { Colors } from '~react-native-design-system';
-import { createStyle } from '~react-native-design-system/utils/style.util';
+import { Colors } from '@repo/react-native-design-system';
+import { createStyle } from '@repo/react-native-design-system/utils/style.util';
 
 import { useCoreUITheme } from '../themes/theme.context';
 import View from './view';

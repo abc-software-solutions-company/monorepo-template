@@ -4,7 +4,7 @@ import { BlockNoteView } from '@blocknote/shadcn';
 
 import '@blocknote/core/fonts/inter.css';
 import '@blocknote/shadcn/style.css';
-import { cn } from '~react-web-ui-shadcn/lib/utils';
+import { cn } from '@repo/react-web-ui-shadcn/lib/utils';
 import { Textarea } from '../ui/textarea';
 
 type BlockEditorProps = {

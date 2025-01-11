@@ -1,8 +1,8 @@
 import React, { FC } from 'react';
 import { FlatList } from 'react-native-gesture-handler';
-import { ds } from '~react-native-design-system';
-import { Theme } from '~react-native-ui-core/interfaces/theme.interface';
-import { useCoreUITheme } from '~react-native-ui-core/themes/theme.context';
+import { ds } from '@repo/react-native-design-system';
+import { Theme } from '@repo/react-native-ui-core/interfaces/theme.interface';
+import { useCoreUITheme } from '@repo/react-native-ui-core/themes/theme.context';
 
 import ThemeItem from './theme-item';
 

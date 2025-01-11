@@ -2,11 +2,11 @@ import { useState } from 'react';
 import { CalendarIcon } from 'lucide-react';
 import { FieldValues, Path, UseFormReturn } from 'react-hook-form';
 import { useLocale, useTranslations } from 'use-intl';
-import { Button } from '~react-web-ui-shadcn/components/ui/button';
-import { Calendar } from '~react-web-ui-shadcn/components/ui/calendar';
-import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '~react-web-ui-shadcn/components/ui/form';
-import { Popover, PopoverContent, PopoverTrigger } from '~react-web-ui-shadcn/components/ui/popover';
-import { toDateTime } from '~shared-universal/utils/date.util';
+import { Button } from '@repo/react-web-ui-shadcn/components/ui/button';
+import { Calendar } from '@repo/react-web-ui-shadcn/components/ui/calendar';
+import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@repo/react-web-ui-shadcn/components/ui/form';
+import { Popover, PopoverContent, PopoverTrigger } from '@repo/react-web-ui-shadcn/components/ui/popover';
+import { toDateTime } from '@repo/shared-universal/utils/date.util';
 
 export const CURRENT_YEAR = new Date().getFullYear();
 

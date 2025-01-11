@@ -5,8 +5,8 @@
 
 import React, { useState } from 'react';
 import { Animated, Pressable, StyleProp, ViewStyle } from 'react-native';
-import { Colors, ds } from '~react-native-design-system';
-import { dynamicStyles } from '~react-native-design-system/utils/style.util';
+import { Colors, ds } from '@repo/react-native-design-system';
+import { dynamicStyles } from '@repo/react-native-design-system/utils/style.util';
 
 type SwitcherProps = {
   checked?: boolean;

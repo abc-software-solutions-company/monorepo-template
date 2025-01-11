@@ -1,7 +1,7 @@
 // InputPassword.tsx
 import React, { FC, forwardRef, useState } from 'react';
 import { Pressable, TextInput } from 'react-native';
-import { ds } from '~react-native-design-system';
+import { ds } from '@repo/react-native-design-system';
 
 import Icon from './icon';
 import InputText, { IInputTextProps } from './input';

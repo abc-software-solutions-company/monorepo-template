@@ -2,6 +2,11 @@ import { FC, useEffect, useMemo, useState } from 'react';
 import classNames from 'classnames';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useLocale, useTranslations } from 'use-intl';
+import ModalConfirm from '@repo/react-web-ui-shadcn/components/modals/modal-confirm';
+import { Checkbox } from '@repo/react-web-ui-shadcn/components/ui/checkbox';
+import Pagination from '@repo/react-web-ui-shadcn/components/ui/pagination-custom';
+import { toDateTime } from '@repo/shared-universal/utils/date.util';
+import { objectToQueryString } from '@repo/shared-universal/utils/string.util';
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -14,11 +19,6 @@ import {
   useReactTable,
   VisibilityState,
 } from '@tanstack/react-table';
-import ModalConfirm from '~react-web-ui-shadcn/components/modals/modal-confirm';
-import { Checkbox } from '~react-web-ui-shadcn/components/ui/checkbox';
-import Pagination from '~react-web-ui-shadcn/components/ui/pagination-custom';
-import { toDateTime } from '~shared-universal/utils/date.util';
-import { objectToQueryString } from '~shared-universal/utils/string.util';
 
 import { ComponentBaseProps } from '@/interfaces/component.interface';
 import { UserEntity, UserFilter } from '../interfaces/users.interface';

@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { parsePhoneNumberFromString } from 'libphonenumber-js';
-import { Language } from '~shared-universal/interfaces/language.interface';
+import { Language } from '@repo/shared-universal/interfaces/language.interface';
 
 export const baseValidator = {
   userName: stringSchema({

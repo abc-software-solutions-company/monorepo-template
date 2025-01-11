@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { LANGUAGES } from '~shared-universal/constants/language.constant';
+import { LANGUAGES } from '@repo/shared-universal/constants/language.constant';
 
 import { campaignStep1LocalizeSchema } from '../validators/campaign-step-1.validator';
 import { campaignStep2Schema } from '../validators/campaign-step-2.validator';

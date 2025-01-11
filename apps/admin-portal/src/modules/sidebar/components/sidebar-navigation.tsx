@@ -18,8 +18,8 @@ import {
 } from 'lucide-react';
 import { useLocation } from 'react-router-dom';
 import { useLocale, useTranslations } from 'use-intl';
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '~react-web-ui-shadcn/components/ui/collapsible';
-import { HoverCard, HoverCardContent, HoverCardTrigger } from '~react-web-ui-shadcn/components/ui/hover-card';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@repo/react-web-ui-shadcn/components/ui/collapsible';
+import { HoverCard, HoverCardContent, HoverCardTrigger } from '@repo/react-web-ui-shadcn/components/ui/hover-card';
 
 import { ComponentBaseProps } from '@/interfaces/component.interface';
 

@@ -3,7 +3,7 @@
  * @Created: 2024-12-29 20:31:01
  */
 
-import { cn } from '~react-web-ui-shadcn/lib/utils';
+import { cn } from '@repo/react-web-ui-shadcn/lib/utils';
 
 type CharacterCountProps = {
   className?: string;

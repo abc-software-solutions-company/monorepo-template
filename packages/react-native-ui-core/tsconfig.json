@@ -3,9 +3,9 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "~react-native-ui-core/*": ["./src/*"],
-      "~react-native-design-system": ["../react-native-design-system/src/index.ts"],
-      "~react-native-design-system/*": ["../react-native-design-system/src/*"]
+      "@repo/react-native-ui-core/*": ["./src/*"],
+      "@repo/react-native-design-system": ["../react-native-design-system/src/index.ts"],
+      "@repo/react-native-design-system/*": ["../react-native-design-system/src/*"]
     }
   },
   "include": ["src", "../react-native-design-system/src"],

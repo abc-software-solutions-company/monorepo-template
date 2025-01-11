@@ -1,7 +1,7 @@
 import React from 'react';
-import { ds } from '~react-native-design-system';
-import StatusBar from '~react-native-ui-core/components/statusbar';
-import View from '~react-native-ui-core/components/view';
+import { ds } from '@repo/react-native-design-system';
+import StatusBar from '@repo/react-native-ui-core/components/statusbar';
+import View from '@repo/react-native-ui-core/components/view';
 
 import SafeViewArea from '@/components/safe-view-area';
 

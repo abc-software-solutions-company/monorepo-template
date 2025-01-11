@@ -5,7 +5,7 @@
 
 import { FC } from 'react';
 import { MousePointer2Icon } from 'lucide-react';
-import { Button } from '~react-web-ui-shadcn/components/ui/button';
+import { Button } from '@repo/react-web-ui-shadcn/components/ui/button';
 
 type ShopStorePopupProps = {
   address: string;

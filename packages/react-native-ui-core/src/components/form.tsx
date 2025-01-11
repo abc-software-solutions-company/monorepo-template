@@ -2,7 +2,7 @@ import React from 'react';
 import { Controller, ControllerProps, FieldPath, FieldValues, FormProvider, useFormContext } from 'react-hook-form';
 import { View } from 'react-native';
 import { Slot } from '@radix-ui/react-slot';
-import { Colors, ds } from '~react-native-design-system';
+import { Colors, ds } from '@repo/react-native-design-system';
 
 import Text from './text';
 

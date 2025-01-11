@@ -1,7 +1,7 @@
 import React, { useRef, useState } from 'react';
 import { cva } from 'class-variance-authority';
-import { Button } from '~react-web-ui-shadcn/components/ui/button';
-import { cn } from '~react-web-ui-shadcn/lib/utils';
+import { Button } from '@repo/react-web-ui-shadcn/components/ui/button';
+import { cn } from '@repo/react-web-ui-shadcn/lib/utils';
 import { Loading } from '../ui/loading';
 
 const dropzoneVariants = cva('relative flex items-center justify-center cursor-pointer rounded-lg border border-dashed text-center', {
@@ -195,7 +195,7 @@ const DropZone: React.FC<DropZoneProps> = ({
         <Button type="button" disabled={disabled}>
           Choose file to upload
         </Button>
-        <p className="text-muted-foreground text-xs">Please upload images with format JPEG, PNG, JPG, HEIC</p>
+        <p className="text-xs text-muted-foreground">Please upload images with format JPEG, PNG, JPG, HEIC</p>
       </div>
     )}
   </div>

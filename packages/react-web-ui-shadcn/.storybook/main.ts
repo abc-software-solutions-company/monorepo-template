@@ -37,7 +37,7 @@ const config: StorybookConfig = {
         ...config.resolve,
         alias: {
           ...config.resolve?.alias,
-          '~react-web-ui-shadcn': '/src',
+          '@repo/react-web-ui-shadcn': '/src',
         },
       },
     });

@@ -1,15 +1,15 @@
 import { ColumnsIcon } from 'lucide-react';
 import { useTranslations } from 'use-intl';
 import { DropdownMenuTrigger } from '@radix-ui/react-dropdown-menu';
-import { Table } from '@tanstack/react-table';
-import { Button } from '~react-web-ui-shadcn/components/ui/button';
+import { Button } from '@repo/react-web-ui-shadcn/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuLabel,
   DropdownMenuSeparator,
-} from '~react-web-ui-shadcn/components/ui/dropdown-menu';
+} from '@repo/react-web-ui-shadcn/components/ui/dropdown-menu';
+import { Table } from '@tanstack/react-table';
 
 interface IDataTableViewOptionsProps<TData> {
   table: Table<TData>;

@@ -2,8 +2,8 @@ import { ChangeEvent, useEffect, useState } from 'react';
 import classNames from 'classnames';
 import { SearchIcon } from 'lucide-react';
 import { useTranslations } from 'use-intl';
-import { Button } from '~react-web-ui-shadcn/components/ui/button';
-import { Input } from '~react-web-ui-shadcn/components/ui/input';
+import { Button } from '@repo/react-web-ui-shadcn/components/ui/button';
+import { Input } from '@repo/react-web-ui-shadcn/components/ui/input';
 
 import { ComponentBaseProps } from '@/interfaces/component.interface';
 

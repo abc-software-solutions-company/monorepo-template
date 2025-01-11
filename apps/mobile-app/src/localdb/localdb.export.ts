@@ -1,7 +1,7 @@
 import { localdbName } from '@/localdb/localdb.constant';
 import { LocalDbSyncData, WMPostEntity } from '@/localdb/localdb.interface';
 import * as RNFS from '@dr.pogodin/react-native-fs';
-import { isJson } from '~shared-universal/utils/string.util';
+import { isJson } from '@repo/shared-universal/utils/string.util';
 
 import log from '@/utils/logger.util';
 

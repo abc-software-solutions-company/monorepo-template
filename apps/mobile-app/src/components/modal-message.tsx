@@ -1,9 +1,9 @@
 import React, { FC } from 'react';
-import { ds } from '~react-native-design-system';
-import Button from '~react-native-ui-core/components/button';
-import Heading from '~react-native-ui-core/components/heading';
-import Text from '~react-native-ui-core/components/text';
-import View from '~react-native-ui-core/components/view';
+import { ds } from '@repo/react-native-design-system';
+import Button from '@repo/react-native-ui-core/components/button';
+import Heading from '@repo/react-native-ui-core/components/heading';
+import Text from '@repo/react-native-ui-core/components/text';
+import View from '@repo/react-native-ui-core/components/view';
 
 interface IMessageBoxProps {
   title?: string | null;

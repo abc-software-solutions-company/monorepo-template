@@ -1,6 +1,6 @@
 import React, { ReactNode, useEffect, useMemo, useState } from 'react';
 import { Pressable, StyleProp, TextStyle, ViewStyle } from 'react-native';
-import { Colors, ds } from '~react-native-design-system';
+import { Colors, ds } from '@repo/react-native-design-system';
 
 import { ComponentRoundedVariant, ComponentSizeVariant, getComponentSizes, getComponentStyle, getTextStyle } from '../interfaces/input.interface';
 

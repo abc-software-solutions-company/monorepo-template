@@ -2,7 +2,7 @@
 
 import { FC } from 'react';
 import { useTranslations } from 'next-intl';
-import { Button } from '~react-web-ui-shadcn/components/ui/button';
+import { Button } from '@repo/react-web-ui-shadcn/components/ui/button';
 
 type ErrorInformationType = {
   code?: number;

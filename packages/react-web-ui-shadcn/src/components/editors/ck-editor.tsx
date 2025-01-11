@@ -38,7 +38,7 @@ import FileManager from './file-manager/file-manager';
 
 import 'ckeditor5/ckeditor5.css';
 import './ck-editor.scss';
-import { cn } from '~react-web-ui-shadcn/lib/utils.js';
+import { cn } from '@repo/react-web-ui-shadcn/lib/utils.js';
 
 interface ICKEditorProps {
   className?: string;

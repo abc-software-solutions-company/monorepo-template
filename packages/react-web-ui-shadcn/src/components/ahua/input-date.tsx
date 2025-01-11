@@ -2,9 +2,9 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { cva } from 'class-variance-authority';
 import { format, isValid, Locale } from 'date-fns';
 import { CalendarDaysIcon } from 'lucide-react';
-import { Calendar } from '~react-web-ui-shadcn/components/ui/calendar';
-import { Popover, PopoverContent, PopoverTrigger } from '~react-web-ui-shadcn/components/ui/popover';
-import { cn } from '~react-web-ui-shadcn/lib/utils';
+import { Calendar } from '@repo/react-web-ui-shadcn/components/ui/calendar';
+import { Popover, PopoverContent, PopoverTrigger } from '@repo/react-web-ui-shadcn/components/ui/popover';
+import { cn } from '@repo/react-web-ui-shadcn/lib/utils';
 import { Matcher } from 'react-day-picker';
 import { InputLabel } from './input-base';
 

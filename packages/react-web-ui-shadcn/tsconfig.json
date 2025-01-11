@@ -3,9 +3,9 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "~react-web-ui-shadcn/*": ["./src/*"],
-      "~shared-universal/*": ["../shared-universal/src/*"],
-      "~shared-web/*": ["../shared-web/src/*"]
+      "@repo/react-web-ui-shadcn/*": ["./src/*"],
+      "@repo/shared-universal/*": ["../shared-universal/src/*"],
+      "@repo/shared-web/*": ["../shared-web/src/*"]
     }
   },
   "include": ["src", "../shared-universal/src", "../shared-web/src"],

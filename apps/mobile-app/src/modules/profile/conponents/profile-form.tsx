@@ -6,12 +6,12 @@ import { useToast } from 'react-native-toast-notifications';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
+import { ds } from '@repo/react-native-design-system';
+import Button from '@repo/react-native-ui-core/components/button';
+import { Form, FormField, FormItem, FormLabel, FormMessage } from '@repo/react-native-ui-core/components/form';
+import Input from '@repo/react-native-ui-core/components/input';
+import View from '@repo/react-native-ui-core/components/view';
 import { useMutation } from '@tanstack/react-query';
-import { ds } from '~react-native-design-system';
-import Button from '~react-native-ui-core/components/button';
-import { Form, FormField, FormItem, FormLabel, FormMessage } from '~react-native-ui-core/components/form';
-import Input from '~react-native-ui-core/components/input';
-import View from '~react-native-ui-core/components/view';
 
 import { ProfileFormData } from '../interfaces/profile.interface';
 

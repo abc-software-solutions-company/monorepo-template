@@ -4,15 +4,15 @@ import { SubmitHandler, useForm } from 'react-hook-form';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { useLocale, useTranslations } from 'use-intl';
 import { zodResolver } from '@hookform/resolvers/zod';
-import Debugger from '~react-web-ui-shadcn/components/debugger';
-import FormFieldCKEditor from '~react-web-ui-shadcn/components/form-fields/form-field-ckeditor';
-import FormFieldInput from '~react-web-ui-shadcn/components/form-fields/form-field-input';
-import FormFieldInputSlug from '~react-web-ui-shadcn/components/form-fields/form-field-input-slug';
-import ModalLoading from '~react-web-ui-shadcn/components/modals/modal-loading';
-import { Card, CardContent } from '~react-web-ui-shadcn/components/ui/card';
-import { Form } from '~react-web-ui-shadcn/components/ui/form';
-import { LANGUAGES } from '~shared-universal/constants/language.constant';
-import { objectToQueryString } from '~shared-universal/utils/string.util';
+import Debugger from '@repo/react-web-ui-shadcn/components/debugger';
+import FormFieldCKEditor from '@repo/react-web-ui-shadcn/components/form-fields/form-field-ckeditor';
+import FormFieldInput from '@repo/react-web-ui-shadcn/components/form-fields/form-field-input';
+import FormFieldInputSlug from '@repo/react-web-ui-shadcn/components/form-fields/form-field-input-slug';
+import ModalLoading from '@repo/react-web-ui-shadcn/components/modals/modal-loading';
+import { Card, CardContent } from '@repo/react-web-ui-shadcn/components/ui/card';
+import { Form } from '@repo/react-web-ui-shadcn/components/ui/form';
+import { LANGUAGES } from '@repo/shared-universal/constants/language.constant';
+import { objectToQueryString } from '@repo/shared-universal/utils/string.util';
 
 import { PostFormData } from '../interfaces/posts.interface';
 

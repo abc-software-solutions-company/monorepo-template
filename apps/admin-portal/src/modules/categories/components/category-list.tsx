@@ -3,6 +3,12 @@ import classNames from 'classnames';
 import { ChevronDown, ChevronRight } from 'lucide-react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useLocale, useTranslations } from 'use-intl';
+import ModalConfirm from '@repo/react-web-ui-shadcn/components/modals/modal-confirm';
+import { Badge } from '@repo/react-web-ui-shadcn/components/ui/badge';
+import { Checkbox } from '@repo/react-web-ui-shadcn/components/ui/checkbox';
+import Pagination from '@repo/react-web-ui-shadcn/components/ui/pagination-custom';
+import { toDateTime } from '@repo/shared-universal/utils/date.util';
+import { objectToQueryString, repeatStr } from '@repo/shared-universal/utils/string.util';
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -17,12 +23,6 @@ import {
   useReactTable,
   VisibilityState,
 } from '@tanstack/react-table';
-import ModalConfirm from '~react-web-ui-shadcn/components/modals/modal-confirm';
-import { Badge } from '~react-web-ui-shadcn/components/ui/badge';
-import { Checkbox } from '~react-web-ui-shadcn/components/ui/checkbox';
-import Pagination from '~react-web-ui-shadcn/components/ui/pagination-custom';
-import { toDateTime } from '~shared-universal/utils/date.util';
-import { objectToQueryString, repeatStr } from '~shared-universal/utils/string.util';
 
 import { ComponentBaseProps } from '@/interfaces/component.interface';
 import { CategoryEntity, CategoryFilter } from '../interfaces/categories.interface';

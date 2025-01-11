@@ -4,9 +4,9 @@ import classNames from 'classnames';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { Button } from '@repo/react-web-ui-shadcn/components/ui/button';
+import { Form } from '@repo/react-web-ui-shadcn/components/ui/form';
 import { useMutation } from '@tanstack/react-query';
-import { Button } from '~react-web-ui-shadcn/components/ui/button';
-import { Form } from '~react-web-ui-shadcn/components/ui/form';
 
 import { ComponentBaseProps } from '@/interfaces/component.interface';
 import { ContactFormData } from '../interfaces/contacts.interface';

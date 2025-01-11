@@ -2,9 +2,8 @@ import * as React from 'react';
 import classNames from 'classnames';
 import { useTranslations } from 'use-intl';
 import { CheckIcon, PlusCircledIcon } from '@radix-ui/react-icons';
-import { Column } from '@tanstack/react-table';
-import { Badge } from '~react-web-ui-shadcn/components/ui/badge';
-import { Button } from '~react-web-ui-shadcn/components/ui/button';
+import { Badge } from '@repo/react-web-ui-shadcn/components/ui/badge';
+import { Button } from '@repo/react-web-ui-shadcn/components/ui/button';
 import {
   Command,
   CommandEmpty,
@@ -13,9 +12,10 @@ import {
   CommandItem,
   CommandList,
   CommandSeparator,
-} from '~react-web-ui-shadcn/components/ui/command';
-import { Popover, PopoverContent, PopoverTrigger } from '~react-web-ui-shadcn/components/ui/popover';
-import { Separator } from '~react-web-ui-shadcn/components/ui/separator';
+} from '@repo/react-web-ui-shadcn/components/ui/command';
+import { Popover, PopoverContent, PopoverTrigger } from '@repo/react-web-ui-shadcn/components/ui/popover';
+import { Separator } from '@repo/react-web-ui-shadcn/components/ui/separator';
+import { Column } from '@tanstack/react-table';
 
 interface IDataTableFacetedFilterProps<TData, TValue> {
   column?: Column<TData, TValue>;

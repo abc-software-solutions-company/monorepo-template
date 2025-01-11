@@ -1,10 +1,15 @@
 import React, { FC, useCallback, useEffect, useRef, useState } from 'react';
 import { Pressable, TextStyle, ViewStyle } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
-import { Colors, ds } from '~react-native-design-system';
-import { dynamicStyles } from '~react-native-design-system/utils/style.util';
-import { ComponentRoundedVariant, ComponentSizeVariant, getComponentStyle, getTextStyle } from '~react-native-ui-core/interfaces/input.interface';
-import { useCoreUITheme } from '~react-native-ui-core/themes/theme.context';
+import { Colors, ds } from '@repo/react-native-design-system';
+import { dynamicStyles } from '@repo/react-native-design-system/utils/style.util';
+import {
+  ComponentRoundedVariant,
+  ComponentSizeVariant,
+  getComponentStyle,
+  getTextStyle,
+} from '@repo/react-native-ui-core/interfaces/input.interface';
+import { useCoreUITheme } from '@repo/react-native-ui-core/themes/theme.context';
 
 import { BottomSheet, BottomSheetRef } from './bottom-sheet';
 import Heading from './heading';

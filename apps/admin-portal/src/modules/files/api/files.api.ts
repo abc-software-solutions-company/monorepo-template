@@ -1,5 +1,5 @@
 import { EntityId } from '@reduxjs/toolkit';
-import { objectToQueryString } from '~shared-universal/utils/string.util';
+import { objectToQueryString } from '@repo/shared-universal/utils/string.util';
 
 import { CreateFileDto, FileFilter, FileResponse, FilesResponse, UpdateFileDto, UploadDto } from '../interfaces/files.interface';
 

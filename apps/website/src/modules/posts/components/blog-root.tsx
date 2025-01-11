@@ -2,8 +2,8 @@
 
 import React, { FC } from 'react';
 import classNames from 'classnames';
+import Pagination from '@repo/react-web-ui-shadcn/components/ui/pagination-custom';
 import { useQuery } from '@tanstack/react-query';
-import Pagination from '~react-web-ui-shadcn/components/ui/pagination-custom';
 
 import { useRouter } from '@/navigation';
 

@@ -1,9 +1,9 @@
 import { ControllerRenderProps, FieldValues, Path, UseFormReturn } from 'react-hook-form';
 import { useTranslations } from 'use-intl';
-import { Input } from '~react-web-ui-shadcn/components/ahua/input';
-import { FormControl, FormField, FormItem, FormMessage } from '~react-web-ui-shadcn/components/ui/form';
+import { Input } from '@repo/react-web-ui-shadcn/components/ahua/input';
+import { FormControl, FormField, FormItem, FormMessage } from '@repo/react-web-ui-shadcn/components/ui/form';
 import { HelperText } from '../form-fields-base/helper-text';
-import { AutocompleteTypes } from '~shared-web/interfaces/autocomplete.interface';
+import { AutocompleteTypes } from '@repo/shared-web/interfaces/autocomplete.interface';
 
 interface FormFieldInputNumberProps<T extends FieldValues> {
   dataTestId?: string;

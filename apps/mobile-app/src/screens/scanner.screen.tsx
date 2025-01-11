@@ -3,11 +3,11 @@ import { useTranslation } from 'react-i18next';
 import { Platform } from 'react-native';
 import { PERMISSIONS, request } from 'react-native-permissions';
 import { useNavigation } from '@react-navigation/native';
-import { ds } from '~react-native-design-system';
-import Button from '~react-native-ui-core/components/button';
-import Icon from '~react-native-ui-core/components/icon';
-import StatusBar from '~react-native-ui-core/components/statusbar';
-import View from '~react-native-ui-core/components/view';
+import { ds } from '@repo/react-native-design-system';
+import Button from '@repo/react-native-ui-core/components/button';
+import Icon from '@repo/react-native-ui-core/components/icon';
+import StatusBar from '@repo/react-native-ui-core/components/statusbar';
+import View from '@repo/react-native-ui-core/components/view';
 
 import SafeViewArea from '@/components/safe-view-area';
 

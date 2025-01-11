@@ -4,7 +4,7 @@
  */
 
 import type { Meta, StoryObj } from '@storybook/react';
-import { Badge } from '~react-web-ui-shadcn/components/ui/badge';
+import { Badge } from '@repo/react-web-ui-shadcn/components/ui/badge';
 
 const meta = {
   title: 'Shadcn-UI/Badge',

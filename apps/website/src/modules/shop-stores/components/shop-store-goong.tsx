@@ -6,7 +6,7 @@
 import { FC, useEffect, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import goongjs from '@goongmaps/goong-js';
-import { cn } from '~react-web-ui-shadcn/lib/utils';
+import { cn } from '@repo/react-web-ui-shadcn/lib/utils';
 
 import { ShopStore } from '../interfaces/shop-stores.interface';
 

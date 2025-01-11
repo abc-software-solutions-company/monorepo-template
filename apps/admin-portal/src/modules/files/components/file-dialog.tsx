@@ -1,11 +1,11 @@
 import { FC, useEffect, useState } from 'react';
 import { useTranslations } from 'use-intl';
-import { Button } from '~react-web-ui-shadcn/components/ui/button';
-import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '~react-web-ui-shadcn/components/ui/dialog';
-import { Loading } from '~react-web-ui-shadcn/components/ui/loading';
-import Pagination from '~react-web-ui-shadcn/components/ui/pagination-custom';
-import { useToast } from '~react-web-ui-shadcn/components/ui/use-toast';
-import useDeepCompareEffect from '~shared-universal/hooks/use-deep-compare-effect';
+import { Button } from '@repo/react-web-ui-shadcn/components/ui/button';
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@repo/react-web-ui-shadcn/components/ui/dialog';
+import { Loading } from '@repo/react-web-ui-shadcn/components/ui/loading';
+import Pagination from '@repo/react-web-ui-shadcn/components/ui/pagination-custom';
+import { useToast } from '@repo/react-web-ui-shadcn/components/ui/use-toast';
+import useDeepCompareEffect from '@repo/shared-universal/hooks/use-deep-compare-effect';
 
 import { ComponentBaseProps } from '@/interfaces/component.interface';
 import { FileEntity, FileFilter } from '../interfaces/files.interface';

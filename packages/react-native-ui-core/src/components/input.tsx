@@ -1,7 +1,7 @@
 import React, { FC, forwardRef, useCallback, useEffect, useState } from 'react';
 import { NativeSyntheticEvent, TextInput, TextInputChangeEventData, TextStyle, ViewStyle } from 'react-native';
-import { Colors } from '~react-native-design-system';
-import { dynamicStyles } from '~react-native-design-system/utils/style.util';
+import { Colors } from '@repo/react-native-design-system';
+import { dynamicStyles } from '@repo/react-native-design-system/utils/style.util';
 
 import { ComponentRoundedVariant, ComponentSizeVariant, getComponentStyle, getTextStyle } from '../interfaces/input.interface';
 

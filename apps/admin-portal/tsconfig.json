@@ -6,9 +6,9 @@
       "@/*": ["./src/*"],
       "@tests/*": ["./__tests__/*"],
       "@mocks/*": ["./__mocks__/*"],
-      "~react-web-ui-shadcn/*": ["../../packages/react-web-ui-shadcn/src/*"],
-      "~shared-web/*": ["../../packages/shared-web/src/*"],
-      "~shared-universal/*": ["../../packages/shared-universal/src/*"]
+      "@repo/react-web-ui-shadcn/*": ["../../packages/react-web-ui-shadcn/src/*"],
+      "@repo/shared-web/*": ["../../packages/shared-web/src/*"],
+      "@repo/shared-universal/*": ["../../packages/shared-universal/src/*"]
     },
     "types": ["vitest/globals", "@testing-library/jest-dom"]
   },

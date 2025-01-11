@@ -3,7 +3,7 @@ import classNames from 'classnames';
 import { LogOutIcon, UserIcon } from 'lucide-react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useLocale, useTranslations } from 'use-intl';
-import { Avatar, AvatarFallback, AvatarImage } from '~react-web-ui-shadcn/components/ui/avatar';
+import { Avatar, AvatarFallback, AvatarImage } from '@repo/react-web-ui-shadcn/components/ui/avatar';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -11,8 +11,8 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '~react-web-ui-shadcn/components/ui/dropdown-menu';
-import { getShortName, objectToQueryString } from '~shared-universal/utils/string.util';
+} from '@repo/react-web-ui-shadcn/components/ui/dropdown-menu';
+import { getShortName, objectToQueryString } from '@repo/shared-universal/utils/string.util';
 
 import { ComponentBaseProps } from '@/interfaces/component.interface';
 

@@ -2,10 +2,10 @@ import { SubmitHandler, useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { useTranslations } from 'use-intl';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { Button } from '@repo/react-web-ui-shadcn/components/ui/button';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@repo/react-web-ui-shadcn/components/ui/form';
+import { Input } from '@repo/react-web-ui-shadcn/components/ui/input';
 import { useMutation } from '@tanstack/react-query';
-import { Button } from '~react-web-ui-shadcn/components/ui/button';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '~react-web-ui-shadcn/components/ui/form';
-import { Input } from '~react-web-ui-shadcn/components/ui/input';
 
 import { SignInDto } from '../interfaces/auth.interface';
 

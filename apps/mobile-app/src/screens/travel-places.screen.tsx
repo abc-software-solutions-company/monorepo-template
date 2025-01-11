@@ -1,11 +1,11 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import Icon from '~react-native-ui-core/components/icon';
-import Loading from '~react-native-ui-core/components/loading';
-import Pagination from '~react-native-ui-core/components/pagination';
-import StatusBar from '~react-native-ui-core/components/statusbar';
-import Text from '~react-native-ui-core/components/text';
-import View from '~react-native-ui-core/components/view';
+import Icon from '@repo/react-native-ui-core/components/icon';
+import Loading from '@repo/react-native-ui-core/components/loading';
+import Pagination from '@repo/react-native-ui-core/components/pagination';
+import StatusBar from '@repo/react-native-ui-core/components/statusbar';
+import Text from '@repo/react-native-ui-core/components/text';
+import View from '@repo/react-native-ui-core/components/view';
 
 import SafeViewArea from '@/components/safe-view-area';
 

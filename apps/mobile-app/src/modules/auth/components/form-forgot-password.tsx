@@ -3,11 +3,11 @@ import { SubmitHandler, useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useNavigation } from '@react-navigation/native';
-import { ds } from '~react-native-design-system';
-import Button from '~react-native-ui-core/components/button';
-import { Form, FormField, FormItem, FormMessage } from '~react-native-ui-core/components/form';
-import Input from '~react-native-ui-core/components/input';
-import View from '~react-native-ui-core/components/view';
+import { ds } from '@repo/react-native-design-system';
+import Button from '@repo/react-native-ui-core/components/button';
+import { Form, FormField, FormItem, FormMessage } from '@repo/react-native-ui-core/components/form';
+import Input from '@repo/react-native-ui-core/components/input';
+import View from '@repo/react-native-ui-core/components/view';
 
 import { ForgotPasswordDto } from '../interfaces/auth.interface';
 

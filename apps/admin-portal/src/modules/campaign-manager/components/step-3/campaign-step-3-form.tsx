@@ -1,7 +1,7 @@
 import { UseFormReturn } from 'react-hook-form';
-import FormFieldRadioBlock from '~react-web-ui-shadcn/components/form-fields-ahua/form-field-radio-block';
-import ModalLoading from '~react-web-ui-shadcn/components/modals/modal-loading';
-import { Form } from '~react-web-ui-shadcn/components/ui/form';
+import FormFieldRadioBlock from '@repo/react-web-ui-shadcn/components/form-fields-ahua/form-field-radio-block';
+import ModalLoading from '@repo/react-web-ui-shadcn/components/modals/modal-loading';
+import { Form } from '@repo/react-web-ui-shadcn/components/ui/form';
 
 import Milestones from './milestones';
 import Rules from './rules';

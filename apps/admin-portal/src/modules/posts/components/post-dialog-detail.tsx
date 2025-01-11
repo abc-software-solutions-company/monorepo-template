@@ -1,8 +1,8 @@
 import { FC, useEffect } from 'react';
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '~react-web-ui-shadcn/components/ui/dialog';
-import { Loading } from '~react-web-ui-shadcn/components/ui/loading';
-import { Separator } from '~react-web-ui-shadcn/components/ui/separator';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@repo/react-web-ui-shadcn/components/ui/dialog';
+import { Loading } from '@repo/react-web-ui-shadcn/components/ui/loading';
+import { Separator } from '@repo/react-web-ui-shadcn/components/ui/separator';
 
 import ContentRenderer from '@/components/content-renderer';
 

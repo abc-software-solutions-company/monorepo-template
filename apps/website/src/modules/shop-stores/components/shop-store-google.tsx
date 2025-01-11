@@ -1,7 +1,7 @@
 import React, { createContext, ReactNode, useContext, useEffect, useRef, useState } from 'react';
 import ReactDOM from 'react-dom';
 import { Wrapper } from '@googlemaps/react-wrapper';
-import { cn } from '~react-web-ui-shadcn/lib/utils';
+import { cn } from '@repo/react-web-ui-shadcn/lib/utils';
 
 import { ShopStore } from '../interfaces/shop-stores.interface';
 

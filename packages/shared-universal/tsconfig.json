@@ -3,7 +3,7 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "~shared-universal/*": ["./src/*"]
+      "@repo/shared-universal/*": ["./src/*"]
     }
   },
   "include": ["src", "__tests__"],

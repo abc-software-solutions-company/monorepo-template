@@ -1,9 +1,9 @@
 import { PlusIcon, Trash2Icon } from 'lucide-react';
 import { useFieldArray, UseFormReturn } from 'react-hook-form';
 import { toast } from 'sonner';
-import FormFieldSelect from '~react-web-ui-shadcn/components/form-fields-ahua/form-field-select';
-import { Button } from '~react-web-ui-shadcn/components/ui/button';
-import { Label } from '~react-web-ui-shadcn/components/ui/label';
+import FormFieldSelect from '@repo/react-web-ui-shadcn/components/form-fields-ahua/form-field-select';
+import { Button } from '@repo/react-web-ui-shadcn/components/ui/button';
+import { Label } from '@repo/react-web-ui-shadcn/components/ui/label';
 
 import { CAMPAIGN_TRIGGER_CONDITION, CAMPAIGN_TRIGGER_PROPERTY } from '../../constants/campaign.constant';
 import { RuleFormValues } from '../../interfaces/campaign.interface';

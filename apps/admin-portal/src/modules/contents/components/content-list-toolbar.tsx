@@ -1,8 +1,8 @@
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useLocale, useTranslations } from 'use-intl';
+import { Button } from '@repo/react-web-ui-shadcn/components/ui/button';
+import { objectToQueryString } from '@repo/shared-universal/utils/string.util';
 import { Table } from '@tanstack/react-table';
-import { Button } from '~react-web-ui-shadcn/components/ui/button';
-import { objectToQueryString } from '~shared-universal/utils/string.util';
 
 import { CONTENT_DEFAULT_FILTER } from '../constants/contents.constant';
 

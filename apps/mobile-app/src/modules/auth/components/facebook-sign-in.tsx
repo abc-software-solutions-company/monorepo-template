@@ -4,8 +4,8 @@ import { Platform, Pressable, PressableProps, StyleProp, ViewStyle } from 'react
 import { AccessToken, AuthenticationToken, LoginManager } from 'react-native-fbsdk-next';
 import { sha256 } from 'react-native-sha256';
 import Auth, { FirebaseAuthTypes } from '@react-native-firebase/auth';
+import { ds } from '@repo/react-native-design-system';
 import { useMutation } from '@tanstack/react-query';
-import { ds } from '~react-native-design-system';
 
 import { OAuthFacebookSignInDto, SignInResponse } from '../interfaces/auth.interface';
 

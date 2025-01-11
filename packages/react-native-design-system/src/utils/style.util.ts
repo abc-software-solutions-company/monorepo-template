@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { ImageStyle, StyleSheet, TextStyle, ViewStyle } from 'react-native';
-import { toCapitalized } from '~shared-universal/utils/string.util';
+import { toCapitalized } from '@repo/shared-universal/utils/string.util';
 
 type StaticStyle = ViewStyle | TextStyle | ImageStyle;
 type DynamicStyleFunction = (...args: any[]) => StaticStyle;

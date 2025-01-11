@@ -1,10 +1,10 @@
 import { FC } from 'react';
 import { useLocale, useTranslations } from 'use-intl';
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@repo/react-web-ui-shadcn/components/ui/dialog';
+import { Loading } from '@repo/react-web-ui-shadcn/components/ui/loading';
+import { toDateTime } from '@repo/shared-universal/utils/date.util';
 import { useQuery } from '@tanstack/react-query';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '~react-web-ui-shadcn/components/ui/dialog';
-import { Loading } from '~react-web-ui-shadcn/components/ui/loading';
-import { toDateTime } from '~shared-universal/utils/date.util';
 
 import { AUDIT_LOG_STATUSES } from '../constants/audit-logs.constant';
 

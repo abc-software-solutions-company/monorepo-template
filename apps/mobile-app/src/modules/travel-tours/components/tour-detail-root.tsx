@@ -1,9 +1,9 @@
 import React, { FC } from 'react';
 import { StyleProp, ViewStyle } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
-import { ds } from '~react-native-design-system';
-import Separator from '~react-native-ui-core/components/separator';
-import View from '~react-native-ui-core/components/view';
+import { ds } from '@repo/react-native-design-system';
+import Separator from '@repo/react-native-ui-core/components/separator';
+import View from '@repo/react-native-ui-core/components/view';
 
 import { TourDetailScreenParams } from '@/modules/navigation/interfaces/navigation.interface';
 

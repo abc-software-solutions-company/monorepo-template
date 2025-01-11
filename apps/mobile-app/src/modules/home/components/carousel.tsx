@@ -2,9 +2,9 @@ import React, { FC } from 'react';
 import { Dimensions, ViewStyle } from 'react-native';
 import FastImage, { ImageStyle } from 'react-native-fast-image';
 import Carousel from 'react-native-reanimated-carousel';
-import { ds } from '~react-native-design-system';
-import { createStyle } from '~react-native-design-system/utils/style.util';
-import View from '~react-native-ui-core/components/view';
+import { ds } from '@repo/react-native-design-system';
+import { createStyle } from '@repo/react-native-design-system/utils/style.util';
+import View from '@repo/react-native-ui-core/components/view';
 
 const WINDOW_SIZES = Dimensions.get('window');
 const banners = [

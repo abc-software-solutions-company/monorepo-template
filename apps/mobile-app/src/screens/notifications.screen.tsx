@@ -1,14 +1,14 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { ScrollView } from 'react-native-gesture-handler';
-import { ds } from '~react-native-design-system';
-import Divider from '~react-native-ui-core/components/divider';
-import Heading from '~react-native-ui-core/components/heading';
-import Icon from '~react-native-ui-core/components/icon';
-import Link from '~react-native-ui-core/components/link';
-import StatusBar from '~react-native-ui-core/components/statusbar';
-import View from '~react-native-ui-core/components/view';
-import { useCoreUITheme } from '~react-native-ui-core/themes/theme.context';
+import { ds } from '@repo/react-native-design-system';
+import Divider from '@repo/react-native-ui-core/components/divider';
+import Heading from '@repo/react-native-ui-core/components/heading';
+import Icon from '@repo/react-native-ui-core/components/icon';
+import Link from '@repo/react-native-ui-core/components/link';
+import StatusBar from '@repo/react-native-ui-core/components/statusbar';
+import View from '@repo/react-native-ui-core/components/view';
+import { useCoreUITheme } from '@repo/react-native-ui-core/themes/theme.context';
 
 import Box from '@/components/box';
 import SafeViewArea from '@/components/safe-view-area';

@@ -2,10 +2,10 @@ import { lazy, Suspense } from 'react';
 import { type Editor } from 'ckeditor5';
 import { FieldValues, Path, UseFormReturn } from 'react-hook-form';
 import { useTranslations } from 'use-intl';
-import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '~react-web-ui-shadcn/components/ui/form';
-import { Loading } from '~react-web-ui-shadcn/components/ui/loading';
+import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@repo/react-web-ui-shadcn/components/ui/form';
+import { Loading } from '@repo/react-web-ui-shadcn/components/ui/loading';
 
-const CKEditor = lazy(() => import('~react-web-ui-shadcn/components/editors/ck-editor'));
+const CKEditor = lazy(() => import('@repo/react-web-ui-shadcn/components/editors/ck-editor'));
 
 type FormFieldCKEditorFullProps<T extends FieldValues> = {
   form: UseFormReturn<T>;

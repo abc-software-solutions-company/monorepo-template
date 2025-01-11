@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { LANGUAGES } from '~shared-universal/constants/language.constant';
+import { LANGUAGES } from '@repo/shared-universal/constants/language.constant';
 
 import { ResponseFormat } from '@/interfaces/api-response.interface';
 import { BaseFilter } from '@/interfaces/filter.interface';

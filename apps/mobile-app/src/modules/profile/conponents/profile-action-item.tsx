@@ -1,10 +1,10 @@
 import React, { FC } from 'react';
 import { ChevronRight } from 'lucide-react-native';
 import { Pressable, StyleProp, ViewStyle } from 'react-native';
-import { ds } from '~react-native-design-system';
-import Text from '~react-native-ui-core/components/text';
-import View from '~react-native-ui-core/components/view';
-import { useCoreUITheme } from '~react-native-ui-core/themes/theme.context';
+import { ds } from '@repo/react-native-design-system';
+import Text from '@repo/react-native-ui-core/components/text';
+import View from '@repo/react-native-ui-core/components/view';
+import { useCoreUITheme } from '@repo/react-native-ui-core/themes/theme.context';
 
 import { ProfileAction } from '../interfaces/profile.interface';
 

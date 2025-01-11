@@ -1,7 +1,7 @@
 import React, { FC, memo, ReactNode } from 'react';
 import { TextStyle } from 'react-native';
-import { ds } from '~react-native-design-system';
-import { createStyle } from '~react-native-design-system/utils/style.util';
+import { ds } from '@repo/react-native-design-system';
+import { createStyle } from '@repo/react-native-design-system/utils/style.util';
 
 import Text from './text';
 import { useCoreUITheme } from '../themes/theme.context';

@@ -1,6 +1,6 @@
 import classNames from 'classnames';
 import { useTranslations } from 'use-intl';
-import { Separator } from '~react-web-ui-shadcn/components/ui/separator';
+import { Separator } from '@repo/react-web-ui-shadcn/components/ui/separator';
 
 import PageHeader from '@/components/pages/page-header';
 import PageWrapper from '@/components/pages/page-wrapper';

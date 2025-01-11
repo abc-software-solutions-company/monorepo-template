@@ -2,7 +2,7 @@ import { FC } from 'react';
 import classNames from 'classnames';
 import { NavLink, useLocation, useSearchParams } from 'react-router-dom';
 import { useLocale } from 'use-intl';
-import { objectToQueryString } from '~shared-universal/utils/string.util';
+import { objectToQueryString } from '@repo/shared-universal/utils/string.util';
 
 type SubMenuDocumentationProps = {
   type: 'dropdown' | 'list';

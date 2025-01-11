@@ -1,7 +1,7 @@
 import React, { FC } from 'react';
-import { ds } from '~react-native-design-system';
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '~react-native-ui-core/components/accordion';
-import Text from '~react-native-ui-core/components/text';
+import { ds } from '@repo/react-native-design-system';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@repo/react-native-ui-core/components/accordion';
+import Text from '@repo/react-native-ui-core/components/text';
 
 type HelpCenterRootProps = {};
 

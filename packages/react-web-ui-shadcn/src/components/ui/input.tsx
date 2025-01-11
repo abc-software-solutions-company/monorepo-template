@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { cva } from 'class-variance-authority';
-import { cn } from '~react-web-ui-shadcn/lib/utils';
+import { cn } from '@repo/react-web-ui-shadcn/lib/utils';
 
 const formControlVariants = cva(
   'grid items-center relative w-full rounded-md border border-input bg-background leading-none ring-offset-background',

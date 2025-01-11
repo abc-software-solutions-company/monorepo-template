@@ -5,8 +5,8 @@
 
 import type { Meta, StoryObj } from '@storybook/react';
 import { useState } from 'react';
-import ModalConfirm from '~react-web-ui-shadcn/components/modals/modal-confirm';
-import { Button } from '~react-web-ui-shadcn/components/ui/button';
+import ModalConfirm from '@repo/react-web-ui-shadcn/components/modals/modal-confirm';
+import { Button } from '@repo/react-web-ui-shadcn/components/ui/button';
 
 const meta = {
   title: 'CUSTOM/ModalConfirm',

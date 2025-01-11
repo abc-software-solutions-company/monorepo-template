@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
-import InputOTP from '~react-native-ui-core/components/input-otp';
-import View from '~react-native-ui-core/components/view';
+import InputOTP from '@repo/react-native-ui-core/components/input-otp';
+import View from '@repo/react-native-ui-core/components/view';
 
 import { UnauthenticatedNavigationProps } from '@/modules/navigation/interfaces/navigation.interface';
 

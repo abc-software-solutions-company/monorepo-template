@@ -1,8 +1,8 @@
 import { FC } from 'react';
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@repo/react-web-ui-shadcn/components/ui/dialog';
+import { Loading } from '@repo/react-web-ui-shadcn/components/ui/loading';
 import { useQuery } from '@tanstack/react-query';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '~react-web-ui-shadcn/components/ui/dialog';
-import { Loading } from '~react-web-ui-shadcn/components/ui/loading';
 
 import ContactApi from '../api/contacts.api';
 

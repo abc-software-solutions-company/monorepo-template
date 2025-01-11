@@ -1,7 +1,7 @@
 import React, { FC } from 'react';
 import classNames from 'classnames';
-import { Avatar, AvatarFallback, AvatarImage } from '~react-web-ui-shadcn/components/ui/avatar';
-import { getShortName } from '~shared-universal/utils/string.util';
+import { Avatar, AvatarFallback, AvatarImage } from '@repo/react-web-ui-shadcn/components/ui/avatar';
+import { getShortName } from '@repo/shared-universal/utils/string.util';
 
 import { ComponentBaseProps } from '@/interfaces/component.interface';
 

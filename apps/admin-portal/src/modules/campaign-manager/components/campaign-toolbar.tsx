@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button } from '~react-web-ui-shadcn/components/ui/button';
+import { Button } from '@repo/react-web-ui-shadcn/components/ui/button';
 
 import { CAMPAIGN_STEP } from '../constants/campaign.constant';
 

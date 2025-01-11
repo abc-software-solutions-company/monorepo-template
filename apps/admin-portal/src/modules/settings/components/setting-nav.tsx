@@ -1,7 +1,7 @@
 import classNames from 'classnames';
 import { NavLink, useLocation, useSearchParams } from 'react-router-dom';
 import { useLocale, useTranslations } from 'use-intl';
-import { objectToQueryString } from '~shared-universal/utils/string.util';
+import { objectToQueryString } from '@repo/shared-universal/utils/string.util';
 
 interface ISettingNavProps extends React.HTMLAttributes<HTMLElement> {}
 

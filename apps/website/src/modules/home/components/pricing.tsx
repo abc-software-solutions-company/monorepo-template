@@ -1,9 +1,9 @@
 import React, { FC } from 'react';
 import classNames from 'classnames';
 import { CheckIcon } from 'lucide-react';
-import { Badge } from '~react-web-ui-shadcn/components/ui/badge';
-import { Button } from '~react-web-ui-shadcn/components/ui/button';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '~react-web-ui-shadcn/components/ui/card';
+import { Badge } from '@repo/react-web-ui-shadcn/components/ui/badge';
+import { Button } from '@repo/react-web-ui-shadcn/components/ui/button';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@repo/react-web-ui-shadcn/components/ui/card';
 
 import { ComponentBaseProps } from '@/interfaces/component.interface';
 

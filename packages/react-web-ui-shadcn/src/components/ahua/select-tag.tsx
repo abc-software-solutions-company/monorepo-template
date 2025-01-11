@@ -1,10 +1,10 @@
 import React, { FC, ForwardedRef, forwardRef, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { CheckIcon, ChevronDownIcon, XIcon } from 'lucide-react';
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '~react-web-ui-shadcn/components/ui/command';
-import { Popover, PopoverContent, PopoverTrigger } from '~react-web-ui-shadcn/components/ui/popover';
-import { Separator } from '~react-web-ui-shadcn/components/ui/separator';
-import { cn } from '~react-web-ui-shadcn/lib/utils';
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@repo/react-web-ui-shadcn/components/ui/command';
+import { Popover, PopoverContent, PopoverTrigger } from '@repo/react-web-ui-shadcn/components/ui/popover';
+import { Separator } from '@repo/react-web-ui-shadcn/components/ui/separator';
+import { cn } from '@repo/react-web-ui-shadcn/lib/utils';
 import { InputLabel } from './input-base';
 import { Button } from '../ui/button';
 import { Loading } from '../ui/loading';
@@ -309,7 +309,7 @@ const SelectTag = forwardRef(
 
     const renderSelectedTags = () => {
       if (selectedItems.length === 0) {
-        return <span className={cn('text-muted-foreground font-medium leading-none', disabled && 'opacity-50')}>{placeholder}</span>;
+        return <span className={cn('font-medium leading-none text-muted-foreground', disabled && 'opacity-50')}>{placeholder}</span>;
       }
 
       const visibleItems = selectedItems.slice(0, maxVisible);

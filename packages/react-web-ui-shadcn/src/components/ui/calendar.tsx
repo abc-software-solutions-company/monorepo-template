@@ -4,8 +4,8 @@ import * as React from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { DayPicker, DropdownProps } from 'react-day-picker';
 
-import { cn } from '~react-web-ui-shadcn/lib/utils';
-import { buttonVariants } from '~react-web-ui-shadcn/components/ui/button';
+import { cn } from '@repo/react-web-ui-shadcn/lib/utils';
+import { buttonVariants } from '@repo/react-web-ui-shadcn/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './select';
 import { ScrollArea } from './scroll-area';
 

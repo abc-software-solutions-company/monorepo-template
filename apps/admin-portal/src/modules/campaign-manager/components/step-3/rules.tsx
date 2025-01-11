@@ -4,10 +4,10 @@ import { useAtom } from 'jotai';
 import { PenIcon, PlusIcon, Trash2Icon } from 'lucide-react';
 import { useFieldArray, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { Button } from '@repo/react-web-ui-shadcn/components/ui/button';
+import { Form } from '@repo/react-web-ui-shadcn/components/ui/form';
+import { Label } from '@repo/react-web-ui-shadcn/components/ui/label';
 import { ColumnDef, getCoreRowModel, useReactTable } from '@tanstack/react-table';
-import { Button } from '~react-web-ui-shadcn/components/ui/button';
-import { Form } from '~react-web-ui-shadcn/components/ui/form';
-import { Label } from '~react-web-ui-shadcn/components/ui/label';
 
 import { DataTable } from '@/components/data-table/data-table';
 

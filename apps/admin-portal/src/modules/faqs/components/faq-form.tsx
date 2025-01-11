@@ -6,12 +6,12 @@ import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { toast } from 'sonner';
 import { useLocale, useTranslations } from 'use-intl';
 import { zodResolver } from '@hookform/resolvers/zod';
-import FormFieldCKEditor from '~react-web-ui-shadcn/components/form-fields/form-field-ckeditor';
-import FormFieldInputName from '~react-web-ui-shadcn/components/form-fields/form-field-input-name';
-import ModalLoading from '~react-web-ui-shadcn/components/modals/modal-loading';
-import { Card, CardContent } from '~react-web-ui-shadcn/components/ui/card';
-import { Form } from '~react-web-ui-shadcn/components/ui/form';
-import { objectToQueryString } from '~shared-universal/utils/string.util';
+import FormFieldCKEditor from '@repo/react-web-ui-shadcn/components/form-fields/form-field-ckeditor';
+import FormFieldInputName from '@repo/react-web-ui-shadcn/components/form-fields/form-field-input-name';
+import ModalLoading from '@repo/react-web-ui-shadcn/components/modals/modal-loading';
+import { Card, CardContent } from '@repo/react-web-ui-shadcn/components/ui/card';
+import { Form } from '@repo/react-web-ui-shadcn/components/ui/form';
+import { objectToQueryString } from '@repo/shared-universal/utils/string.util';
 
 import { FaqFormData } from '../interfaces/faqs.interface';
 

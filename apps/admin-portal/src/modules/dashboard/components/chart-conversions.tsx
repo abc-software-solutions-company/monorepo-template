@@ -2,9 +2,9 @@ import { FC, useEffect, useRef, useState } from 'react';
 import Chart, { ChartDataset } from 'chart.js/auto';
 import classNames from 'classnames';
 import { useTranslations } from 'use-intl';
-import { Card, CardContent, CardHeader, CardTitle } from '~react-web-ui-shadcn/components/ui/card';
-import { Separator } from '~react-web-ui-shadcn/components/ui/separator';
-import { Switch } from '~react-web-ui-shadcn/components/ui/switch';
+import { Card, CardContent, CardHeader, CardTitle } from '@repo/react-web-ui-shadcn/components/ui/card';
+import { Separator } from '@repo/react-web-ui-shadcn/components/ui/separator';
+import { Switch } from '@repo/react-web-ui-shadcn/components/ui/switch';
 
 import { ComponentBaseProps } from '@/interfaces/component.interface';
 

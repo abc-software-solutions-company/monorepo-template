@@ -1,6 +1,6 @@
 import { FC } from 'react';
 import { useTranslations } from 'use-intl';
-import { Card, CardContent, CardHeader, CardTitle } from '~react-web-ui-shadcn/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@repo/react-web-ui-shadcn/components/ui/card';
 
 import { ComponentBaseProps } from '@/interfaces/component.interface';
 

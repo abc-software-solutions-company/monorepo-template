@@ -1,9 +1,9 @@
 import { useRef } from 'react';
 import classNames from 'classnames';
+import { Loading } from '@repo/react-web-ui-shadcn/components/ui/loading';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@repo/react-web-ui-shadcn/components/ui/table';
+import { useSmoothDragToScroll } from '@repo/shared-web/hooks/use-smooth-drag-to-scroll';
 import { ColumnDef, flexRender, Row, Table as TTable } from '@tanstack/react-table';
-import { Loading } from '~react-web-ui-shadcn/components/ui/loading';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '~react-web-ui-shadcn/components/ui/table';
-import { useSmoothDragToScroll } from '~shared-web/hooks/use-smooth-drag-to-scroll';
 
 import NoData from '../no-data';
 

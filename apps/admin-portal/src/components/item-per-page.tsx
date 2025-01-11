@@ -1,5 +1,5 @@
 import { FC } from 'react';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '~react-web-ui-shadcn/components/ui/select';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@repo/react-web-ui-shadcn/components/ui/select';
 
 interface IItemsPerPageProps {
   limit?: number;

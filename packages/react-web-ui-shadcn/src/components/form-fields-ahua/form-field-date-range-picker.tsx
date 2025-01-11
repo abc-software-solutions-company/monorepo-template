@@ -1,7 +1,7 @@
 import { Locale } from 'date-fns';
 import { FieldValues, Path, UseFormReturn } from 'react-hook-form';
-import { InputDateRange } from '~react-web-ui-shadcn/components/ahua/input-date-range';
-import { FormControl, FormField, FormItem, FormMessage } from '~react-web-ui-shadcn/components/ui/form';
+import { InputDateRange } from '@repo/react-web-ui-shadcn/components/ahua/input-date-range';
+import { FormControl, FormField, FormItem, FormMessage } from '@repo/react-web-ui-shadcn/components/ui/form';
 
 interface IFormFieldDateRangePickerProps<T extends FieldValues> {
   dataTestId?: string;

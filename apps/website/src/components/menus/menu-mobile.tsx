@@ -1,9 +1,9 @@
 import React, { FC, useEffect, useState } from 'react';
 import { MenuIcon, X } from 'lucide-react';
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
-import { Drawer, DrawerContent, DrawerDescription, DrawerHeader, DrawerTitle, DrawerTrigger } from '~react-web-ui-shadcn/components/ui/drawer';
-import { cn } from '~react-web-ui-shadcn/lib/utils';
-import { useMediaQuery } from '~shared-web/hooks/use-media-query';
+import { Drawer, DrawerContent, DrawerDescription, DrawerHeader, DrawerTitle, DrawerTrigger } from '@repo/react-web-ui-shadcn/components/ui/drawer';
+import { cn } from '@repo/react-web-ui-shadcn/lib/utils';
+import { useMediaQuery } from '@repo/shared-web/hooks/use-media-query';
 
 import Logo from '../icons/logo';
 import NavigationLink from '../navigation-link';

@@ -2,9 +2,9 @@ import { FC } from 'react';
 import classNames from 'classnames';
 import { parseISO } from 'date-fns';
 import { useLocale, useTranslations } from 'use-intl';
-import { Card, CardContent, CardHeader, CardTitle } from '~react-web-ui-shadcn/components/ui/card';
-import { Separator } from '~react-web-ui-shadcn/components/ui/separator';
-import { toDateTime } from '~shared-universal/utils/date.util';
+import { Card, CardContent, CardHeader, CardTitle } from '@repo/react-web-ui-shadcn/components/ui/card';
+import { Separator } from '@repo/react-web-ui-shadcn/components/ui/separator';
+import { toDateTime } from '@repo/shared-universal/utils/date.util';
 
 import { ComponentBaseProps } from '@/interfaces/component.interface';
 

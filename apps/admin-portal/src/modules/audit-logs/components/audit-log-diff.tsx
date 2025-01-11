@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import { useTranslations } from 'use-intl';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '~react-web-ui-shadcn/components/ui/table';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@repo/react-web-ui-shadcn/components/ui/table';
 
 type AuditLogDiffProps = {
   oldData: Record<string, unknown>;

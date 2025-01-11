@@ -1,10 +1,10 @@
 import React from 'react';
 import { CheckIcon } from 'lucide-react-native';
 import { Pressable } from 'react-native';
-import { ds } from '~react-native-design-system';
-import { dynamicStyles } from '~react-native-design-system/utils/style.util';
-import Text from '~react-native-ui-core/components/text';
-import { useCoreUITheme } from '~react-native-ui-core/themes/theme.context';
+import { ds } from '@repo/react-native-design-system';
+import { dynamicStyles } from '@repo/react-native-design-system/utils/style.util';
+import Text from '@repo/react-native-ui-core/components/text';
+import { useCoreUITheme } from '@repo/react-native-ui-core/themes/theme.context';
 
 import { LanguageNames } from '../constants/language.constant';
 

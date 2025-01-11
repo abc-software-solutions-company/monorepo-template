@@ -1,8 +1,8 @@
 import { FC } from 'react';
 import classNames from 'classnames';
 import { ChevronDownIcon } from 'lucide-react';
-import { Button } from '~react-web-ui-shadcn/components/ui/button';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '~react-web-ui-shadcn/components/ui/dropdown-menu';
+import { Button } from '@repo/react-web-ui-shadcn/components/ui/button';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@repo/react-web-ui-shadcn/components/ui/dropdown-menu';
 
 import { ComponentBaseProps } from '@/interfaces/component.interface';
 

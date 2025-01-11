@@ -3,9 +3,9 @@
 import { useTranslations } from 'next-intl';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Button } from '~react-web-ui-shadcn/components/ui/button';
-import { Form } from '~react-web-ui-shadcn/components/ui/form';
-import { Loading } from '~react-web-ui-shadcn/components/ui/loading';
+import { Button } from '@repo/react-web-ui-shadcn/components/ui/button';
+import { Form } from '@repo/react-web-ui-shadcn/components/ui/form';
+import { Loading } from '@repo/react-web-ui-shadcn/components/ui/loading';
 
 import { SignUpDto } from '../interfaces/auth.interface';
 

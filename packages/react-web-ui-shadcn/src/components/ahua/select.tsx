@@ -2,7 +2,7 @@ import React, { FC, ForwardedRef, forwardRef, useCallback, useEffect, useMemo, u
 import { cva, type VariantProps } from 'class-variance-authority';
 import { CheckIcon, ChevronDownIcon, InfoIcon, XIcon } from 'lucide-react';
 import { InputLabel } from './input-base';
-import { cn } from '~react-web-ui-shadcn/lib/utils';
+import { cn } from '@repo/react-web-ui-shadcn/lib/utils';
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '../ui/command';
 import { Separator } from '../ui/separator';

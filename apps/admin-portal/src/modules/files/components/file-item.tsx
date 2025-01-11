@@ -1,7 +1,7 @@
 import { FC } from 'react';
 import classNames from 'classnames';
-import { Checkbox } from '~react-web-ui-shadcn/components/ui/checkbox';
-import { convertBytes } from '~shared-universal/utils/string.util';
+import { Checkbox } from '@repo/react-web-ui-shadcn/components/ui/checkbox';
+import { convertBytes } from '@repo/shared-universal/utils/string.util';
 
 import { ComponentBaseProps } from '@/interfaces/component.interface';
 import { FileEntity } from '../interfaces/files.interface';

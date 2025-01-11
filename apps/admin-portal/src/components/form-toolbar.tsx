@@ -2,7 +2,7 @@ import { FC } from 'react';
 import classNames from 'classnames';
 import { ChevronLeftIcon } from 'lucide-react';
 import { useTranslations } from 'use-intl';
-import { Button } from '~react-web-ui-shadcn/components/ui/button';
+import { Button } from '@repo/react-web-ui-shadcn/components/ui/button';
 
 import { ComponentBaseProps } from '@/interfaces/component.interface';
 

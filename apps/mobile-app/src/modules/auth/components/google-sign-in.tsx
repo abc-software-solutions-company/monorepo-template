@@ -3,8 +3,8 @@ import { Pressable, PressableProps, StyleProp, ViewStyle } from 'react-native';
 import Config from 'react-native-config';
 import Auth from '@react-native-firebase/auth';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
+import { ds } from '@repo/react-native-design-system';
 import { useMutation } from '@tanstack/react-query';
-import { ds } from '~react-native-design-system';
 
 import { OAuthGoogleSignInDto } from '../interfaces/auth.interface';
 

@@ -2,8 +2,8 @@ import React, { FC } from 'react';
 import { Platform, Pressable, PressableProps, StyleProp, ViewStyle } from 'react-native';
 import appleAuth from '@invertase/react-native-apple-authentication';
 import Auth from '@react-native-firebase/auth';
+import { ds } from '@repo/react-native-design-system';
 import { useMutation } from '@tanstack/react-query';
-import { ds } from '~react-native-design-system';
 
 import { OAuthAppleSignInDto } from '../interfaces/auth.interface';
 

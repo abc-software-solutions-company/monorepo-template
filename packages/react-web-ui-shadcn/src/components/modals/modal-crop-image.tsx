@@ -2,9 +2,9 @@ import { FC, useCallback, useState } from 'react';
 import Cropper, { type Area } from 'react-easy-crop';
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
 import { useTranslations } from 'use-intl';
-import { Button } from '~react-web-ui-shadcn/components/ui/button';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '~react-web-ui-shadcn/components/ui/dialog';
-import { Slider } from '~react-web-ui-shadcn/components/ui/slider';
+import { Button } from '@repo/react-web-ui-shadcn/components/ui/button';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@repo/react-web-ui-shadcn/components/ui/dialog';
+import { Slider } from '@repo/react-web-ui-shadcn/components/ui/slider';
 
 type ModalCropImageProps = {
   visible: boolean;

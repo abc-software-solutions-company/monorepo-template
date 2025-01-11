@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useLocale } from 'use-intl';
+import useDeepCompareEffect from '@repo/shared-universal/hooks/use-deep-compare-effect';
+import { objectToQueryString } from '@repo/shared-universal/utils/string.util';
 import { useQuery } from '@tanstack/react-query';
-import useDeepCompareEffect from '~shared-universal/hooks/use-deep-compare-effect';
-import { objectToQueryString } from '~shared-universal/utils/string.util';
 
 import { ResponseMeta } from '@/interfaces/api-response.interface';
 import { AuditLogEntity, AuditLogFilter } from '../interfaces/audit-logs.interface';

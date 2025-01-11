@@ -1,7 +1,7 @@
 import React, { FC } from 'react';
-import Input from '~react-native-ui-core/components/input';
-import Text from '~react-native-ui-core/components/text';
-import View from '~react-native-ui-core/components/view';
+import Input from '@repo/react-native-ui-core/components/input';
+import Text from '@repo/react-native-ui-core/components/text';
+import View from '@repo/react-native-ui-core/components/view';
 
 interface IPostFilterProps {
   value?: string;
