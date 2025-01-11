@@ -16,7 +16,9 @@
     "types",
     "__tests__",
     "__mocks__",
-    "../../packages/react-web-ui-shadcn/src"
+    "../../packages/react-web-ui-shadcn/src",
+    "../../packages/shared-universal/src",
+    "../../packages/shared-web/src"
   ],
   "exclude": ["node_modules"]
 }

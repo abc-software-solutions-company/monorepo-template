@@ -1,7 +1,7 @@
 import { FieldValues, Path, UseFormReturn } from 'react-hook-form';
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@repo/react-web-ui-shadcn/components/ui/form';
 import { RadioGroup, RadioGroupItem } from '@repo/react-web-ui-shadcn/components/ui/radio-group';
-import { cn } from '@repo/react-web-ui-shadcn/lib/utils';
+import { cn } from '../../lib/utils';
 
 type Option = {
   label: string;

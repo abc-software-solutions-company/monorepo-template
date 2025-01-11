@@ -1,6 +1,6 @@
 import { cva } from 'class-variance-authority';
 import { FC, LabelHTMLAttributes } from 'react';
-import { cn } from '@repo/react-web-ui-shadcn/lib/utils';
+import { cn } from '../../lib/utils';
 
 const inputLabelVariants = cva('block text-muted-foreground px-3 font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70', {
   variants: {

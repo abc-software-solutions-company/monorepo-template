@@ -1,5 +1,5 @@
 import React from 'react';
-import { cn } from '@repo/react-web-ui-shadcn/lib/utils';
+import { cn } from '../../lib/utils';
 
 interface IBlockProps extends React.InputHTMLAttributes<HTMLDivElement> {
   visibled?: boolean;

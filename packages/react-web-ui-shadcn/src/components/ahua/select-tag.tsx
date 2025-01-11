@@ -4,7 +4,7 @@ import { CheckIcon, ChevronDownIcon, XIcon } from 'lucide-react';
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@repo/react-web-ui-shadcn/components/ui/command';
 import { Popover, PopoverContent, PopoverTrigger } from '@repo/react-web-ui-shadcn/components/ui/popover';
 import { Separator } from '@repo/react-web-ui-shadcn/components/ui/separator';
-import { cn } from '@repo/react-web-ui-shadcn/lib/utils';
+import { cn } from '../../lib/utils';
 import { InputLabel } from './input-base';
 import { Button } from '../ui/button';
 import { Loading } from '../ui/loading';

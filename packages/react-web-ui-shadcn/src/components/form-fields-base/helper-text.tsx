@@ -4,7 +4,7 @@
  */
 
 import { InfoIcon } from 'lucide-react';
-import { cn } from '@repo/react-web-ui-shadcn/lib/utils';
+import { cn } from '../../lib/utils';
 
 type HelperTextProps = {
   text?: string;

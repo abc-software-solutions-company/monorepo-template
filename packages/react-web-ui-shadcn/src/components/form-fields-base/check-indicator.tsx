@@ -5,7 +5,7 @@
 
 import { FC } from 'react';
 import { CircleCheckBigIcon, InfoIcon } from 'lucide-react';
-import { cn } from '@repo/react-web-ui-shadcn/lib/utils';
+import { cn } from '../../lib/utils';
 import { Translation } from '@repo/shared-universal/interfaces/language.interface';
 
 type CheckIndicatorProps = {

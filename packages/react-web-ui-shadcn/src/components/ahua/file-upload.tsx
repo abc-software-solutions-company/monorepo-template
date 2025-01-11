@@ -1,7 +1,7 @@
 import React, { useRef, useState } from 'react';
 import { cva } from 'class-variance-authority';
 import { Button } from '@repo/react-web-ui-shadcn/components/ui/button';
-import { cn } from '@repo/react-web-ui-shadcn/lib/utils';
+import { cn } from '../../lib/utils';
 import { Loading } from '../ui/loading';
 
 const dropzoneVariants = cva('relative flex items-center justify-center cursor-pointer rounded-lg border border-dashed text-center', {

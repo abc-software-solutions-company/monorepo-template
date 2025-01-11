@@ -9,7 +9,7 @@ import { Command, CommandGroup, CommandItem, CommandList } from '@repo/react-web
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@repo/react-web-ui-shadcn/components/ui/form';
 import { Loading } from '@repo/react-web-ui-shadcn/components/ui/loading';
 import { Popover, PopoverContent, PopoverTrigger } from '@repo/react-web-ui-shadcn/components/ui/popover';
-import { cn } from '@repo/react-web-ui-shadcn/lib/utils';
+import { cn } from '../../lib/utils';
 import { Language, Translation } from '@repo/shared-universal/interfaces/language.interface';
 
 import { CheckIndicator } from '../form-fields-base/check-indicator';

@@ -5,7 +5,7 @@ import { CalendarDaysIcon } from 'lucide-react';
 import { DateRange, Matcher } from 'react-day-picker';
 import { InputLabel } from './input-base';
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
-import { cn } from '@repo/react-web-ui-shadcn/lib/utils';
+import { cn } from '../../lib/utils';
 import { Calendar } from '../ui/calendar';
 
 const CURRENT_YEAR = new Date().getFullYear();

@@ -1,15 +1,11 @@
 {
   "extends": "@repo/config-typescript/react-library.json",
   "compilerOptions": {
+    "jsx": "react-jsx",
     "moduleResolution": "bundler",
     "target": "ESNext",
-    "module": "ESNext",
-    "paths": {
-      "@/*": ["./src/*"],
-      "@repo/shared-universal/*": ["../shared-universal/src/*"],
-      "@repo/shared-web/*": ["../shared-web/src/*"]
-    }
+    "module": "ESNext"
   },
-  "include": ["src", "../shared-universal/src", "../shared-web/src"],
+  "include": ["src", "../../packages/shared-universal/src"],
   "exclude": ["node_modules"]
 }

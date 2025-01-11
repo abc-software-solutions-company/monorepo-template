@@ -1,7 +1,7 @@
 import { useEffect, useState, useCallback, forwardRef } from 'react';
 import ReactQuill, { type UnprivilegedEditor } from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
-import { cn } from '@repo/react-web-ui-shadcn/lib/utils';
+import { cn } from '../../lib/utils';
 
 interface IQuillEditorProps {
   value: string;

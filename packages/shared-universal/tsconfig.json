@@ -1,11 +1,11 @@
 {
   "extends": "@repo/config-typescript/react-library.json",
   "compilerOptions": {
-    "baseUrl": ".",
-    "paths": {
-      "@repo/shared-universal/*": ["./src/*"]
-    }
+    "jsx": "react-jsx",
+    "moduleResolution": "bundler",
+    "target": "ESNext",
+    "module": "ESNext"
   },
-  "include": ["src", "__tests__"],
+  "include": ["src"],
   "exclude": ["node_modules"]
 }

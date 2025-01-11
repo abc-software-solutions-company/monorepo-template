@@ -4,6 +4,7 @@
   "private": true,
   "description": "Common utilities, hooks",
   "license": "MIT",
+  "type": "module",
   "scripts": {
     "lint": "eslint . --max-warnings 0",
     "lint:fix": "eslint . --fix"
@@ -16,6 +17,7 @@
     "./validators/*": "./src/validators/*.ts"
   },
   "devDependencies": {
+    "@repo/config-prettier": "*",
     "@repo/config-typescript": "*",
     "@repo/eslint-config": "*",
     "@types/node": "^22.10.2",
