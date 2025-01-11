@@ -194,6 +194,7 @@ const InputDate = React.forwardRef<HTMLButtonElement, InputDateProps>(
               <button
                 {...props}
                 ref={ref}
+                aria-label="input-date"
                 className={cn(triggerVariants({ size }), disabled && 'cursor-not-allowed')}
                 aria-expanded={isOpen}
                 disabled={disabled}

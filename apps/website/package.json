@@ -55,6 +55,7 @@
     "@tanstack/react-table": "^8.17.3",
     "axios": "^1.7.4",
     "classnames": "^2.5.1",
+    "critters": "^0.0.25",
     "date-fns": "^3.6.0",
     "dayjs": "^1.11.11",
     "framer-motion": "^11.2.6",

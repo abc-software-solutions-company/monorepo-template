@@ -30,7 +30,7 @@ const Hero: FC<ComponentBaseProps> = ({ className }) => {
           </div>
         </div>
         <div className="relative w-full">
-          <Image src={fileManImg} alt="hero image" className="rounded-xl" width={1000} height={915} />
+          <Image priority loading="eager" src={fileManImg} alt="hero image" className="rounded-xl" width={1000} height={915} />
         </div>
       </section>
     </div>

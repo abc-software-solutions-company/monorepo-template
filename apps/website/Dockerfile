@@ -48,6 +48,9 @@ RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 USER nextjs
 
+# Disable Next.js telemetry
+ENV NEXT_TELEMETRY_DISABLED 1
+
 # Automatically leverage output traces to reduce image size
 # https://nextjs.org/docs/advanced-features/output-file-tracing
 COPY --from=installer --chown=nextjs:nodejs /app/apps/website/.next/standalone ./

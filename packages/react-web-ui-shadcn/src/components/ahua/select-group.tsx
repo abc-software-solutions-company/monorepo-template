@@ -394,6 +394,7 @@ const SelectGroup = forwardRef(
                   aria-expanded={isOpen}
                   disabled={disabled}
                   type="button"
+                  aria-label="open-select-group"
                   onClick={() => !disabled && setIsFocused(true)}
                   onFocus={handleFocus}
                   onBlur={handleBlur}
@@ -422,11 +423,21 @@ const SelectGroup = forwardRef(
                             <div className="flex flex-1 items-center justify-between">
                               <span>{group.name}</span>
                               <div className="flex gap-2 text-xs text-muted-foreground">
-                                <button type="button" className="cursor-pointer hover:text-primary" onClick={e => handleSelectAllInGroup(group, e)}>
+                                <button
+                                  aria-label="select-all"
+                                  type="button"
+                                  className="cursor-pointer hover:text-primary"
+                                  onClick={e => handleSelectAllInGroup(group, e)}
+                                >
                                   Select all
                                 </button>
                                 <span>|</span>
-                                <button type="button" className="cursor-pointer hover:text-primary" onClick={e => handleDeselectAllInGroup(group, e)}>
+                                <button
+                                  aria-label="deselect-all"
+                                  type="button"
+                                  className="cursor-pointer hover:text-primary"
+                                  onClick={e => handleDeselectAllInGroup(group, e)}
+                                >
                                   Deselect all
                                 </button>
                               </div>
