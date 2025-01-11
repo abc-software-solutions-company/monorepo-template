@@ -1,7 +1,7 @@
 'use client';
 
-import { Toast, ToastClose, ToastDescription, ToastProvider, ToastTitle, ToastViewport } from '@repo/react-web-ui-shadcn/components/ui/toast';
-import { useToast } from '@repo/react-web-ui-shadcn/components/ui/use-toast';
+import { Toast, ToastClose, ToastDescription, ToastProvider, ToastTitle, ToastViewport } from './toast';
+import { useToast } from './use-toast';
 
 export function Toaster() {
   const { toasts } = useToast();

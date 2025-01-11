@@ -5,22 +5,18 @@
     "paths": {
       "@/*": ["./src/*"],
       "@tests/*": ["./__tests__/*"],
-      "@mocks/*": ["./__mocks__/*"],
-      "@repo/react-web-ui-shadcn/*": ["../../packages/react-web-ui-shadcn/src/*"],
-      "@repo/shared-web/*": ["../../packages/shared-web/src/*"],
-      "@repo/shared-universal/*": ["../../packages/shared-universal/src/*"]
+      "@mocks/*": ["./__mocks__/*"]
     }
   },
   "include": [
     "next-env.d.ts",
     ".next/types/**/*.ts",
-    "src",
+    "**/*.tsx",
+    "**/*.ts",
     "types",
     "__tests__",
     "__mocks__",
-    "../../packages/react-web-ui-shadcn/src",
-    "../../packages/shared-web/src",
-    "../../packages/shared-universal/src"
+    "../../packages/react-web-ui-shadcn/src"
   ],
   "exclude": ["node_modules"]
 }

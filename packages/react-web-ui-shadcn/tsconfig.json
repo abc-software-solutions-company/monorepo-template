@@ -1,9 +1,11 @@
 {
-  "extends": "@repo/config-typescript/vite.json",
+  "extends": "@repo/config-typescript/react-library.json",
   "compilerOptions": {
-    "baseUrl": ".",
+    "moduleResolution": "bundler",
+    "target": "ESNext",
+    "module": "ESNext",
     "paths": {
-      "@repo/react-web-ui-shadcn/*": ["./src/*"],
+      "@/*": ["./src/*"],
       "@repo/shared-universal/*": ["../shared-universal/src/*"],
       "@repo/shared-web/*": ["../shared-web/src/*"]
     }
