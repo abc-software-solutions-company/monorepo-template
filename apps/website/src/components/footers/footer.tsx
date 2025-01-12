@@ -15,7 +15,7 @@ const Footer: FC = () => {
       <div className="container">
         <div className="py-14 sm:py-16 md:flex md:justify-between">
           <div className="mb-10 md:mb-0">
-            <Link href="/" className="flex items-center">
+            <Link href="/" className="flex items-center" aria-label="Next Application">
               <Logo />
             </Link>
           </div>
