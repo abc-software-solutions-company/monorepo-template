@@ -1,11 +1,14 @@
 {
   "extends": "@repo/config-typescript/react-library.json",
   "compilerOptions": {
-    "jsx": "react-jsx",
-    "moduleResolution": "bundler",
-    "target": "ESNext",
-    "module": "ESNext"
+    "types": ["vitest/globals", "@testing-library/jest-dom"],
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"],
+      "@tests/*": ["./__tests__/*"],
+      "@mocks/*": ["./__mocks__/*"]
+    }
   },
-  "include": ["src", "../../packages/shared-universal/src"],
+  "include": ["src", "__tests__", "__mocks__", "../../packages/shared-universal/src", "../../packages/shared-web/src"],
   "exclude": ["node_modules"]
 }

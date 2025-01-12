@@ -11,8 +11,7 @@
   "include": [
     "next-env.d.ts",
     ".next/types/**/*.ts",
-    "**/*.tsx",
-    "**/*.ts",
+    "src",
     "types",
     "__tests__",
     "__mocks__",
