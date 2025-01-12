@@ -116,6 +116,7 @@ const PostForm: FC<PostFormProps> = ({ isEdit }) => {
                   formLabel={t('form_field_description')}
                   editorRef={editorRef}
                   minHeight={120}
+                  maxLength={2000}
                   toolbar={['bold', 'italic', 'underline', 'strikethrough']}
                   locales={LANGUAGES}
                 />
@@ -133,6 +134,7 @@ const PostForm: FC<PostFormProps> = ({ isEdit }) => {
                   formLabel={t('form_field_content')}
                   editorRef={editorRef}
                   locales={LANGUAGES}
+                  maxLength={50000}
                   setVisible={setIsFileManagerVisible}
                 />
               </CardContent>
