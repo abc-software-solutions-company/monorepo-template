@@ -16,12 +16,13 @@
     }
   },
   "include": [
-    "src",
     "App.tsx",
+    "index.ts",
     "types",
+    "src",
+    "e2e",
     "__tests__",
     "__mocks__",
-    "e2e",
     "../../packages/react-native-design-system/src",
     "../../packages/react-native-ui-core/src",
     "../../packages/shared-universal/src"

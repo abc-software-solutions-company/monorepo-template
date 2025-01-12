@@ -10,11 +10,11 @@ module.exports = {
   parserOptions: { project },
   settings: {
     'import/resolver': {
-      typescript: { project }
-    }
+      typescript: { project },
+    },
   },
-  ignorePatterns: ['prettier.config.js'],
+  ignorePatterns: ['.eslintrc.cjs', 'prettier.config.mjs'],
   rules: {
-    'no-redeclare': 'off'
-  }
+    'no-redeclare': 'off',
+  },
 };

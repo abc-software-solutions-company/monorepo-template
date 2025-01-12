@@ -11,6 +11,7 @@
   "include": [
     "next-env.d.ts",
     ".next/types/**/*.ts",
+    "i18n.ts",
     "src",
     "types",
     "__tests__",

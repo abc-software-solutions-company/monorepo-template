@@ -1,3 +1,5 @@
+patches
+dist
 node_modules
 coverage-unit
 coverage-e2e

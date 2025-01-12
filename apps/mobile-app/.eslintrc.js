@@ -24,17 +24,5 @@ module.exports = {
       version: 'detect',
     },
   },
-  ignorePatterns: [
-    'cli',
-    'index.js',
-    '.eslintrc.js',
-    'nativewind-env.d.ts',
-    'babel.config.js',
-    'metro.config.js',
-    'prettier.config.js',
-    'react-native.config.js',
-    'jest.config.ts',
-    'tailwind.config.js',
-    'vitest.config.ts',
-  ],
+  ignorePatterns: ['.eslintrc.js', 'babel.config.js', 'jest.config.ts', 'metro.config.js', 'prettier.config.js', 'react-native.config.js', 'cli'],
 };

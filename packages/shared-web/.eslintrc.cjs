@@ -13,7 +13,7 @@ module.exports = {
       typescript: { project },
     },
   },
-  ignorePatterns: ['postcss.config.mjs', 'prettier.config.mjs', 'tailwind.config.ts', 'vitest.config.mts'],
+  ignorePatterns: ['.eslintrc.cjs', 'postcss.config.mjs', 'prettier.config.mjs', 'tailwind.config.ts', 'vitest.config.ts'],
   rules: {
     'no-redeclare': 'off',
   },
