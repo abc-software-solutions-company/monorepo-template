@@ -1,8 +1,8 @@
 import { FC } from 'react';
 import classNames from 'classnames';
 import { useTranslations } from 'use-intl';
-import { Button } from '~react-web-ui-shadcn/components/ui/button';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '~react-web-ui-shadcn/components/ui/select';
+import { Button } from '@repo/react-web-ui-shadcn/components/ui/button';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@repo/react-web-ui-shadcn/components/ui/select';
 
 import { ComponentBaseProps } from '@/interfaces/component.interface';
 import { AuditLogFilter } from '../interfaces/audit-logs.interface';

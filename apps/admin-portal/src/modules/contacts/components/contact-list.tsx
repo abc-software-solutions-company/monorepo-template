@@ -2,10 +2,10 @@ import { FC, useEffect, useMemo, useState } from 'react';
 import classNames from 'classnames';
 import { EyeIcon } from 'lucide-react';
 import { useLocale, useTranslations } from 'use-intl';
+import { Button } from '@repo/react-web-ui-shadcn/components/ui/button';
+import Pagination from '@repo/react-web-ui-shadcn/components/ui/pagination-custom';
+import { toDateTime } from '@repo/shared-universal/utils/date.util';
 import { ColumnDef, getCoreRowModel, useReactTable } from '@tanstack/react-table';
-import { Button } from '~react-web-ui-shadcn/components/ui/button';
-import Pagination from '~react-web-ui-shadcn/components/ui/pagination-custom';
-import { toDateTime } from '~shared-universal/utils/date.util';
 
 import { ComponentBaseProps } from '@/interfaces/component.interface';
 import { ContactEntity } from '../interfaces/contacts.interface';

@@ -1,9 +1,9 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { Pressable, View, ViewStyle } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
-import { ds } from '~react-native-design-system';
-import { createStyle, dynamicStyles } from '~react-native-design-system/utils/style.util';
-import { useCoreUITheme } from '~react-native-ui-core/themes/theme.context';
+import { ds } from '@repo/react-native-design-system';
+import { createStyle, dynamicStyles } from '@repo/react-native-design-system/utils/style.util';
+import { useCoreUITheme } from '@repo/react-native-ui-core/themes/theme.context';
 
 interface IContextProps {
   active: string;

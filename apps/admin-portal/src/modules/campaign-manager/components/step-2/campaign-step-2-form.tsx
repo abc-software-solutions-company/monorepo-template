@@ -1,12 +1,12 @@
 import { UseFormReturn } from 'react-hook-form';
-import FormFieldDateRangePicker from '~react-web-ui-shadcn/components/form-fields-ahua/form-field-date-range-picker';
-import FormFieldInput from '~react-web-ui-shadcn/components/form-fields-ahua/form-field-input';
-import FormFieldSelect from '~react-web-ui-shadcn/components/form-fields-ahua/form-field-select';
-import FormFieldSelectGroup from '~react-web-ui-shadcn/components/form-fields-ahua/form-field-select-group';
-import FormFieldSelectTag from '~react-web-ui-shadcn/components/form-fields-ahua/form-field-select-tag';
-import ModalLoading from '~react-web-ui-shadcn/components/modals/modal-loading';
-import { Form } from '~react-web-ui-shadcn/components/ui/form';
-import { LANGUAGES } from '~shared-universal/constants/language.constant';
+import FormFieldDateRangePicker from '@repo/react-web-ui-shadcn/components/form-fields-ahua/form-field-date-range-picker';
+import FormFieldInput from '@repo/react-web-ui-shadcn/components/form-fields-ahua/form-field-input';
+import FormFieldSelect from '@repo/react-web-ui-shadcn/components/form-fields-ahua/form-field-select';
+import FormFieldSelectGroup from '@repo/react-web-ui-shadcn/components/form-fields-ahua/form-field-select-group';
+import FormFieldSelectTag from '@repo/react-web-ui-shadcn/components/form-fields-ahua/form-field-select-tag';
+import ModalLoading from '@repo/react-web-ui-shadcn/components/modals/modal-loading';
+import { Form } from '@repo/react-web-ui-shadcn/components/ui/form';
+import { LANGUAGES } from '@repo/shared-universal/constants/language.constant';
 
 import { campaignStep2Dto } from '../../dtos/campaign-step-2.dto';
 import { CampaignStep2FormValues } from '../../interfaces/campaign.interface';

@@ -1,9 +1,9 @@
 import React, { FC, ReactNode } from 'react';
 import { StyleProp, ViewStyle } from 'react-native';
-import { ds } from '~react-native-design-system';
-import { dynamicStyles } from '~react-native-design-system/utils/style.util';
-import View from '~react-native-ui-core/components/view';
-import { useCoreUITheme } from '~react-native-ui-core/themes/theme.context';
+import { ds } from '@repo/react-native-design-system';
+import { dynamicStyles } from '@repo/react-native-design-system/utils/style.util';
+import View from '@repo/react-native-ui-core/components/view';
+import { useCoreUITheme } from '@repo/react-native-ui-core/themes/theme.context';
 
 type BoxProps = {
   padding?: number;

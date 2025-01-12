@@ -1,7 +1,7 @@
 import React, { ForwardedRef, forwardRef, Fragment, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { ChevronDownIcon, CheckIcon, XIcon } from 'lucide-react';
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
-import { cn } from '~react-web-ui-shadcn/lib/utils';
+import { cn } from '../../lib/utils';
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '../ui/command';
 import { type VariantProps } from 'class-variance-authority';
 import { Separator } from '../ui/separator';
@@ -421,12 +421,12 @@ const SelectGroup = forwardRef(
                           <div className={groupHeaderVariants({ size })}>
                             <div className="flex flex-1 items-center justify-between">
                               <span>{group.name}</span>
-                              <div className="text-muted-foreground flex gap-2 text-xs">
-                                <button type="button" className="hover:text-primary cursor-pointer" onClick={e => handleSelectAllInGroup(group, e)}>
+                              <div className="flex gap-2 text-xs text-muted-foreground">
+                                <button type="button" className="cursor-pointer hover:text-primary" onClick={e => handleSelectAllInGroup(group, e)}>
                                   Select all
                                 </button>
                                 <span>|</span>
-                                <button type="button" className="hover:text-primary cursor-pointer" onClick={e => handleDeselectAllInGroup(group, e)}>
+                                <button type="button" className="cursor-pointer hover:text-primary" onClick={e => handleDeselectAllInGroup(group, e)}>
                                   Deselect all
                                 </button>
                               </div>
@@ -443,7 +443,7 @@ const SelectGroup = forwardRef(
                                 <span>{String(option[displayField])}</span>
                                 <div className={checkboxVariants({ size, selected: isSelected ? 'all' : 'none' })}>
                                   <CheckIcon
-                                    className={cn('text-primary-foreground h-3 w-3', {
+                                    className={cn('h-3 w-3 text-primary-foreground', {
                                       'opacity-100': isSelected,
                                       'opacity-0': !isSelected,
                                     })}

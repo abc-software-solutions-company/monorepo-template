@@ -2,10 +2,10 @@ import { FC, useEffect } from 'react';
 import classNames from 'classnames';
 import { NavLink, useLocation, useSearchParams } from 'react-router-dom';
 import { useLocale, useTranslations } from 'use-intl';
+import { buttonVariants } from '@repo/react-web-ui-shadcn/components/ui/button';
+import { Separator } from '@repo/react-web-ui-shadcn/components/ui/separator';
+import { objectToQueryString } from '@repo/shared-universal/utils/string.util';
 import { useQuery } from '@tanstack/react-query';
-import { buttonVariants } from '~react-web-ui-shadcn/components/ui/button';
-import { Separator } from '~react-web-ui-shadcn/components/ui/separator';
-import { objectToQueryString } from '~shared-universal/utils/string.util';
 
 import { ComponentBaseProps } from '@/interfaces/component.interface';
 

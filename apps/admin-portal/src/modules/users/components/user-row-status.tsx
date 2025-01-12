@@ -1,7 +1,7 @@
 import { FC } from 'react';
 import classNames from 'classnames';
 import { InfoIcon } from 'lucide-react';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '~react-web-ui-shadcn/components/ui/tooltip';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@repo/react-web-ui-shadcn/components/ui/tooltip';
 
 import { ComponentBaseProps } from '@/interfaces/component.interface';
 import { OptionType } from '@/interfaces/status.interface';

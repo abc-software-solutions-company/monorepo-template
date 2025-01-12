@@ -1,12 +1,13 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { Pressable, ViewStyle } from 'react-native';
 import FastImage, { ImageStyle } from 'react-native-fast-image';
-import { Colors, ds } from '~react-native-design-system';
-import { dynamicStyles } from '~react-native-design-system/utils/style.util';
+import { Colors, ds } from '@repo/react-native-design-system';
+import { dynamicStyles } from '@repo/react-native-design-system/utils/style.util';
 
 import Text from './text';
-import { useCoreUITheme } from '../themes/theme.context';
 import View from './view';
+
+import { useCoreUITheme } from '../themes/theme.context';
 
 type AvatarProps = {
   size?: number;

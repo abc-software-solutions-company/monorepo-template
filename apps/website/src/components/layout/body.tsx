@@ -1,12 +1,12 @@
 import React, { FC, ReactNode } from 'react';
 import classNames from 'classnames';
-import { Toaster } from '~react-web-ui-shadcn/components/ui/sonner';
+import { Toaster } from '@repo/react-web-ui-shadcn/components/ui/sonner';
 
 import { ComponentBaseProps } from '@/interfaces/component.interface';
 
 import AllTheProviders from '../all-the-providers';
 
-import '~react-web-ui-shadcn/globals.scss';
+import '@repo/react-web-ui-shadcn/globals.scss';
 import '@/globals.scss';
 import 'lightgallery.js/dist/css/lightgallery.css';
 

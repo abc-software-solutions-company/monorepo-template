@@ -1,6 +1,6 @@
 import React, { FC } from 'react';
 import classNames from 'classnames';
-import { Separator } from '~react-web-ui-shadcn/components/ui/separator';
+import { Separator } from '@repo/react-web-ui-shadcn/components/ui/separator';
 
 import { ComponentBaseProps } from '@/interfaces/component.interface';
 

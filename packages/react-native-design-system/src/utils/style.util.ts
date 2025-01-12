@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { ImageStyle, StyleSheet, TextStyle, ViewStyle } from 'react-native';
-import { toCapitalized } from '~shared-universal/utils/string.util';
+import { toCapitalized } from '@repo/shared-universal/utils/string.util';
 
 type StaticStyle = ViewStyle | TextStyle | ImageStyle;
 type DynamicStyleFunction = (...args: any[]) => StaticStyle;
@@ -37,12 +37,15 @@ export function createStyleProp<T extends Record<string, any>, P extends string 
   mapFn: (value: any) => StaticStyle
 ): StyleProp<T, P> {
   const result = {} as StyleProp<T, P>;
+
   for (const key in styles) {
     if (Object.prototype.hasOwnProperty.call(styles, key)) {
       const newKey = prefix ? `${prefix}${toCapitalized(String(key))}` : key;
+
       (result as Record<string, StaticStyle>)[newKey] = mapFn(styles[key]);
     }
   }
+
   return result;
 }
 
@@ -51,6 +54,7 @@ export function getNegativeStyleProp<T extends Record<string, number>>(record: T
 
   for (const key of Object.keys(record) as Array<keyof T>) {
     const newKey = `${String(key)}ne` as keyof StylePropNegative<T>;
+
     result[newKey] = -record[key] as StylePropNegative<T>[typeof newKey];
   }
 

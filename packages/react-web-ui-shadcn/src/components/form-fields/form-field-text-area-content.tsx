@@ -1,7 +1,7 @@
 import { FieldValues, Path, UseFormReturn } from 'react-hook-form';
 import { useTranslations } from 'use-intl';
-import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '~react-web-ui-shadcn/components/ui/form';
-import { Textarea } from '~react-web-ui-shadcn/components/ui/textarea';
+import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@repo/react-web-ui-shadcn/components/ui/form';
+import { Textarea } from '@repo/react-web-ui-shadcn/components/ui/textarea';
 
 type FormFieldTextAreaContentProps<T extends FieldValues> = {
   form: UseFormReturn<T>;

@@ -1,15 +1,15 @@
 import { StyleSheet } from 'react-native';
 
-import { colors } from './config';
-import { SPACING_STYLE } from './spacing';
 import { BORDER_STYLE } from './border';
-import { SIZE_STYLE } from './sizing';
-import { EFFECT_STYLE } from './effect';
-import { IMAGE_STYLE } from './image';
-import { FLEX_STYLE } from './flex';
-import { LAYOUT_STYLE } from './layout';
-import { TYPOGRAPHY_STYLE } from './typography';
 import { COLOR_STYLE } from './colors';
+import { colors } from './config';
+import { EFFECT_STYLE } from './effect';
+import { FLEX_STYLE } from './flex';
+import { IMAGE_STYLE } from './image';
+import { LAYOUT_STYLE } from './layout';
+import { SIZE_STYLE } from './sizing';
+import { SPACING_STYLE } from './spacing';
+import { TYPOGRAPHY_STYLE } from './typography';
 
 const styles = StyleSheet.create({
   heading1: { ...TYPOGRAPHY_STYLE.text36 },

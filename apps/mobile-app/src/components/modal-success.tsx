@@ -2,9 +2,9 @@ import React, { FC, useEffect, useRef } from 'react';
 import LottieView from 'lottie-react-native';
 import { useTranslation } from 'react-i18next';
 import { View } from 'react-native';
-import { ds } from '~react-native-design-system';
-import Text from '~react-native-ui-core/components/text';
-import { useCoreUITheme } from '~react-native-ui-core/themes/theme.context';
+import { ds } from '@repo/react-native-design-system';
+import Text from '@repo/react-native-ui-core/components/text';
+import { useCoreUITheme } from '@repo/react-native-ui-core/themes/theme.context';
 
 import { sleep } from '@/utils/miscs.util';
 

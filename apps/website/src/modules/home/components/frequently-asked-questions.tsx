@@ -1,6 +1,6 @@
 import React, { FC } from 'react';
 import classNames from 'classnames';
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '~react-web-ui-shadcn/components/ui/accordion';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@repo/react-web-ui-shadcn/components/ui/accordion';
 
 import { ComponentBaseProps } from '@/interfaces/component.interface';
 

@@ -1,7 +1,7 @@
 import { ChangeEvent, ReactNode, useRef } from 'react';
 import classNames from 'classnames';
-import { Button } from '~react-web-ui-shadcn/components/ui/button';
-import { Loading } from '~react-web-ui-shadcn/components/ui/loading';
+import { Button } from '@repo/react-web-ui-shadcn/components/ui/button';
+import { Loading } from '@repo/react-web-ui-shadcn/components/ui/loading';
 
 import { ComponentBaseProps } from '@/interfaces/component.interface';
 

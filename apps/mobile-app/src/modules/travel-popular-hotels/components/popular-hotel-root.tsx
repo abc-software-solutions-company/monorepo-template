@@ -1,11 +1,11 @@
 import React, { FC } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
-import { ds } from '~react-native-design-system';
-import Heading from '~react-native-ui-core/components/heading';
-import Link from '~react-native-ui-core/components/link';
-import View from '~react-native-ui-core/components/view';
-import { useCoreUITheme } from '~react-native-ui-core/themes/theme.context';
+import { ds } from '@repo/react-native-design-system';
+import Heading from '@repo/react-native-ui-core/components/heading';
+import Link from '@repo/react-native-ui-core/components/link';
+import View from '@repo/react-native-ui-core/components/view';
+import { useCoreUITheme } from '@repo/react-native-ui-core/themes/theme.context';
 
 import { AccommodationParamList } from '@/modules/navigation/interfaces/navigation.interface';
 import { AccommodationEntity } from '@/modules/travel-accommodations/interfaces/accommodations.interface';

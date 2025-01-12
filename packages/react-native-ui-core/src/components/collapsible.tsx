@@ -1,6 +1,6 @@
 import React, { ReactNode, useEffect, useRef } from 'react';
 import { Animated, LayoutChangeEvent, Platform, UIManager, View, ViewStyle } from 'react-native';
-import { ds } from '~react-native-design-system';
+import { ds } from '@repo/react-native-design-system';
 
 // Enable LayoutAnimation for Android
 if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {

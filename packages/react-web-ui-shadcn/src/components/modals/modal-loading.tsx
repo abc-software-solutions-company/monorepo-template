@@ -6,8 +6,8 @@ import {
   AlertDialogDescription,
   AlertDialogHeader,
   AlertDialogTitle,
-} from '~react-web-ui-shadcn/components/ui/alert-dialog';
-import { Loading } from '~react-web-ui-shadcn/components/ui/loading';
+} from '@repo/react-web-ui-shadcn/components/ui/alert-dialog';
+import { Loading } from '@repo/react-web-ui-shadcn/components/ui/loading';
 
 type ModalLoadingProps = {
   visible: boolean;

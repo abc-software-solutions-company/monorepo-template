@@ -1,8 +1,8 @@
 import React, { useCallback, useEffect } from 'react';
 import { generatePosts, generateSeed, resetLocalDatabase } from '@/localdb/localdb.generate';
-import { ds } from '~react-native-design-system';
-import Loading from '~react-native-ui-core/components/loading';
-import StatusBar from '~react-native-ui-core/components/statusbar';
+import { ds } from '@repo/react-native-design-system';
+import Loading from '@repo/react-native-ui-core/components/loading';
+import StatusBar from '@repo/react-native-ui-core/components/statusbar';
 
 import SafeViewArea from '@/components/safe-view-area';
 

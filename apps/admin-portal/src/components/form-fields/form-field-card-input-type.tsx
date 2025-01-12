@@ -1,8 +1,8 @@
 import { FieldValues, Path, UseFormReturn } from 'react-hook-form';
 import { useTranslations } from 'use-intl';
-import { Card, CardContent, CardHeader, CardTitle } from '~react-web-ui-shadcn/components/ui/card';
-import { FormControl, FormField, FormItem, FormMessage } from '~react-web-ui-shadcn/components/ui/form';
-import { Input } from '~react-web-ui-shadcn/components/ui/input';
+import { Card, CardContent, CardHeader, CardTitle } from '@repo/react-web-ui-shadcn/components/ui/card';
+import { FormControl, FormField, FormItem, FormMessage } from '@repo/react-web-ui-shadcn/components/ui/form';
+import { Input } from '@repo/react-web-ui-shadcn/components/ui/input';
 
 type FormFieldCardInputTypeProps<T extends FieldValues> = {
   form: UseFormReturn<T>;

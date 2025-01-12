@@ -1,4 +1,4 @@
-import { Separator } from '~react-web-ui-shadcn/components/ui/separator';
+import { Separator } from '@repo/react-web-ui-shadcn/components/ui/separator';
 
 interface ISettingHeadingProps {
   title: string;

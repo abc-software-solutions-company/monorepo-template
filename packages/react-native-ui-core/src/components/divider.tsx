@@ -1,8 +1,9 @@
 import React, { FC } from 'react';
 import { StyleProp, ViewStyle } from 'react-native';
-import { createStyle } from '~react-native-design-system/utils/style.util';
+import { createStyle } from '@repo/react-native-design-system/utils/style.util';
 
 import { ICoreUIBaseProps } from '../interfaces/component.interface';
+
 import View from './view';
 
 interface IDividerProps extends ICoreUIBaseProps {

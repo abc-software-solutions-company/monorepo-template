@@ -1,5 +1,5 @@
 import { EntityId } from '@reduxjs/toolkit';
-import { objectToQueryString } from '~shared-universal/utils/string.util';
+import { objectToQueryString } from '@repo/shared-universal/utils/string.util';
 
 import { ContactFilter, ContactResponse, ContactsResponse } from '../interfaces/contacts.interface';
 

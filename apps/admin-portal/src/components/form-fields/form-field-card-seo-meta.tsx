@@ -1,11 +1,11 @@
 import { FieldValues, Path, UseFormReturn } from 'react-hook-form';
 import { useTranslations } from 'use-intl';
-import { Card, CardContent, CardDescription, CardHeader } from '~react-web-ui-shadcn/components/ui/card';
-import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '~react-web-ui-shadcn/components/ui/form';
-import { Input } from '~react-web-ui-shadcn/components/ui/input';
-import { InputTag } from '~react-web-ui-shadcn/components/ui/input-tag';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '~react-web-ui-shadcn/components/ui/tabs';
-import { Textarea } from '~react-web-ui-shadcn/components/ui/textarea';
+import { Card, CardContent, CardDescription, CardHeader } from '@repo/react-web-ui-shadcn/components/ui/card';
+import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@repo/react-web-ui-shadcn/components/ui/form';
+import { Input } from '@repo/react-web-ui-shadcn/components/ui/input';
+import { InputTag } from '@repo/react-web-ui-shadcn/components/ui/input-tag';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@repo/react-web-ui-shadcn/components/ui/tabs';
+import { Textarea } from '@repo/react-web-ui-shadcn/components/ui/textarea';
 
 type FormFieldCardSeoMetaProps<T extends FieldValues> = {
   form: UseFormReturn<T>;

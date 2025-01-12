@@ -6,7 +6,7 @@
 'use client';
 
 import React, { FC } from 'react';
-import { cn } from '~react-web-ui-shadcn/lib/utils';
+import { cn } from '@repo/react-web-ui-shadcn/lib/utils';
 
 import { ShopStore } from '../interfaces/shop-stores.interface';
 

@@ -4,15 +4,15 @@ import { SubmitHandler, useForm } from 'react-hook-form';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { useLocale, useTranslations } from 'use-intl';
 import { zodResolver } from '@hookform/resolvers/zod';
-import FormFieldInputEmail from '~react-web-ui-shadcn/components/form-fields/form-field-input-email';
-import FormFieldInputPassword from '~react-web-ui-shadcn/components/form-fields/form-field-input-password';
-import FormFieldInputPhoneNumber from '~react-web-ui-shadcn/components/form-fields/form-field-input-phone-number';
-import FormFieldInputUserName from '~react-web-ui-shadcn/components/form-fields/form-field-input-user-name';
-import ModalLoading from '~react-web-ui-shadcn/components/modals/modal-loading';
-import { Card, CardContent } from '~react-web-ui-shadcn/components/ui/card';
-import { Checkbox } from '~react-web-ui-shadcn/components/ui/checkbox';
-import { Form, FormLabel } from '~react-web-ui-shadcn/components/ui/form';
-import { objectToQueryString } from '~shared-universal/utils/string.util';
+import FormFieldInputEmail from '@repo/react-web-ui-shadcn/components/form-fields/form-field-input-email';
+import FormFieldInputPassword from '@repo/react-web-ui-shadcn/components/form-fields/form-field-input-password';
+import FormFieldInputPhoneNumber from '@repo/react-web-ui-shadcn/components/form-fields/form-field-input-phone-number';
+import FormFieldInputUserName from '@repo/react-web-ui-shadcn/components/form-fields/form-field-input-user-name';
+import ModalLoading from '@repo/react-web-ui-shadcn/components/modals/modal-loading';
+import { Card, CardContent } from '@repo/react-web-ui-shadcn/components/ui/card';
+import { Checkbox } from '@repo/react-web-ui-shadcn/components/ui/checkbox';
+import { Form, FormLabel } from '@repo/react-web-ui-shadcn/components/ui/form';
+import { objectToQueryString } from '@repo/shared-universal/utils/string.util';
 
 import { UserFormData } from '../interfaces/users.interface';
 

@@ -4,8 +4,8 @@ import React, { useEffect, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { debounce } from 'lodash-es';
 import { ChevronsUpIcon } from 'lucide-react';
-import { Button } from '~react-web-ui-shadcn/components/ui/button';
-import useScrollTo from '~shared-web/hooks/use-scroll-to';
+import { Button } from '@repo/react-web-ui-shadcn/components/ui/button';
+import useScrollTo from '@repo/shared-web/hooks/use-scroll-to';
 
 type ScrollToTopProps = {
   offset?: number;

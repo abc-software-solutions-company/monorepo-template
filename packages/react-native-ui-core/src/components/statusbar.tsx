@@ -1,8 +1,8 @@
 import React, { FC } from 'react';
 import { Appearance, StatusBar as RNStatusBar, StatusBarStyle, StyleProp, ViewProps } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { Colors } from '~react-native-design-system';
-import { dynamicStyles } from '~react-native-design-system/utils/style.util';
+import { Colors } from '@repo/react-native-design-system';
+import { dynamicStyles } from '@repo/react-native-design-system/utils/style.util';
 
 import View from './view';
 

@@ -2,8 +2,8 @@ import React from 'react';
 import BootSplash from 'react-native-bootsplash';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { DarkTheme, NavigationContainer, useNavigationContainerRef } from '@react-navigation/native';
-import { ds } from '~react-native-design-system';
-import { useCoreUITheme } from '~react-native-ui-core/themes/theme.context';
+import { ds } from '@repo/react-native-design-system';
+import { useCoreUITheme } from '@repo/react-native-ui-core/themes/theme.context';
 
 import GlobalModal from '@/components/global-modal/global-modal';
 

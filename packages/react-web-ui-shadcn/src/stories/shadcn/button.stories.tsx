@@ -4,7 +4,7 @@
  */
 
 import type { Meta, StoryObj } from '@storybook/react';
-import { Button } from '~react-web-ui-shadcn/components/ui/button';
+import { Button } from '@repo/react-web-ui-shadcn/components/ui/button';
 
 const meta = {
   title: 'Shadcn-UI/Button',

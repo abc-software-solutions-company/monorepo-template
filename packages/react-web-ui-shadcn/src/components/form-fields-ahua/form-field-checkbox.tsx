@@ -1,7 +1,7 @@
 import { FieldValues, Path, UseFormReturn } from 'react-hook-form';
-import { Checkbox } from '~react-web-ui-shadcn/components/ui/checkbox';
-import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '~react-web-ui-shadcn/components/ui/form';
-import { Label } from '~react-web-ui-shadcn/components/ui/label';
+import { Checkbox } from '@repo/react-web-ui-shadcn/components/ui/checkbox';
+import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@repo/react-web-ui-shadcn/components/ui/form';
+import { Label } from '@repo/react-web-ui-shadcn/components/ui/label';
 
 type FormFieldCheckboxProps<T extends FieldValues> = {
   dataTestId?: string;

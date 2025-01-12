@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState } from 'react';
 import { Pressable, StyleProp, ViewStyle } from 'react-native';
-import { Colors, ds } from '~react-native-design-system';
-import { dynamicStyles } from '~react-native-design-system/utils/style.util';
+import { Colors, ds } from '@repo/react-native-design-system';
+import { dynamicStyles } from '@repo/react-native-design-system/utils/style.util';
 
 import Text from './text';
 import View from './view';

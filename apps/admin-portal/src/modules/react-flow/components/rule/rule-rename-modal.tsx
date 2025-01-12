@@ -2,10 +2,10 @@ import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import FormFieldInput from '~react-web-ui-shadcn/components/form-fields-ahua/form-field-input';
-import { Button } from '~react-web-ui-shadcn/components/ui/button';
-import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '~react-web-ui-shadcn/components/ui/dialog';
-import { Form } from '~react-web-ui-shadcn/components/ui/form';
+import FormFieldInput from '@repo/react-web-ui-shadcn/components/form-fields-ahua/form-field-input';
+import { Button } from '@repo/react-web-ui-shadcn/components/ui/button';
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@repo/react-web-ui-shadcn/components/ui/dialog';
+import { Form } from '@repo/react-web-ui-shadcn/components/ui/form';
 
 const formSchema = z.object({
   name: z.string().min(1, 'This field is mandatory'),

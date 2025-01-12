@@ -2,11 +2,11 @@ import { SubmitHandler, useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { useTranslations } from 'use-intl';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { Button } from '@repo/react-web-ui-shadcn/components/ui/button';
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@repo/react-web-ui-shadcn/components/ui/form';
+import { RadioGroup, RadioGroupItem } from '@repo/react-web-ui-shadcn/components/ui/radio-group';
+import useDeepCompareEffect from '@repo/shared-universal/hooks/use-deep-compare-effect';
 import { useMutation } from '@tanstack/react-query';
-import { Button } from '~react-web-ui-shadcn/components/ui/button';
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '~react-web-ui-shadcn/components/ui/form';
-import { RadioGroup, RadioGroupItem } from '~react-web-ui-shadcn/components/ui/radio-group';
-import useDeepCompareEffect from '~shared-universal/hooks/use-deep-compare-effect';
 
 import { AppearanceFormValues } from '../interfaces/settings.interface';
 

@@ -1,5 +1,5 @@
 import { TextStyle, ViewStyle } from 'react-native';
-import { calculateLineHeight } from '~react-native-design-system/utils/font.util';
+import { calculateLineHeight } from '@repo/react-native-design-system/utils/font.util';
 
 export type ComponentSizeVariant = 'sm' | 'md' | 'lg';
 export type ComponentRoundedVariant = 'none' | 'sm' | 'md' | 'lg' | 'full';

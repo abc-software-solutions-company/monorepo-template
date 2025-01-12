@@ -1,13 +1,14 @@
 {
-  "extends": "@repo/config-typescript/vite.json",
+  "extends": "@repo/config-typescript/react-library.json",
   "compilerOptions": {
+    "types": ["vitest/globals", "@testing-library/jest-dom"],
     "baseUrl": ".",
     "paths": {
-      "~react-web-ui-shadcn/*": ["./src/*"],
-      "~shared-universal/*": ["../shared-universal/src/*"],
-      "~shared-web/*": ["../shared-web/src/*"]
+      "@/*": ["./src/*"],
+      "@tests/*": ["./__tests__/*"],
+      "@mocks/*": ["./__mocks__/*"]
     }
   },
-  "include": ["src", "../shared-universal/src", "../shared-web/src"],
+  "include": ["src", "__tests__", "__mocks__", "../../packages/shared-universal/src", "../../packages/shared-web/src"],
   "exclude": ["node_modules"]
 }

@@ -2,8 +2,8 @@ import { FC, useEffect, useRef } from 'react';
 import Chart from 'chart.js/auto';
 import classNames from 'classnames';
 import { useTranslations } from 'use-intl';
-import { Card, CardContent, CardHeader, CardTitle } from '~react-web-ui-shadcn/components/ui/card';
-import { Separator } from '~react-web-ui-shadcn/components/ui/separator';
+import { Card, CardContent, CardHeader, CardTitle } from '@repo/react-web-ui-shadcn/components/ui/card';
+import { Separator } from '@repo/react-web-ui-shadcn/components/ui/separator';
 
 import { ComponentBaseProps } from '@/interfaces/component.interface';
 

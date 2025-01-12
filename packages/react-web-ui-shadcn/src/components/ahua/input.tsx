@@ -1,6 +1,6 @@
 import React, { FC, useState } from 'react';
 import { cva } from 'class-variance-authority';
-import { cn } from '~react-web-ui-shadcn/lib/utils';
+import { cn } from '../../lib/utils';
 import { InputLabel } from './input-base';
 
 const formControlVariants = cva(

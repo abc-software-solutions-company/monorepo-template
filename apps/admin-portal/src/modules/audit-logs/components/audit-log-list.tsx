@@ -2,11 +2,11 @@ import { FC, useMemo, useState } from 'react';
 import classNames from 'classnames';
 import { EyeIcon } from 'lucide-react';
 import { useLocale, useTranslations } from 'use-intl';
+import { Badge } from '@repo/react-web-ui-shadcn/components/ui/badge';
+import { Button } from '@repo/react-web-ui-shadcn/components/ui/button';
+import Pagination from '@repo/react-web-ui-shadcn/components/ui/pagination-custom';
+import { toDateTime } from '@repo/shared-universal/utils/date.util';
 import { ColumnDef, getCoreRowModel, useReactTable } from '@tanstack/react-table';
-import { Badge } from '~react-web-ui-shadcn/components/ui/badge';
-import { Button } from '~react-web-ui-shadcn/components/ui/button';
-import Pagination from '~react-web-ui-shadcn/components/ui/pagination-custom';
-import { toDateTime } from '~shared-universal/utils/date.util';
 
 import { ComponentBaseProps } from '@/interfaces/component.interface';
 import { AuditLogEntity } from '../interfaces/audit-logs.interface';

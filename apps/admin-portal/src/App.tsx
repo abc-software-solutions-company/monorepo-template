@@ -1,7 +1,7 @@
 import { lazy, Suspense } from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import { Loading } from '~react-web-ui-shadcn/components/ui/loading';
-import { Toaster } from '~react-web-ui-shadcn/components/ui/sonner';
+import { Loading } from '@repo/react-web-ui-shadcn/components/ui/loading';
+import { Toaster } from '@repo/react-web-ui-shadcn/components/ui/sonner';
 
 import AllTheProviders from './components/all-the-providers';
 import ChartDefaultConfigs from './components/charts/chart-default-configs';

@@ -1,5 +1,5 @@
-import { Colors } from '~react-native-design-system';
-import { ThemeConfigs } from '~react-native-ui-core/interfaces/theme.interface';
+import { Colors } from '@repo/react-native-design-system';
+import { ThemeConfigs } from '@repo/react-native-ui-core/interfaces/theme.interface';
 
 export const defaultLightTheme: ThemeConfigs = {
   background: Colors.white,

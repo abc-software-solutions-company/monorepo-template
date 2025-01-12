@@ -1,10 +1,10 @@
 import React, { FC } from 'react';
 import { Image, ImageSourcePropType, ImageStyle, Pressable } from 'react-native';
-import { ds } from '~react-native-design-system';
-import { dynamicStyles } from '~react-native-design-system/utils/style.util';
-import Text from '~react-native-ui-core/components/text';
-import View from '~react-native-ui-core/components/view';
-import { useCoreUITheme } from '~react-native-ui-core/themes/theme.context';
+import { ds } from '@repo/react-native-design-system';
+import { dynamicStyles } from '@repo/react-native-design-system/utils/style.util';
+import Text from '@repo/react-native-ui-core/components/text';
+import View from '@repo/react-native-ui-core/components/view';
+import { useCoreUITheme } from '@repo/react-native-ui-core/themes/theme.context';
 
 import { TourEntity } from '../interfaces/travel-tours.interface';
 

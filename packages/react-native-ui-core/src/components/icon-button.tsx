@@ -6,11 +6,12 @@
 import React from 'react';
 import { icons } from 'lucide-react-native';
 import { Pressable, ViewStyle } from 'react-native';
-import { ds } from '~react-native-design-system';
-import { dynamicStyles } from '~react-native-design-system/utils/style.util';
-import { useCoreUITheme } from '~react-native-ui-core/themes/theme.context';
+import { ds } from '@repo/react-native-design-system';
+import { dynamicStyles } from '@repo/react-native-design-system/utils/style.util';
 
 import Icon from './icon';
+
+import { useCoreUITheme } from '../themes/theme.context';
 
 type IconButtonSize = 'sm' | 'md' | 'lg';
 

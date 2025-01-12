@@ -3,13 +3,13 @@ import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { toast } from 'sonner';
 import { useLocale, useTranslations } from 'use-intl';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { Button } from '@repo/react-web-ui-shadcn/components/ui/button';
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@repo/react-web-ui-shadcn/components/ui/form';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@repo/react-web-ui-shadcn/components/ui/select';
+import { LANGUAGES } from '@repo/shared-universal/constants/language.constant';
+import useDeepCompareEffect from '@repo/shared-universal/hooks/use-deep-compare-effect';
+import { objectToQueryString } from '@repo/shared-universal/utils/string.util';
 import { useMutation } from '@tanstack/react-query';
-import { Button } from '~react-web-ui-shadcn/components/ui/button';
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '~react-web-ui-shadcn/components/ui/form';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '~react-web-ui-shadcn/components/ui/select';
-import { LANGUAGES } from '~shared-universal/constants/language.constant';
-import useDeepCompareEffect from '~shared-universal/hooks/use-deep-compare-effect';
-import { objectToQueryString } from '~shared-universal/utils/string.util';
 
 import { AccountFormValues } from '../interfaces/settings.interface';
 

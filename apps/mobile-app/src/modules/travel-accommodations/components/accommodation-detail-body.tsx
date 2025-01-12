@@ -1,7 +1,7 @@
 import React, { FC } from 'react';
 import { StyleProp, ViewStyle } from 'react-native';
-import Text from '~react-native-ui-core/components/text';
-import View from '~react-native-ui-core/components/view';
+import Text from '@repo/react-native-ui-core/components/text';
+import View from '@repo/react-native-ui-core/components/view';
 
 import RenderHTML from '@/components/render-html';
 

@@ -1,15 +1,15 @@
 import { useState } from 'react';
 import { AlertCircle, ChevronDown, Trash2Icon } from 'lucide-react';
 import { ControllerRenderProps, FieldValues, Path, UseFormReturn } from 'react-hook-form';
-import FileUpload from '~react-web-ui-shadcn/components/ahua/file-upload';
-import { Alert, AlertDescription } from '~react-web-ui-shadcn/components/ui/alert';
-import { Button } from '~react-web-ui-shadcn/components/ui/button';
-import { Command, CommandGroup, CommandItem, CommandList } from '~react-web-ui-shadcn/components/ui/command';
-import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '~react-web-ui-shadcn/components/ui/form';
-import { Popover, PopoverContent, PopoverTrigger } from '~react-web-ui-shadcn/components/ui/popover';
-import { cn } from '~react-web-ui-shadcn/lib/utils';
-import { Language, Translation } from '~shared-universal/interfaces/language.interface';
-import { convertBytes } from '~shared-universal/utils/string.util';
+import FileUpload from '@repo/react-web-ui-shadcn/components/ahua/file-upload';
+import { Alert, AlertDescription } from '@repo/react-web-ui-shadcn/components/ui/alert';
+import { Button } from '@repo/react-web-ui-shadcn/components/ui/button';
+import { Command, CommandGroup, CommandItem, CommandList } from '@repo/react-web-ui-shadcn/components/ui/command';
+import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@repo/react-web-ui-shadcn/components/ui/form';
+import { Popover, PopoverContent, PopoverTrigger } from '@repo/react-web-ui-shadcn/components/ui/popover';
+import { cn } from '../../lib/utils';
+import { Language, Translation } from '@repo/shared-universal/interfaces/language.interface';
+import { convertBytes } from '@repo/shared-universal/utils/string.util';
 
 import { CheckIndicator } from '../form-fields-base/check-indicator';
 import ModalConfirm from '../modals/modal-confirm';
@@ -157,7 +157,7 @@ export default function FormFieldUploaderMultiLanguage<T extends FieldValues>({
     if (!images?.length) return null;
 
     return (
-      <div className="existing-image bg-background absolute left-0 top-0 h-64 w-full rounded-lg border">
+      <div className="existing-image absolute left-0 top-0 h-64 w-full rounded-lg border bg-background">
         {images.map((imageUrl, index) => (
           <div
             key={index}
@@ -189,7 +189,7 @@ export default function FormFieldUploaderMultiLanguage<T extends FieldValues>({
     if (!files) return null;
 
     return (
-      <div className="blob-image bg-background absolute left-0 top-0 h-64 w-full rounded-lg border">
+      <div className="blob-image absolute left-0 top-0 h-64 w-full rounded-lg border bg-background">
         {files?.map((file, index) => (
           <div
             key={index}
@@ -228,12 +228,12 @@ export default function FormFieldUploaderMultiLanguage<T extends FieldValues>({
           {formLabel && (
             <FormLabel className={cn('text-xs font-medium', error ? 'text-destructive' : 'text-muted-foreground')}>
               {formLabel}
-              {required && <span className="text-destructive ml-0.5">*</span>}
+              {required && <span className="ml-0.5 text-destructive">*</span>}
             </FormLabel>
           )}
           <FormControl>
             <div data-testid={dataTestId} className={cn('space-y-4', className)}>
-              <div className="border-input flex h-10 items-center justify-between border-b">
+              <div className="flex h-10 items-center justify-between border-b border-input">
                 <div className="flex h-full items-center">
                   {visibleLocales.map(locale => (
                     <Button
@@ -253,13 +253,13 @@ export default function FormFieldUploaderMultiLanguage<T extends FieldValues>({
                         {locale.isDefault && <span className="ml-1">(Default)</span>}
                         <CheckIndicator values={field.value} lang={locale.code} />
                       </span>
-                      {activeLocale === locale.code && <div className="bg-primary absolute bottom-0 left-0 h-0.5 w-full" />}
+                      {activeLocale === locale.code && <div className="absolute bottom-0 left-0 h-0.5 w-full bg-primary" />}
                     </Button>
                   ))}
                   {dropdownLocales.length > 0 && (
                     <Popover open={isOpenDropdown} onOpenChange={setIsOpenDropdown}>
                       <PopoverTrigger asChild>
-                        <Button variant="ghost" size="sm" disabled={disabled} className="hover:bg-secondary/30 h-10 px-2">
+                        <Button variant="ghost" size="sm" disabled={disabled} className="h-10 px-2 hover:bg-secondary/30">
                           <ChevronDown className="h-4 w-4" />
                         </Button>
                       </PopoverTrigger>
@@ -297,14 +297,14 @@ export default function FormFieldUploaderMultiLanguage<T extends FieldValues>({
                   <div
                     key={locale.code}
                     className={cn(
-                      'border-input bg-background ring-offset-background relative w-full rounded-md',
+                      'relative w-full rounded-md border-input bg-background ring-offset-background',
                       disabled && 'cursor-not-allowed',
-                      focusedStates[locale.code] && 'ring-ring ring-2 ring-offset-2',
+                      focusedStates[locale.code] && 'ring-2 ring-ring ring-offset-2',
                       activeLocale !== locale.code && 'hidden'
                     )}
                   >
                     <FileUpload
-                      className={cn('placeholder:text-muted-foreground h-64 w-full bg-transparent text-sm font-medium focus-visible:outline-none')}
+                      className={cn('h-64 w-full bg-transparent text-sm font-medium placeholder:text-muted-foreground focus-visible:outline-none')}
                       required={required}
                       disabled={disabled}
                       error={!!error}
@@ -357,7 +357,7 @@ type FileUploadRulesProps = {
 
 function FileUploadRules({ className, maxSize, maxFiles, imageDimensions }: FileUploadRulesProps) {
   return (
-    <ul className={cn('text-muted-foreground list-inside list-disc space-y-1 text-xs', className)}>
+    <ul className={cn('list-inside list-disc space-y-1 text-xs text-muted-foreground', className)}>
       <li>Images should not be blurred</li>
       {imageDimensions && (
         <li>

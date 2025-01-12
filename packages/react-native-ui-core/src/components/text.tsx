@@ -1,8 +1,8 @@
 import React, { forwardRef, ReactNode } from 'react';
 import { StyleProp, Text as RNText, TextStyle } from 'react-native';
-import { FontStyle, FontWeight } from '~react-native-design-system/interfaces/font.interface';
-import { fontMaker, FontMakerOptions } from '~react-native-design-system/utils/font.util';
-import { createStyle } from '~react-native-design-system/utils/style.util';
+import { FontStyle, FontWeight } from '@repo/react-native-design-system/interfaces/font.interface';
+import { fontMaker, FontMakerOptions } from '@repo/react-native-design-system/utils/font.util';
+import { createStyle } from '@repo/react-native-design-system/utils/style.util';
 
 import { ICoreUIBaseProps } from '../interfaces/component.interface';
 

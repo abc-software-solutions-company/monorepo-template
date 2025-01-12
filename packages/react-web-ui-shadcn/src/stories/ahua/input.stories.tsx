@@ -5,7 +5,7 @@
 
 import type { Meta, StoryObj } from '@storybook/react';
 import { useState } from 'react';
-import { Input } from '~react-web-ui-shadcn/components/ahua/input';
+import { Input } from '@repo/react-web-ui-shadcn/components/ahua/input';
 
 const meta = {
   title: 'Ahua/Input',

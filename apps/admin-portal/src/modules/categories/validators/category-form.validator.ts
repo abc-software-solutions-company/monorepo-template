@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { baseValidator } from '~shared-universal/validators/zod';
+import { baseValidator } from '@repo/shared-universal/validators/zod';
 
 import { CATEGORY_STATUS, CATEGORY_TYPE } from '../constants/categories.constant';
 

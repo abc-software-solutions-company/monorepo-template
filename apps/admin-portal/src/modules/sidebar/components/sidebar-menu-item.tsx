@@ -3,7 +3,7 @@ import classNames from 'classnames';
 import { LucideIcon } from 'lucide-react';
 import { NavLink, useLocation, useSearchParams } from 'react-router-dom';
 import { useLocale } from 'use-intl';
-import { objectToQueryString } from '~shared-universal/utils/string.util';
+import { objectToQueryString } from '@repo/shared-universal/utils/string.util';
 
 import { ComponentBaseProps } from '@/interfaces/component.interface';
 

@@ -1,13 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { ControllerRenderProps, Path, UseFormReturn } from 'react-hook-form';
-import FormFieldDatePicker from '~react-web-ui-shadcn/components/form-fields-ahua/form-field-date-picker';
-import FormFieldInputMultiLanguage from '~react-web-ui-shadcn/components/form-fields-ahua/form-field-input-multi-language';
-import FormFieldQuillMultiLanguage from '~react-web-ui-shadcn/components/form-fields-ahua/form-field-quill-multi-language';
-import FormFieldUploaderMultiLanguage, { FilePreview } from '~react-web-ui-shadcn/components/form-fields-ahua/form-field-uploader-multi-language';
-import ModalLoading from '~react-web-ui-shadcn/components/modals/modal-loading';
-import { Form } from '~react-web-ui-shadcn/components/ui/form';
-import { LANGUAGES } from '~shared-universal/constants/language.constant';
-import { Translation } from '~shared-universal/interfaces/language.interface';
+import FormFieldDatePicker from '@repo/react-web-ui-shadcn/components/form-fields-ahua/form-field-date-picker';
+import FormFieldInputMultiLanguage from '@repo/react-web-ui-shadcn/components/form-fields-ahua/form-field-input-multi-language';
+import FormFieldQuillMultiLanguage from '@repo/react-web-ui-shadcn/components/form-fields-ahua/form-field-quill-multi-language';
+import FormFieldUploaderMultiLanguage, {
+  FilePreview,
+} from '@repo/react-web-ui-shadcn/components/form-fields-ahua/form-field-uploader-multi-language';
+import ModalLoading from '@repo/react-web-ui-shadcn/components/modals/modal-loading';
+import { Form } from '@repo/react-web-ui-shadcn/components/ui/form';
+import { LANGUAGES } from '@repo/shared-universal/constants/language.constant';
+import { Translation } from '@repo/shared-universal/interfaces/language.interface';
 
 import { campaignStep1Dto } from '../../dtos/campaign-step-1.dto';
 import { CampaignStep1FormValues } from '../../interfaces/campaign.interface';

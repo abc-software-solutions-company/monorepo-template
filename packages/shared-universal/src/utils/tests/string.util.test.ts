@@ -95,7 +95,7 @@ describe('objectToQueryString', () => {
     const obj = { name: 'John', age: null, gender: undefined };
     const result = objectToQueryString(obj);
 
-    expect(result).toBe('name=John&age=null&gender=undefined');
+    expect(result).toBe('name=John');
   });
 
   test('should handle boolean values', () => {

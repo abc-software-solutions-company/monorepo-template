@@ -1,11 +1,11 @@
 import React from 'react';
 import { Image, ImageSourcePropType, ImageStyle } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
-import { ds } from '~react-native-design-system';
-import Divider from '~react-native-ui-core/components/divider';
-import Heading from '~react-native-ui-core/components/heading';
-import StatusBar from '~react-native-ui-core/components/statusbar';
-import Text from '~react-native-ui-core/components/text';
+import { ds } from '@repo/react-native-design-system';
+import Divider from '@repo/react-native-ui-core/components/divider';
+import Heading from '@repo/react-native-ui-core/components/heading';
+import StatusBar from '@repo/react-native-ui-core/components/statusbar';
+import Text from '@repo/react-native-ui-core/components/text';
 
 import SafeViewArea from '@/components/safe-view-area';
 

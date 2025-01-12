@@ -1,7 +1,7 @@
 import { FC } from 'react';
 import classNames from 'classnames';
-import { Badge } from '~react-web-ui-shadcn/components/ui/badge';
-import { Separator } from '~react-web-ui-shadcn/components/ui/separator';
+import { Badge } from '@repo/react-web-ui-shadcn/components/ui/badge';
+import { Separator } from '@repo/react-web-ui-shadcn/components/ui/separator';
 
 import { ComponentBaseProps } from '@/interfaces/component.interface';
 

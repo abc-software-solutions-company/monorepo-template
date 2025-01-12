@@ -1,7 +1,7 @@
 import { FC } from 'react';
 import classNames from 'classnames';
 import { Trash2Icon } from 'lucide-react';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '~react-web-ui-shadcn/components/ui/tooltip';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@repo/react-web-ui-shadcn/components/ui/tooltip';
 
 type RuleButtonRemoveProps = {
   className?: string;

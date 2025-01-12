@@ -1,5 +1,5 @@
 import { FC } from 'react';
-import { Label } from '~react-web-ui-shadcn/components/ui/label';
+import { Label } from '@repo/react-web-ui-shadcn/components/ui/label';
 
 type RuleOutcomeDisplayProps = {
   pointStrategyName?: string;

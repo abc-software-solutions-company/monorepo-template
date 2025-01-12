@@ -1,12 +1,7 @@
 {
   "extends": "@repo/config-typescript/react-library.json",
   "compilerOptions": {
-    "baseUrl": ".",
-    "paths": {
-      "~react-native-design-system": ["./src/index.ts"],
-      "~react-native-design-system/*": ["./src/*"],
-      "~shared-universal/*": ["../shared-universal/src/*"]
-    }
+    "baseUrl": "."
   },
   "include": ["src", "../shared-universal/src"],
   "exclude": ["node_modules"]

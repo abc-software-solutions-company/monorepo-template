@@ -1,6 +1,6 @@
 import { FieldValues, Path, UseFormReturn } from 'react-hook-form';
-import { Select } from '~react-web-ui-shadcn/components/ahua/select';
-import { FormControl, FormField, FormItem, FormMessage } from '~react-web-ui-shadcn/components/ui/form';
+import { Select } from '@repo/react-web-ui-shadcn/components/ahua/select';
+import { FormControl, FormField, FormItem, FormMessage } from '@repo/react-web-ui-shadcn/components/ui/form';
 
 type OptionType = Record<string, string>;
 

@@ -2,10 +2,10 @@ import { useState } from 'react';
 import { ChevronsUpDown } from 'lucide-react';
 import { FieldValues, Path, UseFormReturn } from 'react-hook-form';
 import { useTranslations } from 'use-intl';
-import { Button } from '~react-web-ui-shadcn/components/ui/button';
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '~react-web-ui-shadcn/components/ui/command';
-import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '~react-web-ui-shadcn/components/ui/form';
-import { Popover, PopoverContent, PopoverTrigger } from '~react-web-ui-shadcn/components/ui/popover';
+import { Button } from '@repo/react-web-ui-shadcn/components/ui/button';
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@repo/react-web-ui-shadcn/components/ui/command';
+import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@repo/react-web-ui-shadcn/components/ui/form';
+import { Popover, PopoverContent, PopoverTrigger } from '@repo/react-web-ui-shadcn/components/ui/popover';
 
 import { ComponentBaseProps } from '@/interfaces/component.interface';
 

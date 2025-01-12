@@ -11,7 +11,7 @@
     "prefix": ""
   },
   "aliases": {
-    "components": "~react-web-ui-shadcn/components",
-    "utils": "~react-web-ui-shadcn/lib/utils"
+    "components": "@repo/react-web-ui-shadcn/components",
+    "utils": "@repo/react-web-ui-shadcn/lib/utils"
   }
 }

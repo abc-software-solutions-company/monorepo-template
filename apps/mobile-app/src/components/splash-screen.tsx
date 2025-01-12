@@ -1,9 +1,9 @@
 import React, { FC, useEffect } from 'react';
 import LottieView from 'lottie-react-native';
 import Animated, { runOnJS, useAnimatedStyle, useSharedValue, withDelay, withTiming } from 'react-native-reanimated';
-import { ds } from '~react-native-design-system';
-import { dynamicStyles } from '~react-native-design-system/utils/style.util';
-import { useCoreUITheme } from '~react-native-ui-core/themes/theme.context';
+import { ds } from '@repo/react-native-design-system';
+import { dynamicStyles } from '@repo/react-native-design-system/utils/style.util';
+import { useCoreUITheme } from '@repo/react-native-ui-core/themes/theme.context';
 
 type SplashScreenProps = {
   onAnimationEnd: () => void;

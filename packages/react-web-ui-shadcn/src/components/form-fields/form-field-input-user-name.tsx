@@ -1,7 +1,7 @@
 import { FieldValues, Path, UseFormReturn } from 'react-hook-form';
 import { useTranslations } from 'use-intl';
-import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '~react-web-ui-shadcn/components/ui/form';
-import { Input } from '~react-web-ui-shadcn/components/ui/input';
+import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@repo/react-web-ui-shadcn/components/ui/form';
+import { Input } from '@repo/react-web-ui-shadcn/components/ui/input';
 
 import { ComponentBaseProps } from '@/interfaces/component.interface';
 

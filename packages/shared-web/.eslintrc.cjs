@@ -5,16 +5,16 @@ const project = resolve(__dirname, 'tsconfig.json');
 /** @type {import("eslint").Linter.Config} */
 module.exports = {
   root: true,
-  extends: ['@repo/eslint-config/react-native.js'],
+  extends: ['@repo/eslint-config/react-internal.js'],
   parser: '@typescript-eslint/parser',
   parserOptions: { project },
   settings: {
     'import/resolver': {
-      typescript: { project }
-    }
+      typescript: { project },
+    },
   },
-  ignorePatterns: ['prettier.config.js'],
+  ignorePatterns: ['.eslintrc.cjs', 'postcss.config.mjs', 'prettier.config.mjs', 'tailwind.config.ts', 'vitest.config.ts'],
   rules: {
-    'no-redeclare': 'off'
-  }
+    'no-redeclare': 'off',
+  },
 };

@@ -2,9 +2,9 @@ import { useCallback, useState } from 'react';
 import { FieldArray, FieldArrayPath, FieldValues, Path, useFieldArray, UseFormReturn } from 'react-hook-form';
 import { ReactSortable, SortableEvent } from 'react-sortablejs';
 import { useTranslations } from 'use-intl';
-import { Card, CardContent, CardHeader, CardTitle } from '~react-web-ui-shadcn/components/ui/card';
-import { FormControl, FormField, FormItem, FormMessage } from '~react-web-ui-shadcn/components/ui/form';
-import { Input } from '~react-web-ui-shadcn/components/ui/input';
+import { Card, CardContent, CardHeader, CardTitle } from '@repo/react-web-ui-shadcn/components/ui/card';
+import { FormControl, FormField, FormItem, FormMessage } from '@repo/react-web-ui-shadcn/components/ui/form';
+import { Input } from '@repo/react-web-ui-shadcn/components/ui/input';
 
 import ButtonRemoveFile from '@/components/button-remove-file';
 import ButtonSelectFile from '@/components/button-select-file';

@@ -1,6 +1,6 @@
 import { CircleXIcon } from 'lucide-react';
 import * as React from 'react';
-import { cn } from '~react-web-ui-shadcn/lib/utils';
+import { cn } from '../../lib/utils';
 
 type InputTagProps = Omit<React.InputHTMLAttributes<HTMLInputElement>, 'onChange'> & {
   value?: string;
@@ -75,8 +75,8 @@ export const InputTag = React.forwardRef<HTMLInputElement, InputTagProps>(({ cla
     <div
       ref={containerRef}
       className={cn(
-        'border-input bg-background ring-offset-background focus-within:ring-ring flex flex-wrap items-center gap-1 rounded-md border px-3 py-2 text-sm focus-within:ring-2 focus-within:ring-offset-2',
-        isFocused && 'ring-ring ring-2 ring-offset-2',
+        'flex flex-wrap items-center gap-1 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2',
+        isFocused && 'ring-2 ring-ring ring-offset-2',
         className
       )}
       onFocus={() => setIsFocused(true)}
@@ -87,11 +87,11 @@ export const InputTag = React.forwardRef<HTMLInputElement, InputTagProps>(({ cla
         <span
           key={index}
           className={cn(
-            'bg-secondary focus:ring-ring inline-flex items-center rounded-full border px-2 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2'
+            'inline-flex items-center rounded-full border bg-secondary px-2 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2'
           )}
         >
           {keyword}
-          <button type="button" onClick={() => removeKeyword(index)} className="hover:text-muted-foreground ml-1 rounded-full outline-none">
+          <button type="button" onClick={() => removeKeyword(index)} className="ml-1 rounded-full outline-none hover:text-muted-foreground">
             <CircleXIcon size={12} className="text-muted-foreground" />
           </button>
         </span>
@@ -99,7 +99,7 @@ export const InputTag = React.forwardRef<HTMLInputElement, InputTagProps>(({ cla
       <input
         ref={inputRef}
         type={type}
-        className="placeholder:text-muted-foreground flex-1 bg-transparent outline-none"
+        className="flex-1 bg-transparent outline-none placeholder:text-muted-foreground"
         value={inputValue}
         onChange={e => setInputValue(e.target.value)}
         onKeyDown={handleInputKeyDown}

@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import classNames from 'classnames';
 import { useTranslations } from 'use-intl';
 import { CheckIcon } from '@radix-ui/react-icons';
-import { Button } from '~react-web-ui-shadcn/components/ui/button';
+import { Button } from '@repo/react-web-ui-shadcn/components/ui/button';
 import {
   Command,
   CommandEmpty,
@@ -11,7 +11,7 @@ import {
   CommandItem,
   CommandList,
   CommandSeparator,
-} from '~react-web-ui-shadcn/components/ui/command';
+} from '@repo/react-web-ui-shadcn/components/ui/command';
 
 import { OptionType } from '@/interfaces/status.interface';
 

@@ -1,4 +1,4 @@
-import { Language } from '~shared-universal/interfaces/language.interface';
+import { Language } from '@repo/shared-universal/interfaces/language.interface';
 
 export const LANGUAGES: Language[] = [
   { name: 'English', code: 'en-us', isDefault: true },

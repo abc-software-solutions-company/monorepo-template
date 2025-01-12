@@ -3,9 +3,9 @@
 // import { Camera, Code, useCameraDevice, useCodeScanner } from 'react-native-vision-camera';
 // import { useIsFocused } from '@react-navigation/core';
 // import { useNavigation } from '@react-navigation/native';
-// import { ds } from '~react-native-design-system';
-// import Button from '~react-native-ui-core/components/button';
-// import View from '~react-native-ui-core/components/view';
+// import { ds } from '@repo/react-native-design-system';
+// import Button from '@repo/react-native-ui-core/components/button';
+// import View from '@repo/react-native-ui-core/components/view';
 
 // import { useIsForeground } from '@/hooks/use-is-foreground';
 

@@ -1,6 +1,6 @@
 import { FC } from 'react';
 import classNames from 'classnames';
-import { Tooltip, TooltipProvider, TooltipTrigger } from '~react-web-ui-shadcn/components/ui/tooltip';
+import { Tooltip, TooltipProvider, TooltipTrigger } from '@repo/react-web-ui-shadcn/components/ui/tooltip';
 
 import { ComponentBaseProps } from '@/interfaces/component.interface';
 import { OptionType } from '@/interfaces/status.interface';

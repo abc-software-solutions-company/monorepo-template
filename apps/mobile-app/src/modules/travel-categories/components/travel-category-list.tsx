@@ -1,6 +1,6 @@
 import React, { FC } from 'react';
-import Text from '~react-native-ui-core/components/text';
-import View from '~react-native-ui-core/components/view';
+import Text from '@repo/react-native-ui-core/components/text';
+import View from '@repo/react-native-ui-core/components/view';
 
 type TravelCategoryListProps = {};
 

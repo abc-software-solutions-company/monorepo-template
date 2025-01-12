@@ -1,8 +1,8 @@
 import React, { FC } from 'react';
-import { ds } from '~react-native-design-system';
-import { Avatar, AvatarFallback, AvatarImage } from '~react-native-ui-core/components/avatar';
-import Text from '~react-native-ui-core/components/text';
-import View from '~react-native-ui-core/components/view';
+import { ds } from '@repo/react-native-design-system';
+import { Avatar, AvatarFallback, AvatarImage } from '@repo/react-native-ui-core/components/avatar';
+import Text from '@repo/react-native-ui-core/components/text';
+import View from '@repo/react-native-ui-core/components/view';
 
 import { useAuthState } from '@/modules/auth/states/auth.state';
 

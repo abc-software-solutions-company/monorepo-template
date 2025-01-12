@@ -1,4 +1,4 @@
-import { Loading } from '~react-web-ui-shadcn/components/ui/loading';
+import { Loading } from '@repo/react-web-ui-shadcn/components/ui/loading';
 
 export default async function PostLoading() {
   return (

@@ -1,8 +1,8 @@
 import React, { FC } from 'react';
 import { TextStyle, useWindowDimensions } from 'react-native';
 import Render, { defaultSystemFonts, HTMLSource } from 'react-native-render-html';
-import { fontMaker } from '~react-native-design-system/utils/font.util';
-import { useCoreUITheme } from '~react-native-ui-core/themes/theme.context';
+import { fontMaker } from '@repo/react-native-design-system/utils/font.util';
+import { useCoreUITheme } from '@repo/react-native-ui-core/themes/theme.context';
 
 type RenderHTMLProps = {
   html: HTMLSource;

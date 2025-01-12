@@ -1,12 +1,12 @@
 import React, { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Pressable } from 'react-native';
-import { ds } from '~react-native-design-system';
-import Heading from '~react-native-ui-core/components/heading';
-import Separator from '~react-native-ui-core/components/separator';
-import Text from '~react-native-ui-core/components/text';
-import View from '~react-native-ui-core/components/view';
-import { useCoreUITheme } from '~react-native-ui-core/themes/theme.context';
+import { ds } from '@repo/react-native-design-system';
+import Heading from '@repo/react-native-ui-core/components/heading';
+import Separator from '@repo/react-native-ui-core/components/separator';
+import Text from '@repo/react-native-ui-core/components/text';
+import View from '@repo/react-native-ui-core/components/view';
+import { useCoreUITheme } from '@repo/react-native-ui-core/themes/theme.context';
 
 interface IModalConfirmProps {
   visible?: boolean;

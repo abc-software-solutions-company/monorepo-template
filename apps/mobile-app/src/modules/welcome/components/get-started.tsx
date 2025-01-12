@@ -1,10 +1,10 @@
 import React, { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigation } from '@react-navigation/native';
-import { Colors, ds } from '~react-native-design-system';
-import Button from '~react-native-ui-core/components/button';
-import Text from '~react-native-ui-core/components/text';
-import View from '~react-native-ui-core/components/view';
+import { Colors, ds } from '@repo/react-native-design-system';
+import Button from '@repo/react-native-ui-core/components/button';
+import Text from '@repo/react-native-ui-core/components/text';
+import View from '@repo/react-native-ui-core/components/view';
 
 import { UnauthenticatedNavigationProps } from '@/modules/navigation/interfaces/navigation.interface';
 

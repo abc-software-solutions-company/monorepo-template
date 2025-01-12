@@ -1,6 +1,6 @@
 import React, { FC } from 'react';
 import { Pressable } from 'react-native';
-import Text from '~react-native-ui-core/components/text';
+import Text from '@repo/react-native-ui-core/components/text';
 
 type TravelCategoryItemProps = {
   onPress?: () => void;

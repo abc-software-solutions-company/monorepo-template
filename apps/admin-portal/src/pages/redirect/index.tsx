@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { createSearchParams, useNavigate, useSearchParams } from 'react-router-dom';
 import { useLocale } from 'use-intl';
-import { Loading } from '~react-web-ui-shadcn/components/ui/loading';
+import { Loading } from '@repo/react-web-ui-shadcn/components/ui/loading';
 
 import { useAuthState } from '../../modules/auth/states/auth.state';
 

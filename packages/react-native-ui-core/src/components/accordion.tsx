@@ -1,13 +1,14 @@
 import React, { createContext, ReactElement, useContext, useState } from 'react';
 import { Pressable, StyleProp, ViewStyle } from 'react-native';
-import { ds } from '~react-native-design-system';
-import { dynamicStyles } from '~react-native-design-system/utils/style.util';
-import { useCoreUITheme } from '~react-native-ui-core/themes/theme.context';
+import { ds } from '@repo/react-native-design-system';
+import { dynamicStyles } from '@repo/react-native-design-system/utils/style.util';
 
 import Collapsible from './collapsible';
 import Icon from './icon';
 import Text from './text';
 import View from './view';
+
+import { useCoreUITheme } from '../themes/theme.context';
 
 type AccordionContextType = {
   activeItems: string[];

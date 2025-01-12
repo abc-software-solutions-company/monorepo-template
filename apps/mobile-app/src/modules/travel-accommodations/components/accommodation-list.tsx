@@ -1,8 +1,8 @@
 import React, { FC } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
-import { ds } from '~react-native-design-system';
-import View from '~react-native-ui-core/components/view';
+import { ds } from '@repo/react-native-design-system';
+import View from '@repo/react-native-ui-core/components/view';
 
 import { AccommodationParamList } from '@/modules/navigation/interfaces/navigation.interface';
 import { AccommodationEntity } from '@/modules/travel-accommodations/interfaces/accommodations.interface';

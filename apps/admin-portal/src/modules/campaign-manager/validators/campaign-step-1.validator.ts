@@ -1,6 +1,6 @@
 import { z } from 'zod';
-import { Language } from '~shared-universal/interfaces/language.interface';
-import { createLocalizedField } from '~shared-universal/validators/zod';
+import { Language } from '@repo/shared-universal/interfaces/language.interface';
+import { createLocalizedField } from '@repo/shared-universal/validators/zod';
 
 export const campaignStep1LocalizeSchema = (languages: Language[]) => {
   const defaultlanguage = languages.find(x => x.isDefault);

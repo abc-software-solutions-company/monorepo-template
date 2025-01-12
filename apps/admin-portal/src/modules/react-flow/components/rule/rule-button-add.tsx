@@ -1,6 +1,6 @@
 import { FC } from 'react';
 import { PlusCircleIcon } from 'lucide-react';
-import { cn } from '~react-web-ui-shadcn/lib/utils';
+import { cn } from '@repo/react-web-ui-shadcn/lib/utils';
 
 type RuleButtonAddProps = {
   className?: string;

@@ -4,11 +4,11 @@ import { CheckIcon, InfoIcon, PenIcon, PlusIcon, Trash2Icon, XIcon } from 'lucid
 import { useFieldArray, useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Input } from '~react-web-ui-shadcn/components/ahua/input';
-import { Button } from '~react-web-ui-shadcn/components/ui/button';
-import { Form } from '~react-web-ui-shadcn/components/ui/form';
-import { Label } from '~react-web-ui-shadcn/components/ui/label';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '~react-web-ui-shadcn/components/ui/tooltip';
+import { Input } from '@repo/react-web-ui-shadcn/components/ahua/input';
+import { Button } from '@repo/react-web-ui-shadcn/components/ui/button';
+import { Form } from '@repo/react-web-ui-shadcn/components/ui/form';
+import { Label } from '@repo/react-web-ui-shadcn/components/ui/label';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@repo/react-web-ui-shadcn/components/ui/tooltip';
 
 import { MilestonesFormValues } from '../../interfaces/campaign.interface';
 import { milestonesAtom, rulesAtom } from '../../states/campaign.state';

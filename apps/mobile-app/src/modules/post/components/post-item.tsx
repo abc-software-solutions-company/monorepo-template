@@ -1,8 +1,8 @@
 import React, { FC } from 'react';
-import { ds } from '~react-native-design-system';
-import Text from '~react-native-ui-core/components/text';
-import View from '~react-native-ui-core/components/view';
-import { useCoreUITheme } from '~react-native-ui-core/themes/theme.context';
+import { ds } from '@repo/react-native-design-system';
+import Text from '@repo/react-native-ui-core/components/text';
+import View from '@repo/react-native-ui-core/components/view';
+import { useCoreUITheme } from '@repo/react-native-ui-core/themes/theme.context';
 
 import { PostEntity } from '../interfaces/post.interface';
 

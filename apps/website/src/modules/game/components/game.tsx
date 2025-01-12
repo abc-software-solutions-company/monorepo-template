@@ -1,7 +1,7 @@
 'use client';
 
 import { Suspense, useEffect, useState } from 'react';
-import { Button } from '~react-web-ui-shadcn/components/ui/button';
+import { Button } from '@repo/react-web-ui-shadcn/components/ui/button';
 
 import { socket } from '../utils/socket.util';
 

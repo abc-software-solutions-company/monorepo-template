@@ -1,7 +1,7 @@
 import React, { createContext, ReactNode, useEffect, useMemo, useState } from 'react';
 import { Appearance } from 'react-native';
-import { PortalProvider } from '~react-native-ui-core/components/portal';
-import { Theme, ThemeConfigs } from '~react-native-ui-core/interfaces/theme.interface';
+import { PortalProvider } from '@repo/react-native-ui-core/components/portal';
+import { Theme, ThemeConfigs } from '@repo/react-native-ui-core/interfaces/theme.interface';
 
 import { defaultDarkTheme, defaultLightTheme } from './theme.config';
 

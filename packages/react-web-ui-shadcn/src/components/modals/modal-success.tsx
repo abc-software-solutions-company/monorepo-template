@@ -1,7 +1,7 @@
 import { FC, ReactNode } from 'react';
 import { useTranslations } from 'use-intl';
-import { AlertDialog, AlertDialogContent, AlertDialogDescription, AlertDialogTitle } from '~react-web-ui-shadcn/components/ui/alert-dialog';
-import { Button } from '~react-web-ui-shadcn/components/ui/button';
+import { AlertDialog, AlertDialogContent, AlertDialogDescription, AlertDialogTitle } from '@repo/react-web-ui-shadcn/components/ui/alert-dialog';
+import { Button } from '@repo/react-web-ui-shadcn/components/ui/button';
 
 import SuccessIcon from '../icons/success';
 

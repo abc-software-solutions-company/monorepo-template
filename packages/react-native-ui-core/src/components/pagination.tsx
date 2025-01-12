@@ -1,9 +1,10 @@
 import React, { FC, memo, useMemo } from 'react';
 import { Pressable } from 'react-native';
-import { ds } from '~react-native-design-system';
+import { ds } from '@repo/react-native-design-system';
+
+import { ICoreUIBaseProps } from '../interfaces/component.interface';
 
 import Text from './text';
-import { ICoreUIBaseProps } from '../interfaces/component.interface';
 import View from './view';
 
 interface IPagination extends ICoreUIBaseProps {

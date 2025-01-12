@@ -1,7 +1,7 @@
 'use client';
 
 import React, { FC } from 'react';
-import useScrollTo from '~shared-web/hooks/use-scroll-to';
+import useScrollTo from '@repo/shared-web/hooks/use-scroll-to';
 
 import { Link } from '@/navigation';
 

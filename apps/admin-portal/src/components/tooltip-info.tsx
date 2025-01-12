@@ -1,6 +1,6 @@
 import React, { FC } from 'react';
 import { InfoIcon } from 'lucide-react';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '~react-web-ui-shadcn/components/ui/tooltip';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@repo/react-web-ui-shadcn/components/ui/tooltip';
 
 import { ComponentBaseProps } from '@/interfaces/component.interface';
 

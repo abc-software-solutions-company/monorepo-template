@@ -7,13 +7,13 @@ import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import { DrawerNavigationProp } from '@react-navigation/drawer';
 import { CompositeNavigationProp, useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
+import { Colors, ds } from '@repo/react-native-design-system';
+import Divider from '@repo/react-native-ui-core/components/divider';
+import Icon from '@repo/react-native-ui-core/components/icon';
+import Text from '@repo/react-native-ui-core/components/text';
+import { Theme } from '@repo/react-native-ui-core/interfaces/theme.interface';
+import { useCoreUITheme } from '@repo/react-native-ui-core/themes/theme.context';
 import { useMutation } from '@tanstack/react-query';
-import { Colors, ds } from '~react-native-design-system';
-import Divider from '~react-native-ui-core/components/divider';
-import Icon from '~react-native-ui-core/components/icon';
-import Text from '~react-native-ui-core/components/text';
-import { Theme } from '~react-native-ui-core/interfaces/theme.interface';
-import { useCoreUITheme } from '~react-native-ui-core/themes/theme.context';
 
 import { ProfileAction } from '../interfaces/profile.interface';
 

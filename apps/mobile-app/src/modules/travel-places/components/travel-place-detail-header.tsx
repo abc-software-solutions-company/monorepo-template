@@ -1,8 +1,8 @@
 import React, { FC } from 'react';
 import { StyleProp, ViewStyle } from 'react-native';
-import Heading from '~react-native-ui-core/components/heading';
-import Text from '~react-native-ui-core/components/text';
-import View from '~react-native-ui-core/components/view';
+import Heading from '@repo/react-native-ui-core/components/heading';
+import Text from '@repo/react-native-ui-core/components/text';
+import View from '@repo/react-native-ui-core/components/view';
 
 import { TravelPlaceDetailScreenParams } from '@/modules/navigation/interfaces/navigation.interface';
 

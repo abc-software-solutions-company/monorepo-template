@@ -1,8 +1,8 @@
 import React, { FC } from 'react';
 import { StyleProp, ViewStyle } from 'react-native';
-import { ds } from '~react-native-design-system';
-import InputText from '~react-native-ui-core/components/input';
-import View from '~react-native-ui-core/components/view';
+import { ds } from '@repo/react-native-design-system';
+import InputText from '@repo/react-native-ui-core/components/input';
+import View from '@repo/react-native-ui-core/components/view';
 
 type SearchBoxProps = {
   value: string;

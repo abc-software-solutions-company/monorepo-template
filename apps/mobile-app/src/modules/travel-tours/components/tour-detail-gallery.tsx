@@ -1,7 +1,7 @@
 import React, { FC } from 'react';
 import { Image, ImageStyle, StyleProp, ViewStyle } from 'react-native';
-import { ds } from '~react-native-design-system';
-import View from '~react-native-ui-core/components/view';
+import { ds } from '@repo/react-native-design-system';
+import View from '@repo/react-native-ui-core/components/view';
 
 import { TourDetailScreenParams } from '@/modules/navigation/interfaces/navigation.interface';
 

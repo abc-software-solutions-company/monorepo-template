@@ -3,12 +3,12 @@ import { cva, type VariantProps } from 'class-variance-authority';
 import { ChevronDown } from 'lucide-react';
 import { FieldValues, Path, UseFormReturn } from 'react-hook-form';
 import { useTranslations } from 'use-intl';
-import { Button } from '~react-web-ui-shadcn/components/ui/button';
-import { Command, CommandGroup, CommandItem, CommandList } from '~react-web-ui-shadcn/components/ui/command';
-import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '~react-web-ui-shadcn/components/ui/form';
-import { Popover, PopoverContent, PopoverTrigger } from '~react-web-ui-shadcn/components/ui/popover';
-import { cn } from '~react-web-ui-shadcn/lib/utils';
-import { Language, Translation } from '~shared-universal/interfaces/language.interface';
+import { Button } from '@repo/react-web-ui-shadcn/components/ui/button';
+import { Command, CommandGroup, CommandItem, CommandList } from '@repo/react-web-ui-shadcn/components/ui/command';
+import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@repo/react-web-ui-shadcn/components/ui/form';
+import { Popover, PopoverContent, PopoverTrigger } from '@repo/react-web-ui-shadcn/components/ui/popover';
+import { cn } from '../../lib/utils';
+import { Language, Translation } from '@repo/shared-universal/interfaces/language.interface';
 
 import { CheckIndicator } from '../form-fields-base/check-indicator';
 

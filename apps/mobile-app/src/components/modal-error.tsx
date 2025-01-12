@@ -1,9 +1,9 @@
 import React, { FC, ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Dimensions, View } from 'react-native';
-import { Colors, ds } from '~react-native-design-system';
-import Button from '~react-native-ui-core/components/button';
-import Heading from '~react-native-ui-core/components/heading';
+import { Colors, ds } from '@repo/react-native-design-system';
+import Button from '@repo/react-native-ui-core/components/button';
+import Heading from '@repo/react-native-ui-core/components/heading';
 
 interface INodalErrorProps {
   icon?: ReactNode;

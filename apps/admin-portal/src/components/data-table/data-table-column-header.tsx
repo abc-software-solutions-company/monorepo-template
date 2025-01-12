@@ -2,15 +2,15 @@ import { HTMLAttributes } from 'react';
 import classNames from 'classnames';
 import { useTranslations } from 'use-intl';
 import { ArrowDownIcon, ArrowUpIcon, CaretSortIcon, EyeNoneIcon } from '@radix-ui/react-icons';
-import { Column } from '@tanstack/react-table';
-import { Button } from '~react-web-ui-shadcn/components/ui/button';
+import { Button } from '@repo/react-web-ui-shadcn/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '~react-web-ui-shadcn/components/ui/dropdown-menu';
+} from '@repo/react-web-ui-shadcn/components/ui/dropdown-menu';
+import { Column } from '@tanstack/react-table';
 
 import { SORT_ORDER } from '@/constants/sort.constant';
 

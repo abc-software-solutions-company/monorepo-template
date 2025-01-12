@@ -1,8 +1,8 @@
 import { FC } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useTranslations } from 'use-intl';
-import { Button } from '~react-web-ui-shadcn/components/ui/button';
-import { objectToQueryString } from '~shared-universal/utils/string.util';
+import { Button } from '@repo/react-web-ui-shadcn/components/ui/button';
+import { objectToQueryString } from '@repo/shared-universal/utils/string.util';
 
 type ErrorInformationType = {
   code?: number;

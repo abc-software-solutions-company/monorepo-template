@@ -3,10 +3,10 @@ import classNames from 'classnames';
 import { CameraIcon } from 'lucide-react';
 import { toast } from 'sonner';
 import { useTranslations } from 'use-intl';
+import ModalCropImage from '@repo/react-web-ui-shadcn/components/modals/modal-crop-image';
+import { Avatar, AvatarFallback, AvatarImage } from '@repo/react-web-ui-shadcn/components/ui/avatar';
+import { getShortName } from '@repo/shared-universal/utils/string.util';
 import { useMutation } from '@tanstack/react-query';
-import ModalCropImage from '~react-web-ui-shadcn/components/modals/modal-crop-image';
-import { Avatar, AvatarFallback, AvatarImage } from '~react-web-ui-shadcn/components/ui/avatar';
-import { getShortName } from '~shared-universal/utils/string.util';
 
 import Uploader from '@/components/uploader';
 

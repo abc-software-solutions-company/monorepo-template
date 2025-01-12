@@ -1,7 +1,7 @@
 import React, { FC } from 'react';
 import { StyleProp, ViewStyle } from 'react-native';
-import Button from '~react-native-ui-core/components/button';
-import View from '~react-native-ui-core/components/view';
+import Button from '@repo/react-native-ui-core/components/button';
+import View from '@repo/react-native-ui-core/components/view';
 
 import { TourDetailScreenParams } from '@/modules/navigation/interfaces/navigation.interface';
 
