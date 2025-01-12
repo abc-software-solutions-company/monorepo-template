@@ -32,8 +32,9 @@ export default async function RootLayout({ children, params: { locale } }: Layou
 export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
-  maximumScale: 1,
-  userScalable: true,
+  minimumScale: 1,
+  maximumScale: 4,
+  userScalable: false,
   colorScheme: 'dark',
   themeColor: [
     { media: '(prefers-color-scheme: dark)', color: '#000000' },
@@ -131,11 +132,6 @@ export async function generateMetadata(_layoutProps: LayoutProps): Promise<Metad
         index: SEO_ENABLED,
         follow: SEO_ENABLED,
       },
-    },
-    other: {
-      HandheldFriendly: 'true',
-      MobileOptimized: '360',
-      google: 'notranslate',
     },
   };
 }
