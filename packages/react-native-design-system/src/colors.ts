@@ -1,5 +1,5 @@
-import { colors } from './config';
 import { createStyleProp } from './utils/style.util';
+import { colors } from './config';
 
 const { transparent, black, white, ...rest } = colors;
 

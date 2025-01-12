@@ -1,5 +1,5 @@
-import { spacing } from './config';
 import { createStyleProp, getNegativeStyleProp } from './utils/style.util';
+import { spacing } from './config';
 
 const spacingNegative = getNegativeStyleProp(spacing);
 

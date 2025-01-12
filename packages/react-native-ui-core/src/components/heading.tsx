@@ -4,6 +4,7 @@ import { ds } from '@repo/react-native-design-system';
 import { createStyle } from '@repo/react-native-design-system/utils/style.util';
 
 import Text from './text';
+
 import { useCoreUITheme } from '../themes/theme.context';
 
 type HeadingType = 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6';

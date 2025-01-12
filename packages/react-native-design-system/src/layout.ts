@@ -1,5 +1,5 @@
-import { spacing } from './config';
 import { createStyleProp } from './utils/style.util';
+import { spacing } from './config';
 
 const DISPLAY_VALUE = {
   hidden: 'none',

@@ -1,5 +1,5 @@
-import { spacing } from './config';
 import { createStyleProp } from './utils/style.util';
+import { spacing } from './config';
 
 const FLEX_SPECIFIC_VALUES = {
   flex1: { flexGrow: 1, flexShrink: 1, flexBasis: '0%' },

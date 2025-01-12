@@ -2,7 +2,7 @@
 IOS result: { fontFamily: 'OpenSans', fontWeight: '600', style: 'italic' }
 Android result: { fontFamily: 'OpenSans-SemiBoldItalic' }
 */
-import { Platform, PixelRatio } from 'react-native';
+import { PixelRatio, Platform } from 'react-native';
 
 import { FontStyle, FontWeight } from '../interfaces/font.interface';
 
@@ -52,5 +52,6 @@ export const fontMaker = (options: FontMakerOptions = {}): FontMakerResult => {
 
 export function calculateLineHeight(fontSize: number, multiplier = 1.2) {
   const scaledFontSize = PixelRatio.roundToNearestPixel(fontSize);
+
   return Math.round(scaledFontSize * multiplier);
 }

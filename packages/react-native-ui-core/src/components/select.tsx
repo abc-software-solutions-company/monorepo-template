@@ -3,13 +3,8 @@ import { Pressable, TextStyle, ViewStyle } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 import { Colors, ds } from '@repo/react-native-design-system';
 import { dynamicStyles } from '@repo/react-native-design-system/utils/style.util';
-import {
-  ComponentRoundedVariant,
-  ComponentSizeVariant,
-  getComponentStyle,
-  getTextStyle,
-} from '@repo/react-native-ui-core/interfaces/input.interface';
-import { useCoreUITheme } from '@repo/react-native-ui-core/themes/theme.context';
+
+import { ComponentRoundedVariant, ComponentSizeVariant, getComponentStyle, getTextStyle } from '../interfaces/input.interface';
 
 import { BottomSheet, BottomSheetRef } from './bottom-sheet';
 import Heading from './heading';
@@ -18,6 +13,8 @@ import InputText from './input';
 import { Portal } from './portal';
 import Separator from './separator';
 import Text from './text';
+
+import { useCoreUITheme } from '../themes/theme.context';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type SelectItem = Record<string, any>;

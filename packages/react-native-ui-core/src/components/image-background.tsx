@@ -3,6 +3,7 @@ import { StyleSheet } from 'react-native';
 import FastImage from 'react-native-fast-image';
 
 import { ICoreUIBaseProps } from '../interfaces/component.interface';
+
 import View from './view';
 
 interface IImageBackgroundProps extends ComponentProps<typeof FastImage> {}

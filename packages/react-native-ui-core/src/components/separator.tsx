@@ -2,8 +2,9 @@ import React from 'react';
 import { StyleProp, ViewStyle } from 'react-native';
 import { ds } from '@repo/react-native-design-system';
 
-import { useCoreUITheme } from '../themes/theme.context';
 import View from './view';
+
+import { useCoreUITheme } from '../themes/theme.context';
 
 interface ISeparatorProps {
   orientation?: 'vertical' | 'horizontal';

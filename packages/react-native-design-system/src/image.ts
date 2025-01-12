@@ -1,4 +1,5 @@
 import { ImageProps } from 'react-native';
+
 import { createStyleProp } from './utils/style.util';
 
 const RESIZE_MODE_VALUE: Record<Required<ImageProps>['resizeMode'], Required<ImageProps>['resizeMode']> = {
