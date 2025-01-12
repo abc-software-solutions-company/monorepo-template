@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { Language } from '@repo/shared-universal/interfaces/language.interface';
-import { baseValidator, stringSchema } from '@repo/shared-universal/validators/zod';
+import { baseValidator, createLocalizedField, stringSchema } from '@repo/shared-universal/validators/zod';
 
 import { POST_STATUS } from '../constants/posts.constant';
 

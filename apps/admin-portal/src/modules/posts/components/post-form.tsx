@@ -8,6 +8,8 @@ import Debugger from '@repo/react-web-ui-shadcn/components/debugger';
 import FormFieldCKEditor from '@repo/react-web-ui-shadcn/components/form-fields/form-field-ckeditor';
 import FormFieldInput from '@repo/react-web-ui-shadcn/components/form-fields/form-field-input';
 import FormFieldInputSlug from '@repo/react-web-ui-shadcn/components/form-fields/form-field-input-slug';
+import FormFieldCKEditorMultiLanguage from '@repo/react-web-ui-shadcn/components/form-fields-ahua/form-field-ckeditor-multi-language';
+import FormFieldInputMultiLanguage from '@repo/react-web-ui-shadcn/components/form-fields-ahua/form-field-input-multi-language';
 import ModalLoading from '@repo/react-web-ui-shadcn/components/modals/modal-loading';
 import { Card, CardContent } from '@repo/react-web-ui-shadcn/components/ui/card';
 import { Form } from '@repo/react-web-ui-shadcn/components/ui/form';
