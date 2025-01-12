@@ -9,6 +9,7 @@ import Authenticated from '@/modules/auth/components/authenticated';
 import Unauthenticated from '@/modules/auth/components/unauthenticated';
 
 import Logo from '../icons/logo';
+import Languages from '../languages/languages';
 import Menu from '../menus/menu';
 import MenuMobile from '../menus/menu-mobile';
 
@@ -44,6 +45,7 @@ const TopBar: FC<ITopBarProps> = ({ userSession }) => {
         <div className="flex flex-wrap items-center justify-between">
           <Logo />
           <Menu className="hidden md:inline-flex" />
+          <Languages className="hidden lg:flex" />
           <div className="authentication ml-6 hidden items-center md:inline-flex">
             <Authenticated userSession={userSession} />
             <Unauthenticated visible={!userSession} />

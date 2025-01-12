@@ -28,7 +28,7 @@ function SearchBox({ className, value = '', placeholder, onKeywordChange, onSear
   }, [value]);
 
   return (
-    <div className={classNames('input-group flex items-center gap-x-1', className)}>
+    <div className={classNames('flex items-center gap-x-1', className)}>
       <Input
         className="w-full pr-10"
         placeholder={placeholder ?? t('keyword') + '...'}
@@ -38,7 +38,7 @@ function SearchBox({ className, value = '', placeholder, onKeywordChange, onSear
           if (event.key === 'Enter') onSearch?.(val);
         }}
       />
-      <Button className="-ml-10 h-9 rounded-l-none rounded-r-sm p-2" variant="ghost" onClick={() => onSearch?.(val)}>
+      <Button className="z-0 -ml-10 h-9 rounded-l-none rounded-r-sm p-2" variant="ghost" onClick={() => onSearch?.(val)}>
         <SearchIcon size={18} />
       </Button>
     </div>

@@ -69,10 +69,15 @@ export class PostsService {
       queryBuilder.where('post.status IN (:...status)', { status });
     }
     if (q) {
+      const searchTerm = `%${q}%`;
+
       queryBuilder
-        .andWhere('LOWER(post.name) LIKE LOWER(:name)', { name: `%${q}%` })
-        .orWhere('LOWER(post.description) LIKE LOWER(:description)', { description: `%${q}%` })
-        .orWhere('LOWER(post.body) LIKE LOWER(:body)', { body: `%${q}%` });
+        .andWhere('LOWER(post.name) LIKE LOWER(:searchTerm)', { searchTerm })
+        .orWhere('LOWER(post.description) LIKE LOWER(:searchTerm)', { searchTerm })
+        .orWhere(
+          "EXISTS (SELECT 1 FROM jsonb_array_elements(post.nameLocalized) AS translation WHERE LOWER(translation->>'value') LIKE LOWER(:searchTerm))",
+          { searchTerm }
+        );
     }
     if (sort) {
       if (order) {

@@ -5,8 +5,6 @@ import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { useLocale, useTranslations } from 'use-intl';
 import { zodResolver } from '@hookform/resolvers/zod';
 import Debugger from '@repo/react-web-ui-shadcn/components/debugger';
-import FormFieldCKEditor from '@repo/react-web-ui-shadcn/components/form-fields/form-field-ckeditor';
-import FormFieldInput from '@repo/react-web-ui-shadcn/components/form-fields/form-field-input';
 import FormFieldInputSlug from '@repo/react-web-ui-shadcn/components/form-fields/form-field-input-slug';
 import FormFieldCKEditorMultiLanguage from '@repo/react-web-ui-shadcn/components/form-fields-ahua/form-field-ckeditor-multi-language';
 import FormFieldInputMultiLanguage from '@repo/react-web-ui-shadcn/components/form-fields-ahua/form-field-input-multi-language';
@@ -100,18 +98,18 @@ const PostForm: FC<PostFormProps> = ({ isEdit }) => {
           <div className="flex gap-4">
             <Card className="grow">
               <CardContent className="grid gap-4 pt-4">
-                <FormFieldInput form={form} fieldName="name" formLabel={t('form_field_name')} minLength={1} maxLength={255} visibled={true} />
+                {/* <FormFieldInput form={form} fieldName="name" formLabel={t('form_field_name')} minLength={1} maxLength={255} visibled={false} /> */}
                 <FormFieldInputMultiLanguage form={form} fieldName="nameLocalized" formLabel={t('form_field_name')} locales={LANGUAGES} />
                 <FormFieldInputSlug form={form} />
-                <FormFieldCKEditor
+                {/* <FormFieldCKEditor
                   form={form}
                   fieldName="description"
                   formLabel={t('form_field_description')}
                   editorRef={editorRef}
                   minHeight={120}
                   toolbar={['bold', 'italic', 'underline', 'strikethrough']}
-                  visibled={true}
-                />
+                  visibled={false}
+                /> */}
                 <FormFieldCKEditorMultiLanguage
                   form={form}
                   fieldName="descriptionLocalized"
@@ -121,14 +119,14 @@ const PostForm: FC<PostFormProps> = ({ isEdit }) => {
                   toolbar={['bold', 'italic', 'underline', 'strikethrough']}
                   locales={LANGUAGES}
                 />
-                <FormFieldCKEditor
+                {/* <FormFieldCKEditor
                   form={form}
                   fieldName="body"
                   formLabel={t('form_field_content')}
                   editorRef={editorRef}
                   setVisible={setIsFileManagerVisible}
-                  visibled={true}
-                />
+                  visibled={false}
+                /> */}
                 <FormFieldCKEditorMultiLanguage
                   form={form}
                   fieldName="bodyLocalized"

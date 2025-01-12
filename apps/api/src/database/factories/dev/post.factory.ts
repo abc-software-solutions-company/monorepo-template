@@ -11,14 +11,17 @@ const statuses = Object.values(POST_STATUS).filter(x => x !== POST_STATUS.DELETE
 
 export function createRandomPost() {
   const name = faker.lorem.words(10);
+  const defaultLanguage = 'en-us';
 
   return {
     id: faker.string.uuid(),
     name: null,
-    nameLocalized: [{ lang: 'en-us', value: name }],
+    nameLocalized: [{ lang: defaultLanguage, value: name }],
     slug: toSlug(name),
-    description: `<p>${faker.lorem.words(20)}</p>`,
-    body: `<p>${faker.lorem.words(120)}</p>`,
+    description: null,
+    descriptionLocalized: [{ lang: defaultLanguage, value: `<p>${faker.lorem.words(20)}</p>` }],
+    body: null,
+    bodyLocalized: [{ lang: defaultLanguage, value: `<p>${faker.lorem.words(20)}</p>` }],
     status: statuses[Math.floor(Math.random() * statuses.length)],
     creator: userFactory[0],
     createdAt: faker.date.past(),

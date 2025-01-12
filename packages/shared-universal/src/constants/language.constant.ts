@@ -7,3 +7,12 @@ export const LANGUAGES: Language[] = [
   { name: 'Thailand', code: 'th-th', isDefault: false },
   { name: 'Indonesia', code: 'id-id', isDefault: false },
 ];
+
+export const LANGUAGE_LABELS = LANGUAGES.reduce(
+  (acc, lang) => {
+    acc[lang.code] = lang.name;
+
+    return acc;
+  },
+  {} as Record<string, string>
+);

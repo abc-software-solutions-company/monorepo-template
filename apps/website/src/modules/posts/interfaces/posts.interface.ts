@@ -1,3 +1,5 @@
+import { Translation } from '@repo/shared-universal/interfaces/language.interface';
+
 import { ResponseFormat } from '@/interfaces/api-response.interface';
 import { BaseFilter } from '@/interfaces/filter.interface';
 
@@ -7,6 +9,9 @@ export type PostEntity = {
   slug: string;
   description: string;
   body: boolean;
+  nameLocalized?: Translation[];
+  descriptionLocalized?: Translation[];
+  bodyLocalized?: Translation[];
   createdAt: Date;
   updatedAt: Date;
 };
