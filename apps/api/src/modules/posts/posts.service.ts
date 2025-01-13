@@ -49,6 +49,7 @@ export class PostsService {
 
     if (createDto.status) newPost.status = createDto.status;
     if (createDto.seoMeta) newPost.seoMeta = createDto.seoMeta;
+    newPost.creator = creator;
 
     const createdPost = await this.postRepository.save(newPost);
 

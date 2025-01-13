@@ -40,6 +40,10 @@ export function toCapitalized(text: string) {
   return text.charAt(0).toUpperCase() + text.slice(1);
 }
 
+export const stripHTML = (htmlString: string) => {
+  return htmlString.replace(/<\/?[^>]+(>|$)/g, '');
+};
+
 export function objectToQueryString(obj: { [key: string]: unknown }): string {
   return Object.keys(obj)
     .filter(key => {
