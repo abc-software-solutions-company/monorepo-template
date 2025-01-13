@@ -21,78 +21,112 @@ const AuditLogDiff: React.FC<AuditLogDiffProps> = ({ oldData, newData }) => {
     return value;
   };
 
-  const fields = useMemo(() => {
-    const baseFields = Object.keys({ ...oldData, ...newData }).filter(key => key !== 'seoMeta');
-    const seoMetaFields = Object.keys({
-      ...((oldData.seoMeta as Record<string, unknown>) || {}),
-      ...((newData.seoMeta as Record<string, unknown>) || {}),
-    }).map(key => `seoMeta.${key}`);
+  const highlightExactDiff = (oldValue: string, newValue: string) => {
+    const oldChars = oldValue.split('');
+    const newChars = newValue.split('');
+    const result: JSX.Element[] = [];
+    let isHighlighting = false;
+    let currentGroup = '';
 
-    const allFields = [...baseFields, ...seoMetaFields];
+    for (let i = 0; i < Math.max(oldChars.length, newChars.length); i++) {
+      const newChar = newChars[i] ?? '';
+      const oldChar = oldChars[i] ?? '';
 
-    // Only return fields that have different values
-    return allFields.filter(field => {
-      const oldValue = getNestedValue(oldData, field);
-      const newValue = getNestedValue(newData, field);
-
-      return String(oldValue ?? '') !== String(newValue ?? '');
-    });
-  }, [oldData, newData]);
-
-  const highlightDifference = (oldValue: unknown, newValue: unknown, isOld: boolean) => {
-    const oldStr = String(oldValue ?? '');
-    const newStr = String(newValue ?? '');
-
-    if (oldStr === newStr) return oldStr;
-
-    const words1 = oldStr.split(' ');
-    const words2 = newStr.split(' ');
-    const result: (string | JSX.Element)[] = [];
-    let diffStart = -1;
-
-    for (let i = 0; i < Math.max(words1.length, words2.length); i++) {
-      const word1 = words1[i] || '';
-      const word2 = words2[i] || '';
-
-      if (word1 !== word2) {
-        if (diffStart === -1) diffStart = i;
+      if (newChar !== oldChar) {
+        if (!isHighlighting) {
+          if (currentGroup) {
+            result.push(<span key={`normal-${i}`}>{currentGroup}</span>);
+            currentGroup = '';
+          }
+          isHighlighting = true;
+        }
+        currentGroup += newChar;
       } else {
-        if (diffStart !== -1) {
-          const diffWords = (isOld ? words1 : words2).slice(diffStart, i).join(' ');
-          const className = isOld ? 'bg-red-200 text-black' : 'bg-green-200 text-black';
-
+        if (isHighlighting) {
           result.push(
-            <span key={diffStart} className={className}>
-              {diffWords}
+            <span key={`highlight-${i}`} className="rounded-sm bg-amber-200 px-0.5 text-black">
+              {currentGroup}
             </span>
           );
-          diffStart = -1;
+          currentGroup = '';
+          isHighlighting = false;
         }
-        result.push(word1, ' ');
+        currentGroup += newChar;
       }
     }
 
-    if (diffStart !== -1) {
-      const diffWords = (isOld ? words1 : words2).slice(diffStart).join(' ');
-      const className = isOld ? 'bg-red-200 text-black' : 'bg-green-200 text-black';
-
+    // Handle any remaining characters
+    if (currentGroup) {
       result.push(
-        <span key={diffStart} className={className}>
-          {diffWords}
-        </span>
+        isHighlighting ? (
+          <span key="highlight-end" className="rounded-sm bg-amber-300 px-0.5 text-black">
+            {currentGroup}
+          </span>
+        ) : (
+          <span key="normal-end">{currentGroup}</span>
+        )
       );
     }
 
     return result;
   };
 
-  const formatValue = (value: unknown): string => {
-    if (value === null || value === undefined) return '';
-    if (Array.isArray(value)) return JSON.stringify(value);
-    if (typeof value === 'object') return JSON.stringify(value);
+  const renderJsonDiff = (oldValue: unknown, newValue: unknown, showOld: boolean) => {
+    if (typeof oldValue === 'object' && typeof newValue === 'object') {
+      const filteredChanges = filterChangedFields(oldValue as Record<string, unknown>, newValue as Record<string, unknown>);
 
-    return String(value);
+      return (
+        <div>
+          {Object.entries(filteredChanges).map(([key, values]) => (
+            <p key={key}>
+              {showOld ? (
+                <span className="rounded-sm bg-red-200 px-0.5 text-black">{JSON.stringify(values.oldValue, null, 2)}</span>
+              ) : (
+                <span className="rounded-sm bg-green-200 px-0.5 text-black">
+                  {highlightExactDiff(JSON.stringify(values.oldValue ?? '', null, 2), JSON.stringify(values.newValue ?? '', null, 2))}
+                </span>
+              )}
+            </p>
+          ))}
+        </div>
+      );
+    }
+
+    return (
+      <span className={showOld ? 'rounded-sm bg-red-200 px-0.5 text-black' : 'rounded-sm bg-green-200 px-0.5 text-black'}>
+        {showOld ? String(oldValue) : highlightExactDiff(String(oldValue ?? ''), String(newValue ?? ''))}
+      </span>
+    );
   };
+
+  const filterChangedFields = (
+    oldValue: Record<string, unknown>,
+    newValue: Record<string, unknown>
+  ): Record<string, { oldValue: unknown; newValue: unknown }> => {
+    const allKeys = Array.from(new Set([...Object.keys(oldValue || {}), ...Object.keys(newValue || {})]));
+
+    return allKeys.reduce<Record<string, { oldValue: unknown; newValue: unknown }>>((acc, key) => {
+      const oldSubValue = oldValue[key];
+      const newSubValue = newValue[key];
+
+      if (JSON.stringify(oldSubValue) !== JSON.stringify(newSubValue)) {
+        acc[key] = { oldValue: oldSubValue, newValue: newSubValue };
+      }
+
+      return acc;
+    }, {});
+  };
+
+  const fields = useMemo(() => {
+    const baseFields = Object.keys({ ...oldData, ...newData });
+
+    return baseFields.filter(field => {
+      const oldValue = getNestedValue(oldData, field);
+      const newValue = getNestedValue(newData, field);
+
+      return JSON.stringify(oldValue) !== JSON.stringify(newValue);
+    });
+  }, [oldData, newData]);
 
   return (
     <div className="scrollbar overflow-auto rounded border">
@@ -122,10 +156,10 @@ const AuditLogDiff: React.FC<AuditLogDiffProps> = ({ oldData, newData }) => {
                     <strong>{field}</strong>
                   </TableCell>
                   <TableCell className="w-1/2 p-2">
-                    <div className="break-all">{highlightDifference(formatValue(oldValue), formatValue(newValue), true)}</div>
+                    <div className="break-all">{renderJsonDiff(oldValue, newValue, true)}</div>
                   </TableCell>
                   <TableCell className="w-1/2 p-2">
-                    <div className="break-all">{highlightDifference(formatValue(oldValue), formatValue(newValue), false)}</div>
+                    <div className="break-all">{renderJsonDiff(oldValue, newValue, false)}</div>
                   </TableCell>
                 </TableRow>
               );

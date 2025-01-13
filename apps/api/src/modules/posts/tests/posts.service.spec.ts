@@ -397,6 +397,8 @@ describe('PostsService', () => {
 
       const result = await service.find(filterDto);
 
+      const searchTerm = `%${filterDto.q}%`;
+
       expect(mockPostRepository.createQueryBuilder).toHaveBeenCalledWith('post');
       expect(mockQueryBuilder.select).toHaveBeenCalledWith(POST_GET_FIELDS);
       expect(mockQueryBuilder.leftJoin).toHaveBeenCalledWith('post.creator', 'user');
@@ -404,9 +406,12 @@ describe('PostsService', () => {
       expect(mockQueryBuilder.leftJoin).toHaveBeenCalledWith('post.postFiles', 'postFile');
       expect(mockQueryBuilder.leftJoin).toHaveBeenCalledWith('postFile.image', 'image');
       expect(mockQueryBuilder.where).toHaveBeenCalledWith('post.status IN (:...status)', { status: filterDto.status });
-      expect(mockQueryBuilder.andWhere).toHaveBeenCalledWith('LOWER(post.name) LIKE LOWER(:name)', { name: `%${filterDto.q}%` });
-      expect(mockQueryBuilder.orWhere).toHaveBeenCalledWith('LOWER(post.description) LIKE LOWER(:description)', { description: `%${filterDto.q}%` });
-      expect(mockQueryBuilder.orWhere).toHaveBeenCalledWith('LOWER(post.body) LIKE LOWER(:body)', { body: `%${filterDto.q}%` });
+      expect(mockQueryBuilder.andWhere).toHaveBeenCalledWith('LOWER(post.name) LIKE LOWER(:searchTerm)', { searchTerm });
+      expect(mockQueryBuilder.orWhere).toHaveBeenCalledWith('LOWER(post.description) LIKE LOWER(:searchTerm)', { searchTerm });
+      expect(mockQueryBuilder.orWhere).toHaveBeenCalledWith(
+        "EXISTS (SELECT 1 FROM jsonb_array_elements(post.nameLocalized) AS translation WHERE LOWER(translation->>'value') LIKE LOWER(:searchTerm))",
+        { searchTerm }
+      );
       expect(mockQueryBuilder.skip).toHaveBeenCalledWith(filterDto.skip);
       expect(mockQueryBuilder.take).toHaveBeenCalledWith(filterDto.limit);
       expect(mockQueryBuilder.orderBy).toHaveBeenCalledWith('post.name', SORT_ORDER.ASC);

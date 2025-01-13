@@ -140,7 +140,7 @@ export class PostsService {
 
       post.category = category;
     } else {
-      post.category = null;
+      post.category = undefined;
     }
 
     if (updateDto.status) post.status = updateDto.status;
