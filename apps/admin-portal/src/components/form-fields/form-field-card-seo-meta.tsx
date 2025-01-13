@@ -3,10 +3,8 @@ import { useTranslations } from 'use-intl';
 import FormFieldInputMultiLanguage from '@repo/react-web-ui-shadcn/components/form-fields-ahua/form-field-input-multi-language';
 import { Card, CardContent, CardDescription, CardHeader } from '@repo/react-web-ui-shadcn/components/ui/card';
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@repo/react-web-ui-shadcn/components/ui/form';
-import { Input } from '@repo/react-web-ui-shadcn/components/ui/input';
 import { InputTag } from '@repo/react-web-ui-shadcn/components/ui/input-tag';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@repo/react-web-ui-shadcn/components/ui/tabs';
-import { Textarea } from '@repo/react-web-ui-shadcn/components/ui/textarea';
 import { LANGUAGES } from '@repo/shared-universal/constants/language.constant';
 
 type FormFieldCardSeoMetaProps<T extends FieldValues> = {
@@ -47,32 +45,6 @@ export default function FormFieldCardSeoMeta<T extends FieldValues>({ form, fiel
                 minLength={1}
                 maxLength={150}
                 locales={LANGUAGES}
-              />
-              <FormField
-                control={form.control}
-                name={`${fieldName}.title` as Path<T>}
-                render={({ field, fieldState: { error } }) => (
-                  <FormItem>
-                    <FormLabel>{t('seo_title')}</FormLabel>
-                    <FormControl>
-                      <Input {...field} placeholder="Title" />
-                    </FormControl>
-                    {error?.message && <FormMessage message={t(error.message, { min: 1, max: 60 })} />}
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name={`${fieldName}.description` as Path<T>}
-                render={({ field, fieldState: { error } }) => (
-                  <FormItem>
-                    <FormLabel>{t('seo_description')}</FormLabel>
-                    <FormControl>
-                      <Textarea {...field} placeholder="Description" />
-                    </FormControl>
-                    {error?.message && <FormMessage message={t(error.message, { min: 1, max: 150 })} />}
-                  </FormItem>
-                )}
               />
               <FormField
                 control={form.control}
