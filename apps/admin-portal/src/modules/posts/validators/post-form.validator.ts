@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { Language } from '@repo/shared-universal/interfaces/language.interface';
-import { baseValidator, createLocalizedField, stringSchema } from '@repo/shared-universal/validators/zod';
+import { createLocalizedField, stringSchema } from '@repo/shared-universal/validators/zod';
 
 import { POST_STATUS } from '../constants/posts.constant';
 
@@ -46,7 +46,42 @@ export const postFormLocalizeSchema = (languages: Language[]) => {
     cover: z.string().max(1000, 'validator_maximum_n_characters_allowed'),
     images: z.object({ id: z.string().uuid({ message: 'validator_id_should_be_an_uuid' }) }).array(),
     categoryId: z.string().optional(),
-    seoMeta: baseValidator.seo,
+    // SEO
+    seoMeta: z.object({
+      // TODO: Will be removed
+      title: z
+        .string()
+        .nullable()
+        .optional()
+        .refine(value => !value || (value.length >= 1 && value.length <= 60), { message: 'validator_seo_title' }),
+      // TODO: Will be removed
+      description: z
+        .string()
+        .nullable()
+        .optional()
+        .refine(value => !value || (value.length >= 1 && value.length <= 150), { message: 'validator_seo_description' }),
+      titleLocalized: localizedField({
+        min: 1,
+        max: 60,
+        required: false,
+        requiredMessage: 'validator_seo_title',
+        minMessage: 'validator_minimum_n_characters_allowed',
+        maxMessage: 'validator_maximum_n_characters_allowed',
+      }),
+      descriptionLocalized: localizedField({
+        min: 1,
+        max: 150,
+        required: false,
+        requiredMessage: 'validator_seo_description',
+        minMessage: 'validator_minimum_n_characters_allowed',
+        maxMessage: 'validator_maximum_n_characters_allowed',
+      }),
+      keywords: z
+        .string()
+        .nullable()
+        .optional()
+        .refine(value => !value || (value.length >= 1 && value.length <= 150), { message: 'validator_seo_keywords' }),
+    }),
     // Multi-language
     nameLocalized: localizedField({
       min: 1,

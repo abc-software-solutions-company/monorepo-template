@@ -1,7 +1,7 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
-export class AddLocalizeForPost1736689552988 implements MigrationInterface {
-  name = 'AddLocalizeForPost1736689552988';
+export class AddLocalizeForPost1736761357418 implements MigrationInterface {
+  name = 'AddLocalizeForPost1736761357418';
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(`ALTER TABLE "posts" ADD "name_localized" jsonb`);

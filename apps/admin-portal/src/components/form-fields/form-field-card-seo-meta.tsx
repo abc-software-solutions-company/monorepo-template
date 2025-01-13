@@ -1,11 +1,13 @@
 import { FieldValues, Path, UseFormReturn } from 'react-hook-form';
 import { useTranslations } from 'use-intl';
+import FormFieldInputMultiLanguage from '@repo/react-web-ui-shadcn/components/form-fields-ahua/form-field-input-multi-language';
 import { Card, CardContent, CardDescription, CardHeader } from '@repo/react-web-ui-shadcn/components/ui/card';
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@repo/react-web-ui-shadcn/components/ui/form';
 import { Input } from '@repo/react-web-ui-shadcn/components/ui/input';
 import { InputTag } from '@repo/react-web-ui-shadcn/components/ui/input-tag';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@repo/react-web-ui-shadcn/components/ui/tabs';
 import { Textarea } from '@repo/react-web-ui-shadcn/components/ui/textarea';
+import { LANGUAGES } from '@repo/shared-universal/constants/language.constant';
 
 type FormFieldCardSeoMetaProps<T extends FieldValues> = {
   form: UseFormReturn<T>;
@@ -29,6 +31,23 @@ export default function FormFieldCardSeoMeta<T extends FieldValues>({ form, fiel
               <CardDescription>{t('seo_explain')}</CardDescription>
             </CardHeader>
             <CardContent className="space-y-2">
+              <FormFieldInputMultiLanguage
+                form={form}
+                fieldName={`${fieldName}.titleLocalized` as Path<T>}
+                formLabel={t('seo_title')}
+                minLength={1}
+                maxLength={60}
+                locales={LANGUAGES}
+              />
+              <FormFieldInputMultiLanguage
+                multiline
+                form={form}
+                fieldName={`${fieldName}.descriptionLocalized` as Path<T>}
+                formLabel={t('seo_description')}
+                minLength={1}
+                maxLength={150}
+                locales={LANGUAGES}
+              />
               <FormField
                 control={form.control}
                 name={`${fieldName}.title` as Path<T>}

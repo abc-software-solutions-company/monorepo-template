@@ -57,10 +57,18 @@ const PostForm: FC<PostFormProps> = ({ isEdit }) => {
     description: post?.description ?? '',
     body: post?.body ?? '',
     categoryId: post?.category?.id ?? undefined,
-    seoMeta: post?.seoMeta ?? { title: '', description: '', keywords: '' },
     nameLocalized: post?.nameLocalized ?? [],
     descriptionLocalized: post?.descriptionLocalized ?? [],
     bodyLocalized: post?.bodyLocalized ?? [],
+    seoMeta: {
+      // TODO: Will be removed
+      title: post?.seoMeta?.title ?? '',
+      // TODO: Will be removed
+      description: post?.seoMeta?.description ?? '',
+      titleLocalized: post?.seoMeta?.titleLocalized ?? [],
+      descriptionLocalized: post?.seoMeta?.descriptionLocalized ?? [],
+      keywords: post?.seoMeta?.keywords ?? '',
+    },
   };
 
   const form = useForm<PostFormData>({
@@ -98,18 +106,15 @@ const PostForm: FC<PostFormProps> = ({ isEdit }) => {
           <div className="flex gap-4">
             <Card className="grow">
               <CardContent className="grid gap-4 pt-4">
-                {/* <FormFieldInput form={form} fieldName="name" formLabel={t('form_field_name')} minLength={1} maxLength={255} visibled={false} /> */}
-                <FormFieldInputMultiLanguage form={form} fieldName="nameLocalized" formLabel={t('form_field_name')} locales={LANGUAGES} />
-                <FormFieldInputSlug form={form} />
-                {/* <FormFieldCKEditor
+                <FormFieldInputMultiLanguage
                   form={form}
-                  fieldName="description"
-                  formLabel={t('form_field_description')}
-                  editorRef={editorRef}
-                  minHeight={120}
-                  toolbar={['bold', 'italic', 'underline', 'strikethrough']}
-                  visibled={false}
-                /> */}
+                  fieldName="nameLocalized"
+                  formLabel={t('form_field_name')}
+                  minLength={1}
+                  maxLength={255}
+                  locales={LANGUAGES}
+                />
+                <FormFieldInputSlug form={form} />
                 <FormFieldCKEditorMultiLanguage
                   form={form}
                   fieldName="descriptionLocalized"
@@ -120,14 +125,6 @@ const PostForm: FC<PostFormProps> = ({ isEdit }) => {
                   toolbar={['bold', 'italic', 'underline', 'strikethrough']}
                   locales={LANGUAGES}
                 />
-                {/* <FormFieldCKEditor
-                  form={form}
-                  fieldName="body"
-                  formLabel={t('form_field_content')}
-                  editorRef={editorRef}
-                  setVisible={setIsFileManagerVisible}
-                  visibled={false}
-                /> */}
                 <FormFieldCKEditorMultiLanguage
                   form={form}
                   fieldName="bodyLocalized"
