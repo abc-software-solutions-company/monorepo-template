@@ -627,9 +627,22 @@ describe('PostsService', () => {
       mockPostRepository.findOneBy.mockResolvedValue(existingPost);
       mockPostRepository.save.mockResolvedValue({ ...existingPost, images: updateDto.images });
 
+      mockPostFileRepository.find.mockResolvedValue([]);
+      mockPostFileRepository.findOne.mockResolvedValueOnce(null).mockResolvedValueOnce(null);
+      mockPostFileRepository.create.mockImplementation(entity => entity);
+
       await service.update(postId, creator, updateDto);
 
-      expect(mockPostFileRepository.save).toHaveBeenCalledTimes(2);
+      expect(mockPostFileRepository.find).toHaveBeenCalledWith({ where: { postId } });
+
+      expect(mockPostFileRepository.findOne).toHaveBeenCalledWith({ where: { fileId: 'image1', postId } });
+      expect(mockPostFileRepository.findOne).toHaveBeenCalledWith({ where: { fileId: 'image2', postId } });
+
+      expect(mockPostFileRepository.create).toHaveBeenCalledWith({ fileId: 'image1', postId, position: 1 });
+      expect(mockPostFileRepository.create).toHaveBeenCalledWith({ fileId: 'image2', postId, position: 2 });
+      expect(mockPostFileRepository.save).toHaveBeenCalledWith({ fileId: 'image1', postId, position: 1 });
+      expect(mockPostFileRepository.save).toHaveBeenCalledWith({ fileId: 'image2', postId, position: 2 });
+
       expect(mockAuditLogsService.auditLogUpdate).toHaveBeenCalledTimes(1);
     });
   });
@@ -711,7 +724,7 @@ describe('PostsService', () => {
       const existingFiles = [
         { fileId: 'image1', postId, position: 1 },
         { fileId: 'image2', postId, position: 2 },
-        { fileId: 'image3', postId, position: 3 }, // File to be removed
+        { fileId: 'image3', postId, position: 3 },
       ] as PostFile[];
 
       const existingFile1 = { fileId: 'image1', postId, position: 1 } as PostFile;
@@ -722,13 +735,9 @@ describe('PostsService', () => {
 
       await service.sortImages(images, postId);
 
-      // Should find all existing files first
       expect(mockPostFileRepository.find).toHaveBeenCalledWith({ where: { postId } });
-
-      // Should remove files that are not in new images array
       expect(mockPostFileRepository.remove).toHaveBeenCalledWith([existingFiles[2]]);
 
-      // Should update remaining files with new positions
       expect(mockPostFileRepository.findOne).toHaveBeenCalledTimes(2);
       expect(mockPostFileRepository.findOne).toHaveBeenCalledWith({ where: { fileId: 'image1', postId } });
       expect(mockPostFileRepository.findOne).toHaveBeenCalledWith({ where: { fileId: 'image2', postId } });
