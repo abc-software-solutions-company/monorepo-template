@@ -195,6 +195,14 @@ export class PostsService {
   async sortImages(images: File[] | undefined, postId: string) {
     if (!images) return;
 
+    const existingFiles = await this.postFileRepository.find({ where: { postId } });
+    const newFileIds = images.map(image => image.id);
+    const filesToRemove = existingFiles.filter(file => !newFileIds.includes(file.fileId));
+
+    if (filesToRemove.length > 0) {
+      await this.postFileRepository.remove(filesToRemove);
+    }
+
     for (let i = 0; i < images.length; i++) {
       const existingFile = await this.postFileRepository.findOne({ where: { fileId: images[i].id, postId } });
 

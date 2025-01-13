@@ -198,7 +198,7 @@ export default function FormFieldQuillMultiLanguage<T extends FieldValues>({
                       >
                         <span className="flex items-center gap-1">
                           {locale.name}
-                          {locale.isDefault && <span className="ml-1">(Default)</span>}
+                          {locale.isDefault && <span className="text-sm">(Default)</span>}
                           <CheckIndicator values={field.value} lang={locale.code} error={isTooLong} />
                         </span>
                         {isActive && <div className={cn('absolute bottom-0 left-0 h-0.5 w-full', isTooLong ? 'bg-destructive' : 'bg-primary')} />}

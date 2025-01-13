@@ -144,7 +144,7 @@ const PostForm: FC<PostFormProps> = ({ isEdit }) => {
               <div className="grid gap-4">
                 <FormFieldCardSelectStatus form={form} statuses={POST_STATUSES} />
                 <FormFieldCardSelectCategory form={form} categories={categories ?? []} />
-                <FormFieldCardCoverMultiLanguage form={form} fieldName="coverLocalized" formLabel="Cover Image" locales={LANGUAGES} />
+                <FormFieldCardCoverMultiLanguage form={form} fieldName="coverLocalized" formLabel="Cover Image" locales={LANGUAGES} maxVisible={2} />
                 <FormFieldCardImages form={form} />
               </div>
             </div>

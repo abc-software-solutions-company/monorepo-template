@@ -100,7 +100,6 @@ export default function FormFieldCardCoverMultiLanguage<T extends FieldValues>({
             {formLabel ?? t('form_field_image')}
             {required && <span className="ml-0.5 text-destructive">*</span>}
           </CardTitle>
-          <ButtonSelectFile onClick={() => setIsFileManagerVisible(true)} />
         </div>
       </CardHeader>
       <CardContent className="space-y-4 pt-0">
@@ -118,7 +117,7 @@ export default function FormFieldCardCoverMultiLanguage<T extends FieldValues>({
               >
                 <span className="flex items-center gap-1">
                   {locale.name}
-                  {locale.isDefault && <span className="ml-1">(Default)</span>}
+                  {locale.isDefault && <span className="text-sm">(Default)</span>}
                   <CheckIndicator values={form.getValues(fieldName)} lang={locale.code} />
                 </span>
                 {isActive && <div className="absolute bottom-0 left-0 h-0.5 w-full bg-primary" />}
