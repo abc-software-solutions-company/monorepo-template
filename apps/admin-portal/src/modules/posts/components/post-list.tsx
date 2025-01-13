@@ -87,6 +87,9 @@ const PostList: FC<ComponentBaseProps> = ({ className }) => {
         size: 0,
         header: ({ column }) => <DataTableColumnHeader column={column} title={t('post_title')} />,
         cell: ({ row }) => {
+          const name = row.original.nameLocalized?.find(x => x.lang === locale)?.value ?? '';
+          const fallbackName = row.original.nameLocalized?.[0]?.value ?? '';
+
           return (
             <div className="flex items-center">
               <button
@@ -98,7 +101,7 @@ const PostList: FC<ComponentBaseProps> = ({ className }) => {
                   })
                 }
               >
-                {row.original.nameLocalized?.[0]?.value ?? row.getValue('name')}
+                {name || fallbackName}
               </button>
               <button className="p-1.5" onClick={() => setViewDetailId(row.original.id)}>
                 <span className="text-primary">({t('view_detail')})</span>
