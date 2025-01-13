@@ -16,21 +16,22 @@ import { postFormLocalizeSchema } from '../validators/post-form.validator';
 
 export type PostEntity = {
   id: string;
-  name: string;
+  name: string; // TODO: Will be removed
   slug: string;
-  description: string;
-  body: string;
+  description: string; // TODO: Will be removed
+  body: string; // TODO: Will be removed
   status: POST_STATUS;
   creator: UserEntity;
-  cover: string;
+  cover: string; // TODO: Will be removed
+  coverLocalized: Translation[];
   images: FileEntity[];
   createdAt: string;
   updatedAt: string;
   category: CategoryEntity;
   seoMeta: SeoMeta;
-  nameLocalized?: Translation[];
-  descriptionLocalized?: Translation[];
-  bodyLocalized?: Translation[];
+  nameLocalized: Translation[];
+  descriptionLocalized: Translation[];
+  bodyLocalized: Translation[];
 };
 
 const postSchema = postFormLocalizeSchema(LANGUAGES);

@@ -21,7 +21,7 @@ import { POST_STATUS, POST_STATUSES } from '../constants/posts.constant';
 import usePosts from '../hooks/use-posts';
 
 import EditorFileDialog from '@/components/editor-file-dialog';
-import FormFieldCardCover from '@/components/form-fields/form-field-card-cover';
+import FormFieldCardCoverMultiLanguage from '@/components/form-fields/form-field-card-cover-multi-language';
 import FormFieldCardImages from '@/components/form-fields/form-field-card-images';
 import FormFieldCardSelectCategory from '@/components/form-fields/form-field-card-select-category';
 import FormFieldCardSelectStatus from '@/components/form-fields/form-field-card-select-status';
@@ -53,6 +53,7 @@ const PostForm: FC<PostFormProps> = ({ isEdit }) => {
     name: post?.name ?? '',
     slug: post?.slug ?? '',
     cover: post?.cover ?? '',
+    coverLocalized: post?.coverLocalized ?? [],
     images: post?.images ?? ([] as FileEntity[]),
     description: post?.description ?? '',
     body: post?.body ?? '',
@@ -143,7 +144,7 @@ const PostForm: FC<PostFormProps> = ({ isEdit }) => {
               <div className="grid gap-4">
                 <FormFieldCardSelectStatus form={form} statuses={POST_STATUSES} />
                 <FormFieldCardSelectCategory form={form} categories={categories ?? []} />
-                <FormFieldCardCover form={form} />
+                <FormFieldCardCoverMultiLanguage form={form} fieldName="coverLocalized" formLabel="Cover Image" locales={LANGUAGES} />
                 <FormFieldCardImages form={form} />
               </div>
             </div>

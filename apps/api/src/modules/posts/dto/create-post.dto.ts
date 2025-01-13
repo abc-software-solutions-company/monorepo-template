@@ -15,12 +15,20 @@ import { File } from '@/modules/files/entities/file.entity';
 import { POST_STATUS } from '../constants/posts.constant';
 
 export class CreatePostDto {
+  // TODO: Will be removed
   @ApiProperty({ example: 'Post Name' })
   @IsString()
   @IsOptional()
   @MaxLength(255)
   name: string;
 
+  @ApiPropertyOptional({
+    description: 'Post name multi-language',
+    example: [
+      { lang: 'en-us', value: 'Title' },
+      { lang: 'vi-vn', value: 'Tiêu đề' },
+    ],
+  })
   @IsOptional()
   @IsArray()
   @ValidateNested({ each: true })
@@ -33,23 +41,39 @@ export class CreatePostDto {
   @MaxLength(255)
   slug: string;
 
+  // TODO: Will be removed
   @ApiPropertyOptional({ example: '<p>description</p>' })
   @IsString()
   @IsOptional()
   @MaxLength(2000)
   description: string;
 
+  @ApiPropertyOptional({
+    description: 'Post description multi-language',
+    example: [
+      { lang: 'en-us', value: 'Short description' },
+      { lang: 'vi-vn', value: 'Nội dung ngắn' },
+    ],
+  })
   @IsOptional()
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => createTranslationDto(2000))
   descriptionLocalized?: Translation[];
 
+  // TODO: Will be removed
   @ApiPropertyOptional({ example: '<p>body</p>' })
   @IsString()
   @IsOptional()
   body: string;
 
+  @ApiPropertyOptional({
+    description: 'Post body multi-language',
+    example: [
+      { lang: 'en-us', value: 'Content' },
+      { lang: 'vi-vn', value: 'Nội dung' },
+    ],
+  })
   @IsOptional()
   @IsArray()
   @ValidateNested({ each: true })
@@ -61,11 +85,25 @@ export class CreatePostDto {
   @IsOptional()
   status: POST_STATUS;
 
-  @ApiPropertyOptional({ description: 'File ID', example: 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx' })
+  // TODO: Will be removed
+  @ApiPropertyOptional({ description: 'Cover image', example: 'sample.jpg' })
   @IsString()
   @IsOptional()
   @MaxLength(1000)
   cover?: string;
+
+  @ApiPropertyOptional({
+    description: 'Cover image multi-language',
+    example: [
+      { lang: 'en-us', value: 'sample-en.jpg' },
+      { lang: 'vi-vn', value: 'sample-vi.jpg' },
+    ],
+  })
+  @IsOptional()
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => createTranslationDto(1000))
+  coverLocalized?: Translation[];
 
   @ApiPropertyOptional({
     description: 'Array of file ID',

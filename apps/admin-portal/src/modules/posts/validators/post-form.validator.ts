@@ -43,7 +43,14 @@ export const postFormLocalizeSchema = (languages: Language[]) => {
     }),
 
     status: z.nativeEnum(POST_STATUS, { errorMap: () => ({ message: 'validator_post_status' }) }),
+    // TODO: Will be removed
     cover: z.string().max(1000, 'validator_maximum_n_characters_allowed'),
+    coverLocalized: localizedField({
+      required: false,
+      requiredMessage: 'validator_cover',
+      minMessage: 'validator_minimum_n_characters_allowed',
+      maxMessage: 'validator_maximum_n_characters_allowed',
+    }),
     images: z.object({ id: z.string().uuid({ message: 'validator_id_should_be_an_uuid' }) }).array(),
     categoryId: z.string().optional(),
     // SEO

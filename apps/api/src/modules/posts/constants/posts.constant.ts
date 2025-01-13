@@ -1,6 +1,6 @@
 export const POST_GET_FIELDS = [
   [
-    'post.id post.name post.nameLocalized post.slug post.description post.descriptionLocalized post.body post.bodyLocalized post.status post.cover post.seoMeta post.createdAt',
+    'post.id post.name post.nameLocalized post.slug post.description post.descriptionLocalized post.body post.bodyLocalized post.status post.coverLocalized post.seoMeta post.createdAt',
   ],
   ['user.id user.name user.email'],
   ['category.id category.name'],
@@ -11,11 +11,12 @@ export const POST_GET_FIELDS = [
   .flatMap(item => item.trim().split(/\s+/));
 
 export const POST_FIELDS_TO_CREATE_OR_UPDATE = [
-  'name',
+  'name', // TODO: Will be removed
   'slug',
-  'description',
-  'body',
-  'cover',
+  'description', // TODO: Will be removed
+  'body', // TODO: Will be removed
+  'cover', // TODO: Will be removed
+  'coverLocalized',
   'nameLocalized',
   'descriptionLocalized',
   'bodyLocalized',

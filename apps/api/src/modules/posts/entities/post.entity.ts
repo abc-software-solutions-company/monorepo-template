@@ -49,6 +49,9 @@ export class Post extends AbstractEntity {
   @Column({ type: 'varchar', nullable: true, length: 1000 })
   cover: string;
 
+  @Column({ type: 'jsonb', nullable: true })
+  coverLocalized: Translation[];
+
   @Expose()
   images: File[];
 

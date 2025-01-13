@@ -9,9 +9,10 @@ export type PostEntity = {
   slug: string;
   description: string;
   body: boolean;
-  nameLocalized?: Translation[];
-  descriptionLocalized?: Translation[];
-  bodyLocalized?: Translation[];
+  coverLocalized: Translation[];
+  nameLocalized: Translation[];
+  descriptionLocalized: Translation[];
+  bodyLocalized: Translation[];
   createdAt: Date;
   updatedAt: Date;
 };
