@@ -41,11 +41,12 @@ export const postFormLocalizeSchema = (languages: Language[]) => {
       minMessage: 'validator_minimum_n_characters_allowed',
       maxMessage: 'validator_maximum_n_characters_allowed',
     }),
-
     status: z.nativeEnum(POST_STATUS, { errorMap: () => ({ message: 'validator_post_status' }) }),
     // TODO: Will be removed
     cover: z.string().max(1000, 'validator_maximum_n_characters_allowed'),
     coverLocalized: localizedField({
+      min: undefined,
+      max: undefined,
       required: false,
       requiredMessage: 'validator_cover',
       minMessage: 'validator_minimum_n_characters_allowed',
@@ -68,7 +69,7 @@ export const postFormLocalizeSchema = (languages: Language[]) => {
         .optional()
         .refine(value => !value || (value.length >= 1 && value.length <= 150), { message: 'validator_seo_description' }),
       titleLocalized: localizedField({
-        min: 1,
+        min: undefined,
         max: 60,
         required: false,
         requiredMessage: 'validator_seo_title',
@@ -76,7 +77,7 @@ export const postFormLocalizeSchema = (languages: Language[]) => {
         maxMessage: 'validator_maximum_n_characters_allowed',
       }),
       descriptionLocalized: localizedField({
-        min: 1,
+        min: undefined,
         max: 150,
         required: false,
         requiredMessage: 'validator_seo_description',
@@ -107,8 +108,9 @@ export const postFormLocalizeSchema = (languages: Language[]) => {
       maxMessage: 'validator_maximum_n_characters_allowed',
     }),
     bodyLocalized: localizedField({
+      min: 1,
       max: Infinity,
-      required: false,
+      required: true,
       requiredMessage: 'validator_post_body',
       minMessage: 'validator_minimum_n_characters_allowed',
       maxMessage: 'validator_maximum_n_characters_allowed',

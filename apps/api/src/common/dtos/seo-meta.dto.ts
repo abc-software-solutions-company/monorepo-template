@@ -22,7 +22,7 @@ export class SeoMetaDto {
   @IsOptional()
   @IsArray()
   @ValidateNested({ each: true })
-  @Type(() => createTranslationDto(50))
+  @Type(() => createTranslationDto(60))
   titleLocalized?: Translation[];
 
   @IsOptional()

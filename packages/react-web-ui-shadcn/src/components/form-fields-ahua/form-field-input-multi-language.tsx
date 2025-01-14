@@ -104,24 +104,26 @@ export default function FormFieldInputMultiLanguage<T extends FieldValues>({
   required,
   showErrorMessage = true,
   maxVisible = 4,
-  minLength = 1,
-  maxLength = 255,
+  minLength,
+  maxLength,
   multiline = false,
 }: IFormFieldInputMultiLanguageProps<T>) {
-  const sortedLocales = [...locales].sort((a, b) => (a.isDefault ? -1 : b.isDefault ? 1 : a.name.localeCompare(b.name)));
-  const defaultLocale = sortedLocales.find(locale => locale.isDefault);
-
   const t = useTranslations();
-  const [activeLocale, setActiveLocale] = useState(defaultLocale?.code || sortedLocales?.[0]?.code);
+  const [activeLocale, setActiveLocale] = useState(locales?.[0].code);
   const [isFocused, setIsFocused] = useState(false);
   const [isOpenDropdown, setIsOpenDropdown] = useState(false);
 
-  const visibleLocales = sortedLocales.slice(0, maxVisible);
-  const dropdownLocales = sortedLocales.slice(maxVisible);
+  const visibleLocales = locales.slice(0, maxVisible);
+  const dropdownLocales = locales.slice(maxVisible);
 
   const getCharCount = (values: Translation[] = [], lang: string): number => values.find(item => item.lang === lang)?.value?.length || 0;
 
-  const isOverMaxLength = (values: Translation[] = [], lang: string): boolean => getCharCount(values, lang) > maxLength;
+  const isOverMaxLength = (values: Translation[] = [], lang: string): boolean => {
+    if (typeof maxLength === 'undefined') {
+      return false;
+    }
+    return getCharCount(values, lang) > maxLength;
+  };
 
   const getFormControlState = (error?: boolean) => {
     if (disabled) return 'disabled';
@@ -202,73 +204,75 @@ export default function FormFieldInputMultiLanguage<T extends FieldValues>({
                       onBlur={() => setIsFocused(false)}
                     />
                   </div>
-                  <div className="order-1 flex items-center border-b border-input">
-                    {visibleLocales.map(locale => {
-                      const isTooLong = isOverMaxLength(field.value, locale.code);
-                      const isActive = activeLocale === locale.code;
+                  {locales.length > 1 && (
+                    <div className="order-1 flex items-center border-b border-input">
+                      {visibleLocales.map(locale => {
+                        const isTooLong = isOverMaxLength(field.value, locale.code);
+                        const isActive = activeLocale === locale.code;
 
-                      return (
-                        <Button
-                          key={locale.code}
-                          variant="transparent"
-                          type="button"
-                          disabled={disabled}
-                          className={cn(tab({ state: getTabState(isActive, isTooLong) }), 'h-10')}
-                          onClick={() => setActiveLocale(locale.code)}
-                        >
-                          <span className="flex items-center gap-1">
-                            {locale.name}
-                            {locale.isDefault && <span className="text-sm">(Default)</span>}
-                            <CheckIndicator values={field.value} lang={locale.code} error={isTooLong} />
-                          </span>
-                          {isActive && <div className={cn('absolute bottom-0 left-0 h-0.5 w-full', isTooLong ? 'bg-destructive' : 'bg-primary')} />}
-                        </Button>
-                      );
-                    })}
-                    {dropdownLocales.length > 0 && (
-                      <Popover open={isOpenDropdown} onOpenChange={setIsOpenDropdown}>
-                        <PopoverTrigger asChild>
-                          <Button variant="transparent" size="sm" disabled={disabled} className="h-10 px-2 hover:bg-secondary/30">
-                            <ChevronDown className="h-4 w-4" />
+                        return (
+                          <Button
+                            key={locale.code}
+                            variant="transparent"
+                            type="button"
+                            disabled={disabled}
+                            className={cn(tab({ state: getTabState(isActive, isTooLong) }), 'h-10')}
+                            onClick={() => setActiveLocale(locale.code)}
+                          >
+                            <span className="flex items-center gap-1">
+                              {locale.name}
+                              {locale.isDefault && <span className="text-sm">(Default)</span>}
+                              <CheckIndicator values={field.value} lang={locale.code} error={isTooLong} />
+                            </span>
+                            {isActive && <div className={cn('absolute bottom-0 left-0 h-0.5 w-full', isTooLong ? 'bg-destructive' : 'bg-primary')} />}
                           </Button>
-                        </PopoverTrigger>
-                        <PopoverContent className="w-48 p-0" side="right" align="end">
-                          <Command>
-                            <CommandList>
-                              <CommandGroup>
-                                {dropdownLocales.map((locale, index) => {
-                                  const isTooLong = isOverMaxLength(field.value, locale.code);
-                                  const isActive = activeLocale === locale.code;
+                        );
+                      })}
+                      {dropdownLocales.length > 0 && (
+                        <Popover open={isOpenDropdown} onOpenChange={setIsOpenDropdown}>
+                          <PopoverTrigger asChild>
+                            <Button variant="transparent" size="sm" disabled={disabled} className="h-10 px-2 hover:bg-secondary/30">
+                              <ChevronDown className="h-4 w-4" />
+                            </Button>
+                          </PopoverTrigger>
+                          <PopoverContent className="w-48 p-0" side="right" align="end">
+                            <Command>
+                              <CommandList>
+                                <CommandGroup>
+                                  {dropdownLocales.map((locale, index) => {
+                                    const isTooLong = isOverMaxLength(field.value, locale.code);
+                                    const isActive = activeLocale === locale.code;
 
-                                  return (
-                                    <CommandItem
-                                      key={locale.code}
-                                      tabIndex={index}
-                                      className={isActive ? '!bg-primary/20' : ''}
-                                      disabled={disabled}
-                                      onSelect={() => {
-                                        setActiveLocale(locale.code);
-                                        setIsOpenDropdown(false);
-                                      }}
-                                    >
-                                      <span className={cn('flex w-full items-center justify-between gap-1', isTooLong && 'text-destructive')}>
-                                        {locale.name}
-                                        <CheckIndicator values={field.value} lang={locale.code} />
-                                      </span>
-                                    </CommandItem>
-                                  );
-                                })}
-                              </CommandGroup>
-                            </CommandList>
-                          </Command>
-                        </PopoverContent>
-                      </Popover>
-                    )}
-                  </div>
+                                    return (
+                                      <CommandItem
+                                        key={locale.code}
+                                        tabIndex={index}
+                                        className={isActive ? '!bg-primary/20' : ''}
+                                        disabled={disabled}
+                                        onSelect={() => {
+                                          setActiveLocale(locale.code);
+                                          setIsOpenDropdown(false);
+                                        }}
+                                      >
+                                        <span className={cn('flex w-full items-center justify-between gap-1', isTooLong && 'text-destructive')}>
+                                          {locale.name}
+                                          <CheckIndicator values={field.value} lang={locale.code} />
+                                        </span>
+                                      </CommandItem>
+                                    );
+                                  })}
+                                </CommandGroup>
+                              </CommandList>
+                            </Command>
+                          </PopoverContent>
+                        </Popover>
+                      )}
+                    </div>
+                  )}
                 </div>
               </div>
             </FormControl>
-            {!error?.message && (
+            {!error?.message && maxLength && (
               <p className={cn(isOverMaxLength(field.value, activeLocale) && 'text-destructive')}>
                 {getCharCount(field.value, activeLocale)}/{maxLength}
               </p>
