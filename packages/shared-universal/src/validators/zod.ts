@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { parsePhoneNumberFromString } from 'libphonenumber-js';
 import { Language } from '@repo/shared-universal/interfaces/language.interface';
+import { stripHTML } from '../utils/string.util';
 
 export const baseValidator = {
   userName: stringSchema({
@@ -78,7 +79,7 @@ export function stringSchema(options: Partial<StringValidatorOptions> = {}) {
   let schema = z.string();
 
   if (required) {
-    schema = schema.min(1, requiredMessage);
+    schema = schema.min(min ?? 1, requiredMessage);
   }
 
   if (min !== undefined) {
@@ -126,38 +127,29 @@ export function passwordSchema(options: Partial<PasswordValidatorOptions> = {}) 
 export const createLocalizedField =
   (language: Language) =>
   ({
-    min = 1,
-    max = Infinity,
+    min,
+    max,
     required = false,
-    requiredMessage = 'validator_required',
     minMessage = 'validator_minimum_n_characters_allowed',
     maxMessage = 'validator_maximum_n_characters_allowed',
     defaultRequiredMessage = 'validator_default_language_required',
   }: CreateLocalizedFieldParams = {}) => {
-    let schema = z.array(z.object({ lang: z.string(), value: z.string() }));
-
-    if (required) {
-      schema = schema.min(1, requiredMessage);
-    }
+    const schema = z.array(z.object({ lang: z.string(), value: z.string() }));
 
     return schema
       .refine(
         data => {
-          if (!required && (!data || data.length === 0)) {
-            return true;
-          }
+          if (!required && (!data || data.length === 0)) return true;
 
           const defaultTranslationValue = data.find(item => item.lang === language.code)?.value;
-
-          return defaultTranslationValue && defaultTranslationValue.trim() !== '';
+          return Boolean(defaultTranslationValue && stripHTML(defaultTranslationValue).trim().length > 0);
         },
         { message: defaultRequiredMessage }
       )
       .refine(
         data => {
-          if (!min) return true;
-
-          return data.every(item => item.value.length >= min);
+          if (typeof min === 'undefined') return true;
+          return data.every(item => stripHTML(item.value).trim().length >= min);
         },
         {
           message: minMessage,
@@ -165,9 +157,8 @@ export const createLocalizedField =
       )
       .refine(
         data => {
-          if (!max) return true;
-
-          return data.every(item => item.value.length <= max);
+          if (typeof max === 'undefined') return true;
+          return data.every(item => stripHTML(item.value).trim().length <= max);
         },
         {
           message: maxMessage,

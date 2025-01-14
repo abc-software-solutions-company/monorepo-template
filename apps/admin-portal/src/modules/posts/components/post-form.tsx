@@ -11,7 +11,6 @@ import FormFieldInputMultiLanguage from '@repo/react-web-ui-shadcn/components/fo
 import ModalLoading from '@repo/react-web-ui-shadcn/components/modals/modal-loading';
 import { Card, CardContent } from '@repo/react-web-ui-shadcn/components/ui/card';
 import { Form } from '@repo/react-web-ui-shadcn/components/ui/form';
-import { LANGUAGES } from '@repo/shared-universal/constants/language.constant';
 import { getLanguages } from '@repo/shared-universal/utils/language.util';
 import { objectToQueryString } from '@repo/shared-universal/utils/string.util';
 
@@ -76,7 +75,7 @@ const PostForm: FC<PostFormProps> = ({ isEdit }) => {
   };
 
   const form = useForm<PostFormData>({
-    resolver: zodResolver(postFormLocalizeSchema(LANGUAGES)),
+    resolver: zodResolver(postFormLocalizeSchema(languages)),
     defaultValues,
   });
 
@@ -125,6 +124,7 @@ const PostForm: FC<PostFormProps> = ({ isEdit }) => {
                   formLabel={t('form_field_description')}
                   editorRef={editorRef}
                   minHeight={120}
+                  minLength={1}
                   maxLength={2000}
                   toolbar={['bold', 'italic', 'underline', 'strikethrough']}
                   locales={languages}
@@ -135,7 +135,7 @@ const PostForm: FC<PostFormProps> = ({ isEdit }) => {
                   formLabel={t('form_field_content')}
                   editorRef={editorRef}
                   locales={languages}
-                  maxLength={50000}
+                  minLength={1}
                   setVisible={setIsFileManagerVisible}
                 />
               </CardContent>

@@ -102,66 +102,68 @@ export default function FormFieldCardCoverMultiLanguage<T extends FieldValues>({
           </CardTitle>
         </div>
       </CardHeader>
-      <CardContent className="space-y-4 pt-0">
-        <div className="flex items-center border-b border-input">
-          {visibleLocales.map(locale => {
-            const isActive = activeLocale === locale.code;
+      <CardContent className="pt-0">
+        {locales.length > 1 && (
+          <div className="mb-2 flex items-center border-b border-input">
+            {visibleLocales.map(locale => {
+              const isActive = activeLocale === locale.code;
 
-            return (
-              <Button
-                key={locale.code}
-                variant="transparent"
-                type="button"
-                className={cn(tab({ state: getTabState(isActive) }), 'h-10')}
-                onClick={() => setActiveLocale(locale.code)}
-              >
-                <span className="flex items-center gap-1">
-                  {locale.name}
-                  {locale.isDefault && <span className="text-sm">(Default)</span>}
-                  <CheckIndicator values={form.getValues(fieldName)} lang={locale.code} />
-                </span>
-                {isActive && <div className="absolute bottom-0 left-0 h-0.5 w-full bg-primary" />}
-              </Button>
-            );
-          })}
-          {dropdownLocales.length > 0 && (
-            <Popover open={isOpenDropdown} onOpenChange={setIsOpenDropdown}>
-              <PopoverTrigger asChild>
-                <Button variant="transparent" size="sm" className="h-10 px-2 hover:bg-secondary/30">
-                  <ChevronDown className="h-4 w-4" />
+              return (
+                <Button
+                  key={locale.code}
+                  variant="transparent"
+                  type="button"
+                  className={cn(tab({ state: getTabState(isActive) }), 'h-10')}
+                  onClick={() => setActiveLocale(locale.code)}
+                >
+                  <span className="flex items-center gap-1">
+                    {locale.name}
+                    {locale.isDefault && <span className="text-sm">(Default)</span>}
+                    <CheckIndicator values={form.getValues(fieldName)} lang={locale.code} />
+                  </span>
+                  {isActive && <div className="absolute bottom-0 left-0 h-0.5 w-full bg-primary" />}
                 </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-48 p-0" side="right" align="end">
-                <Command>
-                  <CommandList>
-                    <CommandGroup>
-                      {dropdownLocales.map((locale, index) => {
-                        const isActive = activeLocale === locale.code;
+              );
+            })}
+            {dropdownLocales.length > 0 && (
+              <Popover open={isOpenDropdown} onOpenChange={setIsOpenDropdown}>
+                <PopoverTrigger asChild>
+                  <Button variant="transparent" size="sm" className="h-10 px-2 hover:bg-secondary/30">
+                    <ChevronDown className="h-4 w-4" />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-48 p-0" side="right" align="end">
+                  <Command>
+                    <CommandList>
+                      <CommandGroup>
+                        {dropdownLocales.map((locale, index) => {
+                          const isActive = activeLocale === locale.code;
 
-                        return (
-                          <CommandItem
-                            key={locale.code}
-                            tabIndex={index}
-                            className={isActive ? '!bg-primary/20' : ''}
-                            onSelect={() => {
-                              setActiveLocale(locale.code);
-                              setIsOpenDropdown(false);
-                            }}
-                          >
-                            <span className="flex w-full items-center justify-between gap-1">
-                              {locale.name}
-                              <CheckIndicator values={form.getValues(fieldName)} lang={locale.code} />
-                            </span>
-                          </CommandItem>
-                        );
-                      })}
-                    </CommandGroup>
-                  </CommandList>
-                </Command>
-              </PopoverContent>
-            </Popover>
-          )}
-        </div>
+                          return (
+                            <CommandItem
+                              key={locale.code}
+                              tabIndex={index}
+                              className={isActive ? '!bg-primary/20' : ''}
+                              onSelect={() => {
+                                setActiveLocale(locale.code);
+                                setIsOpenDropdown(false);
+                              }}
+                            >
+                              <span className="flex w-full items-center justify-between gap-1">
+                                {locale.name}
+                                <CheckIndicator values={form.getValues(fieldName)} lang={locale.code} />
+                              </span>
+                            </CommandItem>
+                          );
+                        })}
+                      </CommandGroup>
+                    </CommandList>
+                  </Command>
+                </PopoverContent>
+              </Popover>
+            )}
+          </div>
+        )}
 
         <FormField
           control={form.control}

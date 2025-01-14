@@ -7,5 +7,5 @@ import { LANGUAGES } from '../constants/language.constant';
 import { Language } from '../interfaces/language.interface';
 
 export const getLanguages = (locale: string): Language[] => {
-  return LANGUAGES.map(language => ({ ...language, isDefault: language.code === locale })).sort((a, b) => (a.isDefault ? -1 : b.isDefault ? 1 : 0));
+  return LANGUAGES.sort((a, b) => (a.code === locale ? -1 : b.code === locale ? 1 : 0));
 };
