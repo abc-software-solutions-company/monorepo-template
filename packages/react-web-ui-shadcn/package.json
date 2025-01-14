@@ -63,7 +63,7 @@
     "@storybook/manager-api": "^8.4.7",
     "@tanstack/react-table": "^8.17.3",
     "ckeditor5": "42.0.1",
-    "class-variance-authority": "^0.7.0",
+    "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cmdk": "^1.0.0",
     "date-fns": "^3.6.0",

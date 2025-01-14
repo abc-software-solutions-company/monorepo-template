@@ -83,7 +83,7 @@
     "@tanstack/react-query-persist-client": "^5.37.1",
     "@tanstack/react-table": "^8.17.3",
     "axios": "^1.7.4",
-    "class-variance-authority": "^0.7.0",
+    "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "i18next": "^23.11.5",
     "lottie-react-native": "^6.7.2",
