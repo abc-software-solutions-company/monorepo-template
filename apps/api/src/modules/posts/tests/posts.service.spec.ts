@@ -45,9 +45,11 @@ describe('PostsService', () => {
   };
 
   const mockPostFileRepository = {
+    find: jest.fn(),
     findOne: jest.fn(),
     save: jest.fn(),
     create: jest.fn(),
+    remove: jest.fn(),
   };
 
   const mockCategoriesService = {
@@ -397,6 +399,8 @@ describe('PostsService', () => {
 
       const result = await service.find(filterDto);
 
+      const searchTerm = `%${filterDto.q}%`;
+
       expect(mockPostRepository.createQueryBuilder).toHaveBeenCalledWith('post');
       expect(mockQueryBuilder.select).toHaveBeenCalledWith(POST_GET_FIELDS);
       expect(mockQueryBuilder.leftJoin).toHaveBeenCalledWith('post.creator', 'user');
@@ -404,9 +408,12 @@ describe('PostsService', () => {
       expect(mockQueryBuilder.leftJoin).toHaveBeenCalledWith('post.postFiles', 'postFile');
       expect(mockQueryBuilder.leftJoin).toHaveBeenCalledWith('postFile.image', 'image');
       expect(mockQueryBuilder.where).toHaveBeenCalledWith('post.status IN (:...status)', { status: filterDto.status });
-      expect(mockQueryBuilder.andWhere).toHaveBeenCalledWith('LOWER(post.name) LIKE LOWER(:name)', { name: `%${filterDto.q}%` });
-      expect(mockQueryBuilder.orWhere).toHaveBeenCalledWith('LOWER(post.description) LIKE LOWER(:description)', { description: `%${filterDto.q}%` });
-      expect(mockQueryBuilder.orWhere).toHaveBeenCalledWith('LOWER(post.body) LIKE LOWER(:body)', { body: `%${filterDto.q}%` });
+      expect(mockQueryBuilder.andWhere).toHaveBeenCalledWith('LOWER(post.name) LIKE LOWER(:searchTerm)', { searchTerm });
+      expect(mockQueryBuilder.orWhere).toHaveBeenCalledWith('LOWER(post.description) LIKE LOWER(:searchTerm)', { searchTerm });
+      expect(mockQueryBuilder.orWhere).toHaveBeenCalledWith(
+        "EXISTS (SELECT 1 FROM jsonb_array_elements(post.nameLocalized) AS translation WHERE LOWER(translation->>'value') LIKE LOWER(:searchTerm))",
+        { searchTerm }
+      );
       expect(mockQueryBuilder.skip).toHaveBeenCalledWith(filterDto.skip);
       expect(mockQueryBuilder.take).toHaveBeenCalledWith(filterDto.limit);
       expect(mockQueryBuilder.orderBy).toHaveBeenCalledWith('post.name', SORT_ORDER.ASC);
@@ -620,9 +627,22 @@ describe('PostsService', () => {
       mockPostRepository.findOneBy.mockResolvedValue(existingPost);
       mockPostRepository.save.mockResolvedValue({ ...existingPost, images: updateDto.images });
 
+      mockPostFileRepository.find.mockResolvedValue([]);
+      mockPostFileRepository.findOne.mockResolvedValueOnce(null).mockResolvedValueOnce(null);
+      mockPostFileRepository.create.mockImplementation(entity => entity);
+
       await service.update(postId, creator, updateDto);
 
-      expect(mockPostFileRepository.save).toHaveBeenCalledTimes(2);
+      expect(mockPostFileRepository.find).toHaveBeenCalledWith({ where: { postId } });
+
+      expect(mockPostFileRepository.findOne).toHaveBeenCalledWith({ where: { fileId: 'image1', postId } });
+      expect(mockPostFileRepository.findOne).toHaveBeenCalledWith({ where: { fileId: 'image2', postId } });
+
+      expect(mockPostFileRepository.create).toHaveBeenCalledWith({ fileId: 'image1', postId, position: 1 });
+      expect(mockPostFileRepository.create).toHaveBeenCalledWith({ fileId: 'image2', postId, position: 2 });
+      expect(mockPostFileRepository.save).toHaveBeenCalledWith({ fileId: 'image1', postId, position: 1 });
+      expect(mockPostFileRepository.save).toHaveBeenCalledWith({ fileId: 'image2', postId, position: 2 });
+
       expect(mockAuditLogsService.auditLogUpdate).toHaveBeenCalledTimes(1);
     });
   });
@@ -697,61 +717,76 @@ describe('PostsService', () => {
       expect(mockPostFileRepository.save).not.toHaveBeenCalled();
     });
 
-    it('should update position of existing images', async () => {
+    it('should update position of existing images and remove non-matching files', async () => {
       const images = [{ id: 'image1' }, { id: 'image2' }] as File[];
+      const postId = 'post-id';
 
-      const existingFile1 = { fileId: 'image1', postId: 'post-id', position: 1 } as PostFile;
-      const existingFile2 = { fileId: 'image2', postId: 'post-id', position: 2 } as PostFile;
+      const existingFiles = [
+        { fileId: 'image1', postId, position: 1 },
+        { fileId: 'image2', postId, position: 2 },
+        { fileId: 'image3', postId, position: 3 },
+      ] as PostFile[];
 
+      const existingFile1 = { fileId: 'image1', postId, position: 1 } as PostFile;
+      const existingFile2 = { fileId: 'image2', postId, position: 2 } as PostFile;
+
+      mockPostFileRepository.find.mockResolvedValue(existingFiles);
       mockPostFileRepository.findOne.mockResolvedValueOnce(existingFile1).mockResolvedValueOnce(existingFile2);
 
-      await service.sortImages(images, 'post-id');
+      await service.sortImages(images, postId);
+
+      expect(mockPostFileRepository.find).toHaveBeenCalledWith({ where: { postId } });
+      expect(mockPostFileRepository.remove).toHaveBeenCalledWith([existingFiles[2]]);
 
       expect(mockPostFileRepository.findOne).toHaveBeenCalledTimes(2);
-      expect(mockPostFileRepository.findOne).toHaveBeenCalledWith({ where: { fileId: 'image1', postId: 'post-id' } });
-      expect(mockPostFileRepository.findOne).toHaveBeenCalledWith({ where: { fileId: 'image2', postId: 'post-id' } });
-      expect(mockPostFileRepository.save).toHaveBeenCalledTimes(2);
+      expect(mockPostFileRepository.findOne).toHaveBeenCalledWith({ where: { fileId: 'image1', postId } });
+      expect(mockPostFileRepository.findOne).toHaveBeenCalledWith({ where: { fileId: 'image2', postId } });
       expect(mockPostFileRepository.save).toHaveBeenCalledWith({ ...existingFile1, position: 1 });
       expect(mockPostFileRepository.save).toHaveBeenCalledWith({ ...existingFile2, position: 2 });
     });
 
     it('should create new PostFile entries for new images', async () => {
       const images = [{ id: 'image1' }, { id: 'image2' }] as File[];
+      const postId = 'post-id';
 
-      mockPostFileRepository.findOne.mockResolvedValueOnce(null);
+      mockPostFileRepository.find.mockResolvedValue([]);
+      mockPostFileRepository.findOne.mockResolvedValue(null);
       mockPostFileRepository.create.mockImplementation(entity => entity);
 
-      await service.sortImages(images, 'post-id');
+      await service.sortImages(images, postId);
 
+      expect(mockPostFileRepository.find).toHaveBeenCalledWith({ where: { postId } });
       expect(mockPostFileRepository.findOne).toHaveBeenCalledTimes(2);
-      expect(mockPostFileRepository.findOne).toHaveBeenCalledWith({ where: { fileId: 'image1', postId: 'post-id' } });
-      expect(mockPostFileRepository.findOne).toHaveBeenCalledWith({ where: { fileId: 'image2', postId: 'post-id' } });
+      expect(mockPostFileRepository.findOne).toHaveBeenCalledWith({ where: { fileId: 'image1', postId } });
+      expect(mockPostFileRepository.findOne).toHaveBeenCalledWith({ where: { fileId: 'image2', postId } });
       expect(mockPostFileRepository.create).toHaveBeenCalledTimes(2);
-      expect(mockPostFileRepository.create).toHaveBeenCalledWith({ fileId: 'image1', postId: 'post-id', position: 1 });
-      expect(mockPostFileRepository.create).toHaveBeenCalledWith({ fileId: 'image2', postId: 'post-id', position: 2 });
+      expect(mockPostFileRepository.create).toHaveBeenCalledWith({ fileId: 'image1', postId, position: 1 });
+      expect(mockPostFileRepository.create).toHaveBeenCalledWith({ fileId: 'image2', postId, position: 2 });
       expect(mockPostFileRepository.save).toHaveBeenCalledTimes(2);
-      expect(mockPostFileRepository.save).toHaveBeenCalledWith({ fileId: 'image1', postId: 'post-id', position: 1 });
-      expect(mockPostFileRepository.save).toHaveBeenCalledWith({ fileId: 'image2', postId: 'post-id', position: 2 });
+      expect(mockPostFileRepository.save).toHaveBeenCalledWith({ fileId: 'image1', postId, position: 1 });
+      expect(mockPostFileRepository.save).toHaveBeenCalledWith({ fileId: 'image2', postId, position: 2 });
     });
 
     it('should handle a mix of existing and new images', async () => {
       const images = [{ id: 'image1' }, { id: 'image2' }] as File[];
+      const postId = 'post-id';
 
-      const existingFile1 = { fileId: 'image1', postId: 'post-id', position: 1 } as PostFile;
+      const existingFile1 = { fileId: 'image1', postId, position: 1 } as PostFile;
 
+      mockPostFileRepository.find.mockResolvedValue([existingFile1]);
       mockPostFileRepository.findOne.mockResolvedValueOnce(existingFile1).mockResolvedValueOnce(null);
-
       mockPostFileRepository.create.mockImplementation(entity => entity);
 
-      await service.sortImages(images, 'post-id');
+      await service.sortImages(images, postId);
 
+      expect(mockPostFileRepository.find).toHaveBeenCalledWith({ where: { postId } });
       expect(mockPostFileRepository.findOne).toHaveBeenCalledTimes(2);
-      expect(mockPostFileRepository.findOne).toHaveBeenCalledWith({ where: { fileId: 'image1', postId: 'post-id' } });
-      expect(mockPostFileRepository.findOne).toHaveBeenCalledWith({ where: { fileId: 'image2', postId: 'post-id' } });
+      expect(mockPostFileRepository.findOne).toHaveBeenCalledWith({ where: { fileId: 'image1', postId } });
+      expect(mockPostFileRepository.findOne).toHaveBeenCalledWith({ where: { fileId: 'image2', postId } });
 
       expect(mockPostFileRepository.save).toHaveBeenCalledTimes(2);
       expect(mockPostFileRepository.save).toHaveBeenCalledWith({ ...existingFile1, position: 1 });
-      expect(mockPostFileRepository.save).toHaveBeenCalledWith({ fileId: 'image2', postId: 'post-id', position: 2 });
+      expect(mockPostFileRepository.save).toHaveBeenCalledWith({ fileId: 'image2', postId, position: 2 });
     });
   });
 });

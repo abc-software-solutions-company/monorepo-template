@@ -2,7 +2,10 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import { IsArray, IsEnum, IsNotEmpty, IsOptional, IsString, IsUUID, MaxLength, ValidateNested } from 'class-validator';
 
+import { createTranslationDto } from '@/common/dtos/language.dto';
 import { SeoMetaDto } from '@/common/dtos/seo-meta.dto';
+
+import { Translation } from '@/common/interfaces/language.interface';
 
 import { toSlug } from '@/common/utils/string.util';
 
@@ -12,11 +15,25 @@ import { File } from '@/modules/files/entities/file.entity';
 import { POST_STATUS } from '../constants/posts.constant';
 
 export class CreatePostDto {
+  // TODO: Will be removed
   @ApiProperty({ example: 'Post Name' })
   @IsString()
-  @IsNotEmpty()
+  @IsOptional()
   @MaxLength(255)
   name: string;
+
+  @ApiPropertyOptional({
+    description: 'Post name multi-language',
+    example: [
+      { lang: 'en-us', value: 'Title' },
+      { lang: 'vi-vn', value: 'Tiêu đề' },
+    ],
+  })
+  @IsOptional()
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => createTranslationDto(255))
+  nameLocalized?: Translation[];
 
   @ApiProperty({ example: toSlug('Post Name') })
   @IsString()
@@ -24,27 +41,69 @@ export class CreatePostDto {
   @MaxLength(255)
   slug: string;
 
+  // TODO: Will be removed
   @ApiPropertyOptional({ example: '<p>description</p>' })
   @IsString()
   @IsOptional()
   @MaxLength(2000)
   description: string;
 
+  @ApiPropertyOptional({
+    description: 'Post description multi-language',
+    example: [
+      { lang: 'en-us', value: 'Short description' },
+      { lang: 'vi-vn', value: 'Nội dung ngắn' },
+    ],
+  })
+  @IsOptional()
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => createTranslationDto(2000))
+  descriptionLocalized?: Translation[];
+
+  // TODO: Will be removed
   @ApiPropertyOptional({ example: '<p>body</p>' })
   @IsString()
   @IsOptional()
   body: string;
+
+  @ApiPropertyOptional({
+    description: 'Post body multi-language',
+    example: [
+      { lang: 'en-us', value: 'Content' },
+      { lang: 'vi-vn', value: 'Nội dung' },
+    ],
+  })
+  @IsOptional()
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => createTranslationDto(Infinity))
+  bodyLocalized?: Translation[];
 
   @ApiPropertyOptional({ example: POST_STATUS.DRAFT })
   @IsEnum(POST_STATUS)
   @IsOptional()
   status: POST_STATUS;
 
-  @ApiPropertyOptional({ description: 'File ID', example: 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx' })
+  // TODO: Will be removed
+  @ApiPropertyOptional({ description: 'Cover image', example: 'sample.jpg' })
   @IsString()
   @IsOptional()
   @MaxLength(1000)
   cover?: string;
+
+  @ApiPropertyOptional({
+    description: 'Cover image multi-language',
+    example: [
+      { lang: 'en-us', value: 'sample-en.jpg' },
+      { lang: 'vi-vn', value: 'sample-vi.jpg' },
+    ],
+  })
+  @IsOptional()
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => createTranslationDto(1000))
+  coverLocalized?: Translation[];
 
   @ApiPropertyOptional({
     description: 'Array of file ID',

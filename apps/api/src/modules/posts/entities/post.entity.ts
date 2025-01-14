@@ -4,6 +4,8 @@ import { AfterLoad, Column, Entity, ManyToOne, OneToMany } from 'typeorm';
 import { AbstractEntity } from '@/common/entities/abstract.entity';
 import { SeoMeta } from '@/common/entities/seo-meta.entity';
 
+import { Translation } from '@/common/interfaces/language.interface';
+
 import { Category } from '@/modules/categories/entities/category.entity';
 import { File } from '@/modules/files/entities/file.entity';
 import { User } from '@/modules/users/entities/user.entity';
@@ -14,8 +16,11 @@ import { POST_STATUS } from '../constants/posts.constant';
 
 @Entity({ name: 'posts' })
 export class Post extends AbstractEntity {
-  @Column({ type: 'varchar', length: 255 })
+  @Column({ type: 'varchar', nullable: true, length: 255 })
   name: string;
+
+  @Column({ type: 'jsonb', nullable: true })
+  nameLocalized: Translation[];
 
   @Column({ type: 'varchar', unique: true, length: 255 })
   slug: string;
@@ -23,8 +28,14 @@ export class Post extends AbstractEntity {
   @Column({ type: 'varchar', nullable: true, length: 2000 })
   description: string;
 
+  @Column({ type: 'jsonb', nullable: true })
+  descriptionLocalized: Translation[];
+
   @Column({ type: 'text', nullable: true })
   body: string;
+
+  @Column({ type: 'jsonb', nullable: true })
+  bodyLocalized: Translation[];
 
   @Column({ type: 'enum', enum: POST_STATUS, default: POST_STATUS.DRAFT })
   status: POST_STATUS;
@@ -37,6 +48,9 @@ export class Post extends AbstractEntity {
 
   @Column({ type: 'varchar', nullable: true, length: 1000 })
   cover: string;
+
+  @Column({ type: 'jsonb', nullable: true })
+  coverLocalized: Translation[];
 
   @Expose()
   images: File[];

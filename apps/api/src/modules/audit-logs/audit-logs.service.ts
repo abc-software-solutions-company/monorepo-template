@@ -73,12 +73,33 @@ export class AuditLogsService {
 
   async getRecordTitle(tableName: AUDIT_LOG_TABLE_NAME, recordId: string): Promise<string> {
     if (!Object.values(AUDIT_LOG_TABLE_NAME).includes(tableName)) return '';
+    let a = '';
 
-    const queryBuilder = this.entityManager.createQueryBuilder();
+    try {
+      const queryBuilder = this.entityManager.createQueryBuilder();
 
-    const result = await queryBuilder.select('table.name', 'title').from(tableName, 'table').where('table.id = :recordId', { recordId }).getRawOne();
+      if (tableName === AUDIT_LOG_TABLE_NAME.POSTS) {
+        queryBuilder.select('table.nameLocalized', 'titleLocalized');
+        queryBuilder.from(tableName, 'table');
+        queryBuilder.where('table.id = :recordId', { recordId });
 
-    return result?.title || '';
+        const result = await queryBuilder.getRawOne();
+
+        a = result.titleLocalized?.[0]?.value || '';
+      } else {
+        queryBuilder.select('table.name', 'name');
+        queryBuilder.from(tableName, 'table');
+        queryBuilder.where('table.id = :recordId', { recordId });
+
+        const result = await queryBuilder.getRawOne();
+
+        a = result.name || '';
+      }
+
+      return a;
+    } catch (error) {
+      return a;
+    }
   }
 
   async auditLogCreate<T extends { id: string }>(creator: User, entity: T, tableName: AUDIT_LOG_TABLE_NAME) {

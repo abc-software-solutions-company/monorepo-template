@@ -5,9 +5,9 @@ import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { useLocale, useTranslations } from 'use-intl';
 import { zodResolver } from '@hookform/resolvers/zod';
 import Debugger from '@repo/react-web-ui-shadcn/components/debugger';
-import FormFieldCKEditor from '@repo/react-web-ui-shadcn/components/form-fields/form-field-ckeditor';
-import FormFieldInput from '@repo/react-web-ui-shadcn/components/form-fields/form-field-input';
 import FormFieldInputSlug from '@repo/react-web-ui-shadcn/components/form-fields/form-field-input-slug';
+import FormFieldCKEditorMultiLanguage from '@repo/react-web-ui-shadcn/components/form-fields-ahua/form-field-ckeditor-multi-language';
+import FormFieldInputMultiLanguage from '@repo/react-web-ui-shadcn/components/form-fields-ahua/form-field-input-multi-language';
 import ModalLoading from '@repo/react-web-ui-shadcn/components/modals/modal-loading';
 import { Card, CardContent } from '@repo/react-web-ui-shadcn/components/ui/card';
 import { Form } from '@repo/react-web-ui-shadcn/components/ui/form';
@@ -21,7 +21,7 @@ import { POST_STATUS, POST_STATUSES } from '../constants/posts.constant';
 import usePosts from '../hooks/use-posts';
 
 import EditorFileDialog from '@/components/editor-file-dialog';
-import FormFieldCardCover from '@/components/form-fields/form-field-card-cover';
+import FormFieldCardCoverMultiLanguage from '@/components/form-fields/form-field-card-cover-multi-language';
 import FormFieldCardImages from '@/components/form-fields/form-field-card-images';
 import FormFieldCardSelectCategory from '@/components/form-fields/form-field-card-select-category';
 import FormFieldCardSelectStatus from '@/components/form-fields/form-field-card-select-status';
@@ -53,11 +53,23 @@ const PostForm: FC<PostFormProps> = ({ isEdit }) => {
     name: post?.name ?? '',
     slug: post?.slug ?? '',
     cover: post?.cover ?? '',
+    coverLocalized: post?.coverLocalized ?? [],
     images: post?.images ?? ([] as FileEntity[]),
     description: post?.description ?? '',
     body: post?.body ?? '',
     categoryId: post?.category?.id ?? undefined,
-    seoMeta: post?.seoMeta ?? { title: '', description: '', keywords: '' },
+    nameLocalized: post?.nameLocalized ?? [],
+    descriptionLocalized: post?.descriptionLocalized ?? [],
+    bodyLocalized: post?.bodyLocalized ?? [],
+    seoMeta: {
+      // TODO: Will be removed
+      title: post?.seoMeta?.title ?? '',
+      // TODO: Will be removed
+      description: post?.seoMeta?.description ?? '',
+      titleLocalized: post?.seoMeta?.titleLocalized ?? [],
+      descriptionLocalized: post?.seoMeta?.descriptionLocalized ?? [],
+      keywords: post?.seoMeta?.keywords ?? '',
+    },
   };
 
   const form = useForm<PostFormData>({
@@ -95,22 +107,32 @@ const PostForm: FC<PostFormProps> = ({ isEdit }) => {
           <div className="flex gap-4">
             <Card className="grow">
               <CardContent className="grid gap-4 pt-4">
-                <FormFieldInput form={form} fieldName="name" formLabel={t('form_field_name')} minLength={1} maxLength={255} />
-                <FormFieldInputSlug form={form} />
-                <FormFieldCKEditor
+                <FormFieldInputMultiLanguage
                   form={form}
-                  fieldName="description"
+                  fieldName="nameLocalized"
+                  formLabel={t('form_field_name')}
+                  minLength={1}
+                  maxLength={255}
+                  locales={LANGUAGES}
+                />
+                <FormFieldInputSlug form={form} />
+                <FormFieldCKEditorMultiLanguage
+                  form={form}
+                  fieldName="descriptionLocalized"
                   formLabel={t('form_field_description')}
                   editorRef={editorRef}
                   minHeight={120}
+                  maxLength={2000}
                   toolbar={['bold', 'italic', 'underline', 'strikethrough']}
+                  locales={LANGUAGES}
                 />
-                <FormFieldCKEditor
+                <FormFieldCKEditorMultiLanguage
                   form={form}
-                  fieldName="body"
+                  fieldName="bodyLocalized"
                   formLabel={t('form_field_content')}
-                  toolbar={undefined}
                   editorRef={editorRef}
+                  locales={LANGUAGES}
+                  maxLength={50000}
                   setVisible={setIsFileManagerVisible}
                 />
               </CardContent>
@@ -122,11 +144,12 @@ const PostForm: FC<PostFormProps> = ({ isEdit }) => {
               <div className="grid gap-4">
                 <FormFieldCardSelectStatus form={form} statuses={POST_STATUSES} />
                 <FormFieldCardSelectCategory form={form} categories={categories ?? []} />
-                <FormFieldCardCover form={form} />
+                <FormFieldCardCoverMultiLanguage form={form} fieldName="coverLocalized" formLabel="Cover Image" locales={LANGUAGES} maxVisible={2} />
                 <FormFieldCardImages form={form} />
               </div>
             </div>
           </div>
+          <Debugger text={JSON.stringify(form.formState.errors, null, 2)} />
           <Debugger text={JSON.stringify(form.watch(), null, 2)} />
         </form>
       </Form>

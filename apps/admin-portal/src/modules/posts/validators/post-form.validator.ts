@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { Language } from '@repo/shared-universal/interfaces/language.interface';
-import { baseValidator, stringSchema } from '@repo/shared-universal/validators/zod';
+import { createLocalizedField, stringSchema } from '@repo/shared-universal/validators/zod';
 
 import { POST_STATUS } from '../constants/posts.constant';
 
@@ -11,13 +11,11 @@ export const postFormLocalizeSchema = (languages: Language[]) => {
     throw new Error('No default language specified. At least one language must have isDefault set to true.');
   }
 
-  // const localizedField = createLocalizedField(defaultlanguage);
+  const localizedField = createLocalizedField(defaultlanguage);
 
   return z.object({
     name: stringSchema({
-      min: 1,
-      max: 255,
-      required: true,
+      required: false,
       requiredMessage: 'validator_post_name',
       minMessage: 'validator_minimum_n_characters_allowed',
       maxMessage: 'validator_maximum_n_characters_allowed',
@@ -31,9 +29,7 @@ export const postFormLocalizeSchema = (languages: Language[]) => {
       maxMessage: 'validator_maximum_n_characters_allowed',
     }),
     description: stringSchema({
-      min: 1,
-      max: 2000,
-      required: true,
+      required: false,
       requiredMessage: 'validator_post_description',
       minMessage: 'validator_minimum_n_characters_allowed',
       maxMessage: 'validator_maximum_n_characters_allowed',
@@ -47,33 +43,75 @@ export const postFormLocalizeSchema = (languages: Language[]) => {
     }),
 
     status: z.nativeEnum(POST_STATUS, { errorMap: () => ({ message: 'validator_post_status' }) }),
+    // TODO: Will be removed
     cover: z.string().max(1000, 'validator_maximum_n_characters_allowed'),
+    coverLocalized: localizedField({
+      required: false,
+      requiredMessage: 'validator_cover',
+      minMessage: 'validator_minimum_n_characters_allowed',
+      maxMessage: 'validator_maximum_n_characters_allowed',
+    }),
     images: z.object({ id: z.string().uuid({ message: 'validator_id_should_be_an_uuid' }) }).array(),
     categoryId: z.string().optional(),
-    seoMeta: baseValidator.seo,
+    // SEO
+    seoMeta: z.object({
+      // TODO: Will be removed
+      title: z
+        .string()
+        .nullable()
+        .optional()
+        .refine(value => !value || (value.length >= 1 && value.length <= 60), { message: 'validator_seo_title' }),
+      // TODO: Will be removed
+      description: z
+        .string()
+        .nullable()
+        .optional()
+        .refine(value => !value || (value.length >= 1 && value.length <= 150), { message: 'validator_seo_description' }),
+      titleLocalized: localizedField({
+        min: 1,
+        max: 60,
+        required: false,
+        requiredMessage: 'validator_seo_title',
+        minMessage: 'validator_minimum_n_characters_allowed',
+        maxMessage: 'validator_maximum_n_characters_allowed',
+      }),
+      descriptionLocalized: localizedField({
+        min: 1,
+        max: 150,
+        required: false,
+        requiredMessage: 'validator_seo_description',
+        minMessage: 'validator_minimum_n_characters_allowed',
+        maxMessage: 'validator_maximum_n_characters_allowed',
+      }),
+      keywords: z
+        .string()
+        .nullable()
+        .optional()
+        .refine(value => !value || (value.length >= 1 && value.length <= 150), { message: 'validator_seo_keywords' }),
+    }),
     // Multi-language
-    // nameLocalized: localizedField({
-    //   min: 1,
-    //   max: 255,
-    //   required: true,
-    //   requiredMessage: 'validator_post_name',
-    //   minMessage: 'validator_minimum_n_characters_allowed',
-    //   maxMessage: 'validator_maximum_n_characters_allowed',
-    // }),
-    // descriptionLocalized: localizedField({
-    //   min: 1,
-    //   max: 2000,
-    //   required: true,
-    //   requiredMessage: 'validator_post_description',
-    //   minMessage: 'validator_minimum_n_characters_allowed',
-    //   maxMessage: 'validator_maximum_n_characters_allowed',
-    // }),
-    // bodyLocalized: localizedField({
-    //   max: Infinity,
-    //   required: false,
-    //   requiredMessage: 'validator_post_body',
-    //   minMessage: 'validator_minimum_n_characters_allowed',
-    //   maxMessage: 'validator_maximum_n_characters_allowed',
-    // }),
+    nameLocalized: localizedField({
+      min: 1,
+      max: 255,
+      required: true,
+      requiredMessage: 'validator_post_name',
+      minMessage: 'validator_minimum_n_characters_allowed',
+      maxMessage: 'validator_maximum_n_characters_allowed',
+    }),
+    descriptionLocalized: localizedField({
+      min: 1,
+      max: 2000,
+      required: true,
+      requiredMessage: 'validator_post_description',
+      minMessage: 'validator_minimum_n_characters_allowed',
+      maxMessage: 'validator_maximum_n_characters_allowed',
+    }),
+    bodyLocalized: localizedField({
+      max: Infinity,
+      required: false,
+      requiredMessage: 'validator_post_body',
+      minMessage: 'validator_minimum_n_characters_allowed',
+      maxMessage: 'validator_maximum_n_characters_allowed',
+    }),
   });
 };

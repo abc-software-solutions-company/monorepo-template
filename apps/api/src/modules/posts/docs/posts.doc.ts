@@ -23,6 +23,9 @@ export class CreatePostSuccessDoc {
       status: POST_STATUS.DRAFT,
       createdAt: '2023-11-28T03:03:39.054Z',
       updatedAt: '2023-11-28T03:03:39.054Z',
+      nameLocalized: [{ lang: 'en-us', value: 'This is title of post' }],
+      descriptionLocalized: [{ lang: 'en-us', value: 'Short content here' }],
+      bodyLocalized: [{ lang: 'en-us', value: 'Full content here' }],
     },
   })
   data: unknown;
@@ -51,6 +54,26 @@ export class GetPostsSuccessDoc {
         },
         createdAt: '2023-11-28T03:03:39.054Z',
         updatedAt: '2023-11-28T03:03:39.054Z',
+        nameLocalized: [{ lang: 'en-us', value: 'This is title of post' }],
+        descriptionLocalized: [{ lang: 'en-us', value: 'Short content here' }],
+        bodyLocalized: [{ lang: 'en-us', value: 'Full content here' }],
+      },
+      {
+        id: 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx',
+        name: 'This is title of post 2',
+        slug: 'this-is-title-of-post-2',
+        description: 'Short content here',
+        body: 'Full content here',
+        status: POST_STATUS.PUBLISHED,
+        creator: {
+          id: '29332240-8d2d-45ad-8bbe-8cfe5906b30a',
+          name: 'My Name',
+        },
+        createdAt: '2023-11-28T03:03:39.054Z',
+        updatedAt: '2023-11-28T03:03:39.054Z',
+        nameLocalized: null,
+        descriptionLocalized: null,
+        bodyLocalized: null,
       },
     ],
   })
@@ -61,8 +84,8 @@ export class GetPostsSuccessDoc {
       paging: {
         currentPage: 1,
         itemsPerPage: 1,
-        totalItems: 4,
-        totalPages: 4,
+        totalItems: 2,
+        totalPages: 2,
       },
     },
   })
@@ -89,6 +112,9 @@ export class GetPostSuccessDoc {
       status: POST_STATUS.PUBLISHED,
       createdAt: '2023-11-28T03:03:39.054Z',
       updatedAt: '2023-11-28T03:03:39.054Z',
+      nameLocalized: [{ lang: 'en-us', value: 'This is title of post' }],
+      descriptionLocalized: [{ lang: 'en-us', value: 'Short content here' }],
+      bodyLocalized: [{ lang: 'en-us', value: 'Full content here' }],
     },
   })
   data: unknown;
@@ -123,6 +149,9 @@ export class UpdatePostSuccessDoc {
       status: POST_STATUS.PUBLISHED,
       createdAt: '2023-11-28T03:03:39.054Z',
       updatedAt: '2023-11-28T03:03:39.054Z',
+      nameLocalized: [{ lang: 'en-us', value: 'This is title of post' }],
+      descriptionLocalized: [{ lang: 'en-us', value: 'Short content here' }],
+      bodyLocalized: [{ lang: 'en-us', value: 'Full content here' }],
     },
   })
   data: unknown;
@@ -147,6 +176,9 @@ export class DeletePostSuccessDoc {
       cover: 'house-21715252750924.jpeg',
       createdAt: '2023-11-28T03:03:39.054Z',
       updatedAt: '2023-11-28T03:03:39.054Z',
+      nameLocalized: [{ lang: 'en-us', value: 'This is title of post' }],
+      descriptionLocalized: [{ lang: 'en-us', value: 'Short content here' }],
+      bodyLocalized: [{ lang: 'en-us', value: 'Full content here' }],
     },
   })
   data: unknown;

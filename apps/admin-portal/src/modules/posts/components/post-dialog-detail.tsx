@@ -1,4 +1,5 @@
 import { FC, useEffect } from 'react';
+import { useLocale } from 'use-intl';
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@repo/react-web-ui-shadcn/components/ui/dialog';
 import { Loading } from '@repo/react-web-ui-shadcn/components/ui/loading';
@@ -15,7 +16,12 @@ type PostDialogDetailProps = {
 };
 
 const PostDialogDetail: FC<PostDialogDetailProps> = ({ id, visible, onCancel }) => {
+  const locale = useLocale();
   const postsState = usePostsState();
+
+  const name = postsState.detail?.nameLocalized?.find(x => x.lang === locale)?.value ?? '';
+  const description = postsState.detail?.descriptionLocalized?.find(x => x.lang === locale)?.value ?? '';
+  const body = postsState.detail?.bodyLocalized?.find(x => x.lang === locale)?.value ?? '';
 
   useEffect(() => {
     if (visible) {
@@ -31,7 +37,7 @@ const PostDialogDetail: FC<PostDialogDetailProps> = ({ id, visible, onCancel }) 
           <>
             <VisuallyHidden>
               <DialogHeader>
-                <DialogTitle></DialogTitle>
+                <DialogTitle>{name}</DialogTitle>
                 <DialogDescription></DialogDescription>
               </DialogHeader>
             </VisuallyHidden>
@@ -44,18 +50,18 @@ const PostDialogDetail: FC<PostDialogDetailProps> = ({ id, visible, onCancel }) 
         {!postsState.isReading && !!postsState.detail && (
           <>
             <DialogHeader>
-              <DialogTitle>{postsState.detail.name}</DialogTitle>
+              <DialogTitle>{name}</DialogTitle>
               <VisuallyHidden>
                 <DialogDescription></DialogDescription>
               </VisuallyHidden>
             </DialogHeader>
             <div className="wysiwyg prose-sm p-4">
               <div>
-                <ContentRenderer data={postsState.detail.description} />
+                <ContentRenderer data={description} />
               </div>
               <Separator className="my-4" />
               <div>
-                <ContentRenderer data={postsState.detail.body} />
+                <ContentRenderer data={body} />
               </div>
             </div>
           </>

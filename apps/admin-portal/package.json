@@ -60,6 +60,7 @@
     "axios": "^1.7.4",
     "chart.js": "^4.4.2",
     "ckeditor5": "42.0.1",
+    "class-variance-authority": "^0.7.1",
     "classnames": "^2.5.1",
     "cmdk": "^1.0.0",
     "d3-hierarchy": "^3.1.2",

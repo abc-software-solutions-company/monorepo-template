@@ -1,6 +1,11 @@
-import { Translation } from '@repo/shared-universal/interfaces/language.interface';
+/*
+ * @Author: <Tin Tran> (tin.tran@abcdigital.io)
+ * @Created: 2025-01-13 20:25:05
+ */
 
-export type SeoMeta = {
+import { Translation } from './language.interface';
+
+export type SeoMetadata = {
   title?: string; // TODO: Will be removed
   description?: string; // TODO: Will be removed
   titleLocalized?: Translation[];

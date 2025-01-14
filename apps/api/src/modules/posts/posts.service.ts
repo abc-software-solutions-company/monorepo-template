@@ -49,6 +49,7 @@ export class PostsService {
 
     if (createDto.status) newPost.status = createDto.status;
     if (createDto.seoMeta) newPost.seoMeta = createDto.seoMeta;
+    newPost.creator = creator;
 
     const createdPost = await this.postRepository.save(newPost);
 
@@ -69,10 +70,15 @@ export class PostsService {
       queryBuilder.where('post.status IN (:...status)', { status });
     }
     if (q) {
+      const searchTerm = `%${q}%`;
+
       queryBuilder
-        .andWhere('LOWER(post.name) LIKE LOWER(:name)', { name: `%${q}%` })
-        .orWhere('LOWER(post.description) LIKE LOWER(:description)', { description: `%${q}%` })
-        .orWhere('LOWER(post.body) LIKE LOWER(:body)', { body: `%${q}%` });
+        .andWhere('LOWER(post.name) LIKE LOWER(:searchTerm)', { searchTerm })
+        .orWhere('LOWER(post.description) LIKE LOWER(:searchTerm)', { searchTerm })
+        .orWhere(
+          "EXISTS (SELECT 1 FROM jsonb_array_elements(post.nameLocalized) AS translation WHERE LOWER(translation->>'value') LIKE LOWER(:searchTerm))",
+          { searchTerm }
+        );
     }
     if (sort) {
       if (order) {
@@ -135,7 +141,7 @@ export class PostsService {
 
       post.category = category;
     } else {
-      post.category = null;
+      post.category = undefined;
     }
 
     if (updateDto.status) post.status = updateDto.status;
@@ -189,6 +195,14 @@ export class PostsService {
 
   async sortImages(images: File[] | undefined, postId: string) {
     if (!images) return;
+
+    const existingFiles = await this.postFileRepository.find({ where: { postId } });
+    const newFileIds = images.map(image => image.id);
+    const filesToRemove = existingFiles.filter(file => !newFileIds.includes(file.fileId));
+
+    if (filesToRemove.length > 0) {
+      await this.postFileRepository.remove(filesToRemove);
+    }
 
     for (let i = 0; i < images.length; i++) {
       const existingFile = await this.postFileRepository.findOne({ where: { fileId: images[i].id, postId } });

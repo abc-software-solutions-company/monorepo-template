@@ -6,7 +6,15 @@ import { locales } from '@/config';
 
 import { LayoutProps } from '@/interfaces/layout.interface';
 
-import { COMPANY_NAME, COMPANY_URL, SEO_ENABLED, WEBSITE_DESCRIPTION, WEBSITE_KEYWORD, WEBSITE_NAME, WEBSITE_URL } from '@/constants/site.constant';
+import {
+  COMPANY_NAME,
+  COMPANY_URL,
+  WEBSITE_DESCRIPTION,
+  WEBSITE_KEYWORD,
+  WEBSITE_NAME,
+  WEBSITE_OG_IMAGE,
+  WEBSITE_URL,
+} from '@/constants/site.constant';
 
 export default async function RootLayout({ children, params: { locale } }: LayoutProps) {
   unstable_setRequestLocale(locale);
@@ -47,6 +55,8 @@ export async function generateStaticParams() {
 }
 
 export async function generateMetadata(_layoutProps: LayoutProps): Promise<Metadata> {
+  const isSeoEnabled = process.env.NEXT_PUBLIC_APP_ENV === 'production';
+
   // https://nextjs.org/docs/app/api-reference/functions/generate-metadata#metadata-fields
   return {
     metadataBase: new URL(WEBSITE_URL),
@@ -66,7 +76,7 @@ export async function generateMetadata(_layoutProps: LayoutProps): Promise<Metad
       site: '@site',
       creator: '@creator',
       description: WEBSITE_DESCRIPTION,
-      images: { url: `${WEBSITE_URL}/og-img.jpg`, alt: WEBSITE_NAME },
+      images: { url: WEBSITE_OG_IMAGE, alt: WEBSITE_NAME },
     },
     openGraph: {
       url: WEBSITE_URL,
@@ -74,7 +84,7 @@ export async function generateMetadata(_layoutProps: LayoutProps): Promise<Metad
       title: WEBSITE_NAME,
       description: WEBSITE_DESCRIPTION,
       type: 'website',
-      images: [{ alt: WEBSITE_NAME, url: `${WEBSITE_URL}/og-img.jpg`, width: 1200, height: 630 }],
+      images: [{ alt: WEBSITE_NAME, url: WEBSITE_OG_IMAGE, width: 1200, height: 630 }],
     },
     manifest: '/manifest.json',
     alternates: {
@@ -125,12 +135,12 @@ export async function generateMetadata(_layoutProps: LayoutProps): Promise<Metad
       },
     ],
     robots: {
-      index: SEO_ENABLED,
-      follow: SEO_ENABLED,
+      index: isSeoEnabled,
+      follow: isSeoEnabled,
       nocache: true,
       googleBot: {
-        index: SEO_ENABLED,
-        follow: SEO_ENABLED,
+        index: isSeoEnabled,
+        follow: isSeoEnabled,
       },
     },
   };

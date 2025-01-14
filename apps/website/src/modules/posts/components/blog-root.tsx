@@ -2,6 +2,7 @@
 
 import React, { FC } from 'react';
 import classNames from 'classnames';
+import { Loading } from '@repo/react-web-ui-shadcn/components/ui/loading';
 import Pagination from '@repo/react-web-ui-shadcn/components/ui/pagination-custom';
 import { useQuery } from '@tanstack/react-query';
 
@@ -28,7 +29,12 @@ const BlogRoot: FC<BlogRootProps> = ({ className, filter }) => {
     queryFn: async () => await PostApi.getServerPosts(filter),
   });
 
-  if (!data) return null;
+  if (!data)
+    return (
+      <div className="flex items-center justify-center p-3">
+        <Loading />
+      </div>
+    );
 
   return (
     <div className={classNames(className)}>
