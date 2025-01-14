@@ -12,6 +12,7 @@ import ModalLoading from '@repo/react-web-ui-shadcn/components/modals/modal-load
 import { Card, CardContent } from '@repo/react-web-ui-shadcn/components/ui/card';
 import { Form } from '@repo/react-web-ui-shadcn/components/ui/form';
 import { LANGUAGES } from '@repo/shared-universal/constants/language.constant';
+import { getLanguages } from '@repo/shared-universal/utils/language.util';
 import { objectToQueryString } from '@repo/shared-universal/utils/string.util';
 
 import { PostFormData } from '../interfaces/posts.interface';
@@ -47,6 +48,8 @@ const PostForm: FC<PostFormProps> = ({ isEdit }) => {
   const [isFileManagerVisible, setIsFileManagerVisible] = useState(false);
   const postsState = usePostsState();
   const { post, categories, isFetching } = usePosts({ isEdit, postId: params.id as string });
+
+  const languages = getLanguages(locale);
 
   const defaultValues: PostFormData = {
     status: post?.status ?? POST_STATUS.DRAFT,
@@ -113,7 +116,7 @@ const PostForm: FC<PostFormProps> = ({ isEdit }) => {
                   formLabel={t('form_field_name')}
                   minLength={1}
                   maxLength={255}
-                  locales={LANGUAGES}
+                  locales={languages}
                 />
                 <FormFieldInputSlug form={form} />
                 <FormFieldCKEditorMultiLanguage
@@ -124,14 +127,14 @@ const PostForm: FC<PostFormProps> = ({ isEdit }) => {
                   minHeight={120}
                   maxLength={2000}
                   toolbar={['bold', 'italic', 'underline', 'strikethrough']}
-                  locales={LANGUAGES}
+                  locales={languages}
                 />
                 <FormFieldCKEditorMultiLanguage
                   form={form}
                   fieldName="bodyLocalized"
                   formLabel={t('form_field_content')}
                   editorRef={editorRef}
-                  locales={LANGUAGES}
+                  locales={languages}
                   maxLength={50000}
                   setVisible={setIsFileManagerVisible}
                 />
@@ -144,7 +147,7 @@ const PostForm: FC<PostFormProps> = ({ isEdit }) => {
               <div className="grid gap-4">
                 <FormFieldCardSelectStatus form={form} statuses={POST_STATUSES} />
                 <FormFieldCardSelectCategory form={form} categories={categories ?? []} />
-                <FormFieldCardCoverMultiLanguage form={form} fieldName="coverLocalized" formLabel="Cover Image" locales={LANGUAGES} maxVisible={2} />
+                <FormFieldCardCoverMultiLanguage form={form} fieldName="coverLocalized" formLabel="Cover Image" locales={languages} maxVisible={2} />
                 <FormFieldCardImages form={form} />
               </div>
             </div>
