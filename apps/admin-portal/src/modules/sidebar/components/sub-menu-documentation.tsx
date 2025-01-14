@@ -6,12 +6,17 @@ import { objectToQueryString } from '@repo/shared-universal/utils/string.util';
 
 type SubMenuDocumentationProps = {
   type: 'dropdown' | 'list';
+  onNavigate?: () => void;
 };
 
-const SubMenuDocumentation: FC<SubMenuDocumentationProps> = ({ type }) => {
+const SubMenuDocumentation: FC<SubMenuDocumentationProps> = ({ type, onNavigate }) => {
   const { pathname } = useLocation();
   const [searchParams] = useSearchParams();
   const locale = useLocale();
+
+  const handleClick = () => {
+    onNavigate?.();
+  };
 
   const className = type === 'list' ? 'px-10' : '';
 
@@ -28,6 +33,7 @@ const SubMenuDocumentation: FC<SubMenuDocumentationProps> = ({ type }) => {
           type === 'dropdown' && pathname.includes(`/${locale}/documentation/getting-started`) && '!bg-primary !text-white',
           type === 'list' && pathname.includes(`/${locale}/documentation/getting-started`) && '!text-primary'
         )}
+        onClick={handleClick}
       >
         <p className={classNames('whitespace-nowrap', className)}>Getting Started</p>
       </NavLink>
@@ -39,6 +45,7 @@ const SubMenuDocumentation: FC<SubMenuDocumentationProps> = ({ type }) => {
           type === 'dropdown' && pathname.includes(`/${locale}/documentation/components`) && '!bg-primary !text-white',
           type === 'list' && pathname.includes(`/${locale}/documentation/components`) && '!text-primary'
         )}
+        onClick={handleClick}
       >
         <p className={classNames('whitespace-nowrap', className)}>Components</p>
       </NavLink>
@@ -50,6 +57,7 @@ const SubMenuDocumentation: FC<SubMenuDocumentationProps> = ({ type }) => {
           type === 'dropdown' && pathname.includes(`/${locale}/documentation/changelogs`) && '!bg-primary !text-white',
           type === 'list' && pathname.includes(`/${locale}/documentation/changelogs`) && '!text-primary'
         )}
+        onClick={handleClick}
       >
         <p className={classNames('whitespace-nowrap', className)}>Changelog</p>
       </NavLink>

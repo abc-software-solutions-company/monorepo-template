@@ -6,13 +6,18 @@ import { objectToQueryString } from '@repo/shared-universal/utils/string.util';
 
 type SubMenuNotificationsProps = {
   type: 'dropdown' | 'list';
+  onNavigate?: () => void;
 };
 
-const SubMenuNotifications: FC<SubMenuNotificationsProps> = ({ type }) => {
+const SubMenuNotifications: FC<SubMenuNotificationsProps> = ({ type, onNavigate }) => {
   const t = useTranslations();
   const [searchParams] = useSearchParams();
   const { pathname } = useLocation();
   const locale = useLocale();
+
+  const handleClick = () => {
+    onNavigate?.();
+  };
 
   const className = type === 'list' ? 'px-10' : '';
 
@@ -29,6 +34,7 @@ const SubMenuNotifications: FC<SubMenuNotificationsProps> = ({ type }) => {
           type === 'dropdown' && pathname.includes(`/${locale}/notifications/push`) && '!bg-primary !text-white',
           type === 'list' && pathname.includes(`/${locale}/notifications/push`) && '!text-primary'
         )}
+        onClick={handleClick}
       >
         <p className={classNames('whitespace-nowrap', className)}>{t('sidebar_menu_notifications_push')}</p>
       </NavLink>

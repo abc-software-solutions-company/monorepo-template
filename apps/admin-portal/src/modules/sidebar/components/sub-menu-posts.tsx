@@ -6,13 +6,18 @@ import { objectToQueryString } from '@repo/shared-universal/utils/string.util';
 
 type SubMenuPostsProps = {
   type: 'dropdown' | 'list';
+  onNavigate?: () => void;
 };
 
-const SubMenuPosts: FC<SubMenuPostsProps> = ({ type }) => {
+const SubMenuPosts: FC<SubMenuPostsProps> = ({ type, onNavigate }) => {
   const t = useTranslations();
   const [searchParams] = useSearchParams();
   const { pathname } = useLocation();
   const locale = useLocale();
+
+  const handleClick = () => {
+    onNavigate?.();
+  };
 
   const className = type === 'list' ? 'px-10' : '';
 
@@ -29,6 +34,7 @@ const SubMenuPosts: FC<SubMenuPostsProps> = ({ type }) => {
           type === 'dropdown' && pathname.includes(`/${locale}/posts/new`) && '!bg-primary !text-white',
           type === 'list' && pathname.includes(`/${locale}/posts/new`) && '!text-primary'
         )}
+        onClick={handleClick}
       >
         <p className={classNames('whitespace-nowrap', className)}>{t('sidebar_menu_posts_create_new')}</p>
       </NavLink>

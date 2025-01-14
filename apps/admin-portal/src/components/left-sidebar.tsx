@@ -1,12 +1,14 @@
-import { FC, ReactNode, useState } from 'react';
+import { FC, ReactNode, useEffect, useState } from 'react';
 import classNames from 'classnames';
 import { useSearchParams } from 'react-router-dom';
+import { useMediaQuery } from '@repo/shared-web/hooks/use-media-query';
 
 import { ComponentBaseProps } from '@/interfaces/component.interface';
 
 import Header from '@/components/headers/header';
 
 import Sidebar from '@/modules/sidebar/components/sidebar';
+import SidebarDrawer from '@/modules/sidebar/components/sidebar-drawer';
 
 type LeftSidebarProps = {
   children?: ReactNode;
@@ -15,8 +17,10 @@ type LeftSidebarProps = {
 const LeftSidebar: FC<LeftSidebarProps> = ({ children }) => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [isSidebarExpand, setIsSidebarExpand] = useState(!searchParams.has('sidebar'));
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const isMobile = useMediaQuery('(max-width: 1024px)');
 
-  const toggle = () => {
+  const toggleSidebar = () => {
     if (isSidebarExpand) {
       setIsSidebarExpand(false);
       setSearchParams({ sidebar: 'closed' });
@@ -26,11 +30,28 @@ const LeftSidebar: FC<LeftSidebarProps> = ({ children }) => {
     }
   };
 
+  const toggleDrawer = () => {
+    setIsDrawerOpen(!isDrawerOpen);
+  };
+
+  useEffect(() => {
+    if (!isMobile) {
+      setIsDrawerOpen(false);
+    }
+  }, [isMobile]);
+
   return (
     <div className="layout-with-left-sidebar flex grow flex-col">
-      <Sidebar isExpand={isSidebarExpand} />
-      <div className={classNames('nap-content flex grow flex-col transition-spacing duration-500', isSidebarExpand ? 'pl-64' : 'pl-20')}>
-        <Header onSidebarCollapseClick={toggle} />
+      {isMobile ? <SidebarDrawer isOpen={isDrawerOpen} onOpenChange={setIsDrawerOpen} /> : <Sidebar isExpand={isSidebarExpand} />}
+
+      <div
+        className={classNames('nap-content flex grow flex-col transition-spacing duration-500', {
+          'pl-64': isSidebarExpand && !isMobile,
+          'pl-20': !isSidebarExpand && !isMobile,
+          'pl-0': isMobile,
+        })}
+      >
+        <Header onSidebarCollapseClick={isMobile ? toggleDrawer : toggleSidebar} />
         {children}
       </div>
     </div>
