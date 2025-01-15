@@ -8,6 +8,7 @@ import SidebarNavigation from './sidebar-navigation';
 
 type SidebarProps = {
   isExpand: boolean;
+  isMobile?: boolean;
 } & ComponentBaseProps;
 
 const Sidebar: FC<SidebarProps> = ({ className, isExpand = true, ...rest }) => {
@@ -21,11 +22,12 @@ const Sidebar: FC<SidebarProps> = ({ className, isExpand = true, ...rest }) => {
   return (
     <div
       ref={ref}
-      className={classNames(
-        'nap-sidebar fixed z-20 flex h-full flex-col border-r bg-card transition-width duration-500',
-        className,
-        isExpand ? 'w-64' : 'w-20'
-      )}
+      className={classNames('nap-sidebar fixed z-20 flex h-full flex-col border-r bg-card', className, {
+        'w-64 transition-width duration-500': isExpand && !rest.isMobile,
+        'w-20 transition-width duration-500': !isExpand && !rest.isMobile,
+        'w-64': isExpand && rest.isMobile,
+        'w-20': !isExpand && rest.isMobile,
+      })}
       data-testid="sidebar"
       {...rest}
     >

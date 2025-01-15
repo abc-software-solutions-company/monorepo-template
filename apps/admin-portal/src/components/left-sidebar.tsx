@@ -19,6 +19,7 @@ const LeftSidebar: FC<LeftSidebarProps> = ({ children }) => {
   const [isSidebarExpand, setIsSidebarExpand] = useState(!searchParams.has('sidebar'));
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const isMobile = useMediaQuery('(max-width: 1024px)');
+  const [isInMobileView, setIsInMobileView] = useState(isMobile);
 
   const toggleSidebar = () => {
     if (isSidebarExpand) {
@@ -40,15 +41,22 @@ const LeftSidebar: FC<LeftSidebarProps> = ({ children }) => {
     }
   }, [isMobile]);
 
+  useEffect(() => {
+    if (isMobile !== isInMobileView) {
+      setIsInMobileView(isMobile);
+    }
+  }, [isMobile, isInMobileView]);
+
   return (
     <div className="layout-with-left-sidebar flex grow flex-col">
-      {isMobile ? <SidebarDrawer isOpen={isDrawerOpen} onOpenChange={setIsDrawerOpen} /> : <Sidebar isExpand={isSidebarExpand} />}
-
+      {isMobile && <SidebarDrawer isOpen={isDrawerOpen} onOpenChange={setIsDrawerOpen} />}
+      {!isMobile && <Sidebar isExpand={isSidebarExpand} isMobile={isMobile} />}
       <div
-        className={classNames('nap-content flex grow flex-col transition-spacing duration-500', {
+        className={classNames('nap-content flex grow flex-col', {
           'pl-64': isSidebarExpand && !isMobile,
           'pl-20': !isSidebarExpand && !isMobile,
           'pl-0': isMobile,
+          'transition-spacing duration-500': !isMobile && !isInMobileView,
         })}
       >
         <Header onSidebarCollapseClick={isMobile ? toggleDrawer : toggleSidebar} />

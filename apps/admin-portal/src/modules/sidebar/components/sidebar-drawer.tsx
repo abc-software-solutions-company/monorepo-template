@@ -9,15 +9,15 @@ import SidebarHeader from '@/modules/sidebar/components/sidebar-header';
 import SidebarNavigation from './sidebar-navigation';
 
 type SidebarDrawerProps = {
+  className?: string;
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
-  className?: string;
 };
 
 const SidebarDrawer: FC<SidebarDrawerProps> = ({ isOpen, onOpenChange, className }) => {
   return (
     <Drawer direction="left" open={isOpen} onOpenChange={onOpenChange}>
-      <DrawerContent className={cn('left-0 right-auto top-0 mt-0 h-screen w-full rounded-none lg:hidden', className)}>
+      <DrawerContent className={cn('left-0 right-auto top-0 mt-0 h-screen w-64 rounded-none lg:hidden', className)}>
         <VisuallyHidden>
           <DrawerHeader>
             <DrawerTitle>Menu</DrawerTitle>
@@ -30,7 +30,7 @@ const SidebarDrawer: FC<SidebarDrawerProps> = ({ isOpen, onOpenChange, className
             <X />
           </button>
         </div>
-        <div className="scrollbar flex h-screen flex-col justify-between p-3 text-xl">
+        <div className="scrollbar flex h-screen flex-col">
           <SidebarNavigation isExpand={true} onNavigate={() => onOpenChange(false)} />
         </div>
       </DrawerContent>
