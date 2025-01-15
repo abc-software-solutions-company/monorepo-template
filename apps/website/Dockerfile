@@ -52,7 +52,7 @@ USER nextjs
 # https://nextjs.org/docs/advanced-features/output-file-tracing
 COPY --from=installer --chown=nextjs:nodejs /app/apps/website/.next/standalone ./
 COPY --from=installer --chown=nextjs:nodejs /app/apps/website/.next/static ./apps/website/.next/static
-COPY --from=installer --chown=nextjs:nodejs /app/apps/website/public ./apps/web/public
+COPY --from=installer --chown=nextjs:nodejs /app/apps/website/public ./apps/website/public
 
 ENV HOSTNAME "0.0.0.0"
 
