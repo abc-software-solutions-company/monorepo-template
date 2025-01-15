@@ -1,84 +1,70 @@
-# Turborepo starter
+# Monorepo Project
 
-This is an official starter Turborepo.
+This is a monorepo containing multiple applications and packages built with modern web technologies. The project includes an admin portal, API
+backend, mobile app, and website components.
 
-## Using this example
+## Repository Structure
 
-Run the following command:
+The repository is organized as follows:
 
-```sh
-npx create-turbo@latest
+```shell
+├── apps/                               # Application packages
+│   ├── admin-portal/                   # Admin dashboard application
+│   ├── api/                            # NestJS API backend
+│   ├── mobile-app/                     # React Native mobile application
+│   └── website/                        # Next.js website frontend
+│
+├── packages/                           # Shared packages
+│   ├── config-prettier/                # Prettier configuration
+│   ├── config-tailwindcss/             # Tailwind CSS configuration
+│   ├── config-typescript/              # TypeScript configuration
+│   ├── eslint-config/                  # ESLint configuration
+│   ├── react-native-design-system/     # React Native design system
+│   ├── react-native-ui-core/           # React Native UI core components
+│   ├── react-web-ui-shadcn/            # Web UI components using shadcn
+│   ├── shared-universal/               # Universal shared utilities
+│   └── shared-web/                     # Web-specific shared utilities
+│
+└── docs/                               # Project documentation
 ```
 
-## What's inside?
+## Core Features
 
-This Turborepo includes the following packages/apps:
+- Full TypeScript support across all packages
+- Authentication with multiple providers (Firebase, Google, Facebook, Apple)
+- Access token & refresh token auth system
+- Content management features (posts, users, files, etc)
+- Settings & preferences management
+- Push notifications
+- Full test coverage (unit testing & E2E testing)
+- API documentation with Swagger
 
-### Apps and Packages
+## Key Technologies
 
-- `docs`: a [Next.js](https://nextjs.org/) app
-- `web`: another [Next.js](https://nextjs.org/) app
-- `@repo/react-web-ui-shadcn`: a stub React component library shared by both `web` and `docs` applications
-- `@repo/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
-- `@repo/config-typescript`: `tsconfig.json`s used throughout the monorepo
+- **Backend**: NestJS, TypeORM, PostgreSQL Firebase (Optional)
+- **Frontend**: React, Next.js, Vite
+- **Mobile**: React Native
+- **UI**: TailwindCSS, shadcn/ui
+- **Testing**: Jest, Playwright
+- **API Documentation**: Swagger
 
-Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
+## Getting Started
 
-### Utilities
+### Install dependencies:
 
-This Turborepo has some additional tools already setup for you:
-
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Prettier](https://prettier.io) for code formatting
-
-### Build
-
-To build all apps and packages, run the following command:
-
-```
-cd my-turborepo
-pnpm build
+```bash
+yarn install
 ```
 
-### Develop
+**Set up API Backend:** Please refer to the <a href="apps/api/README.md" target="\_blank">API documentation</a> for more information.
 
-To develop all apps and packages, run the following command:
+**Set up Admin Portal:** Please refer to the <a href="apps/admin-portal/README.md" target="\_blank">Admin Portal documentation</a> for more
+information.
 
-```
-cd my-turborepo
-pnpm dev
-```
+**Set up Website:** Please refer to the <a href="apps/website/README.md" target="\_blank">Website documentation</a> for more information.
 
-### Remote Caching
+**Set up Mobile App:** Please refer to the <a href="apps/mobile-app/README.md" target="\_blank">Mobile App documentation</a> for more information.
 
-Turborepo can use a technique known as [Remote Caching](https://turbo.build/repo/docs/core-concepts/remote-caching) to
-share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
+## Documentation
 
-By default, Turborepo will cache locally. To enable Remote Caching you will need an account with Vercel. If you don't
-have an account you can [create one](https://vercel.com/signup), then enter the following commands:
-
-```
-cd my-turborepo
-npx turbo login
-```
-
-This will authenticate the Turborepo CLI with your
-[Vercel account](https://vercel.com/docs/concepts/personal-accounts/overview).
-
-Next, you can link your Turborepo to your Remote Cache by running the following command from the root of your Turborepo:
-
-```
-npx turbo link
-```
-
-## Useful Links
-
-Learn more about the power of Turborepo:
-
-- [Tasks](https://turbo.build/repo/docs/core-concepts/monorepos/running-tasks)
-- [Caching](https://turbo.build/repo/docs/core-concepts/caching)
-- [Remote Caching](https://turbo.build/repo/docs/core-concepts/remote-caching)
-- [Filtering](https://turbo.build/repo/docs/core-concepts/monorepos/filtering)
-- [Configuration Options](https://turbo.build/repo/docs/reference/configuration)
-- [CLI Usage](https://turbo.build/repo/docs/reference/command-line-reference)
+- Additional documentation available in the `docs/` directory
