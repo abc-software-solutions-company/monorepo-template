@@ -19,7 +19,6 @@
     "check:types": "tsc --pretty --noEmit",
     "clean": "rimraf .next",
     "commit": "better-commits",
-    "deadcode": "ts-prune | wc -l",
     "dev": "vite",
     "format": "prettier --write .",
     "postinstall": "patch-package",

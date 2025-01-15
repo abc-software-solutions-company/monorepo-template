@@ -16,10 +16,14 @@ export default defineConfig({
     },
   },
   test: {
+    // deps: {
+    //   moduleDirectories: ['node_modules', path.resolve('../../packages')],
+    // },
     globals: true,
     environment: 'jsdom',
     setupFiles: ['./__tests__/unit/setup/index.ts'],
     include: ['./src/**/*.{test,spec}.{ts,tsx}', './__tests__/unit/**/*.{test,spec}.{ts,tsx}'],
+    exclude: ['node_modules', 'dist', '.idea', '.git', '.cache'],
     coverage: {
       all: true,
       include: ['src/**/*.{ts,tsx}'],
