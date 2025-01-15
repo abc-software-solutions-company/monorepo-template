@@ -49,13 +49,8 @@ WORKDIR /app
 RUN addgroup --system --gid 1001 nestjs
 RUN adduser --system --uid 1001 nestjs
 USER nestjs
-
-# Automatically leverage output traces to reduce image size
-COPY --from=installer --chown=nestjs:nodejs /app/apps/api/dist ./
-COPY --from=installer --chown=nestjs:nodejs /app/apps/api/package.json ./package.json
-COPY --from=installer --chown=nestjs:nodejs /app/apps/api/tsconfig.json ./tsconfig.json
-COPY --from=installer --chown=nestjs:nodejs /app/apps/api/.env ./.env
-COPY --from=installer --chown=nestjs:nodejs /app/apps/api/node_modules ./node_modules
+COPY --from=installer --chown=nestjs:nodejs /app .
+COPY --from=installer --chown=nestjs:nodejs /app/node_modules /app/apps/api/node_modules
 
 # Correct the path to the entry point
-CMD ["/bin/sh", "-c", "yarn migration:run && node dist/main.js"]
+CMD ["/bin/sh", "-c", "cd apps/api && yarn migration:run && node dist/main.js"]
