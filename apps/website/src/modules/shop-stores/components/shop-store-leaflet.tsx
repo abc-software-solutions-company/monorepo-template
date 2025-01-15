@@ -3,6 +3,11 @@
  * @Created: 2025-01-04 10:53:06
  */
 
+// TODO: Remove all comments below if you want to use this component
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+/* eslint-disable import/no-unresolved */
+// @ts-nocheck
+
 import React, { FC, useRef, useState } from 'react';
 import { Icon, LatLngExpression, Marker as LeafletMarker } from 'leaflet';
 import { MapContainer, Marker, Popup, TileLayer, useMap } from 'react-leaflet';

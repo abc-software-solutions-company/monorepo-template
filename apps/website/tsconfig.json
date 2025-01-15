@@ -5,8 +5,12 @@
     "paths": {
       "@/*": ["./src/*"],
       "@tests/*": ["./__tests__/*"],
-      "@mocks/*": ["./__mocks__/*"]
-    }
+      "@mocks/*": ["./__mocks__/*"],
+      "@repo/react-web-ui-shadcn/*": ["../../packages/react-web-ui-shadcn/src/*"],
+      "@repo/shared-universal/*": ["../../packages/shared-universal/src/*"],
+      "@repo/shared-web/*": ["../../packages/shared-web/src/*"]
+    },
+    "types": ["vitest/globals", "@testing-library/jest-dom"]
   },
   "include": [
     "next-env.d.ts",

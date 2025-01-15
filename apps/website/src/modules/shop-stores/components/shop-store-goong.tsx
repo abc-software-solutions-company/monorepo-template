@@ -3,6 +3,11 @@
  * @Created: 2025-01-07 14:24:24
  */
 
+// TODO: Remove all comments below if you want to use this component
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+/* eslint-disable import/no-unresolved */
+// @ts-nocheck
+
 import { FC, useEffect, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import goongjs from '@goongmaps/goong-js';
