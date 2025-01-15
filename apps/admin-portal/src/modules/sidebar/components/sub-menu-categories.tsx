@@ -23,7 +23,7 @@ const SubMenuCategories: FC<SubMenuCategoriesProps> = ({ type, onNavigate }) => 
 
   return (
     <div>
-      <NavLink  
+      <NavLink
         to={{
           pathname: `/${locale}/categories/new`,
           search: `?${objectToQueryString({ sidebar: searchParams.get('sidebar') })}`,
