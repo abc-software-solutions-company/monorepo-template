@@ -26,10 +26,10 @@ const FormSignUp = () => {
   const authState = useAuthState();
 
   const defaultValues: SignUpDto = {
-    name: 'Ammodesk',
-    email: 'ammodesk@gmail.com',
-    password: 'Ammodesk123@',
-    confirmPassword: 'Ammodesk123@',
+    name: '',
+    email: '',
+    password: '',
+    confirmPassword: '',
   };
 
   const form = useForm<SignUpDto>({ resolver: zodResolver(signInValidator), defaultValues });

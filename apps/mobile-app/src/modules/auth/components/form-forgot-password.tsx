@@ -22,7 +22,7 @@ const ForgotPasswordForm = () => {
   const navigation = useNavigation<UnauthenticatedNavigationProps>();
 
   const defaultValues: ForgotPasswordDto = {
-    email: 'mrkilobyte@gmail.com',
+    email: '',
   };
 
   const form = useForm<ForgotPasswordDto>({ resolver: zodResolver(forgotPasswordValidator), defaultValues });

@@ -19,8 +19,8 @@ const LoginForm = () => {
   const authState = useAuthState();
 
   const defaultValues: SignInDto = {
-    email: 'ammodesk@gmail.com',
-    password: 'Ammodesk123@',
+    email: '',
+    password: '',
   };
 
   const form = useForm<SignInDto>({ resolver: zodResolver(signInValidator), defaultValues });
