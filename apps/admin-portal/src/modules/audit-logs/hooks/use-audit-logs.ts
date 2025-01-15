@@ -35,7 +35,7 @@ export const useAuditLogs = (): UseAuditLogsProps => {
 
       return response.data;
     },
-    gcTime: 0,
+    staleTime: 0,
   });
 
   useDeepCompareEffect(() => {
