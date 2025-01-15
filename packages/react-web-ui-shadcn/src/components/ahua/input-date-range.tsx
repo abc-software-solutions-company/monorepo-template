@@ -202,6 +202,7 @@ const InputDateRange = React.forwardRef<HTMLButtonElement, InputDateRangeProps>(
               <button
                 {...props}
                 ref={ref}
+                aria-label="input-date-range"
                 className={cn(triggerVariants({ size }), disabled && 'cursor-not-allowed')}
                 aria-expanded={isOpen}
                 disabled={disabled}

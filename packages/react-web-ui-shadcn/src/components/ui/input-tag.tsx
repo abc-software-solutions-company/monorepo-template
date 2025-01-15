@@ -91,7 +91,12 @@ export const InputTag = React.forwardRef<HTMLInputElement, InputTagProps>(({ cla
           )}
         >
           {keyword}
-          <button type="button" onClick={() => removeKeyword(index)} className="ml-1 rounded-full outline-none hover:text-muted-foreground">
+          <button
+            aria-label="input-tag"
+            type="button"
+            onClick={() => removeKeyword(index)}
+            className="ml-1 rounded-full outline-none hover:text-muted-foreground"
+          >
             <CircleXIcon size={12} className="text-muted-foreground" />
           </button>
         </span>

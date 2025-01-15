@@ -366,6 +366,7 @@ const SelectTag = forwardRef(
                 aria-expanded={isOpen}
                 disabled={disabled}
                 type="button"
+                aria-label="select-tag"
                 onClick={() => !disabled && setIsFocused(true)}
                 onFocus={handleFocus}
                 onBlur={handleBlur}

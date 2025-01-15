@@ -36,7 +36,7 @@ const Languages: FC<LanguagesProps> = ({ className, visibled = true }) => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <button className={cn('items-center space-x-2 p-2', className)} data-testid="language-dropdown-trigger">
+        <button aria-label="btn-change-language" className={cn('items-center space-x-2 p-2', className)} data-testid="language-dropdown-trigger">
           <LanguagesIcon className="size-4" />
           <span>{getLocaleLabel(currentLocale)}</span>
         </button>

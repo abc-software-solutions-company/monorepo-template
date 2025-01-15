@@ -390,6 +390,7 @@ const Select = forwardRef(
                 aria-expanded={isOpen}
                 disabled={disabled}
                 type="button"
+                aria-label="select"
                 onClick={() => !disabled && setIsFocused(true)}
                 onFocus={handleFocus}
                 onBlur={handleBlur}

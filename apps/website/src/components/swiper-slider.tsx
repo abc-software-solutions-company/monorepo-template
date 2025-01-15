@@ -41,7 +41,14 @@ const SwiperSlider: FC<SwiperProps> = ({ className, items, groupName }) => {
                     src={typeof item.image === 'string' ? item.image : item.image.src}
                     thumb={typeof item.image === 'string' ? item.image : item.image.src}
                   >
-                    <Image src={item.image} width={1920} height={1024} className="h-full w-full rounded-lg object-cover" alt="image" />
+                    <Image
+                      loading="eager"
+                      src={item.image}
+                      width={1920}
+                      height={1024}
+                      className="h-full w-full rounded-lg object-cover"
+                      alt="image"
+                    />
                     <div className="absolute left-0 top-0 flex h-full w-full items-center justify-center rounded-lg transition-all duration-300 group-hover:bg-black/20">
                       <SearchIcon className="scale-75 transform text-white opacity-0 transition-all duration-300 group-hover:scale-100 group-hover:opacity-100" />
                     </div>

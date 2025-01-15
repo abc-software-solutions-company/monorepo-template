@@ -170,6 +170,7 @@ export default function FormFieldUploaderMultiLanguage<T extends FieldValues>({
                 <img src={imageUrl.value} className="h-full w-full object-contain" />
                 {hoveredImageIndex === index && (
                   <button
+                    aria-label="image-preview"
                     type="button"
                     className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-black/50 p-2"
                     onClick={() => handleRemoveClick(index, locale)}
@@ -202,6 +203,7 @@ export default function FormFieldUploaderMultiLanguage<T extends FieldValues>({
                 <img src={file.url} alt={file.name} className="h-full w-full object-contain" />
                 {hoveredImageIndex === index && (
                   <button
+                    aria-label="image-preview"
                     type="button"
                     className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-black/50 p-2"
                     onClick={() => handleRemoveClick(index, activeLocale)}

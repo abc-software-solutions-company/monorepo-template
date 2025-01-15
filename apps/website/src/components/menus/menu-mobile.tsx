@@ -31,7 +31,7 @@ const MenuMobile: FC<MenuMobileProps> = ({ className }) => {
   return (
     <Drawer direction="top" open={isOpen} onOpenChange={setIsOpen}>
       <DrawerTrigger asChild className={cn(className)} onClick={() => setIsOpen(true)}>
-        <button type="button" className="p-2 pr-0">
+        <button type="button" className="p-2 pr-0" aria-label="menu-mobile">
           <MenuIcon />
         </button>
       </DrawerTrigger>
@@ -44,7 +44,7 @@ const MenuMobile: FC<MenuMobileProps> = ({ className }) => {
         </VisuallyHidden>
         <div className="flex items-center justify-between px-3 py-1.5">
           <Logo />
-          <button type="button" className="p-2 pr-0" onClick={() => setIsOpen(false)}>
+          <button type="button" aria-label="close-menu-mobile" className="p-2 pr-0" onClick={() => setIsOpen(false)}>
             <X />
           </button>
         </div>
