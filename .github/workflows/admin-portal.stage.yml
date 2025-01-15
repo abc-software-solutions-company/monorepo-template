@@ -14,7 +14,7 @@ env:
   DOCKERFILE_PATH: apps/admin-portal/Dockerfile
   DOCKER_COMPOSE_PATH: apps/admin-portal/docker-compose.yml
   ENV_FILE_PATH: apps/admin-portal/.env
-  DOCKER_HOST_PORT: 3003 # Change this value if your server is already run docker container with this port, using command docker ps to check it
+  DOCKER_HOST_PORT: 3005 # Change this value if your server is already run docker container with this port, using command docker ps to check it
   DOCKER_CONTAINER_PORT: 3001 # This is the app port, which command yarn start run and provided
 
 jobs:
@@ -84,8 +84,8 @@ jobs:
           host: ${{ secrets.STAGE_SERVER_HOST }}
           username: ${{secrets.STAGE_SERVER_USER_NAME}}
           port: 22
-          # password: ${{ secrets.STAGE_SERVER_PASSWORD }} //NOTE: Uncomment if your VPS Server using SSH connection with password
-          key: ${{ secrets.STAGE_SERVER_KEY }}
+          password: ${{ secrets.STAGE_SERVER_PASSWORD }}
+          # key: ${{ secrets.STAGE_SERVER_KEY }} //NOTE: Uncomment if your VPS Server using SSH connection with key
           source: '${{ env.APP_NAME }}.tar,${{ env.DOCKER_COMPOSE_PATH }},${{ env.ENV_FILE_PATH }}'
           target: '~/${{ env.APP_NAME }}'
 
@@ -95,8 +95,8 @@ jobs:
           host: ${{ secrets.STAGE_SERVER_HOST }}
           username: ${{secrets.STAGE_SERVER_USER_NAME}}
           port: 22
-          # password: ${{ secrets.STAGE_SERVER_PASSWORD }} //NOTE: Uncomment if your VPS Server using SSH connection with password
-          key: ${{ secrets.STAGE_SERVER_KEY }}
+          password: ${{ secrets.STAGE_SERVER_PASSWORD }}
+          # key: ${{ secrets.STAGE_SERVER_KEY }} //NOTE: Uncomment if your VPS Server using SSH connection with key
           script_stop: true
           script: |
             cd ~/${{ env.APP_NAME }}
