@@ -6,13 +6,18 @@ import { objectToQueryString } from '@repo/shared-universal/utils/string.util';
 
 type SubMenuProductsProps = {
   type: 'dropdown' | 'list';
+  onNavigate?: () => void;
 };
 
-const SubMenuProducts: FC<SubMenuProductsProps> = ({ type }) => {
+const SubMenuProducts: FC<SubMenuProductsProps> = ({ type, onNavigate }) => {
   const t = useTranslations();
   const [searchParams] = useSearchParams();
   const { pathname } = useLocation();
   const locale = useLocale();
+
+  const handleClick = () => {
+    onNavigate?.();
+  };
 
   const className = type === 'list' ? 'px-10' : '';
 
@@ -29,6 +34,7 @@ const SubMenuProducts: FC<SubMenuProductsProps> = ({ type }) => {
           type === 'dropdown' && pathname.includes(`/${locale}/products/new`) && '!bg-primary !text-white',
           type === 'list' && pathname.includes(`/${locale}/products/new`) && '!text-primary'
         )}
+        onClick={handleClick}
       >
         <p className={classNames('whitespace-nowrap', className)}>{t('sidebar_menu_products_create_new')}</p>
       </NavLink>

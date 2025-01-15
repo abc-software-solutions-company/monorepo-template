@@ -12,6 +12,7 @@ type SidebarMenuItemProps = {
   isExpand: boolean;
   options: {
     icon: LucideIcon;
+    onClick?: () => void;
   };
   children?: ReactNode;
 } & ComponentBaseProps;
@@ -29,6 +30,10 @@ export function SidebarMenuItem({ className, isExpand, children, url, options }:
 
   const nodePath = getNodePath(url, locale);
 
+  const handleClick = () => {
+    options?.onClick?.();
+  };
+
   const linkClasses = classNames(
     'flex w-full cursor-pointer items-center gap-x-2 rounded-md px-3.5 py-2 transition-background hover:bg-accent',
     pathname.includes(nodePath) && '!bg-primary text-primary-foreground',
@@ -44,6 +49,7 @@ export function SidebarMenuItem({ className, isExpand, children, url, options }:
         pathname: url,
         search: `?${objectToQueryString({ sidebar: searchParams.get('sidebar') })}`,
       }}
+      onClick={handleClick}
     >
       <div className={iconClasses}>{options.icon && <options.icon size={22} strokeWidth={1.5} />}</div>
       <p className={textClasses}>{children}</p>

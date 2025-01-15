@@ -19,6 +19,7 @@
     "mobile-app:android": "yarn workspace mobile-app android",
     "prepare": "turbo prepare",
     "setup": "turbo setup",
+    "preinstall": "yarn prepare",
     "postinstall": "manypkg check"
   },
   "dependencies": {

@@ -38,9 +38,10 @@ import UsersSubMenu from './sub-menu-users';
 
 type SidebarNavigationProps = ComponentBaseProps & {
   isExpand: boolean;
+  onNavigate?: () => void;
 };
 
-const SidebarNavigation: FC<SidebarNavigationProps> = ({ className, isExpand }) => {
+const SidebarNavigation: FC<SidebarNavigationProps> = ({ className, isExpand, onNavigate }) => {
   const t = useTranslations();
   const locale = useLocale();
   const { pathname } = useLocation();
@@ -84,6 +85,10 @@ const SidebarNavigation: FC<SidebarNavigationProps> = ({ className, isExpand }) 
 
   useEffect(() => {}, [isExpand]);
 
+  const handleItemClick = () => {
+    onNavigate?.();
+  };
+
   return (
     <div className={classNames('nap-sidebar-nav scrollbar relative h-full overflow-y-auto', className)}>
       <div className="nap-sidebar-expanded relative overflow-x-hidden">
@@ -92,14 +97,14 @@ const SidebarNavigation: FC<SidebarNavigationProps> = ({ className, isExpand }) 
           **************************************************************/}
         <div className="relative my-0.5 px-3">
           <Collapsible open={isOpenSubMenu.dashboard} onOpenChange={value => setIsOpenSubMenu(prevState => ({ ...prevState, dashboard: value }))}>
-            <SidebarMenuItem url={`/${locale}/dashboard`} isExpand={isExpand} options={{ icon: LayoutGridIcon }}>
+            <SidebarMenuItem url={`/${locale}/dashboard`} isExpand={isExpand} options={{ icon: LayoutGridIcon, onClick: handleItemClick }}>
               {t('sidebar_menu_dashboard')}
             </SidebarMenuItem>
           </Collapsible>
           <HoverCard openDelay={250} closeDelay={250}>
             <HoverCardTrigger asChild className={classNames('absolute top-0 opacity-0', isExpand && 'invisible')}>
               <div>
-                <SidebarMenuItem url={`/${locale}/dashboard`} isExpand={isExpand} options={{ icon: LayoutGridIcon }} />
+                <SidebarMenuItem url={`/${locale}/dashboard`} isExpand={isExpand} options={{ icon: LayoutGridIcon, onClick: handleItemClick }} />
               </div>
             </HoverCardTrigger>
           </HoverCard>
@@ -112,7 +117,7 @@ const SidebarNavigation: FC<SidebarNavigationProps> = ({ className, isExpand }) 
             open={isOpenSubMenu.categories && isExpand}
             onOpenChange={value => setIsOpenSubMenu(prevState => ({ ...prevState, categories: value }))}
           >
-            <SidebarMenuItem url={`/${locale}/categories`} isExpand={isExpand} options={{ icon: ListTreeIcon }}>
+            <SidebarMenuItem url={`/${locale}/categories`} isExpand={isExpand} options={{ icon: ListTreeIcon, onClick: handleItemClick }}>
               {t('sidebar_menu_categories')}
             </SidebarMenuItem>
             <CollapsibleTrigger asChild>
@@ -125,17 +130,17 @@ const SidebarNavigation: FC<SidebarNavigationProps> = ({ className, isExpand }) 
                 'mt-1 overflow-hidden rounded [&[data-state=closed]]:animate-collapsible-up [&[data-state=open]]:animate-collapsible-down'
               )}
             >
-              <CategoriesSubMenu type="list" />
+              <CategoriesSubMenu type="list" onNavigate={handleItemClick} />
             </CollapsibleContent>
           </Collapsible>
           <HoverCard openDelay={250} closeDelay={250}>
             <HoverCardTrigger asChild className={classNames('absolute top-0 opacity-0', isExpand && 'invisible')}>
               <div>
-                <SidebarMenuItem url={`/${locale}/categories`} isExpand={isExpand} options={{ icon: ListTreeIcon }} />
+                <SidebarMenuItem url={`/${locale}/categories`} isExpand={isExpand} options={{ icon: ListTreeIcon, onClick: handleItemClick }} />
               </div>
             </HoverCardTrigger>
             <HoverCardContent className="w-52 p-1" sideOffset={SUB_MENU_SIDE_OFFSET} alignOffset={SUB_MENU_ALIGN_OFFSET} side="right" align="start">
-              <CategoriesSubMenu type="dropdown" />
+              <CategoriesSubMenu type="dropdown" onNavigate={handleItemClick} />
             </HoverCardContent>
           </HoverCard>
         </div>
@@ -144,14 +149,14 @@ const SidebarNavigation: FC<SidebarNavigationProps> = ({ className, isExpand }) 
           **************************************************************/}
         <div className="relative my-0.5 px-3">
           <Collapsible open={isOpenSubMenu.contents} onOpenChange={value => setIsOpenSubMenu(prevState => ({ ...prevState, contents: value }))}>
-            <SidebarMenuItem url={`/${locale}/contents`} isExpand={isExpand} options={{ icon: FileTextIcon }}>
+            <SidebarMenuItem url={`/${locale}/contents`} isExpand={isExpand} options={{ icon: FileTextIcon, onClick: handleItemClick }}>
               {t('sidebar_menu_contents')}
             </SidebarMenuItem>
           </Collapsible>
           <HoverCard openDelay={250} closeDelay={250}>
             <HoverCardTrigger asChild className={classNames('absolute top-0 opacity-0', isExpand && 'invisible')}>
               <div>
-                <SidebarMenuItem url={`/${locale}/contents`} isExpand={isExpand} options={{ icon: FileTextIcon }} />
+                <SidebarMenuItem url={`/${locale}/contents`} isExpand={isExpand} options={{ icon: FileTextIcon, onClick: handleItemClick }} />
               </div>
             </HoverCardTrigger>
           </HoverCard>
@@ -161,7 +166,7 @@ const SidebarNavigation: FC<SidebarNavigationProps> = ({ className, isExpand }) 
           **************************************************************/}
         <div className="relative my-0.5 px-3">
           <Collapsible open={isOpenSubMenu.posts && isExpand} onOpenChange={value => setIsOpenSubMenu(prevState => ({ ...prevState, posts: value }))}>
-            <SidebarMenuItem url={`/${locale}/posts`} isExpand={isExpand} options={{ icon: BookOpenTextIcon }}>
+            <SidebarMenuItem url={`/${locale}/posts`} isExpand={isExpand} options={{ icon: BookOpenTextIcon, onClick: handleItemClick }}>
               {t('sidebar_menu_posts')}
             </SidebarMenuItem>
             <CollapsibleTrigger asChild>
@@ -174,17 +179,17 @@ const SidebarNavigation: FC<SidebarNavigationProps> = ({ className, isExpand }) 
                 'mt-1 overflow-hidden rounded [&[data-state=closed]]:animate-collapsible-up [&[data-state=open]]:animate-collapsible-down'
               )}
             >
-              <PostsSubMenu type="list" />
+              <PostsSubMenu type="list" onNavigate={handleItemClick} />
             </CollapsibleContent>
           </Collapsible>
           <HoverCard openDelay={250} closeDelay={250}>
             <HoverCardTrigger asChild className={classNames('absolute top-0 opacity-0', isExpand && 'invisible')}>
               <div>
-                <SidebarMenuItem url={`/${locale}/posts`} isExpand={isExpand} options={{ icon: BookOpenTextIcon }} />
+                <SidebarMenuItem url={`/${locale}/posts`} isExpand={isExpand} options={{ icon: BookOpenTextIcon, onClick: handleItemClick }} />
               </div>
             </HoverCardTrigger>
             <HoverCardContent className="w-52 p-1" sideOffset={SUB_MENU_SIDE_OFFSET} alignOffset={SUB_MENU_ALIGN_OFFSET} side="right" align="start">
-              <PostsSubMenu type="dropdown" />
+              <PostsSubMenu type="dropdown" onNavigate={handleItemClick} />
             </HoverCardContent>
           </HoverCard>
         </div>
@@ -196,7 +201,7 @@ const SidebarNavigation: FC<SidebarNavigationProps> = ({ className, isExpand }) 
             open={isOpenSubMenu.products && isExpand}
             onOpenChange={value => setIsOpenSubMenu(prevState => ({ ...prevState, products: value }))}
           >
-            <SidebarMenuItem url={`/${locale}/products`} isExpand={isExpand} options={{ icon: PackageIcon }}>
+            <SidebarMenuItem url={`/${locale}/products`} isExpand={isExpand} options={{ icon: PackageIcon, onClick: handleItemClick }}>
               {t('sidebar_menu_products')}
             </SidebarMenuItem>
             <CollapsibleTrigger asChild>
@@ -209,17 +214,17 @@ const SidebarNavigation: FC<SidebarNavigationProps> = ({ className, isExpand }) 
                 'mt-1 overflow-hidden rounded [&[data-state=closed]]:animate-collapsible-up [&[data-state=open]]:animate-collapsible-down'
               )}
             >
-              <ProductsSubMenu type="list" />
+              <ProductsSubMenu type="list" onNavigate={handleItemClick} />
             </CollapsibleContent>
           </Collapsible>
           <HoverCard openDelay={250} closeDelay={250}>
             <HoverCardTrigger asChild className={classNames('absolute top-0 opacity-0', isExpand && 'invisible')}>
               <div>
-                <SidebarMenuItem url={`/${locale}/products`} isExpand={isExpand} options={{ icon: PackageIcon }} />
+                <SidebarMenuItem url={`/${locale}/products`} isExpand={isExpand} options={{ icon: PackageIcon, onClick: handleItemClick }} />
               </div>
             </HoverCardTrigger>
             <HoverCardContent className="w-52 p-1" sideOffset={SUB_MENU_SIDE_OFFSET} alignOffset={SUB_MENU_ALIGN_OFFSET} side="right" align="start">
-              <ProductsSubMenu type="dropdown" />
+              <ProductsSubMenu type="dropdown" onNavigate={handleItemClick} />
             </HoverCardContent>
           </HoverCard>
         </div>
@@ -228,7 +233,7 @@ const SidebarNavigation: FC<SidebarNavigationProps> = ({ className, isExpand }) 
           **************************************************************/}
         <div className="relative my-0.5 px-3">
           <Collapsible open={isOpenSubMenu.users && isExpand} onOpenChange={value => setIsOpenSubMenu(prevState => ({ ...prevState, users: value }))}>
-            <SidebarMenuItem url={`/${locale}/users`} isExpand={isExpand} options={{ icon: UsersIcon }}>
+            <SidebarMenuItem url={`/${locale}/users`} isExpand={isExpand} options={{ icon: UsersIcon, onClick: handleItemClick }}>
               {t('sidebar_menu_users')}
             </SidebarMenuItem>
             <CollapsibleTrigger asChild>
@@ -241,17 +246,17 @@ const SidebarNavigation: FC<SidebarNavigationProps> = ({ className, isExpand }) 
                 'mt-1 overflow-hidden rounded [&[data-state=closed]]:animate-collapsible-up [&[data-state=open]]:animate-collapsible-down'
               )}
             >
-              <UsersSubMenu type="list" />
+              <UsersSubMenu type="list" onNavigate={handleItemClick} />
             </CollapsibleContent>
           </Collapsible>
           <HoverCard openDelay={250} closeDelay={250}>
             <HoverCardTrigger asChild className={classNames('absolute top-0 opacity-0', isExpand && 'invisible')}>
               <div>
-                <SidebarMenuItem url={`/${locale}/users`} isExpand={isExpand} options={{ icon: UsersIcon }} />
+                <SidebarMenuItem url={`/${locale}/users`} isExpand={isExpand} options={{ icon: UsersIcon, onClick: handleItemClick }} />
               </div>
             </HoverCardTrigger>
             <HoverCardContent className="w-52 p-1" sideOffset={SUB_MENU_SIDE_OFFSET} alignOffset={SUB_MENU_ALIGN_OFFSET} side="right" align="start">
-              <UsersSubMenu type="dropdown" />
+              <UsersSubMenu type="dropdown" onNavigate={handleItemClick} />
             </HoverCardContent>
           </HoverCard>
         </div>
@@ -263,7 +268,7 @@ const SidebarNavigation: FC<SidebarNavigationProps> = ({ className, isExpand }) 
             open={isOpenSubMenu.notifications && isExpand}
             onOpenChange={value => setIsOpenSubMenu(prevState => ({ ...prevState, notifications: value }))}
           >
-            <SidebarMenuItem url={`/${locale}/notifications/push`} isExpand={isExpand} options={{ icon: BellIcon }}>
+            <SidebarMenuItem url={`/${locale}/notifications/push`} isExpand={isExpand} options={{ icon: BellIcon, onClick: handleItemClick }}>
               {t('sidebar_menu_notifications')}
             </SidebarMenuItem>
             <CollapsibleTrigger asChild>
@@ -280,17 +285,17 @@ const SidebarNavigation: FC<SidebarNavigationProps> = ({ className, isExpand }) 
                 'mt-1 overflow-hidden rounded [&[data-state=closed]]:animate-collapsible-up [&[data-state=open]]:animate-collapsible-down'
               )}
             >
-              <NotificationsSubMenu type="list" />
+              <NotificationsSubMenu type="list" onNavigate={handleItemClick} />
             </CollapsibleContent>
           </Collapsible>
           <HoverCard openDelay={250} closeDelay={250}>
             <HoverCardTrigger asChild className={classNames('absolute top-0 opacity-0', isExpand && 'invisible')}>
               <div>
-                <SidebarMenuItem url={`/${locale}/notifications/push`} isExpand={isExpand} options={{ icon: BellIcon }} />
+                <SidebarMenuItem url={`/${locale}/notifications/push`} isExpand={isExpand} options={{ icon: BellIcon, onClick: handleItemClick }} />
               </div>
             </HoverCardTrigger>
             <HoverCardContent className="w-52 p-1" sideOffset={SUB_MENU_SIDE_OFFSET} alignOffset={SUB_MENU_ALIGN_OFFSET} side="right" align="start">
-              <NotificationsSubMenu type="dropdown" />
+              <NotificationsSubMenu type="dropdown" onNavigate={handleItemClick} />
             </HoverCardContent>
           </HoverCard>
         </div>
@@ -299,14 +304,14 @@ const SidebarNavigation: FC<SidebarNavigationProps> = ({ className, isExpand }) 
           **************************************************************/}
         <div className="relative my-0.5 px-3">
           <Collapsible open={isOpenSubMenu.files && isExpand} onOpenChange={value => setIsOpenSubMenu(prevState => ({ ...prevState, files: value }))}>
-            <SidebarMenuItem url={`/${locale}/files`} isExpand={isExpand} options={{ icon: FoldersIcon }}>
+            <SidebarMenuItem url={`/${locale}/files`} isExpand={isExpand} options={{ icon: FoldersIcon, onClick: handleItemClick }}>
               {t('sidebar_menu_files')}
             </SidebarMenuItem>
           </Collapsible>
           <HoverCard openDelay={250} closeDelay={250}>
             <HoverCardTrigger asChild className={classNames('absolute top-0 opacity-0', isExpand && 'invisible')}>
               <div>
-                <SidebarMenuItem url={`/${locale}/files`} isExpand={isExpand} options={{ icon: FoldersIcon }} />
+                <SidebarMenuItem url={`/${locale}/files`} isExpand={isExpand} options={{ icon: FoldersIcon, onClick: handleItemClick }} />
               </div>
             </HoverCardTrigger>
           </HoverCard>
@@ -319,14 +324,14 @@ const SidebarNavigation: FC<SidebarNavigationProps> = ({ className, isExpand }) 
             open={isOpenSubMenu.audit_logs && isExpand}
             onOpenChange={value => setIsOpenSubMenu(prevState => ({ ...prevState, audit_logs: value }))}
           >
-            <SidebarMenuItem url={`/${locale}/audit-logs`} isExpand={isExpand} options={{ icon: NotebookTabsIcon }}>
+            <SidebarMenuItem url={`/${locale}/audit-logs`} isExpand={isExpand} options={{ icon: NotebookTabsIcon, onClick: handleItemClick }}>
               {t('sidebar_menu_audit_logs')}
             </SidebarMenuItem>
           </Collapsible>
           <HoverCard openDelay={250} closeDelay={250}>
             <HoverCardTrigger asChild className={classNames('absolute top-0 opacity-0', isExpand && 'invisible')}>
               <div>
-                <SidebarMenuItem url={`/${locale}/audit-logs`} isExpand={isExpand} options={{ icon: NotebookTabsIcon }} />
+                <SidebarMenuItem url={`/${locale}/audit-logs`} isExpand={isExpand} options={{ icon: NotebookTabsIcon, onClick: handleItemClick }} />
               </div>
             </HoverCardTrigger>
           </HoverCard>
@@ -336,14 +341,18 @@ const SidebarNavigation: FC<SidebarNavigationProps> = ({ className, isExpand }) 
           **************************************************************/}
         <div className="relative my-0.5 px-3">
           <Collapsible open={isOpenSubMenu.contacts} onOpenChange={value => setIsOpenSubMenu(prevState => ({ ...prevState, contacts: value }))}>
-            <SidebarMenuItem url={`/${locale}/contacts`} isExpand={isExpand} options={{ icon: MessageSquareTextIcon }}>
+            <SidebarMenuItem url={`/${locale}/contacts`} isExpand={isExpand} options={{ icon: MessageSquareTextIcon, onClick: handleItemClick }}>
               {t('sidebar_menu_contacts')}
             </SidebarMenuItem>
           </Collapsible>
           <HoverCard openDelay={250} closeDelay={250}>
             <HoverCardTrigger asChild className={classNames('absolute top-0 opacity-0', isExpand && 'invisible')}>
               <div>
-                <SidebarMenuItem url={`/${locale}/contacts`} isExpand={isExpand} options={{ icon: MessageSquareTextIcon }} />
+                <SidebarMenuItem
+                  url={`/${locale}/contacts`}
+                  isExpand={isExpand}
+                  options={{ icon: MessageSquareTextIcon, onClick: handleItemClick }}
+                />
               </div>
             </HoverCardTrigger>
           </HoverCard>
@@ -353,14 +362,14 @@ const SidebarNavigation: FC<SidebarNavigationProps> = ({ className, isExpand }) 
           **************************************************************/}
         <div className="relative my-0.5 px-3">
           <Collapsible open={isOpenSubMenu.faqs} onOpenChange={value => setIsOpenSubMenu(prevState => ({ ...prevState, faqs: value }))}>
-            <SidebarMenuItem url={`/${locale}/faqs`} isExpand={isExpand} options={{ icon: CircleHelpIcon }}>
+            <SidebarMenuItem url={`/${locale}/faqs`} isExpand={isExpand} options={{ icon: CircleHelpIcon, onClick: handleItemClick }}>
               {t('sidebar_menu_faqs')}
             </SidebarMenuItem>
           </Collapsible>
           <HoverCard openDelay={250} closeDelay={250}>
             <HoverCardTrigger asChild className={classNames('absolute top-0 opacity-0', isExpand && 'invisible')}>
               <div>
-                <SidebarMenuItem url={`/${locale}/faqs`} isExpand={isExpand} options={{ icon: CircleHelpIcon }} />
+                <SidebarMenuItem url={`/${locale}/faqs`} isExpand={isExpand} options={{ icon: CircleHelpIcon, onClick: handleItemClick }} />
               </div>
             </HoverCardTrigger>
           </HoverCard>
@@ -373,7 +382,7 @@ const SidebarNavigation: FC<SidebarNavigationProps> = ({ className, isExpand }) 
             open={isOpenSubMenu.settings && isExpand}
             onOpenChange={value => setIsOpenSubMenu(prevState => ({ ...prevState, settings: value }))}
           >
-            <SidebarMenuItem url={`/${locale}/settings/account`} isExpand={isExpand} options={{ icon: SettingsIcon }}>
+            <SidebarMenuItem url={`/${locale}/settings/account`} isExpand={isExpand} options={{ icon: SettingsIcon, onClick: handleItemClick }}>
               {t('sidebar_menu_settings')}
             </SidebarMenuItem>
             <CollapsibleTrigger asChild>
@@ -386,17 +395,17 @@ const SidebarNavigation: FC<SidebarNavigationProps> = ({ className, isExpand }) 
                 'mt-1 overflow-hidden rounded [&[data-state=closed]]:animate-collapsible-up [&[data-state=open]]:animate-collapsible-down'
               )}
             >
-              <SettingsSubMenu type="list" />
+              <SettingsSubMenu type="list" onNavigate={handleItemClick} />
             </CollapsibleContent>
           </Collapsible>
           <HoverCard openDelay={250} closeDelay={250}>
             <HoverCardTrigger asChild className={classNames('absolute top-0 opacity-0', isExpand && 'invisible')}>
               <div>
-                <SidebarMenuItem url={`/${locale}/settings/account`} isExpand={isExpand} options={{ icon: SettingsIcon }} />
+                <SidebarMenuItem url={`/${locale}/settings/account`} isExpand={isExpand} options={{ icon: SettingsIcon, onClick: handleItemClick }} />
               </div>
             </HoverCardTrigger>
             <HoverCardContent className="w-52 p-1" sideOffset={SUB_MENU_SIDE_OFFSET} alignOffset={SUB_MENU_ALIGN_OFFSET} side="right" align="start">
-              <SettingsSubMenu type="dropdown" />
+              <SettingsSubMenu type="dropdown" onNavigate={handleItemClick} />
             </HoverCardContent>
           </HoverCard>
         </div>
@@ -408,7 +417,7 @@ const SidebarNavigation: FC<SidebarNavigationProps> = ({ className, isExpand }) 
             open={isOpenSubMenu.profile && isExpand}
             onOpenChange={value => setIsOpenSubMenu(prevState => ({ ...prevState, profile: value }))}
           >
-            <SidebarMenuItem url={`/${locale}/profile/overview`} isExpand={isExpand} options={{ icon: BookUserIcon }}>
+            <SidebarMenuItem url={`/${locale}/profile/overview`} isExpand={isExpand} options={{ icon: BookUserIcon, onClick: handleItemClick }}>
               {t('sidebar_menu_profile')}
             </SidebarMenuItem>
             <CollapsibleTrigger asChild>
@@ -421,17 +430,17 @@ const SidebarNavigation: FC<SidebarNavigationProps> = ({ className, isExpand }) 
                 'mt-1 overflow-hidden rounded [&[data-state=closed]]:animate-collapsible-up [&[data-state=open]]:animate-collapsible-down'
               )}
             >
-              <SubMenuProfile type="list" />
+              <SubMenuProfile type="list" onNavigate={handleItemClick} />
             </CollapsibleContent>
           </Collapsible>
           <HoverCard openDelay={250} closeDelay={250}>
             <HoverCardTrigger asChild className={classNames('absolute top-0 opacity-0', isExpand && 'invisible')}>
               <div>
-                <SidebarMenuItem url={`/${locale}/profile/overview`} isExpand={isExpand} options={{ icon: BookUserIcon }} />
+                <SidebarMenuItem url={`/${locale}/profile/overview`} isExpand={isExpand} options={{ icon: BookUserIcon, onClick: handleItemClick }} />
               </div>
             </HoverCardTrigger>
             <HoverCardContent className="w-52 p-1" sideOffset={SUB_MENU_SIDE_OFFSET} alignOffset={SUB_MENU_ALIGN_OFFSET} side="right" align="start">
-              <SubMenuProfile type="dropdown" />
+              <SubMenuProfile type="dropdown" onNavigate={handleItemClick} />
             </HoverCardContent>
           </HoverCard>
         </div>
@@ -443,7 +452,11 @@ const SidebarNavigation: FC<SidebarNavigationProps> = ({ className, isExpand }) 
             open={isOpenSubMenu.documentation && isExpand}
             onOpenChange={value => setIsOpenSubMenu(prevState => ({ ...prevState, documentation: value }))}
           >
-            <SidebarMenuItem url={`/${locale}/documentation/getting-started`} isExpand={isExpand} options={{ icon: FileCode2Icon }}>
+            <SidebarMenuItem
+              url={`/${locale}/documentation/getting-started`}
+              isExpand={isExpand}
+              options={{ icon: FileCode2Icon, onClick: handleItemClick }}
+            >
               Documentation
             </SidebarMenuItem>
             <CollapsibleTrigger asChild>
@@ -460,17 +473,21 @@ const SidebarNavigation: FC<SidebarNavigationProps> = ({ className, isExpand }) 
                 'mt-1 overflow-hidden rounded [&[data-state=closed]]:animate-collapsible-up [&[data-state=open]]:animate-collapsible-down'
               )}
             >
-              <DocumentationSubMenu type="list" />
+              <DocumentationSubMenu type="list" onNavigate={handleItemClick} />
             </CollapsibleContent>
           </Collapsible>
           <HoverCard openDelay={250} closeDelay={250}>
             <HoverCardTrigger asChild className={classNames('absolute top-0 opacity-0', isExpand && 'invisible')}>
               <div>
-                <SidebarMenuItem url={`/${locale}/documentation/getting-started`} isExpand={isExpand} options={{ icon: FileCode2Icon }} />
+                <SidebarMenuItem
+                  url={`/${locale}/documentation/getting-started`}
+                  isExpand={isExpand}
+                  options={{ icon: FileCode2Icon, onClick: handleItemClick }}
+                />
               </div>
             </HoverCardTrigger>
             <HoverCardContent className="w-52 p-1" sideOffset={SUB_MENU_SIDE_OFFSET} alignOffset={SUB_MENU_ALIGN_OFFSET} side="right" align="start">
-              <DocumentationSubMenu type="dropdown" />
+              <DocumentationSubMenu type="dropdown" onNavigate={handleItemClick} />
             </HoverCardContent>
           </HoverCard>
         </div>
