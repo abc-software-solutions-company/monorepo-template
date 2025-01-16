@@ -130,8 +130,8 @@ export class FilesService {
     if (!file) {
       throw new NotFoundException('File not found');
     }
-
-    await this.awsService.moveToTrashObject(file.uniqueName);
+    //TODO: not move to trash folder, handle this later
+    // await this.awsService.moveToTrashObject(file.uniqueName);
 
     file.status = FILE_STATUS.DELETED;
 
@@ -143,7 +143,8 @@ export class FilesService {
 
     const data = await queryBuilder.returning('id, status, uniqueName, thumbnailUrl').execute();
 
-    await this.awsService.moveToTrashObjects(data.raw.map(x => x.unique_name));
+    //TODO: not move to trash folder, handle this later
+    // await this.awsService.moveToTrashObjects(data.raw.map(x => x.unique_name));
 
     return data.raw;
   }
