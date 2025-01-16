@@ -6,6 +6,7 @@ on:
       - 'main'
     paths:
       - 'apps/admin-portal/**'
+  workflow_dispatch:
 
 env:
   APP_ENV: ${{ secrets.PORTAL_STAGE }}

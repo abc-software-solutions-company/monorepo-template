@@ -6,6 +6,7 @@ on:
       - 'main'
     paths:
       - 'apps/website/**'
+  workflow_dispatch:
 
 env:
   APP_ENV: ${{ secrets.WEBSITE_STAGE }}
