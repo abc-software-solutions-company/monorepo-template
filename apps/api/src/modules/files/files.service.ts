@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException, UnprocessableEntityException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
+import path from 'path';
 import sharp from 'sharp';
 import { Repository } from 'typeorm';
 
@@ -10,11 +11,11 @@ import { PaginationResponseDto } from '@/common/dtos/pagination-response.dto';
 
 import { toSlug } from '@/common/utils/string.util';
 
-import { FILE_GET_FIELDS, FILE_STATUS, THUMBNAIL_WIDTH, VALID_IMAGE_MIME_TYPES } from './constants/files.constant';
+import { FILE_GET_FIELDS, FILE_PROVIDER, FILE_ROOT_PATH, FILE_STATUS, THUMBNAIL_WIDTH, VALID_IMAGE_MIME_TYPES } from './constants/files.constant';
 import { FilterFileDto } from './dto/filter-file.dto';
 import { UploadDto } from './dto/upload.dto';
 import { File } from './entities/file.entity';
-import { getFileExtension, getFileName } from './utils/file.util';
+import { createThumbnail, getFileExtension, getFileName, saveFileToDisk } from './utils/file.util';
 
 import { AwsService } from '../aws/aws.service';
 import { Category } from '../categories/entities/category.entity';
@@ -22,6 +23,8 @@ import { Category } from '../categories/entities/category.entity';
 @Injectable()
 export class FilesService {
   private readonly s3Url: string;
+  private readonly isS3: boolean;
+  private readonly isSelfHosted: boolean;
 
   constructor(
     @InjectRepository(File)
@@ -29,7 +32,11 @@ export class FilesService {
     private readonly awsService: AwsService,
     private readonly configService: ConfigService
   ) {
+    const fileProvider = configService.get<string>('app.fileProvider');
+
     this.s3Url = configService.get<string>('aws.s3.baseUrl');
+    this.isS3 = fileProvider === FILE_PROVIDER.S3;
+    this.isSelfHosted = fileProvider === FILE_PROVIDER.SELF_HOSTED;
   }
 
   async uploadFiles(body: UploadDto, files: Array<Express.Multer.File>) {
@@ -40,18 +47,14 @@ export class FilesService {
         const fileInfo = await this.processFile(file, body.categoryId);
         const fileData = this.fileRepository.create(fileInfo);
 
-        await this.awsService.putObject({ key: fileInfo.uniqueName, body: file.buffer });
-
         await this.fileRepository.save(fileData);
 
-        if (VALID_IMAGE_MIME_TYPES.includes(fileInfo.mime)) {
-          // Amazon S3
-          const thumb = sharp(file.buffer).resize(THUMBNAIL_WIDTH, null, { fit: 'contain' });
+        if (this.isS3) {
+          await this.handleUploadFileS3(fileInfo, file);
+        }
 
-          await this.awsService.putObject({
-            key: `thumbnails/${fileInfo.uniqueName}`,
-            body: (await thumb.toBuffer()).buffer,
-          });
+        if (this.isSelfHosted) {
+          await this.handleUploadFileSelfHosted(fileInfo, file);
         }
 
         uploadedFileInfos.push(fileInfo);
@@ -61,6 +64,29 @@ export class FilesService {
     }
 
     return uploadedFileInfos;
+  }
+
+  async handleUploadFileS3(fileInfo: File, file: Express.Multer.File) {
+    await this.awsService.putObject({ key: fileInfo.uniqueName, body: file.buffer });
+
+    if (VALID_IMAGE_MIME_TYPES.includes(fileInfo.mime)) {
+      const thumb = sharp(file.buffer).resize(THUMBNAIL_WIDTH, null, { fit: 'contain' });
+
+      await this.awsService.putObject({
+        key: `thumbnails/${fileInfo.uniqueName}`,
+        body: (await thumb.toBuffer()).buffer as Buffer,
+      });
+    }
+  }
+
+  async handleUploadFileSelfHosted(fileInfo: File, file: Express.Multer.File) {
+    const filePath = path.join(FILE_ROOT_PATH, fileInfo.uniqueName);
+
+    await saveFileToDisk(file, fileInfo.uniqueName);
+
+    if (VALID_IMAGE_MIME_TYPES.includes(fileInfo.mime)) {
+      await createThumbnail(filePath, fileInfo.uniqueName);
+    }
   }
 
   async find(filterDto: FilterFileDto) {
@@ -122,10 +148,20 @@ export class FilesService {
     const mime = file.mimetype;
     const size = file.size;
     const uniqueName = `${toSlug(caption)}-${Date.now()}${ext}`;
-    const url = `${this.s3Url}/${uniqueName}`;
-    const thumbnailUrl = VALID_IMAGE_MIME_TYPES.includes(mime) // Check if mime is an image
-      ? `${this.s3Url}/thumbnails/${uniqueName}`
-      : null; // Set to null or handle accordingly if not an image
+    let url = '';
+    let thumbnailUrl = '';
+
+    if (this.isS3) {
+      url = `${this.s3Url}/${uniqueName}`;
+      thumbnailUrl = VALID_IMAGE_MIME_TYPES.includes(mime) ? `${this.s3Url}/thumbnails/${uniqueName}` : null;
+    }
+
+    if (this.isSelfHosted) {
+      const baseURl = process.env.AP_URL || '';
+
+      url = `${baseURl}/${uniqueName}`;
+      thumbnailUrl = VALID_IMAGE_MIME_TYPES.includes(mime) ? `${baseURl}/thumbnails/${uniqueName}` : null;
+    }
 
     const fileInfo = {
       name: originalName,

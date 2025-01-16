@@ -3,6 +3,8 @@ export interface IConfigs {
     host: string;
     port: number;
     isDocumentationEnabled: boolean;
+    fileProvider: string;
+    url: string;
   };
   http: {
     timeout: number;

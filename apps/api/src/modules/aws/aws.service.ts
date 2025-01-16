@@ -1,8 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { DeleteObjectCommand, PutObjectCommand, PutObjectRequest, S3Client, S3ClientConfig } from '@aws-sdk/client-s3';
+import { DeleteObjectCommand, PutObjectCommand, S3Client, S3ClientConfig } from '@aws-sdk/client-s3';
 
 import { IConfigs } from '@/common/interfaces/configs.interface';
+
+import { PutObjectRequest } from './interfaces/aws.interface';
 
 @Injectable()
 export class AwsService {
@@ -37,7 +39,7 @@ export class AwsService {
     this.s3Client = new S3Client(s3ClientConfig);
   }
 
-  async putObject({ Key: key, Body: body }: PutObjectRequest): Promise<void> {
+  async putObject({ key, body }: PutObjectRequest): Promise<void> {
     const command = new PutObjectCommand({
       Bucket: this.bucketName,
       Key: key,
