@@ -6,11 +6,12 @@ import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { toast } from 'sonner';
 import { useLocale, useTranslations } from 'use-intl';
 import { zodResolver } from '@hookform/resolvers/zod';
-import FormFieldCKEditor from '@repo/react-web-ui-shadcn/components/form-fields/form-field-ckeditor';
-import FormFieldInputName from '@repo/react-web-ui-shadcn/components/form-fields/form-field-input-name';
+import FormFieldCKEditorMultiLanguage from '@repo/react-web-ui-shadcn/components/form-fields-ahua/form-field-ckeditor-multi-language';
+import FormFieldInputMultiLanguage from '@repo/react-web-ui-shadcn/components/form-fields-ahua/form-field-input-multi-language';
 import ModalLoading from '@repo/react-web-ui-shadcn/components/modals/modal-loading';
 import { Card, CardContent } from '@repo/react-web-ui-shadcn/components/ui/card';
 import { Form } from '@repo/react-web-ui-shadcn/components/ui/form';
+import { getLanguages } from '@repo/shared-universal/utils/language.util';
 import { objectToQueryString } from '@repo/shared-universal/utils/string.util';
 
 import { FaqFormData } from '../interfaces/faqs.interface';
@@ -23,7 +24,7 @@ import EditorFileDialog from '@/components/editor-file-dialog';
 import FormFieldCardSelectStatus from '@/components/form-fields/form-field-card-select-status';
 import FormToolbar from '@/components/form-toolbar';
 
-import { faqFormValidator } from '../validators/faq-form.validator';
+import { faqFormLocalizeSchema } from '../validators/faq-form.validator';
 
 type FaqFormProps = {
   isEdit: boolean;
@@ -41,13 +42,17 @@ const FaqForm: FC<FaqFormProps> = ({ isEdit }) => {
   const { mutate: createMutation } = useCreateFaqMutation();
   const { mutate: updateMutation } = useUpdateFaqMutation();
 
+  const languages = getLanguages(locale);
+
   const defaultValues: FaqFormData = {
     title: faq?.title ?? '',
     content: faq?.content ?? '',
     status: faq?.status ?? FAQ_STATUS.DRAFT,
+    titleLocalized: faq?.titleLocalized ?? [],
+    contentLocalized: faq?.contentLocalized ?? [],
   };
 
-  const form = useForm<FaqFormData>({ resolver: zodResolver(faqFormValidator), defaultValues });
+  const form = useForm<FaqFormData>({ resolver: zodResolver(faqFormLocalizeSchema(languages)), defaultValues });
 
   const onBackClick = () => {
     navigate({
@@ -120,8 +125,14 @@ const FaqForm: FC<FaqFormProps> = ({ isEdit }) => {
           <div className="flex gap-4">
             <Card className="grow">
               <CardContent className="grid gap-4 pt-4">
-                <FormFieldInputName form={form} fieldName={'title'} />
-                <FormFieldCKEditor form={form} editorRef={editorRef} setVisible={setIsFileManagerVisible} fieldName={'content'} />
+                <FormFieldInputMultiLanguage form={form} fieldName={'titleLocalized'} locales={languages} />
+                <FormFieldCKEditorMultiLanguage
+                  form={form}
+                  editorRef={editorRef}
+                  setVisible={setIsFileManagerVisible}
+                  fieldName={'contentLocalized'}
+                  locales={languages}
+                />
               </CardContent>
             </Card>
             <div className="w-72 shrink-0">

@@ -30,6 +30,11 @@ export class ContentsService {
       }
     }
 
+    // Update some localized field
+    if (createDto.bodyLocalized) newContent.bodyLocalized = createDto.bodyLocalized;
+    if (createDto.nameLocalized) newContent.nameLocalized = createDto.nameLocalized;
+    if (createDto.descriptionLocalized) newContent.descriptionLocalized = createDto.descriptionLocalized;
+
     if (createDto.status) newContent.status = createDto.status;
     if (createDto.seoMeta) newContent.seoMeta = createDto.seoMeta;
 

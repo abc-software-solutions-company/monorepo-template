@@ -30,6 +30,8 @@ export class FaqsService {
       }
     }
 
+    if (createDto.titleLocalized) newFaq.titleLocalized = createDto.titleLocalized;
+    if (createDto.contentLocalized) newFaq.contentLocalized = createDto.contentLocalized;
     if (createDto.status) newFaq.status = createDto.status;
 
     const createdFaq = await this.faqRepository.save(newFaq);

@@ -47,6 +47,11 @@ export class ProductsService {
       newProduct.category = category;
     }
 
+    // Update some localized field
+    if (createDto.nameLocalized) newProduct.nameLocalized = createDto.nameLocalized;
+    if (createDto.bodyLocalized) newProduct.bodyLocalized = createDto.bodyLocalized;
+    if (createDto.coverLocalized) newProduct.coverLocalized = createDto.coverLocalized;
+
     if (createDto.status) newProduct.status = createDto.status;
     if (createDto.seoMeta) newProduct.seoMeta = createDto.seoMeta;
 

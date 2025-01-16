@@ -1,4 +1,6 @@
 import { z } from 'zod';
+import { LANGUAGES } from '@repo/shared-universal/constants/language.constant';
+import { Translation } from '@repo/shared-universal/interfaces/language.interface';
 
 import { ResponseFormat } from '@/interfaces/api-response.interface';
 import { BaseFilter } from '@/interfaces/filter.interface';
@@ -8,7 +10,7 @@ import { CATEGORY_STATUS, CATEGORY_TYPE } from '../constants/categories.constant
 
 import { FileEntity } from '@/modules/files/interfaces/files.interface';
 
-import { categoryFormValidator } from '../validators/category-form.validator';
+import { categoriesFormLocalizeSchema } from '../validators/category-form.validator';
 
 export type CategoryEntity = {
   id: string;
@@ -27,9 +29,15 @@ export type CategoryEntity = {
   updatedAt?: string;
   category: CategoryEntity;
   seoMeta: SeoMeta;
+  nameLocalized: Translation[];
+  bodyLocalized: Translation[];
+  descriptionLocalized: Translation[];
+  coverLocalized: Translation[];
 };
 
-export type CategoryFormData = z.infer<typeof categoryFormValidator>;
+const categoriesSchema = categoriesFormLocalizeSchema(LANGUAGES);
+
+export type CategoryFormData = z.infer<typeof categoriesSchema>;
 
 export type CategoriesResponse = ResponseFormat<CategoryEntity[]>;
 export type CategoryResponse = ResponseFormat<CategoryEntity>;

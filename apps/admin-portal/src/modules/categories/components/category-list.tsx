@@ -35,6 +35,8 @@ import DataTableRowAction from '@/components/data-table/data-table-row-action';
 import ItemsPerPage from '@/components/item-per-page';
 import PaginationInfo from '@/components/pagination-info';
 
+import PostDialogDetail from '@/modules/posts/components/post-dialog-detail';
+
 import CategoryListToolbar from './category-list-toolbar';
 import CategoryRowStatus from './category-row-status';
 
@@ -46,6 +48,7 @@ const CategoryList: FC<ComponentBaseProps> = ({ className }) => {
   const [searchParams] = useSearchParams();
   const locale = useLocale();
   const categoriesState = useCategoriesState();
+  const [viewDetailId, setViewDetailId] = useState('');
   const [action, setAction] = useState<{ name: string; data?: CategoryEntity }>({ name: '' });
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
@@ -90,6 +93,9 @@ const CategoryList: FC<ComponentBaseProps> = ({ className }) => {
         size: 0,
         header: ({ column }) => <DataTableColumnHeader column={column} title={t('category_title')} />,
         cell: ({ row }) => {
+          const name = row.original.nameLocalized?.find(x => x.lang === locale)?.value ?? '';
+          const fallbackName = row.original.nameLocalized?.[0]?.value ?? '';
+
           return (
             <div className="flex items-center space-x-1">
               <button
@@ -103,7 +109,7 @@ const CategoryList: FC<ComponentBaseProps> = ({ className }) => {
               >
                 <span>
                   {repeatStr('└', '─', row.depth)}
-                  {row.getValue('name')}
+                  {name || fallbackName}
                 </span>
               </button>
               {row.getCanExpand() && (
@@ -111,6 +117,9 @@ const CategoryList: FC<ComponentBaseProps> = ({ className }) => {
                   {row.getIsExpanded() ? <ChevronDown size={18} className="text-primary" /> : <ChevronRight size={18} className="text-primary" />}
                 </button>
               )}
+              <button className="p-1.5" onClick={() => setViewDetailId(row.original.id)}>
+                <span className="text-primary">({t('view_detail')})</span>
+              </button>
             </div>
           );
         },
@@ -283,6 +292,7 @@ const CategoryList: FC<ComponentBaseProps> = ({ className }) => {
         }}
         onNo={() => setAction({ name: '' })}
       />
+      <PostDialogDetail id={viewDetailId} visible={!!viewDetailId} onCancel={() => setViewDetailId('')} />
     </div>
   );
 };

@@ -1,4 +1,4 @@
-export const FAQ_GET_FIELDS = [['faq.id faq.title faq.content faq.status faq.createdAt faq.updatedAt']]
+export const FAQ_GET_FIELDS = [['faq.id faq.title faq.content faq.status faq.createdAt faq.updatedAt faq.contentLocalized faq.titleLocalized']]
   .flat()
   .flatMap(item => item.trim().split(/\s+/));
 

@@ -37,6 +37,8 @@ import DataTableRowStatus from '@/components/data-table/data-table-row-status';
 import ItemsPerPage from '@/components/item-per-page';
 import PaginationInfo from '@/components/pagination-info';
 
+import PostDialogDetail from '@/modules/posts/components/post-dialog-detail';
+
 import { getQueryClient } from '@/utils/query-client.util';
 
 import ContentListToolbar from './content-list-toolbar';
@@ -48,6 +50,7 @@ const ContentList: FC<ComponentBaseProps> = ({ className }) => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const locale = useLocale();
+  const [viewDetailId, setViewDetailId] = useState('');
   const [action, setAction] = useState<{ name: string; data?: ContentEntity }>({ name: '' });
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
@@ -90,6 +93,9 @@ const ContentList: FC<ComponentBaseProps> = ({ className }) => {
         size: 0,
         header: ({ column }) => <DataTableColumnHeader column={column} title={t('content_name')} />,
         cell: ({ row }) => {
+          const name = row.original.nameLocalized?.find(x => x.lang === locale)?.value ?? '';
+          const fallbackName = row.original.nameLocalized?.[0]?.value ?? '';
+
           return (
             <div className="flex items-center">
               <button
@@ -101,7 +107,10 @@ const ContentList: FC<ComponentBaseProps> = ({ className }) => {
                   })
                 }
               >
-                {row.getValue('name')}
+                {name || fallbackName}
+              </button>
+              <button className="p-1.5" onClick={() => setViewDetailId(row.original.id)}>
+                <span className="text-primary">({t('view_detail')})</span>
               </button>
             </div>
           );
@@ -273,6 +282,7 @@ const ContentList: FC<ComponentBaseProps> = ({ className }) => {
         }}
         onNo={() => setAction({ name: '' })}
       />
+      <PostDialogDetail id={viewDetailId} visible={!!viewDetailId} onCancel={() => setViewDetailId('')} />
     </div>
   );
 };

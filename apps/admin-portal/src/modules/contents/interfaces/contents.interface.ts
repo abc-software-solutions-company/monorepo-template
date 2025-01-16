@@ -1,4 +1,6 @@
 import { z } from 'zod';
+import { LANGUAGES } from '@repo/shared-universal/constants/language.constant';
+import { Translation } from '@repo/shared-universal/interfaces/language.interface';
 
 import { ResponseFormat } from '@/interfaces/api-response.interface';
 import { BaseFilter } from '@/interfaces/filter.interface';
@@ -6,7 +8,7 @@ import { SeoMeta } from '@/interfaces/seo-meta.interface';
 
 import { CONTENT_STATUS } from '../constants/contents.constant';
 
-import { contentFormValidator } from '../validators/content-form.validator';
+import { contentFormLocalizeSchema } from '../validators/content-form.validator';
 
 export type ContentEntity = {
   id: string;
@@ -19,9 +21,14 @@ export type ContentEntity = {
   createdAt: string;
   updatedAt: string;
   seoMeta: SeoMeta;
+  nameLocalized: Translation[];
+  bodyLocalized: Translation[];
+  descriptionLocalized: Translation[];
 };
 
-export type ContentFormData = z.infer<typeof contentFormValidator>;
+const contentSchema = contentFormLocalizeSchema(LANGUAGES);
+
+export type ContentFormData = z.infer<typeof contentSchema>;
 
 export type ContentsResponse = ResponseFormat<ContentEntity[]>;
 export type ContentResponse = ResponseFormat<ContentEntity>;

@@ -1,6 +1,6 @@
 export const CONTENT_GET_FIELDS = [
   [
-    'content.id content.name content.slug content.description content.body content.status content.type content.seoMeta content.createdAt content.updatedAt',
+    'content.id content.name content.slug content.description content.body content.status content.type content.seoMeta content.createdAt content.updatedAt content.nameLocalized content.descriptionLocalized content.bodyLocalized',
   ],
 ]
   .flat()

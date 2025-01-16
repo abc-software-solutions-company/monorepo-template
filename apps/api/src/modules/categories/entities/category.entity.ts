@@ -4,6 +4,8 @@ import { AfterLoad, Column, Entity, ManyToOne, OneToMany } from 'typeorm';
 import { AbstractEntity } from '@/common/entities/abstract.entity';
 import { SeoMeta } from '@/common/entities/seo-meta.entity';
 
+import { Translation } from '@/common/interfaces/language.interface';
+
 import { File } from '@/modules/files/entities/file.entity';
 import { Post } from '@/modules/posts/entities/post.entity';
 import { Product } from '@/modules/products/entities/product.entity';
@@ -15,8 +17,11 @@ import { CATEGORY_STATUS, CATEGORY_TYPE } from '../constants/categories.constant
 
 @Entity({ name: 'categories' })
 export class Category extends AbstractEntity {
-  @Column()
+  @Column({ type: 'varchar', nullable: true })
   name: string;
+
+  @Column({ type: 'jsonb', nullable: true })
+  nameLocalized: Translation[];
 
   @Column({ type: 'varchar', unique: true, length: 255 })
   slug: string;
@@ -27,14 +32,23 @@ export class Category extends AbstractEntity {
   @Column({ type: 'varchar', nullable: true, length: 2000 })
   description: string;
 
+  @Column({ type: 'jsonb', nullable: true })
+  descriptionLocalized: Translation[];
+
   @Column({ type: 'text', nullable: true })
   body: string;
+
+  @Column({ type: 'jsonb', nullable: true })
+  bodyLocalized: Translation[];
 
   @Column({ type: 'enum', enum: CATEGORY_STATUS, default: CATEGORY_STATUS.VISIBLED })
   status: CATEGORY_STATUS;
 
   @Column({ type: 'varchar', nullable: true, length: 1000 })
   cover: string;
+
+  @Column({ type: 'jsonb', nullable: true })
+  coverLocalized: Translation[];
 
   @Expose()
   images: File[];

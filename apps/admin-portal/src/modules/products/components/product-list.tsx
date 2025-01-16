@@ -31,6 +31,8 @@ import DataTableRowAction from '@/components/data-table/data-table-row-action';
 import ItemsPerPage from '@/components/item-per-page';
 import PaginationInfo from '@/components/pagination-info';
 
+import PostDialogDetail from '@/modules/posts/components/post-dialog-detail';
+
 import ProductListToolbar from './product-list-toolbar';
 import ProductRowStatus from './product-row-status';
 
@@ -42,6 +44,7 @@ const ProductList: FC<ComponentBaseProps> = ({ className }) => {
   const locale = useLocale();
   const [searchParams] = useSearchParams();
   const productsState = useProductsState();
+  const [viewDetailId, setViewDetailId] = useState('');
   const [action, setAction] = useState<{ name: string; data?: ProductEntity }>({ name: '' });
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
@@ -85,12 +88,17 @@ const ProductList: FC<ComponentBaseProps> = ({ className }) => {
         size: 130,
         header: ({ column }) => <DataTableColumnHeader column={column} title={t('product_image')} />,
         cell: ({ row }) => {
-          const cover = row.original.cover;
+          const cover = row.original.coverLocalized?.find(x => x.lang === locale)?.value ?? '';
+          const fallbackCover = row.original.coverLocalized?.[0]?.value ?? '';
 
-          if (!cover) return null;
+          if (!cover || !fallbackCover) return null;
 
           return (
-            <img className="h-16 w-24 rounded-md object-cover" src={`${import.meta.env.VITE_PUBLIC_API_URL}/${cover}`} alt={row.original.name} />
+            <img
+              className="h-16 w-24 rounded-md object-cover"
+              src={`${import.meta.env.VITE_PUBLIC_API_URL}/${cover || fallbackCover}`}
+              alt={row.original.cover}
+            />
           );
         },
       },
@@ -99,6 +107,9 @@ const ProductList: FC<ComponentBaseProps> = ({ className }) => {
         size: 0,
         header: ({ column }) => <DataTableColumnHeader column={column} title={t('product_title')} />,
         cell: ({ row }) => {
+          const name = row.original.nameLocalized?.find(x => x.lang === locale)?.value ?? '';
+          const fallbackName = row.original.nameLocalized?.[0]?.value ?? '';
+
           return (
             <div className="flex items-center space-x-1">
               <button
@@ -110,7 +121,10 @@ const ProductList: FC<ComponentBaseProps> = ({ className }) => {
                   })
                 }
               >
-                {row.getValue('name')}
+                {name || fallbackName}
+              </button>
+              <button className="p-1.5" onClick={() => setViewDetailId(row.original.id)}>
+                <span className="text-primary">({t('view_detail')})</span>
               </button>
             </div>
           );
@@ -278,6 +292,7 @@ const ProductList: FC<ComponentBaseProps> = ({ className }) => {
         }}
         onNo={() => setAction({ name: '' })}
       />
+      <PostDialogDetail id={viewDetailId} visible={!!viewDetailId} onCancel={() => setViewDetailId('')} />
     </div>
   );
 };

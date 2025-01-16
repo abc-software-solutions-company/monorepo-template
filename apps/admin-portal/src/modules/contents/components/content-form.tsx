@@ -7,11 +7,13 @@ import { toast } from 'sonner';
 import { useLocale, useTranslations } from 'use-intl';
 import { zodResolver } from '@hookform/resolvers/zod';
 import FormFieldCKEditor from '@repo/react-web-ui-shadcn/components/form-fields/form-field-ckeditor';
-import FormFieldInput from '@repo/react-web-ui-shadcn/components/form-fields/form-field-input';
 import FormFieldInputSlug from '@repo/react-web-ui-shadcn/components/form-fields/form-field-input-slug';
+import FormFieldCKEditorMultiLanguage from '@repo/react-web-ui-shadcn/components/form-fields-ahua/form-field-ckeditor-multi-language';
+import FormFieldInputMultiLanguage from '@repo/react-web-ui-shadcn/components/form-fields-ahua/form-field-input-multi-language';
 import ModalLoading from '@repo/react-web-ui-shadcn/components/modals/modal-loading';
 import { Card, CardContent } from '@repo/react-web-ui-shadcn/components/ui/card';
 import { Form } from '@repo/react-web-ui-shadcn/components/ui/form';
+import { getLanguages } from '@repo/shared-universal/utils/language.util';
 import { objectToQueryString } from '@repo/shared-universal/utils/string.util';
 
 import { ContentFormData } from '../interfaces/contents.interface';
@@ -26,7 +28,7 @@ import FormFieldCardSelectStatus from '@/components/form-fields/form-field-card-
 import FormFieldCardSeoMeta from '@/components/form-fields/form-field-card-seo-meta';
 import FormToolbar from '@/components/form-toolbar';
 
-import { contentFormValidator } from '../validators/content-form.validator';
+import { contentFormLocalizeSchema } from '../validators/content-form.validator';
 
 type ContentFormProps = {
   isEdit: boolean;
@@ -44,6 +46,8 @@ const ContentForm: FC<ContentFormProps> = ({ isEdit }) => {
   const { mutate: createMutation } = useCreateContentMutation();
   const { mutate: updateMutation } = useUpdateContentMutation();
 
+  const languages = getLanguages(locale);
+
   const defaultValues: ContentFormData = {
     status: content?.status ?? CONTENT_STATUS.DRAFT,
     name: content?.name ?? '',
@@ -52,9 +56,12 @@ const ContentForm: FC<ContentFormProps> = ({ isEdit }) => {
     body: content?.body ?? '',
     type: content?.type ?? CONTENT_TYPE.UNCATEGORIZED,
     seoMeta: content?.seoMeta ?? { title: '', description: '', keywords: '' },
+    nameLocalized: content?.nameLocalized ?? [],
+    descriptionLocalized: content?.descriptionLocalized ?? [],
+    bodyLocalized: content?.bodyLocalized ?? [],
   };
 
-  const form = useForm<ContentFormData>({ resolver: zodResolver(contentFormValidator), defaultValues });
+  const form = useForm<ContentFormData>({ resolver: zodResolver(contentFormLocalizeSchema(languages)), defaultValues });
 
   const onBackClick = () => {
     navigate({
@@ -127,22 +134,24 @@ const ContentForm: FC<ContentFormProps> = ({ isEdit }) => {
           <div className="flex gap-4">
             <Card className="grow">
               <CardContent className="grid gap-4 pt-4">
-                <FormFieldInput form={form} fieldName="name" formLabel={t('form_field_name')} />
+                <FormFieldInputMultiLanguage locales={languages} form={form} fieldName="nameLocalized" formLabel={t('form_field_name')} />
                 <FormFieldInputSlug form={form} />
-                <FormFieldCKEditor
+                <FormFieldCKEditorMultiLanguage
                   form={form}
-                  fieldName="description"
+                  fieldName="descriptionLocalized"
                   formLabel={t('form_field_description')}
                   editorRef={editorRef}
                   minHeight={120}
                   toolbar={['bold', 'italic', 'underline', 'strikethrough']}
+                  locales={languages}
                 />
-                <FormFieldCKEditor
+                <FormFieldCKEditorMultiLanguage
                   form={form}
-                  fieldName="body"
+                  fieldName="bodyLocalized"
                   formLabel={t('form_field_content')}
                   editorRef={editorRef}
                   setVisible={setIsFileManagerVisible}
+                  locales={languages}
                 />
               </CardContent>
               <CardContent className="grid gap-4 pt-4">

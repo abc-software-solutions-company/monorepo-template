@@ -173,6 +173,12 @@ export class CategoriesService {
       }
     }
 
+    // Update some localized property
+    if (updateDto.nameLocalized !== undefined) category.nameLocalized = updateDto.nameLocalized;
+    if (updateDto.descriptionLocalized !== undefined) category.descriptionLocalized = updateDto.descriptionLocalized;
+    if (updateDto.bodyLocalized !== undefined) category.bodyLocalized = updateDto.bodyLocalized;
+    if (updateDto.coverLocalized !== undefined) category.coverLocalized = updateDto.coverLocalized;
+
     if (updateDto.status) category.status = updateDto.status;
     if (updateDto.seoMeta) category.seoMeta = updateDto.seoMeta;
 
