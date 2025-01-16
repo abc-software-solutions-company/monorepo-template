@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { DeleteObjectCommand, PutObjectCommand, S3Client, S3ClientConfig } from '@aws-sdk/client-s3';
+import { DeleteObjectCommand, PutObjectCommand, PutObjectRequest, S3Client, S3ClientConfig } from '@aws-sdk/client-s3';
 
 import { IConfigs } from '@/common/interfaces/configs.interface';
 
@@ -37,9 +37,7 @@ export class AwsService {
     this.s3Client = new S3Client(s3ClientConfig);
   }
 
-  // TODO: Fix type
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  async putObject({ key, body }: any): Promise<void> {
+  async putObject({ Key: key, Body: body }: PutObjectRequest): Promise<void> {
     const command = new PutObjectCommand({
       Bucket: this.bucketName,
       Key: key,
