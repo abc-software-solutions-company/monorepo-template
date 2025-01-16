@@ -21,9 +21,13 @@ const nextConfig = {
         protocol: 'https',
         hostname: 'images.pexels.com',
       },
+      {
+        protocol: 'https',
+        hostname: 's3.ap-southeast-1.amazonaws.com',
+      },
     ],
   },
-  async headers() {
+  async headers () {
     return [
       {
         source: '/_next/static/(.*)',

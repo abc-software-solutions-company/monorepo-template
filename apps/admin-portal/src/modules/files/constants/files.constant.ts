@@ -30,6 +30,10 @@ export const VALID_ALL_MIME_TYPES = [
   ...VALID_DOCUMENT_MIME_TYPES,
 ];
 
+export const FILE_PATH = import.meta.env.VITE_PUBLIC_AWS_S3_BUCKET_NAME
+  ? `${import.meta.env.VITE_PUBLIC_AWS_S3_END_POINT}/${import.meta.env.VITE_PUBLIC_AWS_S3_BUCKET_NAME}`
+  : import.meta.env.VITE_PUBLIC_API_URL;
+
 export type FileDialogType = 'list' | 'single' | 'multiple';
 
 export enum FILE_STATUS {

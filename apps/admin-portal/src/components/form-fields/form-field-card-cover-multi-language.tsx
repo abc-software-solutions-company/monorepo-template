@@ -22,6 +22,7 @@ import ButtonRemoveFile from '@/components/button-remove-file';
 import ButtonSelectFile from '@/components/button-select-file';
 
 import FileDialog from '@/modules/files/components/file-dialog';
+import { FILE_PATH } from '@/modules/files/constants/files.constant';
 
 interface IFormFieldCardCoverMultiLanguageProps<T extends FieldValues> {
   form: UseFormReturn<T>;
@@ -178,11 +179,7 @@ export default function FormFieldCardCoverMultiLanguage<T extends FieldValues>({
                   <div className="relative overflow-hidden rounded-md">
                     <img
                       className="aspect-video w-full object-cover"
-                      src={
-                        import.meta.env.VITE_PUBLIC_API_URL +
-                        '/thumbnails/' +
-                        field.value?.find((item: Translation) => item.lang === activeLocale)?.value
-                      }
+                      src={FILE_PATH + '/thumbnails/' + field.value?.find((item: Translation) => item.lang === activeLocale)?.value}
                       alt={field.value?.find((item: Translation) => item.lang === activeLocale)?.value}
                       height="100"
                       width="100"

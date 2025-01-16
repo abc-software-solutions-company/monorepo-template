@@ -15,5 +15,7 @@ declare namespace NodeJS {
     AUTH_GOOGLE_SECRET: string;
     NEXT_PUBLIC_GOONG_MAP_API_KEY: string;
     NEXT_PUBLIC_GOOGLE_MAP_API_KEY: string;
+    NEXT_PUBLIC_AWS_ENDPOINT: string;
+    NEXT_PUBLIC_AWS_S3_BUCKET_NAME: string;
   }
 }

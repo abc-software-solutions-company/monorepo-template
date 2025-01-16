@@ -1,0 +1,3 @@
+export const FILE_SELF_HOSTED_PATH = `${process.env.NEXT_PUBLIC_API_URL}`;
+export const FILE_S3_PATH = `${process.env.NEXT_PUBLIC_AWS_ENDPOINT}/${process.env.NEXT_PUBLIC_AWS_S3_BUCKET_NAME}`;
+export const FILE_PATH = process.env.NEXT_PUBLIC_AWS_S3_BUCKET_NAME ? FILE_S3_PATH : FILE_SELF_HOSTED_PATH;
