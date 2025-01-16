@@ -47,8 +47,6 @@ export class FilesService {
         const fileInfo = await this.processFile(file, body.categoryId);
         const fileData = this.fileRepository.create(fileInfo);
 
-        await this.awsService.putObject({ key: fileInfo.uniqueName, body: file.buffer });
-
         await this.fileRepository.save(fileData);
 
         if (this.isS3) {
