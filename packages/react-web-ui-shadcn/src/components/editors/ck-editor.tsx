@@ -126,6 +126,52 @@ const IMAGE_TOOLBAR_CONFIG = [
   'imageTextAlternative',
 ];
 
+const EXTRA_PROVIDERS = [
+  {
+    name: 'awsS3video',
+    url: /^https:\/\/([\w-]+)\.s3\.([\w-]+-\d+)\.amazonaws\.com\/([\w-]+\.mp4)/,
+    html: (match: any) => {
+      return (
+        '<div style="position: relative; height: 0; padding-bottom: 56.2493%; pointer-events: auto;"><video controls style="position: absolute; width: 100%; height: 100%; top: 0; left: 0;" src="' +
+        match.input +
+        '"></video></div>'
+      );
+    },
+  },
+  {
+    name: 'awsS3audio',
+    url: /^https:\/\/([\w-]+)\.s3\.([\w-]+-\d+)\.amazonaws\.com\/([\w-]+\.mp3)/,
+    html: (match: any) => {
+      return '<div style="position: relative;pointer-events: auto;"><audio controls src="' + match.input + '"></audio></div>';
+    },
+  },
+  {
+    name: 'video',
+    url: [/.*\.(mp4)$/],
+    html: (match: any) =>
+      '<div style="position: relative; height: 0; padding-bottom: 56.2493%; pointer-events: auto;"><video controls style="position: absolute; width: 100%; height: 100%; top: 0; left: 0;" src="' +
+      match.input +
+      '"></video></div>',
+  },
+  {
+    name: 'audio',
+    url: [/.*\.(mp3)$/],
+    html: (match: any) => '<div style="position: relative;pointer-events: auto;"><audio controls src="' + match.input + '"></audio></div>',
+  },
+];
+
+const HTML_SUPPORT = {
+  allow: [
+    {
+      name: /.*/,
+      attributes: true,
+      classes: true,
+      styles: true,
+    },
+  ],
+  allowEmpty: ['div'],
+};
+
 const CKEditor = forwardRef<Editor, ICKEditorProps>(
   (
     {
@@ -228,53 +274,10 @@ const CKEditor = forwardRef<Editor, ICKEditorProps>(
                 },
               },
               actions: { showFileManager: handleShowFileManager },
-              htmlSupport: {
-                allow: [
-                  {
-                    name: /.*/,
-                    attributes: true,
-                    classes: true,
-                    styles: true,
-                  },
-                ],
-                allowEmpty: ['div'],
-              },
+              htmlSupport: HTML_SUPPORT,
               mediaEmbed: {
                 previewsInData: true,
-                extraProviders: [
-                  {
-                    name: 'awsS3video',
-                    url: /^https:\/\/([\w-]+)\.s3\.([\w-]+-\d+)\.amazonaws\.com\/([\w-]+\.mp4)/,
-                    html: (match: any) => {
-                      return (
-                        '<div style="position: relative; height: 0; padding-bottom: 56.2493%; pointer-events: auto;"><video controls style="position: absolute; width: 100%; height: 100%; top: 0; left: 0;" src="' +
-                        match.input +
-                        '"></video></div>'
-                      );
-                    },
-                  },
-                  {
-                    name: 'awsS3audio',
-                    url: /^https:\/\/([\w-]+)\.s3\.([\w-]+-\d+)\.amazonaws\.com\/([\w-]+\.mp3)/,
-                    html: (match: any) => {
-                      return '<div style="position: relative;pointer-events: auto;"><audio controls src="' + match.input + '"></audio></div>';
-                    },
-                  },
-                  {
-                    name: 'video',
-                    url: [/.*\.(mp4)$/],
-                    html: (match: any) =>
-                      '<div style="position: relative; height: 0; padding-bottom: 56.2493%; pointer-events: auto;"><video controls style="position: absolute; width: 100%; height: 100%; top: 0; left: 0;" src="' +
-                      match.input +
-                      '"></video></div>',
-                  },
-                  {
-                    name: 'audio',
-                    url: [/.*\.(mp3)$/],
-                    html: (match: any) =>
-                      '<div style="position: relative;pointer-events: auto;"><audio controls src="' + match.input + '"></audio></div>',
-                  },
-                ],
+                extraProviders: EXTRA_PROVIDERS,
               },
             } as EditorConfig
           }
