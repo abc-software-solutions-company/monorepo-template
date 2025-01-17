@@ -62,12 +62,14 @@ export class PostsService {
   }
 
   async find(filterDto: FilterPostDto) {
-    const { q, order, status, sort, skip, limit } = filterDto;
+    const { q, order, status, sort, skip, limit, type } = filterDto;
 
     const queryBuilder = this.createQueryBuilderWithJoins('post');
 
+    queryBuilder.where('post.type = :type', { type });
+
     if (status) {
-      queryBuilder.where('post.status IN (:...status)', { status });
+      queryBuilder.andWhere('post.status IN (:...status)', { status });
     }
     if (q) {
       const searchTerm = `%${q}%`;
@@ -135,13 +137,12 @@ export class PostsService {
         post[field] = updateDto[field];
       }
     }
-
     if (updateDto.categoryId) {
       const category = await this.categoriesService.findOne(updateDto.categoryId);
 
       post.category = category;
     } else {
-      post.category = undefined;
+      post.category = null;
     }
 
     if (updateDto.status) post.status = updateDto.status;

@@ -13,7 +13,7 @@ import { Category } from '@/modules/categories/entities/category.entity';
 import { File } from '@/modules/files/entities/file.entity';
 import { User } from '@/modules/users/entities/user.entity';
 
-import { POST_GET_FIELDS, POST_STATUS } from '../constants/posts.constant';
+import { POST_GET_FIELDS, POST_STATUS, POST_TYPE } from '../constants/posts.constant';
 import { CreatePostDto } from '../dto/create-post.dto';
 import { FilterPostDto } from '../dto/filter-post.dto';
 import { UpdatePostDto } from '../dto/update-post.dto';
@@ -87,6 +87,7 @@ describe('PostsService', () => {
     const baseCreateDto: CreatePostDto = {
       name: 'Test Post',
       slug: 'test-post',
+      type: POST_TYPE.DEFAULT,
       description: 'Test Description',
       body: 'Test Body',
       status: POST_STATUS.PUBLISHED,
@@ -206,6 +207,7 @@ describe('PostsService', () => {
 
       const mockQueryBuilder = {
         select: jest.fn().mockReturnThis(),
+        where: jest.fn().mockReturnThis(),
         leftJoin: jest.fn().mockReturnThis(),
         orderBy: jest.fn().mockReturnThis(),
         skip: jest.fn().mockReturnThis(),
@@ -224,6 +226,7 @@ describe('PostsService', () => {
       expect(mockQueryBuilder.leftJoin).toHaveBeenCalledWith('post.category', 'category');
       expect(mockQueryBuilder.leftJoin).toHaveBeenCalledWith('post.postFiles', 'postFile');
       expect(mockQueryBuilder.leftJoin).toHaveBeenCalledWith('postFile.image', 'image');
+      expect(mockQueryBuilder.where).toHaveBeenCalledWith('post.type = :type', { type: filterDto.type });
       expect(mockQueryBuilder.skip).toHaveBeenCalledWith(filterDto.skip);
       expect(mockQueryBuilder.take).toHaveBeenCalledWith(filterDto.limit);
       expect(mockQueryBuilder.orderBy).toHaveBeenCalledWith('post.createdAt', SORT_ORDER.DESC);
@@ -269,7 +272,8 @@ describe('PostsService', () => {
       expect(mockQueryBuilder.leftJoin).toHaveBeenCalledWith('post.category', 'category');
       expect(mockQueryBuilder.leftJoin).toHaveBeenCalledWith('post.postFiles', 'postFile');
       expect(mockQueryBuilder.leftJoin).toHaveBeenCalledWith('postFile.image', 'image');
-      expect(mockQueryBuilder.where).toHaveBeenCalledWith('post.status IN (:...status)', { status: filterDto.status });
+      expect(mockQueryBuilder.where).toHaveBeenCalledWith('post.type = :type', { type: filterDto.type });
+      expect(mockQueryBuilder.andWhere).toHaveBeenCalledWith('post.status IN (:...status)', { status: filterDto.status });
       expect(mockQueryBuilder.skip).toHaveBeenCalledWith(filterDto.skip);
       expect(mockQueryBuilder.take).toHaveBeenCalledWith(filterDto.limit);
       expect(mockQueryBuilder.orderBy).toHaveBeenCalledWith('post.createdAt', SORT_ORDER.DESC);
@@ -314,7 +318,8 @@ describe('PostsService', () => {
       expect(mockQueryBuilder.leftJoin).toHaveBeenCalledWith('post.category', 'category');
       expect(mockQueryBuilder.leftJoin).toHaveBeenCalledWith('post.postFiles', 'postFile');
       expect(mockQueryBuilder.leftJoin).toHaveBeenCalledWith('postFile.image', 'image');
-      expect(mockQueryBuilder.where).toHaveBeenCalledWith('post.status IN (:...status)', { status: filterDto.status });
+      expect(mockQueryBuilder.where).toHaveBeenCalledWith('post.type = :type', { type: filterDto.type });
+      expect(mockQueryBuilder.andWhere).toHaveBeenCalledWith('post.status IN (:...status)', { status: filterDto.status });
       expect(mockQueryBuilder.skip).toHaveBeenCalledWith(filterDto.skip);
       expect(mockQueryBuilder.take).toHaveBeenCalledWith(filterDto.limit);
       expect(mockQueryBuilder.orderBy).toHaveBeenCalledWith('post.name', SORT_ORDER.ASC);
@@ -359,7 +364,8 @@ describe('PostsService', () => {
       expect(mockQueryBuilder.leftJoin).toHaveBeenCalledWith('post.category', 'category');
       expect(mockQueryBuilder.leftJoin).toHaveBeenCalledWith('post.postFiles', 'postFile');
       expect(mockQueryBuilder.leftJoin).toHaveBeenCalledWith('postFile.image', 'image');
-      expect(mockQueryBuilder.where).toHaveBeenCalledWith('post.status IN (:...status)', { status: filterDto.status });
+      expect(mockQueryBuilder.where).toHaveBeenCalledWith('post.type = :type', { type: filterDto.type });
+      expect(mockQueryBuilder.andWhere).toHaveBeenCalledWith('post.status IN (:...status)', { status: filterDto.status });
       expect(mockQueryBuilder.skip).toHaveBeenCalledWith(filterDto.skip);
       expect(mockQueryBuilder.take).toHaveBeenCalledWith(filterDto.limit);
       expect(mockQueryBuilder.orderBy).toHaveBeenCalledWith('post.name', SORT_ORDER.DESC);
@@ -407,7 +413,8 @@ describe('PostsService', () => {
       expect(mockQueryBuilder.leftJoin).toHaveBeenCalledWith('post.category', 'category');
       expect(mockQueryBuilder.leftJoin).toHaveBeenCalledWith('post.postFiles', 'postFile');
       expect(mockQueryBuilder.leftJoin).toHaveBeenCalledWith('postFile.image', 'image');
-      expect(mockQueryBuilder.where).toHaveBeenCalledWith('post.status IN (:...status)', { status: filterDto.status });
+      expect(mockQueryBuilder.where).toHaveBeenCalledWith('post.type = :type', { type: filterDto.type });
+      expect(mockQueryBuilder.andWhere).toHaveBeenCalledWith('post.status IN (:...status)', { status: filterDto.status });
       expect(mockQueryBuilder.andWhere).toHaveBeenCalledWith('LOWER(post.name) LIKE LOWER(:searchTerm)', { searchTerm });
       expect(mockQueryBuilder.orWhere).toHaveBeenCalledWith('LOWER(post.description) LIKE LOWER(:searchTerm)', { searchTerm });
       expect(mockQueryBuilder.orWhere).toHaveBeenCalledWith(

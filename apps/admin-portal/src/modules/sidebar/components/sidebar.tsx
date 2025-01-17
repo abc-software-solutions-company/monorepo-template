@@ -11,7 +11,7 @@ type SidebarProps = {
   isMobile?: boolean;
 } & ComponentBaseProps;
 
-const Sidebar: FC<SidebarProps> = ({ className, isExpand = true, ...rest }) => {
+const Sidebar: FC<SidebarProps> = ({ className, isExpand = true, isMobile, ...rest }) => {
   const ref = useRef<HTMLDivElement>(null);
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(false);
 
@@ -23,10 +23,10 @@ const Sidebar: FC<SidebarProps> = ({ className, isExpand = true, ...rest }) => {
     <div
       ref={ref}
       className={classNames('nap-sidebar fixed z-20 flex h-full flex-col border-r bg-card', className, {
-        'w-64 transition-width duration-500': isExpand && !rest.isMobile,
-        'w-20 transition-width duration-500': !isExpand && !rest.isMobile,
-        'w-64': isExpand && rest.isMobile,
-        'w-20': !isExpand && rest.isMobile,
+        'w-64 transition-width duration-500': isExpand && !isMobile,
+        'w-20 transition-width duration-500': !isExpand && !isMobile,
+        'w-64': isExpand && isMobile,
+        'w-20': !isExpand && isMobile,
       })}
       data-testid="sidebar"
       {...rest}

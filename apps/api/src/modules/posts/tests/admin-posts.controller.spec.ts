@@ -9,7 +9,7 @@ import { AccessTokenGuard } from '@/modules/auth/guards/access-token.guard';
 import { User } from '@/modules/users/entities/user.entity';
 
 import { AdminPostsController } from '../admin-posts.controller';
-import { POST_STATUS } from '../constants/posts.constant';
+import { POST_STATUS, POST_TYPE } from '../constants/posts.constant';
 import { CreatePostDto } from '../dto/create-post.dto';
 import { FilterPostDto } from '../dto/filter-post.dto';
 import { UpdatePostDto } from '../dto/update-post.dto';
@@ -72,6 +72,7 @@ describe('AdminPostsController', () => {
       const createPostDto: CreatePostDto = {
         name: 'Test Post',
         slug: 'test-post',
+        type: POST_TYPE.DEFAULT,
         description: 'This is a test',
         body: 'Test Body',
         status: POST_STATUS.PUBLISHED,

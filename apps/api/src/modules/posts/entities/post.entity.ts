@@ -25,6 +25,9 @@ export class Post extends AbstractEntity {
   @Column({ type: 'varchar', unique: true, length: 255 })
   slug: string;
 
+  @Column({ type: 'varchar', nullable: true, length: 50 })
+  type: string;
+
   @Column({ type: 'varchar', nullable: true, length: 2000 })
   description: string;
 

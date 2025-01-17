@@ -16,7 +16,7 @@ import {
   SettingsIcon,
   UsersIcon,
 } from 'lucide-react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useSearchParams } from 'react-router-dom';
 import { useLocale, useTranslations } from 'use-intl';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@repo/react-web-ui-shadcn/components/ui/collapsible';
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@repo/react-web-ui-shadcn/components/ui/hover-card';
@@ -24,6 +24,8 @@ import { HoverCard, HoverCardContent, HoverCardTrigger } from '@repo/react-web-u
 import { ComponentBaseProps } from '@/interfaces/component.interface';
 
 import { SUB_MENU_ALIGN_OFFSET, SUB_MENU_SIDE_OFFSET } from '../constants/sidebar.constant';
+
+import { POST_TYPE } from '@/modules/posts/constants/posts.constant';
 
 import SidebarMenuIndicator from './sidebar-menu-indicator';
 import SidebarMenuItem from './sidebar-menu-item';
@@ -33,6 +35,7 @@ import NotificationsSubMenu from './sub-menu-notifications';
 import PostsSubMenu from './sub-menu-posts';
 import ProductsSubMenu from './sub-menu-products';
 import SubMenuProfile from './sub-menu-profile';
+import SubMenuServices from './sub-menu-service';
 import SettingsSubMenu from './sub-menu-settings';
 import UsersSubMenu from './sub-menu-users';
 
@@ -45,12 +48,14 @@ const SidebarNavigation: FC<SidebarNavigationProps> = ({ className, isExpand, on
   const t = useTranslations();
   const locale = useLocale();
   const { pathname } = useLocation();
+  const [searchParams] = useSearchParams();
 
   const [isOpenSubMenu, setIsOpenSubMenu] = useState({
     dashboard: false,
     categories: false,
     contents: false,
     posts: false,
+    services: false,
     products: false,
     users: false,
     notifications: false,
@@ -69,7 +74,8 @@ const SidebarNavigation: FC<SidebarNavigationProps> = ({ className, isExpand, on
       dashboard: pathname.includes(`/${locale}/dashboard`),
       categories: pathname.includes(`/${locale}/categories`),
       contents: pathname.includes(`/${locale}/contents`),
-      posts: pathname.includes(`/${locale}/posts`),
+      posts: pathname.includes(`/${locale}/posts`) && searchParams.get('type') === 'default',
+      services: pathname.includes(`/${locale}/posts`) && searchParams.get('type') === 'service',
       products: pathname.includes(`/${locale}/products`),
       users: pathname.includes(`/${locale}/users`),
       notifications: pathname.includes(`/${locale}/notifications`),
@@ -81,9 +87,7 @@ const SidebarNavigation: FC<SidebarNavigationProps> = ({ className, isExpand, on
       profile: pathname.includes(`/${locale}/profile`),
       documentation: pathname.includes(`/${locale}/documentation`),
     }));
-  }, [locale, pathname]);
-
-  useEffect(() => {}, [isExpand]);
+  }, [locale, pathname, searchParams]);
 
   const handleItemClick = () => {
     onNavigate?.();
@@ -166,12 +170,17 @@ const SidebarNavigation: FC<SidebarNavigationProps> = ({ className, isExpand, on
           **************************************************************/}
         <div className="relative my-0.5 px-3">
           <Collapsible open={isOpenSubMenu.posts && isExpand} onOpenChange={value => setIsOpenSubMenu(prevState => ({ ...prevState, posts: value }))}>
-            <SidebarMenuItem url={`/${locale}/posts`} isExpand={isExpand} options={{ icon: BookOpenTextIcon, onClick: handleItemClick }}>
+            <SidebarMenuItem
+              url={`/${locale}/posts`}
+              queryParams={{ type: POST_TYPE.DEFAULT }}
+              isExpand={isExpand}
+              options={{ icon: BookOpenTextIcon, onClick: handleItemClick }}
+            >
               {t('sidebar_menu_posts')}
             </SidebarMenuItem>
             <CollapsibleTrigger asChild>
               <div>
-                <SidebarMenuIndicator isExpand={isExpand} isActive={pathname.includes(`/${locale}/posts`)} isOpen={isOpenSubMenu.posts} />
+                <SidebarMenuIndicator isExpand={isExpand} isActive={isOpenSubMenu.posts} isOpen={isOpenSubMenu.posts} />
               </div>
             </CollapsibleTrigger>
             <CollapsibleContent
@@ -185,11 +194,61 @@ const SidebarNavigation: FC<SidebarNavigationProps> = ({ className, isExpand, on
           <HoverCard openDelay={250} closeDelay={250}>
             <HoverCardTrigger asChild className={classNames('absolute top-0 opacity-0', isExpand && 'invisible')}>
               <div>
-                <SidebarMenuItem url={`/${locale}/posts`} isExpand={isExpand} options={{ icon: BookOpenTextIcon, onClick: handleItemClick }} />
+                <SidebarMenuItem
+                  url={`/${locale}/posts`}
+                  queryParams={{ type: POST_TYPE.DEFAULT }}
+                  isExpand={isExpand}
+                  options={{ icon: BookOpenTextIcon, onClick: handleItemClick }}
+                />
               </div>
             </HoverCardTrigger>
             <HoverCardContent className="w-52 p-1" sideOffset={SUB_MENU_SIDE_OFFSET} alignOffset={SUB_MENU_ALIGN_OFFSET} side="right" align="start">
               <PostsSubMenu type="dropdown" onNavigate={handleItemClick} />
+            </HoverCardContent>
+          </HoverCard>
+        </div>
+        {/*************************************************************
+          POSTS (SERVICES)
+          **************************************************************/}
+        <div className="relative my-0.5 px-3">
+          <Collapsible
+            open={isOpenSubMenu.services && isExpand}
+            onOpenChange={value => setIsOpenSubMenu(prevState => ({ ...prevState, services: value }))}
+          >
+            <SidebarMenuItem
+              url={`/${locale}/posts`}
+              queryParams={{ type: POST_TYPE.SERVICE }}
+              isExpand={isExpand}
+              options={{ icon: BookOpenTextIcon, onClick: handleItemClick }}
+            >
+              {t('sidebar_menu_services')}
+            </SidebarMenuItem>
+            <CollapsibleTrigger asChild>
+              <div>
+                <SidebarMenuIndicator isExpand={isExpand} isActive={isOpenSubMenu.services} isOpen={isOpenSubMenu.services} />
+              </div>
+            </CollapsibleTrigger>
+            <CollapsibleContent
+              className={classNames(
+                'mt-1 overflow-hidden rounded [&[data-state=closed]]:animate-collapsible-up [&[data-state=open]]:animate-collapsible-down'
+              )}
+            >
+              <SubMenuServices type="list" onNavigate={handleItemClick} />
+            </CollapsibleContent>
+          </Collapsible>
+          <HoverCard openDelay={250} closeDelay={250}>
+            <HoverCardTrigger asChild className={classNames('absolute top-0 opacity-0', isExpand && 'invisible')}>
+              <div>
+                <SidebarMenuItem
+                  url={`/${locale}/posts`}
+                  queryParams={{ type: POST_TYPE.SERVICE }}
+                  isExpand={isExpand}
+                  options={{ icon: BookOpenTextIcon, onClick: handleItemClick }}
+                />
+              </div>
+            </HoverCardTrigger>
+            <HoverCardContent className="w-52 p-1" sideOffset={SUB_MENU_SIDE_OFFSET} alignOffset={SUB_MENU_ALIGN_OFFSET} side="right" align="start">
+              <SubMenuServices type="dropdown" onNavigate={handleItemClick} />
             </HoverCardContent>
           </HoverCard>
         </div>

@@ -6,13 +6,13 @@ import { Table } from '@tanstack/react-table';
 
 import { POST_DEFAULT_FILTER } from '../constants/posts.constant';
 
+import { usePosts } from '../hooks/use-posts';
+
 import { DataTableViewOptions } from '@/components/data-table/data-table-view-options';
 import DropdownBulkActions from '@/components/dropdown-bulk-actions';
 import SearchBox from '@/components/search-box';
 
 import PostFilters from './post-filters';
-
-import { usePostsState } from '../states/posts.state';
 
 type PostListToolbarProps<TData> = {
   table: Table<TData>;
@@ -24,14 +24,14 @@ export default function PostListToolbar<TData>({ table, onBulkDelete }: PostList
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const locale = useLocale();
-  const postsState = usePostsState();
+  const { selected, filter, setFilter } = usePosts();
 
   return (
     <div className="flex items-center justify-between">
       <div className="flex items-center space-x-2">
         <PostFilters />
-        <SearchBox value={postsState.filter?.q} onSearch={text => postsState.setFilter({ q: text })} />
-        <Button variant="outline" onClick={() => postsState.setFilter(POST_DEFAULT_FILTER)}>
+        <SearchBox value={filter?.q} onSearch={text => setFilter({ ...filter, q: text })} />
+        <Button variant="outline" onClick={() => setFilter(POST_DEFAULT_FILTER)}>
           {t('filter_reset')}
         </Button>
         <DataTableViewOptions table={table} />
@@ -41,7 +41,7 @@ export default function PostListToolbar<TData>({ table, onBulkDelete }: PostList
           onClick={() =>
             navigate({
               pathname: `/${locale}/posts/new`,
-              search: `?${objectToQueryString({ sidebar: searchParams.get('sidebar') })}`,
+              search: `?${objectToQueryString({ sidebar: searchParams.get('sidebar'), type: searchParams.get('type') })}`,
             })
           }
         >
@@ -51,7 +51,7 @@ export default function PostListToolbar<TData>({ table, onBulkDelete }: PostList
           actions={[
             {
               label: t('bulk_actions_delete_selected_rows'),
-              disabled: !postsState.selected.length,
+              disabled: !selected.length,
               onClick: onBulkDelete,
             },
           ]}

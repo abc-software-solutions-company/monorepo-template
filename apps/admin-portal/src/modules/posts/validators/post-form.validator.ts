@@ -41,6 +41,7 @@ export const postFormLocalizeSchema = (languages: Language[]) => {
       minMessage: 'validator_minimum_n_characters_allowed',
       maxMessage: 'validator_maximum_n_characters_allowed',
     }),
+    type: z.string().nullable(),
     status: z.nativeEnum(POST_STATUS, { errorMap: () => ({ message: 'validator_post_status' }) }),
     // TODO: Will be removed
     cover: z.string().max(1000, 'validator_maximum_n_characters_allowed'),

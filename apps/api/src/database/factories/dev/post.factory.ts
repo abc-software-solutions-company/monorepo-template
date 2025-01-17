@@ -2,7 +2,7 @@ import { faker } from '@faker-js/faker';
 
 import { toSlug } from '@/common/utils/string.util';
 
-import { POST_STATUS } from '@/modules/posts/constants/posts.constant';
+import { POST_STATUS, POST_TYPE } from '@/modules/posts/constants/posts.constant';
 import { Post } from '@/modules/posts/entities/post.entity';
 
 import { userFactory } from '../user.factory';
@@ -18,11 +18,13 @@ export function createRandomPost() {
     name: null,
     nameLocalized: [{ lang: defaultLanguage, value: name }],
     slug: toSlug(name),
+    type: POST_TYPE.DEFAULT,
     description: null,
     descriptionLocalized: [{ lang: defaultLanguage, value: `<p>${faker.lorem.words(20)}</p>` }],
     body: null,
     bodyLocalized: [{ lang: defaultLanguage, value: `<p>${faker.lorem.words(20)}</p>` }],
     status: statuses[Math.floor(Math.random() * statuses.length)],
+    category: null,
     creator: userFactory[0],
     createdAt: faker.date.past(),
   } as Post;

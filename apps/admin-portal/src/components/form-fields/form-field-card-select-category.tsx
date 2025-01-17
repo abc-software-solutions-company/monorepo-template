@@ -53,7 +53,7 @@ export default function FormFieldCardSelectCategory<T extends FieldValues>({
                 <Select
                   value={field.value}
                   onValueChange={value => {
-                    const val = value === 'root' ? undefined : value;
+                    const val = value === 'root' ? '' : value;
 
                     field.onChange(val);
                     onChange?.(val);

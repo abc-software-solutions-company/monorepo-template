@@ -1,12 +1,16 @@
-import { ApiPropertyOptional } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Transform } from 'class-transformer';
-import { IsArray, IsEnum, IsOptional } from 'class-validator';
+import { IsArray, IsEnum, IsOptional, IsString } from 'class-validator';
 
 import { BaseFilterDto } from '@/common/dtos/base-filter.dto';
 
 import { POST_STATUS } from '../constants/posts.constant';
 
 export class FilterPostDto extends BaseFilterDto {
+  @ApiProperty()
+  @IsString()
+  type: string;
+
   @ApiPropertyOptional({
     enum: POST_STATUS,
     isArray: true,

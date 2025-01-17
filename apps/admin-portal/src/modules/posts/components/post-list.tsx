@@ -1,6 +1,8 @@
 import { FC, useEffect, useMemo, useState } from 'react';
+import axios from 'axios';
 import classNames from 'classnames';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import { toast } from 'sonner';
 import { useLocale, useTranslations } from 'use-intl';
 import ModalConfirm from '@repo/react-web-ui-shadcn/components/modals/modal-confirm';
 import { Checkbox } from '@repo/react-web-ui-shadcn/components/ui/checkbox';
@@ -21,9 +23,12 @@ import {
 } from '@tanstack/react-table';
 
 import { ComponentBaseProps } from '@/interfaces/component.interface';
-import { PostEntity, PostFilter } from '../interfaces/posts.interface';
+import { PostEntity, PostResponse, PostsResponse } from '../interfaces/posts.interface';
 
-import { POST_ACTION, POST_DEFAULT_FILTER, POST_STATUSES } from '../constants/posts.constant';
+import { POST_ACTION, POST_STATUS, POST_STATUSES, QUERY_POST_LIST } from '../constants/posts.constant';
+
+import { useBulkDestroyPostsMutation, useDestroyPostMutation } from '../hooks/use-post-queries';
+import { usePosts } from '../hooks/use-posts';
 
 import { DataTable } from '@/components/data-table/data-table';
 import { DataTableColumnHeader } from '@/components/data-table/data-table-column-header';
@@ -31,27 +36,27 @@ import DataTableRowAction from '@/components/data-table/data-table-row-action';
 import ItemsPerPage from '@/components/item-per-page';
 import PaginationInfo from '@/components/pagination-info';
 
+import { getQueryClient } from '@/utils/query-client.util';
+
 import PostDialogDetail from './post-dialog-detail';
 import PostListToolbar from './post-list-toolbar';
 import PostRowStatus from './post-row-status';
 
-import { usePostsState } from '../states/posts.state';
+const queryClient = getQueryClient();
 
 const PostList: FC<ComponentBaseProps> = ({ className }) => {
   const t = useTranslations();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const locale = useLocale();
-  const postsState = usePostsState();
   const [viewDetailId, setViewDetailId] = useState('');
   const [action, setAction] = useState<{ name: string; data?: PostEntity }>({ name: '' });
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [sorting, setSorting] = useState<SortingState>([]);
-
-  const { items, filter, meta, fetchedAt, filteredAt, deletedAt, isFetching, selected, selectSingle, selectAll } = postsState;
-  const selectedIds = selected.reduce((row, id) => ({ ...row, [id]: true }), {});
-
+  const { items, meta, selected, selectedIds, isFetching, filter, setFilter, toggleSelect, toggleSelectAll, clearSelection } = usePosts();
+  const { mutateAsync: destroyMutation } = useDestroyPostMutation();
+  const { mutateAsync: bulkDestroyMutation } = useBulkDestroyPostsMutation();
   const [rowSelection, setRowSelection] = useState<RowSelectionState>(selectedIds);
   const columns: ColumnDef<PostEntity>[] = useMemo(
     () => [
@@ -65,7 +70,7 @@ const PostList: FC<ComponentBaseProps> = ({ className }) => {
             className="translate-y-[2px]"
             onCheckedChange={value => {
               table.toggleAllRowsSelected(!!value);
-              selectAll(value ? items.map(x => x.id) : []);
+              toggleSelectAll(!!value);
             }}
           />
         ),
@@ -77,7 +82,7 @@ const PostList: FC<ComponentBaseProps> = ({ className }) => {
             className="translate-y-[2px]"
             onCheckedChange={value => {
               row.toggleSelected(!!value);
-              selectSingle(row.original.id);
+              toggleSelect(row.original.id);
             }}
           />
         ),
@@ -97,7 +102,7 @@ const PostList: FC<ComponentBaseProps> = ({ className }) => {
                 onClick={() =>
                   navigate({
                     pathname: `/${locale}/posts/${row.original.id}/edit`,
-                    search: `?${objectToQueryString({ sidebar: searchParams.get('sidebar') })}`,
+                    search: `?${objectToQueryString({ sidebar: searchParams.get('sidebar'), type: searchParams.get('type') })}`,
                   })
                 }
               >
@@ -144,9 +149,6 @@ const PostList: FC<ComponentBaseProps> = ({ className }) => {
               <PostRowStatus status={status} />
             </div>
           );
-        },
-        filterFn: (row, id, value) => {
-          return value.includes(row.getValue(id));
         },
       },
       {
@@ -214,55 +216,77 @@ const PostList: FC<ComponentBaseProps> = ({ className }) => {
     getFacetedUniqueValues: getFacetedUniqueValues(),
   });
 
-  const getFilter = (): PostFilter => {
-    return {
-      q: searchParams.get('q') || POST_DEFAULT_FILTER.q,
-      page: parseInt(searchParams.get('page') as string) || POST_DEFAULT_FILTER.page,
-      limit: parseInt(searchParams.get('limit') as string) || POST_DEFAULT_FILTER.limit,
-      order: searchParams.get('order') || POST_DEFAULT_FILTER.order,
-      status: searchParams.getAll('status') || POST_DEFAULT_FILTER.status,
-    };
+  const onDeletePostSuccess = async (resp: PostResponse, id: string) => {
+    queryClient.setQueryData<PostsResponse>([QUERY_POST_LIST, filter], cached => {
+      if (!cached || !cached.data) return cached;
+
+      const updatedData = cached.data.map(item => (item.id === id ? { ...item, status: POST_STATUS.DELETED } : item));
+
+      return { ...cached, data: updatedData };
+    });
+
+    toast(t('post_delete_toast_title'), { description: t('post_delete_success') });
+  };
+
+  const onDeleteFailure = (error: Error, _id: string) => {
+    let errorMessage = t('post_delete_failure');
+
+    if (axios.isAxiosError(error) && error.response) {
+      errorMessage += `\n${error.response.data.message}`;
+    } else {
+      errorMessage += `\n${error.message}`;
+    }
+
+    toast(t('post_delete_toast_title'), { description: errorMessage });
+  };
+
+  const onBulkDeleteSuccess = (resp: PostsResponse, ids: string[]) => {
+    queryClient.setQueryData<PostsResponse>([QUERY_POST_LIST, filter], cached => {
+      if (!cached || !cached.data) return cached;
+
+      const updatedData = cached.data.map(item => (ids.includes(item.id) ? { ...item, status: POST_STATUS.DELETED } : item));
+
+      return { ...cached, data: updatedData };
+    });
+
+    table.resetRowSelection(false);
+    clearSelection();
+    toast(t('post_delete_toast_title'), { description: t('post_delete_success') });
+  };
+
+  const onBulkDeleteFailure = (error: Error) => {
+    let errorMessage = t('post_bulk_delete_failure');
+
+    if (axios.isAxiosError(error) && error.response) {
+      errorMessage += `\n${error.response.data.message}`;
+    } else {
+      errorMessage += `\n${error.message}`;
+    }
+
+    toast(t('post_delete_toast_title'), { description: errorMessage });
   };
 
   useEffect(() => {
-    const currentFilter = getFilter();
-
-    if (filter) {
-      const queryString = objectToQueryString({ ...filter, sidebar: searchParams.get('sidebar') });
-
-      navigate({
-        pathname: `/${locale}/posts`,
-        search: `?${queryString}`,
-      });
-
-      postsState.listRequest({ filter });
-    } else {
-      postsState.setFilter(currentFilter);
-    }
+    setFilter({ ...filter, type: searchParams.get('type') || undefined });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filteredAt]);
-
-  useEffect(() => {
-    if (postsState.deletedAt) table.resetRowSelection(false);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [deletedAt]);
+  }, [searchParams]);
 
   return (
     <div className={classNames('posts-list flex grow flex-col rounded-lg border bg-card p-4 text-card-foreground shadow-sm', className)}>
       <div className="relative flex h-full grow flex-col">
         <PostListToolbar table={table} onBulkDelete={() => setAction({ name: POST_ACTION.BULK_DELETE })} />
-        <DataTable containerClassName="mt-4" table={table} columns={columns} isFetching={isFetching || !fetchedAt} />
+        <DataTable containerClassName="mt-4" table={table} columns={columns} isFetching={isFetching} />
       </div>
       <div className="mt-3 flex justify-between">
         <div className="flex items-center space-x-2">
-          <ItemsPerPage limit={filter?.limit} onFilter={value => postsState.setFilter({ page: 1, limit: +value })} />
+          <ItemsPerPage limit={filter?.limit} onFilter={value => setFilter({ ...filter, page: 1, limit: +value })} />
           <PaginationInfo amount={meta?.paging?.totalItems} text={t('post_records')} />
         </div>
         <Pagination
           totalItems={meta?.paging?.totalItems || 0}
           currentPage={meta?.paging?.currentPage}
           itemPerPage={meta?.paging?.itemsPerPage}
-          onChange={page => postsState.setFilter({ page })}
+          onChange={page => setFilter({ ...filter, page })}
         />
       </div>
       <ModalConfirm
@@ -275,7 +299,10 @@ const PostList: FC<ComponentBaseProps> = ({ className }) => {
           </>
         }
         onYes={() => {
-          postsState.destroyRequest(action.data?.id as string);
+          destroyMutation(action.data?.id as string, {
+            onSuccess: onDeletePostSuccess,
+            onError: onDeleteFailure,
+          });
           setAction({ name: '' });
         }}
         onNo={() => setAction({ name: '' })}
@@ -285,7 +312,10 @@ const PostList: FC<ComponentBaseProps> = ({ className }) => {
         title={t('bulk_delete')}
         content={<span>{t('post_bulk_delete_message')}</span>}
         onYes={() => {
-          postsState.bulkDestroyRequest({ ids: postsState.selected });
+          bulkDestroyMutation(selected, {
+            onSuccess: onBulkDeleteSuccess,
+            onError: onBulkDeleteFailure,
+          });
           setAction({ name: '' });
         }}
         onNo={() => setAction({ name: '' })}
