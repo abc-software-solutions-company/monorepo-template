@@ -94,7 +94,7 @@ class LayoutManagerEditing extends Plugin {
     editor.conversion.for('upcast').elementToElement({
       view: {
         name: 'div',
-        classes: ['columns'],
+        classes: ['ck-columns'],
       },
       model: 'layout',
     });
@@ -102,7 +102,7 @@ class LayoutManagerEditing extends Plugin {
     editor.conversion.for('dataDowncast').elementToElement({
       view: {
         name: 'div',
-        classes: ['columns'],
+        classes: ['ck-columns'],
       },
       model: 'layout',
     });
@@ -110,7 +110,7 @@ class LayoutManagerEditing extends Plugin {
     editor.conversion.for('upcast').elementToElement({
       view: {
         name: 'div',
-        classes: ['column'],
+        classes: ['ck-column'],
       },
       model: 'column',
     });
@@ -118,7 +118,7 @@ class LayoutManagerEditing extends Plugin {
     editor.conversion.for('dataDowncast').elementToElement({
       view: {
         name: 'div',
-        classes: ['column'],
+        classes: ['ck-column'],
       },
       model: 'column',
     });
@@ -126,7 +126,7 @@ class LayoutManagerEditing extends Plugin {
     editor.conversion.for('editingDowncast').elementToElement({
       model: 'layout',
       view: (_modelElement, viewWriter) => {
-        const container = viewWriter.writer.createContainerElement('div', { class: 'columns' });
+        const container = viewWriter.writer.createContainerElement('div', { class: 'ck-columns' });
         return toWidget(container, viewWriter.writer, { label: 'custom block widget' });
       },
     });
@@ -134,7 +134,7 @@ class LayoutManagerEditing extends Plugin {
     editor.conversion.for('editingDowncast').elementToElement({
       model: 'column',
       view: (_modelElement, viewWriter) => {
-        const column = viewWriter.writer.createEditableElement('paragraph', { class: 'column' });
+        const column = viewWriter.writer.createEditableElement('paragraph', { class: 'ck-column' });
         return toWidgetEditable(column, viewWriter.writer);
       },
     });

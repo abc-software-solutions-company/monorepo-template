@@ -168,14 +168,14 @@
   .ck-placeholder:before {
     @apply text-muted-foreground;
   }
-  .ck-content .columns {
+  .ck-content .ck-columns {
     @apply flex w-full;
   }
-  .ck-content .column {
+  .ck-content .ck-column {
     @apply flex-1 border border-dotted border-blue-500;
   }
 
-  .ck .ck-editor__nested-editable.column {
+  .ck .ck-editor__nested-editable.ck-column {
     @apply flex-1 border border-dotted border-blue-500;
   }
   .image-style-align-left,
