@@ -39,6 +39,7 @@ import FileManager from './file-manager/file-manager';
 import 'ckeditor5/ckeditor5.css';
 import './ck-editor.scss';
 import { cn } from '@repo/react-web-ui-shadcn/lib/utils.js';
+import LayoutManager from './layout-manager/layout-manager';
 
 interface ICKEditorProps {
   className?: string;
@@ -77,6 +78,7 @@ export const DEFAULT_TOOLBAR = [
   'mediaEmbed',
   'fileManager',
   'sourceEditing',
+  'insertLayout',
 ];
 
 export const EDITOR_PLUGINS = [
@@ -109,6 +111,7 @@ export const EDITOR_PLUGINS = [
   HtmlEmbedEditing,
   SourceEditing,
   FileManager,
+  LayoutManager,
 ];
 
 const IMAGE_TOOLBAR_CONFIG = [
@@ -122,6 +125,52 @@ const IMAGE_TOOLBAR_CONFIG = [
   'toggleImageCaption',
   'imageTextAlternative',
 ];
+
+const EXTRA_PROVIDERS = [
+  {
+    name: 'awsS3video',
+    url: /^https:\/\/([\w-]+)\.s3\.([\w-]+-\d+)\.amazonaws\.com\/([\w-]+\.mp4)/,
+    html: (match: any) => {
+      return (
+        '<div style="position: relative; height: 0; padding-bottom: 56.2493%; pointer-events: auto;"><video controls style="position: absolute; width: 100%; height: 100%; top: 0; left: 0;" src="' +
+        match.input +
+        '"></video></div>'
+      );
+    },
+  },
+  {
+    name: 'awsS3audio',
+    url: /^https:\/\/([\w-]+)\.s3\.([\w-]+-\d+)\.amazonaws\.com\/([\w-]+\.mp3)/,
+    html: (match: any) => {
+      return '<div style="position: relative;pointer-events: auto;"><audio controls src="' + match.input + '"></audio></div>';
+    },
+  },
+  {
+    name: 'video',
+    url: [/.*\.(mp4)$/],
+    html: (match: any) =>
+      '<div style="position: relative; height: 0; padding-bottom: 56.2493%; pointer-events: auto;"><video controls style="position: absolute; width: 100%; height: 100%; top: 0; left: 0;" src="' +
+      match.input +
+      '"></video></div>',
+  },
+  {
+    name: 'audio',
+    url: [/.*\.(mp3)$/],
+    html: (match: any) => '<div style="position: relative;pointer-events: auto;"><audio controls src="' + match.input + '"></audio></div>',
+  },
+];
+
+const HTML_SUPPORT = {
+  allow: [
+    {
+      name: /.*/,
+      attributes: true,
+      classes: true,
+      styles: true,
+    },
+  ],
+  allowEmpty: ['div'],
+};
 
 const CKEditor = forwardRef<Editor, ICKEditorProps>(
   (
@@ -169,8 +218,8 @@ const CKEditor = forwardRef<Editor, ICKEditorProps>(
 
     const handleFocus = (event: unknown, editor: Editor) => {
       if (disabled || readOnly) return;
-
-      editor.editing.view.focus();
+      //TODO: check if this is needed
+      // editor.editing.view.focus();
       onFocus?.(event, editor);
     };
 
@@ -220,8 +269,16 @@ const CKEditor = forwardRef<Editor, ICKEditorProps>(
               plugins: EDITOR_PLUGINS,
               image: {
                 toolbar: IMAGE_TOOLBAR_CONFIG,
+                insert: {
+                  type: 'inline',
+                },
               },
               actions: { showFileManager: handleShowFileManager },
+              htmlSupport: HTML_SUPPORT,
+              mediaEmbed: {
+                previewsInData: true,
+                extraProviders: EXTRA_PROVIDERS,
+              },
             } as EditorConfig
           }
           data={internalValue}
