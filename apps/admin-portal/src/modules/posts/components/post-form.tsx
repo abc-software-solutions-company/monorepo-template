@@ -1,7 +1,9 @@
 import { FC, useEffect, useRef, useState } from 'react';
+import axios from 'axios';
 import { Editor } from 'ckeditor5';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
+import { toast } from 'sonner';
 import { useLocale, useTranslations } from 'use-intl';
 import { zodResolver } from '@hookform/resolvers/zod';
 import Debugger from '@repo/react-web-ui-shadcn/components/debugger';
@@ -18,7 +20,7 @@ import { PostFormData } from '../interfaces/posts.interface';
 
 import { POST_STATUS, POST_STATUSES } from '../constants/posts.constant';
 
-import usePosts from '../hooks/use-posts';
+import { useCreatePostMutation, useGetPostQuery, useUpdatePostMutation } from '../hooks/use-post-queries';
 
 import EditorFileDialog from '@/components/editor-file-dialog';
 import FormFieldCardCoverMultiLanguage from '@/components/form-fields/form-field-card-cover-multi-language';
@@ -28,9 +30,10 @@ import FormFieldCardSelectStatus from '@/components/form-fields/form-field-card-
 import FormFieldCardSeoMeta from '@/components/form-fields/form-field-card-seo-meta';
 import FormToolbar from '@/components/form-toolbar';
 
+import { CATEGORY_TYPE } from '@/modules/categories/constants/categories.constant';
+import { useGetCategoriesQuery } from '@/modules/categories/hooks/use-category-queries';
 import { FileEntity } from '@/modules/files/interfaces/files.interface';
 
-import { usePostsState } from '../states/posts.state';
 import { postFormLocalizeSchema } from '../validators/post-form.validator';
 
 type PostFormProps = {
@@ -45,61 +48,105 @@ const PostForm: FC<PostFormProps> = ({ isEdit }) => {
   const locale = useLocale();
   const editorRef = useRef<Editor | null>(null);
   const [isFileManagerVisible, setIsFileManagerVisible] = useState(false);
-  const postsState = usePostsState();
-  const { post, categories, isFetching } = usePosts({ isEdit, postId: params.id as string });
+  const { data: content, isFetching } = useGetPostQuery({ id: params.id as string, enabled: !!params.id });
+  const { data: categories, isFetching: isCategoriesFetching } = useGetCategoriesQuery({ type: CATEGORY_TYPE.POST });
+  const { mutate: createMutation } = useCreatePostMutation();
+  const { mutate: updateMutation } = useUpdatePostMutation();
 
   const languages = getLanguages(locale);
 
   const defaultValues: PostFormData = {
-    status: post?.status ?? POST_STATUS.DRAFT,
-    name: post?.name ?? '',
-    slug: post?.slug ?? '',
-    cover: post?.cover ?? '',
-    coverLocalized: post?.coverLocalized ?? [],
-    images: post?.images ?? ([] as FileEntity[]),
-    description: post?.description ?? '',
-    body: post?.body ?? '',
-    categoryId: post?.category?.id ?? undefined,
-    nameLocalized: post?.nameLocalized ?? [],
-    descriptionLocalized: post?.descriptionLocalized ?? [],
-    bodyLocalized: post?.bodyLocalized ?? [],
+    status: content?.data.status ?? POST_STATUS.DRAFT,
+    name: content?.data.name ?? '',
+    slug: content?.data.slug ?? '',
+    type: content?.data.type ?? searchParams.get('type'),
+    cover: content?.data.cover ?? '',
+    coverLocalized: content?.data.coverLocalized ?? [],
+    images: content?.data.images ?? ([] as FileEntity[]),
+    description: content?.data.description ?? '',
+    body: content?.data.body ?? '',
+    categoryId: content?.data.category?.id ?? '',
+    nameLocalized: content?.data.nameLocalized ?? [],
+    descriptionLocalized: content?.data.descriptionLocalized ?? [],
+    bodyLocalized: content?.data.bodyLocalized ?? [],
     seoMeta: {
       // TODO: Will be removed
-      title: post?.seoMeta?.title ?? '',
+      title: content?.data.seoMeta?.title ?? '',
       // TODO: Will be removed
-      description: post?.seoMeta?.description ?? '',
-      titleLocalized: post?.seoMeta?.titleLocalized ?? [],
-      descriptionLocalized: post?.seoMeta?.descriptionLocalized ?? [],
-      keywords: post?.seoMeta?.keywords ?? '',
+      description: content?.data.seoMeta?.description ?? '',
+      titleLocalized: content?.data.seoMeta?.titleLocalized ?? [],
+      descriptionLocalized: content?.data.seoMeta?.descriptionLocalized ?? [],
+      keywords: content?.data.seoMeta?.keywords ?? '',
     },
   };
 
-  const form = useForm<PostFormData>({
-    resolver: zodResolver(postFormLocalizeSchema(languages)),
-    defaultValues,
-  });
-
-  const onSubmit: SubmitHandler<PostFormData> = async formData => {
-    formData.images = formData.images.map(item => ({ id: item.id }));
-
-    if (isEdit) {
-      postsState.updateRequest({ id: params.id as string, data: formData });
-    } else {
-      postsState.createRequest(formData);
-    }
-  };
+  const form = useForm<PostFormData>({ resolver: zodResolver(postFormLocalizeSchema(languages)), defaultValues });
 
   const onBackClick = () => {
     navigate({
       pathname: `/${locale}/posts`,
-      search: `?${objectToQueryString({ sidebar: searchParams.get('sidebar') })}`,
+      search: `?${objectToQueryString({
+        sidebar: searchParams.get('sidebar'),
+        type: searchParams.get('type'),
+      })}`,
     });
+  };
+
+  const onCreateSuccess = () => {
+    toast(t('post_create_toast_title'), { description: t('post_create_success') });
+    onBackClick();
+  };
+
+  const onCreateFailure = (error: Error) => {
+    let errorMessage = t('post_create_failure');
+
+    if (axios.isAxiosError(error) && error.response) {
+      errorMessage += `\n${error.response.data.message}`;
+    } else {
+      errorMessage += `\n${error.message}`;
+    }
+
+    toast(t('post_update_toast_title'), { description: errorMessage });
+  };
+
+  const onUpdateSuccess = () => {
+    toast(t('post_update_toast_title'), { description: t('post_update_success') });
+    onBackClick();
+  };
+
+  const onUpdateFailure = (error: Error) => {
+    let errorMessage = t('post_update_failure');
+
+    if (axios.isAxiosError(error) && error.response) {
+      errorMessage += `\n${error.response.data.message}`;
+    } else {
+      errorMessage += `\n${error.message}`;
+    }
+
+    toast(t('post_update_toast_title'), { description: errorMessage });
+  };
+
+  const onSubmit: SubmitHandler<PostFormData> = async formData => {
+    if (isEdit) {
+      updateMutation(
+        { id: params.id as string, formData },
+        {
+          onSuccess: onUpdateSuccess,
+          onError: onUpdateFailure,
+        }
+      );
+    } else {
+      createMutation(formData, {
+        onSuccess: onCreateSuccess,
+        onError: onCreateFailure,
+      });
+    }
   };
 
   useEffect(() => {
     form.reset(defaultValues);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [form, post, categories]);
+  }, [form, content, categories]);
 
   return (
     <div data-testid="frm-post">
@@ -146,7 +193,7 @@ const PostForm: FC<PostFormProps> = ({ isEdit }) => {
             <div className="w-72 shrink-0">
               <div className="grid gap-4">
                 <FormFieldCardSelectStatus form={form} statuses={POST_STATUSES} />
-                <FormFieldCardSelectCategory form={form} categories={categories ?? []} />
+                <FormFieldCardSelectCategory form={form} categories={categories?.data ?? []} />
                 <FormFieldCardCoverMultiLanguage form={form} fieldName="coverLocalized" formLabel="Cover Image" locales={languages} maxVisible={2} />
                 <FormFieldCardImages form={form} />
               </div>
@@ -157,7 +204,7 @@ const PostForm: FC<PostFormProps> = ({ isEdit }) => {
         </form>
       </Form>
       <EditorFileDialog editorRef={editorRef} visible={isFileManagerVisible} setVisible={setIsFileManagerVisible} />
-      <ModalLoading visible={isFetching} />
+      <ModalLoading visible={isFetching || isCategoriesFetching} />
     </div>
   );
 };

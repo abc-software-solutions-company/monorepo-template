@@ -1,6 +1,6 @@
 export const POST_GET_FIELDS = [
   [
-    'post.id post.name post.nameLocalized post.slug post.description post.descriptionLocalized post.body post.bodyLocalized post.status post.coverLocalized post.seoMeta post.createdAt',
+    'post.id post.name post.nameLocalized post.slug post.type post.description post.descriptionLocalized post.body post.bodyLocalized post.status post.coverLocalized post.seoMeta post.createdAt',
   ],
   ['user.id user.name user.email'],
   ['category.id category.name'],
@@ -13,6 +13,7 @@ export const POST_GET_FIELDS = [
 export const POST_FIELDS_TO_CREATE_OR_UPDATE = [
   'name', // TODO: Will be removed
   'slug',
+  'type',
   'description', // TODO: Will be removed
   'body', // TODO: Will be removed
   'cover', // TODO: Will be removed
@@ -26,4 +27,11 @@ export enum POST_STATUS {
   PUBLISHED = 'published',
   DRAFT = 'draft',
   DELETED = 'deleted',
+}
+
+export enum POST_TYPE {
+  DEFAULT = 'default',
+  RECRUIT = 'recruit',
+  PROMOTION = 'promotion',
+  SERVICE = 'service',
 }

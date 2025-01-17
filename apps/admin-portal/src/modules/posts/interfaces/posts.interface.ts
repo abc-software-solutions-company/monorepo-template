@@ -18,6 +18,7 @@ export type PostEntity = {
   id: string;
   name: string; // TODO: Will be removed
   slug: string;
+  type: string;
   description: string; // TODO: Will be removed
   body: string; // TODO: Will be removed
   status: POST_STATUS;
@@ -40,4 +41,4 @@ export type PostFormData = z.infer<typeof postSchema>;
 export type PostsResponse = ResponseFormat<PostEntity[]>;
 export type PostResponse = ResponseFormat<PostEntity>;
 export type BulkDeletePostResponse = PostResponse;
-export type PostFilter = BaseFilter;
+export type PostFilter = { type?: string } & BaseFilter;

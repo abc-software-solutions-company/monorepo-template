@@ -2,7 +2,6 @@ import { ReactNode, useEffect, useState } from 'react';
 import { Provider } from 'react-redux';
 import { IntlProvider } from 'use-intl';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Unsubscribe } from '@reduxjs/toolkit';
 import { createAsyncStoragePersister } from '@tanstack/query-async-storage-persister';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client';
@@ -11,12 +10,11 @@ import { MediaContextProvider } from '@/components/media';
 
 import { AppDataProvider } from '@/modules/app-data/components/app-data.provider';
 import { useAuthState } from '@/modules/auth/states/auth.state';
-import { setupPostListeners } from '@/modules/posts/states/posts.listener';
 import { PreferenceEntity } from '@/modules/settings/interfaces/settings.interface';
 
 import { getQueryClient } from '@/utils/query-client.util';
 
-import { startAppListening, store } from '@/stores/redux/store';
+import { store } from '@/stores/redux/store';
 
 import enMessages from '@/locales/en-us.json';
 import viMessages from '@/locales/vi-vn.json';
@@ -52,12 +50,6 @@ function AllTheProviders({ children }: AllTheProvidersProps) {
       setPreference({ theme: 'dark' } as PreferenceEntity);
     }
   }, [setPreference, theme]);
-
-  useEffect(() => {
-    const subscriptions: Unsubscribe[] = [setupPostListeners(startAppListening)];
-
-    return () => subscriptions.forEach(unsubscribe => unsubscribe());
-  }, []);
 
   useEffect(() => {
     if (theme === 'dark') {

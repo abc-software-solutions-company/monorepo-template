@@ -7,8 +7,6 @@ import { categoriesData } from '@/modules/categories/states/categories.data';
 import categorySlice from '@/modules/categories/states/categories.slice';
 import { filesData } from '@/modules/files/states/files.data';
 import fileSlice from '@/modules/files/states/files.slice';
-import { postsData } from '@/modules/posts/states/posts.data';
-import postSlice from '@/modules/posts/states/posts.slice';
 import { productsData } from '@/modules/products/states/products.data';
 import productSlice from '@/modules/products/states/products.slice';
 import { usersData } from '@/modules/users/states/users.data';
@@ -22,7 +20,6 @@ const rootReducer = combineReducers({
   [userSlice.name]: userSlice.reducer,
   [fileSlice.name]: fileSlice.reducer,
   [categorySlice.name]: categorySlice.reducer,
-  [postSlice.name]: postSlice.reducer,
   [productSlice.name]: productSlice.reducer,
 });
 
@@ -30,7 +27,6 @@ const preloadedState = {
   [userSlice.name]: usersData,
   [fileSlice.name]: filesData,
   [categorySlice.name]: categoriesData,
-  [postSlice.name]: postsData,
   [productSlice.name]: productsData,
 };
 const listenerMiddlewareInstance = createListenerMiddleware();

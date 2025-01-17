@@ -1,13 +1,13 @@
-import { FC, useEffect } from 'react';
+import { FC, useEffect, useState } from 'react';
 import { useLocale } from 'use-intl';
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@repo/react-web-ui-shadcn/components/ui/dialog';
 import { Loading } from '@repo/react-web-ui-shadcn/components/ui/loading';
 import { Separator } from '@repo/react-web-ui-shadcn/components/ui/separator';
 
-import ContentRenderer from '@/components/content-renderer';
+import { useGetPostQuery } from '../hooks/use-post-queries';
 
-import { usePostsState } from '@/modules/posts/states/posts.state';
+import ContentRenderer from '@/components/content-renderer';
 
 type PostDialogDetailProps = {
   id: string;
@@ -17,23 +17,25 @@ type PostDialogDetailProps = {
 
 const PostDialogDetail: FC<PostDialogDetailProps> = ({ id, visible, onCancel }) => {
   const locale = useLocale();
-  const postsState = usePostsState();
+  const [isVisible, setIsVisible] = useState(false);
+  const { data: content, isFetching } = useGetPostQuery({ id, enabled: isVisible });
 
-  const name = postsState.detail?.nameLocalized?.find(x => x.lang === locale)?.value ?? '';
-  const description = postsState.detail?.descriptionLocalized?.find(x => x.lang === locale)?.value ?? '';
-  const body = postsState.detail?.bodyLocalized?.find(x => x.lang === locale)?.value ?? '';
+  const name = content?.data.nameLocalized?.find(x => x.lang === locale)?.value ?? '';
+  const description = content?.data.descriptionLocalized?.find(x => x.lang === locale)?.value ?? '';
+  const body = content?.data.bodyLocalized?.find(x => x.lang === locale)?.value ?? '';
 
   useEffect(() => {
     if (visible) {
-      postsState.readRequest(id);
+      setIsVisible(true);
     }
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [visible, id]);
 
   return (
     <Dialog open={visible} onOpenChange={onCancel}>
       <DialogContent className="top-0 max-w-7xl translate-y-0">
-        {postsState.isReading && (
+        {isFetching && (
           <>
             <VisuallyHidden>
               <DialogHeader>
@@ -47,7 +49,7 @@ const PostDialogDetail: FC<PostDialogDetailProps> = ({ id, visible, onCancel }) 
           </>
         )}
 
-        {!postsState.isReading && !!postsState.detail && (
+        {!isFetching && (
           <>
             <DialogHeader>
               <DialogTitle>{name}</DialogTitle>

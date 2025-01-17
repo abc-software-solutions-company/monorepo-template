@@ -132,9 +132,6 @@ const ContentList: FC<ComponentBaseProps> = ({ className }) => {
             </div>
           );
         },
-        filterFn: (row, id, value) => {
-          return value.includes(row.getValue(id));
-        },
       },
       {
         id: 'actions',

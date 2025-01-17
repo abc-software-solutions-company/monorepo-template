@@ -1,6 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import { IsArray, IsEnum, IsNotEmpty, IsOptional, IsString, IsUUID, MaxLength, ValidateNested } from 'class-validator';
+import { IsArray, IsEnum, IsNotEmpty, IsOptional, IsString, MaxLength, Validate, ValidateNested } from 'class-validator';
 
 import { createTranslationDto } from '@/common/dtos/language.dto';
 import { SeoMetaDto } from '@/common/dtos/seo-meta.dto';
@@ -9,10 +9,12 @@ import { Translation } from '@/common/interfaces/language.interface';
 
 import { toSlug } from '@/common/utils/string.util';
 
+import { IsUUIDOrEmpty } from '@/common/validators/is-uuid-or-emptystring.validator';
+
 import { FileDto } from '@/modules/files/dto/file.dto';
 import { File } from '@/modules/files/entities/file.entity';
 
-import { POST_STATUS } from '../constants/posts.constant';
+import { POST_STATUS, POST_TYPE } from '../constants/posts.constant';
 
 export class CreatePostDto {
   // TODO: Will be removed
@@ -40,6 +42,10 @@ export class CreatePostDto {
   @IsNotEmpty()
   @MaxLength(255)
   slug: string;
+
+  @ApiPropertyOptional({ example: POST_TYPE.DEFAULT })
+  @IsString()
+  type: POST_TYPE;
 
   // TODO: Will be removed
   @ApiPropertyOptional({ example: '<p>description</p>' })
@@ -117,7 +123,7 @@ export class CreatePostDto {
 
   @ApiPropertyOptional({ description: 'Category ID', example: 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx' })
   @IsOptional()
-  @IsUUID('4')
+  @Validate(IsUUIDOrEmpty)
   categoryId?: string;
 
   @ApiPropertyOptional({ type: SeoMetaDto, description: 'SEO Meta Data' })

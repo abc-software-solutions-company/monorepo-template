@@ -20,14 +20,14 @@ import { ComponentBaseProps } from '@/interfaces/component.interface';
 
 import { POST_STATUSES } from '../constants/posts.constant';
 
-import PostFilterStatus from './post-filter-status';
+import { usePosts } from '../hooks/use-posts';
 
-import { usePostsState } from '../states/posts.state';
+import PostFilterStatus from './post-filter-status';
 
 const PostFilters: FC<ComponentBaseProps> = ({ className }) => {
   const t = useTranslations();
   const [searchParams] = useSearchParams();
-  const postsState = usePostsState();
+  const { filter, setFilter } = usePosts();
   const [isOpenSubMenu, setIsOpenSubMenu] = useState<string | null>(null);
 
   const currentStatuses = searchParams.getAll('status');
@@ -50,7 +50,7 @@ const PostFilters: FC<ComponentBaseProps> = ({ className }) => {
                   <PostFilterStatus
                     options={POST_STATUSES}
                     value={currentStatuses}
-                    onChange={statuses => postsState.setFilter({ page: 1, status: statuses })}
+                    onChange={statuses => setFilter({ ...filter, page: 1, status: statuses })}
                     onClose={() => setIsOpenSubMenu(null)}
                   />
                 </DropdownMenuSubContent>

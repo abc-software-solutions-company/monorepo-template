@@ -3,6 +3,16 @@ import { CheckCircle2Icon, CircleSlashIcon, XCircleIcon } from 'lucide-react';
 import { OptionType } from '@/interfaces/status.interface';
 import { PostFilter } from '../interfaces/posts.interface';
 
+export const QUERY_POST_LIST = 'posts';
+export const QUERY_POST_DETAIL = 'post';
+
+export enum POST_TYPE {
+  DEFAULT = 'default',
+  RECRUIT = 'recruit',
+  PROMOTION = 'promotion',
+  SERVICE = 'service',
+}
+
 export enum POST_STATUS {
   PUBLISHED = 'published',
   DRAFT = 'draft',
@@ -22,6 +32,7 @@ export const POST_DEFAULT_FILTER: PostFilter = {
   limit: 50,
   order: 'DESC',
   status: [],
+  type: 'default',
 };
 
 export const POST_STATUSES: OptionType[] = [

@@ -18,7 +18,7 @@ import { CATEGORY_STATUS, CATEGORY_TYPE } from '@/modules/categories/constants/c
 import { Category } from '@/modules/categories/entities/category.entity';
 import { File } from '@/modules/files/entities/file.entity';
 import { FilesModule } from '@/modules/files/files.module';
-import { POST_STATUS } from '@/modules/posts/constants/posts.constant';
+import { POST_STATUS, POST_TYPE } from '@/modules/posts/constants/posts.constant';
 import { CreatePostDto } from '@/modules/posts/dto/create-post.dto';
 import { FilterPostDto } from '@/modules/posts/dto/filter-post.dto';
 import { UpdatePostDto } from '@/modules/posts/dto/update-post.dto';
@@ -121,6 +121,7 @@ describe('AdminPostsController (e2e)', () => {
       const createPostDto: CreatePostDto = {
         name: 'Invalid Category',
         slug: 'invalid-category',
+        type: POST_TYPE.DEFAULT,
         description: 'This post has a non-UUID categoryId.',
         body: 'Full content with non-UUID categoryId.',
         status: POST_STATUS.DRAFT,
@@ -139,7 +140,14 @@ describe('AdminPostsController (e2e)', () => {
     });
 
     it('should throw Unauthorized if accessToken is missing', async () => {
-      const createPostDto: CreatePostDto = { name: 'NestJS', slug: 'nestjs', description: 'short', body: 'full', status: POST_STATUS.PUBLISHED };
+      const createPostDto: CreatePostDto = {
+        name: 'NestJS',
+        slug: 'nestjs',
+        type: POST_TYPE.DEFAULT,
+        description: 'short',
+        body: 'full',
+        status: POST_STATUS.PUBLISHED,
+      };
 
       const response = await supertest(app.getHttpServer()).post('/api/v1/admin/posts').send(createPostDto);
 
@@ -153,6 +161,7 @@ describe('AdminPostsController (e2e)', () => {
       const createPostDto: CreatePostDto = {
         name: 'NestJS',
         slug: 'nestjs',
+        type: POST_TYPE.DEFAULT,
         description: 'short',
         body: 'full content',
         status: POST_STATUS.DRAFT,
@@ -185,6 +194,7 @@ describe('AdminPostsController (e2e)', () => {
       const createPostDto: CreatePostDto = {
         name: 'NestJS',
         slug: 'nestjs',
+        type: POST_TYPE.DEFAULT,
         description: 'short',
         body: 'full',
         status: POST_STATUS.PUBLISHED,
@@ -206,6 +216,7 @@ describe('AdminPostsController (e2e)', () => {
       const createPostDto: CreatePostDto = {
         name: 'Test Post',
         slug: 'test-post',
+        type: POST_TYPE.DEFAULT,
         description: 'Test Description',
         body: 'Test Body',
         status: POST_STATUS.PUBLISHED,
@@ -226,6 +237,7 @@ describe('AdminPostsController (e2e)', () => {
       const createPostDto: CreatePostDto = {
         name: 'Test Post',
         slug: 'test-post',
+        type: POST_TYPE.DEFAULT,
         description: 'Test Description',
         body: 'Test Body',
         status: POST_STATUS.PUBLISHED,
@@ -247,6 +259,7 @@ describe('AdminPostsController (e2e)', () => {
       const createPostDto: CreatePostDto = {
         name: 'Test Post',
         slug: 'test-post',
+        type: POST_TYPE.DEFAULT,
         description: 'Test Description',
         body: 'Test Body',
         status: POST_STATUS.PUBLISHED,

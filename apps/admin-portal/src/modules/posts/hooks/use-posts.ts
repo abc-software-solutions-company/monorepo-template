@@ -1,66 +1,18 @@
-import { useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
+/*
+ * @Author: <Tin Tran> (tin.tran@abcdigital.io)
+ * @Created: 2025-01-17 14:26:39
+ */
 
-import CategoryApi from '@/modules/categories/api/categories.api';
-import { CATEGORY_TYPE } from '@/modules/categories/constants/categories.constant';
+import { useContext } from 'react';
 
-import PostApi from '../api/posts.api';
+import { PostContext } from '../contexts/posts.context';
 
-type CategoryFormFilter = {
-  type?: CATEGORY_TYPE;
+export const usePosts = () => {
+  const context = useContext(PostContext);
+
+  if (context === undefined) {
+    throw new Error('usePosts must be used within a PostProvider');
+  }
+
+  return context;
 };
-
-type UsePostsProps = {
-  isEdit: boolean;
-  postId: string;
-};
-
-function usePosts({ isEdit, postId }: UsePostsProps) {
-  const [formFilter, refetchCategories] = useState<CategoryFormFilter>({ type: CATEGORY_TYPE.POST });
-  const {
-    data: post,
-    isFetched: isPostFetched,
-    isFetching: isPostFetching,
-  } = useQuery({
-    queryKey: ['post', postId],
-    queryFn: async () => {
-      const postResp = await PostApi.read(postId);
-
-      return postResp.data.data;
-    },
-    enabled: isEdit,
-    staleTime: 0,
-    gcTime: 0,
-  });
-  const {
-    data: categories,
-    isFetched: isCategoriesFetched,
-    isFetching: isCategoriesFetching,
-  } = useQuery({
-    queryKey: ['categories', formFilter],
-    queryFn: async () => {
-      const categoriesResp = await CategoryApi.list({ type: formFilter.type });
-
-      return categoriesResp.data.data;
-    },
-    staleTime: 0,
-    gcTime: 0,
-  });
-
-  const isFetched = isCategoriesFetched;
-  const isFetching = isCategoriesFetching;
-
-  return {
-    isFetched,
-    isFetching,
-    isPostFetched,
-    isPostFetching,
-    isCategoriesFetched,
-    isCategoriesFetching,
-    post,
-    categories,
-    refetchCategories,
-  };
-}
-
-export default usePosts;

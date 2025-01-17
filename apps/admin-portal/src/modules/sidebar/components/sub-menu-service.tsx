@@ -4,12 +4,12 @@ import { NavLink, useLocation, useSearchParams } from 'react-router-dom';
 import { useLocale, useTranslations } from 'use-intl';
 import { objectToQueryString } from '@repo/shared-universal/utils/string.util';
 
-type SubMenuPostsProps = {
+type SubMenuServicesProps = {
   type: 'dropdown' | 'list';
   onNavigate?: () => void;
 };
 
-const SubMenuPosts: FC<SubMenuPostsProps> = ({ type, onNavigate }) => {
+const SubMenuServices: FC<SubMenuServicesProps> = ({ type, onNavigate }) => {
   const t = useTranslations();
   const [searchParams] = useSearchParams();
   const { pathname } = useLocation();
@@ -39,10 +39,10 @@ const SubMenuPosts: FC<SubMenuPostsProps> = ({ type, onNavigate }) => {
         )}
         onClick={handleClick}
       >
-        <p className={classNames('whitespace-nowrap', className)}>{t('sidebar_menu_posts_create_new')}</p>
+        <p className={classNames('whitespace-nowrap', className)}>{t('sidebar_menu_services_create_new')}</p>
       </NavLink>
     </div>
   );
 };
 
-export default SubMenuPosts;
+export default SubMenuServices;
