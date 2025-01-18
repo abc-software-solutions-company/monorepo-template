@@ -6,13 +6,13 @@ import { Table } from '@tanstack/react-table';
 
 import { CATEGORY_DEFAULT_FILTER } from '../constants/categories.constant';
 
+import { useCategories } from '../hooks/use-categories';
+
 import { DataTableViewOptions } from '@/components/data-table/data-table-view-options';
 import DropdownBulkActions from '@/components/dropdown-bulk-actions';
 import SearchBox from '@/components/search-box';
 
 import CategoryFilters from './category-filters';
-
-import { useCategoriesState } from '../states/categories.state';
 
 type CategoryListToolbarProps<TData> = {
   table: Table<TData>;
@@ -24,14 +24,14 @@ export default function CategoryListToolbar<TData>({ table, onBulkDelete }: Cate
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const locale = useLocale();
-  const categoriesState = useCategoriesState();
+  const { selected, filter, setFilter } = useCategories();
 
   return (
     <div className="flex items-center justify-between">
       <div className="flex items-center space-x-2">
         <CategoryFilters />
-        <SearchBox value={categoriesState.filter?.q} onSearch={text => categoriesState.setFilter({ q: text })} />
-        <Button variant="outline" onClick={() => categoriesState.setFilter(CATEGORY_DEFAULT_FILTER)}>
+        <SearchBox value={filter?.q} onSearch={text => setFilter({ ...filter, q: text })} />
+        <Button variant="outline" onClick={() => setFilter(CATEGORY_DEFAULT_FILTER)}>
           {t('filter_reset')}
         </Button>
         <DataTableViewOptions table={table} />
@@ -51,7 +51,7 @@ export default function CategoryListToolbar<TData>({ table, onBulkDelete }: Cate
           actions={[
             {
               label: t('bulk_actions_delete_selected_rows'),
-              disabled: !categoriesState.selected.length,
+              disabled: !selected.length,
               onClick: onBulkDelete,
             },
           ]}

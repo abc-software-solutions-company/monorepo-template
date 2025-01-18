@@ -1,4 +1,3 @@
-import { EntityId } from '@reduxjs/toolkit';
 import { objectToQueryString } from '@repo/shared-universal/utils/string.util';
 
 import { ProductFilter, ProductFormData, ProductResponse, ProductsResponse } from '../interfaces/products.interface';
@@ -17,20 +16,20 @@ export const create = (createProductDto: ProductFormData) => {
   return axiosClient.post<ProductResponse>(API_ENDPOINTS.PRODUCTS, createProductDto);
 };
 
-export const read = (id: EntityId) => {
+export const read = (id: string) => {
   return axiosClient.get<ProductResponse>(`${API_ENDPOINTS.PRODUCTS}/${id}`);
 };
 
-export const update = (id: EntityId, updateProductDto: ProductFormData) => {
+export const update = (id: string, updateProductDto: ProductFormData) => {
   return axiosClient.patch<ProductResponse>(`${API_ENDPOINTS.PRODUCTS}/${id}`, updateProductDto);
 };
 
-export const destroy = (id: EntityId) => {
+export const destroy = (id: string) => {
   return axiosClient.delete<ProductResponse>(`${API_ENDPOINTS.PRODUCTS}/${id}`);
 };
 
-export const bulkDestroy = (payload: { ids: EntityId[] }) => {
-  return axiosClient.post<ProductResponse>(`${API_ENDPOINTS.PRODUCTS}/bulk-delete`, payload);
+export const bulkDestroy = (payload: { ids: string[] }) => {
+  return axiosClient.post<ProductsResponse>(`${API_ENDPOINTS.PRODUCTS}/bulk-delete`, payload);
 };
 
 const ProductApi = { list, create, read, update, destroy, bulkDestroy };

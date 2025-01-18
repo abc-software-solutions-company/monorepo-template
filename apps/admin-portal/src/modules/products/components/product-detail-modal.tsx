@@ -5,20 +5,20 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 import { Loading } from '@repo/react-web-ui-shadcn/components/ui/loading';
 import { Separator } from '@repo/react-web-ui-shadcn/components/ui/separator';
 
-import { useGetPostQuery } from '../hooks/use-post-queries';
+import { useGetProductQuery } from '../hooks/use-product-queries';
 
 import ContentRenderer from '@/components/content-renderer';
 
-type PostDialogDetailProps = {
+type ProductDetailModalProps = {
   id: string;
   visible: boolean;
   onCancel?: () => void;
 };
 
-const PostDialogDetail: FC<PostDialogDetailProps> = ({ id, visible, onCancel }) => {
+const ProductDetailModal: FC<ProductDetailModalProps> = ({ id, visible, onCancel }) => {
   const locale = useLocale();
   const [isVisible, setIsVisible] = useState(false);
-  const { data: content, isFetching } = useGetPostQuery({ id, enabled: isVisible });
+  const { data: content, isFetching } = useGetProductQuery({ id, enabled: isVisible });
 
   const name = content?.data.nameLocalized?.find(x => x.lang === locale)?.value ?? '';
   const description = content?.data.descriptionLocalized?.find(x => x.lang === locale)?.value ?? '';
@@ -73,4 +73,4 @@ const PostDialogDetail: FC<PostDialogDetailProps> = ({ id, visible, onCancel }) 
   );
 };
 
-export default PostDialogDetail;
+export default ProductDetailModal;

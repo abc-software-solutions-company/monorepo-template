@@ -3,6 +3,10 @@ import { CheckCircle2Icon, XCircleIcon } from 'lucide-react';
 import { OptionType } from '@/interfaces/status.interface';
 import { CategoryFilter } from '../interfaces/categories.interface';
 
+export const QUERY_CATEGORY_LIST = 'categories';
+export const QUERY_CATEGORY_DETAIL = 'category';
+export const QUERY_CATEGORY_LIST_BY_TYPE = 'categories-by-type';
+
 export enum CATEGORY_STATUS {
   VISIBLED = 'visibled',
   DELETED = 'deleted',
@@ -41,7 +45,7 @@ export const CATEGORY_TYPES = [
     label: 'Post',
     value: CATEGORY_TYPE.POST,
   },
-] as unknown as OptionType[];
+] as OptionType[];
 
 export const CATEGORY_STATUSES: OptionType[] = [
   {

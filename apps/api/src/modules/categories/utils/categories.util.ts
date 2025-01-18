@@ -43,14 +43,15 @@ export function renameDirectorySync(oldPath: string, newPath: string) {
   }
 }
 
-export function getCategoryInfo(categories: Category[], categoryId: string): { path: string; depth: number } {
+export function getCategoryInfo(categories: Category[], categoryId: string, locale?: string): { path: string; depth: number } {
   const category = categories.find(cat => cat.id === categoryId);
+  const name = category.nameLocalized.find(x => x.lang === locale)?.value;
 
   if (!category) {
     return { path: '', depth: 0 };
   }
 
-  let catePath = `/${category.name}`;
+  let catePath = `/${name}`;
   let depth = 0;
 
   if (category.parent) {
@@ -63,14 +64,15 @@ export function getCategoryInfo(categories: Category[], categoryId: string): { p
   return { path: catePath, depth };
 }
 
-export function buildTree(categories: Category[], id: string, basePath: string) {
+export function buildTree(categories: Category[], id: string, basePath: string, locale?: string) {
   const tree: Category[] = [];
 
   categories.forEach(category => {
     const parentId = category.parent && category.parent.id;
+    const name = category.nameLocalized.find(x => x.lang === locale)?.value;
 
     if (parentId === id) {
-      const fullPath = basePath === '/' ? basePath + category.name : basePath + '/' + category.name;
+      const fullPath = basePath === '/' ? basePath + name : basePath + '/' + name;
       const children = buildTree(categories, category.id, fullPath);
 
       tree.push({

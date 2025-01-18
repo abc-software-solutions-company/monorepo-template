@@ -41,7 +41,7 @@ const users = [
     createdAt: faker.date.past(),
     updatedAt: faker.date.recent(),
   },
-] as unknown as User[];
+] as User[];
 
 function createRandomUser() {
   const countryCodes = ['91', '65', '1'];
@@ -61,7 +61,7 @@ function createRandomUser() {
     country: countries[Math.floor(Math.random() * countries.length)].code,
     createdAt: faker.date.past(),
     updatedAt: faker.date.recent(),
-  } as unknown as User;
+  } as User;
 }
 
 const randomUsers = faker.helpers.multiple(createRandomUser, {

@@ -1,4 +1,3 @@
-import { EntityId } from '@reduxjs/toolkit';
 import { objectToQueryString } from '@repo/shared-universal/utils/string.util';
 
 import { CategoriesResponse, CategoryFilter, CategoryFormData, CategoryResponse } from '../interfaces/categories.interface';
@@ -17,20 +16,20 @@ export const create = (createCategoryDto: CategoryFormData) => {
   return axiosClient.post<CategoryResponse>(API_ENDPOINTS.CATEGORIES, createCategoryDto);
 };
 
-export const read = (id: EntityId) => {
+export const read = (id: string) => {
   return axiosClient.get<CategoryResponse>(`${API_ENDPOINTS.CATEGORIES}/${id}`);
 };
 
-export const update = (id: EntityId, updateCategoryDto: CategoryFormData) => {
+export const update = (id: string, updateCategoryDto: CategoryFormData) => {
   return axiosClient.patch<CategoryResponse>(`${API_ENDPOINTS.CATEGORIES}/${id}`, updateCategoryDto);
 };
 
-export const destroy = (id: EntityId) => {
+export const destroy = (id: string) => {
   return axiosClient.delete<CategoryResponse>(`${API_ENDPOINTS.CATEGORIES}/${id}`);
 };
 
-export const bulkDestroy = (payload: { ids: EntityId[] }) => {
-  return axiosClient.post<CategoryResponse>(`${API_ENDPOINTS.CATEGORIES}/bulk-delete`, payload);
+export const bulkDestroy = (payload: { ids: string[] }) => {
+  return axiosClient.post<CategoriesResponse>(`${API_ENDPOINTS.CATEGORIES}/bulk-delete`, payload);
 };
 
 const CategoryApi = { list, create, read, update, destroy, bulkDestroy };

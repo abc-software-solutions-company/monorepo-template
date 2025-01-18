@@ -5,7 +5,7 @@ import FilesRoot from '@/modules/files/components/file-root';
 const PageFileList = () => {
   return (
     <PageWrapper>
-      <FilesRoot categoryVisible={false} />
+      <FilesRoot />
     </PageWrapper>
   );
 };

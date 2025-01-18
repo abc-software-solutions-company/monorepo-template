@@ -14,7 +14,7 @@ export class FilterPostDto extends BaseFilterDto {
   @ApiPropertyOptional({
     enum: POST_STATUS,
     isArray: true,
-    example: [POST_STATUS.DRAFT],
+    example: [POST_STATUS.DRAFT, POST_STATUS.PUBLISHED],
     default: [POST_STATUS.DRAFT],
   })
   @IsArray()

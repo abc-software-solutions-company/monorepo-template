@@ -15,6 +15,8 @@ import { FilterPostDto } from '../dto/filter-post.dto';
 import { UpdatePostDto } from '../dto/update-post.dto';
 import { PostsService } from '../posts.service';
 
+const defaultLanguage = 'en-us';
+
 describe('AdminPostsController', () => {
   let controller: AdminPostsController;
   let service: PostsService;
@@ -70,11 +72,11 @@ describe('AdminPostsController', () => {
   describe('create', () => {
     it('should call postsService.create with correct parameters', async () => {
       const createPostDto: CreatePostDto = {
-        name: 'Test Post',
         slug: 'test-post',
         type: POST_TYPE.DEFAULT,
-        description: 'This is a test',
-        body: 'Test Body',
+        nameLocalized: [{ lang: defaultLanguage, value: 'Test Name' }],
+        descriptionLocalized: [{ lang: defaultLanguage, value: 'Test Description' }],
+        bodyLocalized: [{ lang: defaultLanguage, value: 'Test Body' }],
         status: POST_STATUS.PUBLISHED,
       };
 
@@ -106,7 +108,7 @@ describe('AdminPostsController', () => {
   describe('update', () => {
     it('should call postsService.update with correct parameters', async () => {
       const postId = 'some-id';
-      const updatePostDto: UpdatePostDto = { name: 'Updated Title' };
+      const updatePostDto: UpdatePostDto = { nameLocalized: [{ lang: defaultLanguage, value: 'Updated Name' }] };
 
       await controller.update(mockRequest, postId, updatePostDto);
 

@@ -1,6 +1,8 @@
 import { FC, useEffect, useMemo, useState } from 'react';
+import axios from 'axios';
 import classNames from 'classnames';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import { toast } from 'sonner';
 import { useLocale, useTranslations } from 'use-intl';
 import ModalConfirm from '@repo/react-web-ui-shadcn/components/modals/modal-confirm';
 import { Checkbox } from '@repo/react-web-ui-shadcn/components/ui/checkbox';
@@ -21,9 +23,12 @@ import {
 } from '@tanstack/react-table';
 
 import { ComponentBaseProps } from '@/interfaces/component.interface';
-import { ProductEntity, ProductFilter } from '../interfaces/products.interface';
+import { ProductEntity, ProductResponse, ProductsResponse } from '../interfaces/products.interface';
 
-import { PRODUCT_ACTION, PRODUCT_DEFAULT_FILTER, PRODUCT_STATUSES } from '../constants/products.constant';
+import { PRODUCT_ACTION, PRODUCT_STATUS, PRODUCT_STATUSES, PRODUCT_TYPE, QUERY_PRODUCT_LIST } from '../constants/products.constant';
+
+import { useBulkDestroyProductsMutation, useDestroyProductMutation } from '../hooks/use-product-queries';
+import { useProducts } from '../hooks/use-products';
 
 import { DataTable } from '@/components/data-table/data-table';
 import { DataTableColumnHeader } from '@/components/data-table/data-table-column-header';
@@ -31,25 +36,27 @@ import DataTableRowAction from '@/components/data-table/data-table-row-action';
 import ItemsPerPage from '@/components/item-per-page';
 import PaginationInfo from '@/components/pagination-info';
 
+import { getQueryClient } from '@/utils/query-client.util';
+
+import ProductDetailModal from './product-detail-modal';
 import ProductListToolbar from './product-list-toolbar';
 import ProductRowStatus from './product-row-status';
 
-import { useProductsState } from '../states/products.state';
+const queryClient = getQueryClient();
 
 const ProductList: FC<ComponentBaseProps> = ({ className }) => {
   const t = useTranslations();
   const navigate = useNavigate();
-  const locale = useLocale();
   const [searchParams] = useSearchParams();
-  const productsState = useProductsState();
+  const locale = useLocale();
+  const [viewDetailId, setViewDetailId] = useState('');
   const [action, setAction] = useState<{ name: string; data?: ProductEntity }>({ name: '' });
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [sorting, setSorting] = useState<SortingState>([]);
-
-  const { items, filter, meta, fetchedAt, filteredAt, deletedAt, isFetching, selected, selectSingle, selectAll } = productsState;
-  const selectedIds = selected.reduce((row, id) => ({ ...row, [id]: true }), {});
-
+  const { items, meta, selected, selectedIds, isFetching, filter, setFilter, toggleSelect, toggleSelectAll, clearSelection } = useProducts();
+  const { mutateAsync: destroyMutation } = useDestroyProductMutation();
+  const { mutateAsync: bulkDestroyMutation } = useBulkDestroyProductsMutation();
   const [rowSelection, setRowSelection] = useState<RowSelectionState>(selectedIds);
   const columns: ColumnDef<ProductEntity>[] = useMemo(
     () => [
@@ -63,7 +70,7 @@ const ProductList: FC<ComponentBaseProps> = ({ className }) => {
             className="translate-y-[2px]"
             onCheckedChange={value => {
               table.toggleAllRowsSelected(!!value);
-              selectAll(value ? items.map(x => x.id) : []);
+              toggleSelectAll(!!value);
             }}
           />
         ),
@@ -75,23 +82,22 @@ const ProductList: FC<ComponentBaseProps> = ({ className }) => {
             className="translate-y-[2px]"
             onCheckedChange={value => {
               row.toggleSelected(!!value);
-              selectSingle(row.original.id);
+              toggleSelect(row.original.id);
             }}
           />
         ),
       },
       {
-        accessorKey: 'cover',
+        accessorKey: 'coverLocalized',
         size: 130,
         header: ({ column }) => <DataTableColumnHeader column={column} title={t('product_image')} />,
         cell: ({ row }) => {
-          const cover = row.original.cover;
+          const name = row.original.nameLocalized?.find(x => x.lang === locale)?.value;
+          const cover = row.original.coverLocalized?.find(x => x.lang === locale)?.value;
 
           if (!cover) return null;
 
-          return (
-            <img className="h-16 w-24 rounded-md object-cover" src={`${import.meta.env.VITE_PUBLIC_API_URL}/${cover}`} alt={row.original.name} />
-          );
+          return <img className="h-16 w-24 rounded-md object-cover" src={`${import.meta.env.VITE_PUBLIC_API_URL}/${cover}`} alt={name} />;
         },
       },
       {
@@ -99,18 +105,24 @@ const ProductList: FC<ComponentBaseProps> = ({ className }) => {
         size: 0,
         header: ({ column }) => <DataTableColumnHeader column={column} title={t('product_title')} />,
         cell: ({ row }) => {
+          const name = row.original.nameLocalized?.find(x => x.lang === locale)?.value ?? '';
+          const fallbackName = row.original.nameLocalized?.[0]?.value ?? '';
+
           return (
-            <div className="flex items-center space-x-1">
+            <div className="flex items-center">
               <button
                 className="text-left hover:underline"
                 onClick={() =>
                   navigate({
                     pathname: `/${locale}/products/${row.original.id}/edit`,
-                    search: `?${objectToQueryString({ sidebar: searchParams.get('sidebar') })}`,
+                    search: `?${objectToQueryString({ sidebar: searchParams.get('sidebar'), type: searchParams.get('type') })}`,
                   })
                 }
               >
-                {row.getValue('name')}
+                {name || fallbackName}
+              </button>
+              <button className="p-1.5" onClick={() => setViewDetailId(row.original.id)}>
+                <span className="text-primary">({t('view_detail')})</span>
               </button>
             </div>
           );
@@ -121,9 +133,9 @@ const ProductList: FC<ComponentBaseProps> = ({ className }) => {
         size: 0,
         header: ({ column }) => <DataTableColumnHeader column={column} title={t('product_category')} />,
         cell: ({ row }) => {
-          const category = row.original.category;
+          const name = row.original.category.nameLocalized.find(x => x.lang === locale)?.value;
 
-          return <p>{category?.name}</p>;
+          return <p>{name}</p>;
         },
       },
       {
@@ -153,6 +165,27 @@ const ProductList: FC<ComponentBaseProps> = ({ className }) => {
         },
         filterFn: (row, id, value) => {
           return value.includes(row.getValue(id));
+        },
+      },
+      {
+        accessorKey: 'creator',
+        size: 0,
+        header: ({ column }) => <DataTableColumnHeader column={column} title={t('product_author')} />,
+        cell: ({ row }) => {
+          const creator = row.original.creator;
+
+          return (
+            <div className="flex space-x-2">
+              <div className="max-w-64 truncate leading-none">
+                {creator && (
+                  <>
+                    <p>{creator.name}</p>
+                    <p className="text-xs text-muted-foreground">{creator.email}</p>
+                  </>
+                )}
+              </div>
+            </div>
+          );
         },
       },
       {
@@ -202,55 +235,77 @@ const ProductList: FC<ComponentBaseProps> = ({ className }) => {
     getFacetedUniqueValues: getFacetedUniqueValues(),
   });
 
-  const getFilter = (): ProductFilter => {
-    return {
-      q: searchParams.get('q') || PRODUCT_DEFAULT_FILTER.q,
-      page: parseInt(searchParams.get('page') as string) || PRODUCT_DEFAULT_FILTER.page,
-      limit: parseInt(searchParams.get('limit') as string) || PRODUCT_DEFAULT_FILTER.limit,
-      order: searchParams.get('order') || PRODUCT_DEFAULT_FILTER.order,
-      status: searchParams.getAll('status') || PRODUCT_DEFAULT_FILTER.status,
-    };
+  const onDeleteSuccess = async (resp: ProductResponse, id: string) => {
+    queryClient.setQueryData<ProductsResponse>([QUERY_PRODUCT_LIST, filter], cached => {
+      if (!cached || !cached.data) return cached;
+
+      const updatedData = cached.data.map(item => (item.id === id ? { ...item, status: PRODUCT_STATUS.DELETED } : item));
+
+      return { ...cached, data: updatedData };
+    });
+
+    toast(t('product_delete_toast_title'), { description: t('product_delete_success') });
+  };
+
+  const onDeleteFailure = (error: Error, _id: string) => {
+    let errorMessage = t('product_delete_failure');
+
+    if (axios.isAxiosError(error) && error.response) {
+      errorMessage += `\n${error.response.data.message}`;
+    } else {
+      errorMessage += `\n${error.message}`;
+    }
+
+    toast(t('product_delete_toast_title'), { description: errorMessage });
+  };
+
+  const onBulkDeleteSuccess = (_resp: ProductsResponse, ids: string[]) => {
+    queryClient.setQueryData<ProductsResponse>([QUERY_PRODUCT_LIST, filter], cached => {
+      if (!cached || !cached.data) return cached;
+
+      const updatedData = cached.data.map(item => (ids.includes(item.id) ? { ...item, status: PRODUCT_STATUS.DELETED } : item));
+
+      return { ...cached, data: updatedData };
+    });
+
+    table.resetRowSelection(false);
+    clearSelection();
+    toast(t('product_delete_toast_title'), { description: t('product_delete_success') });
+  };
+
+  const onBulkDeleteFailure = (error: Error) => {
+    let errorMessage = t('product_bulk_delete_failure');
+
+    if (axios.isAxiosError(error) && error.response) {
+      errorMessage += `\n${error.response.data.message}`;
+    } else {
+      errorMessage += `\n${error.message}`;
+    }
+
+    toast(t('product_delete_toast_title'), { description: errorMessage });
   };
 
   useEffect(() => {
-    const currentFilter = getFilter();
-
-    if (filter) {
-      const queryString = objectToQueryString({ ...filter, sidebar: searchParams.get('sidebar') });
-
-      navigate({
-        pathname: `/${locale}/products`,
-        search: `?${queryString}`,
-      });
-
-      productsState.listRequest({ filter });
-    } else {
-      productsState.setFilter(currentFilter);
-    }
+    setFilter({ ...filter, type: searchParams.get('type') as PRODUCT_TYPE });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filteredAt]);
-
-  useEffect(() => {
-    if (productsState.deletedAt) table.resetRowSelection(false);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [deletedAt]);
+  }, [searchParams]);
 
   return (
     <div className={classNames('products-list flex grow flex-col rounded-lg border bg-card p-4 text-card-foreground shadow-sm', className)}>
       <div className="relative flex h-full grow flex-col">
         <ProductListToolbar table={table} onBulkDelete={() => setAction({ name: PRODUCT_ACTION.BULK_DELETE })} />
-        <DataTable containerClassName="mt-4" table={table} columns={columns} isFetching={isFetching || !fetchedAt} />
+        <DataTable containerClassName="mt-4" table={table} columns={columns} isFetching={isFetching} />
       </div>
       <div className="mt-3 flex justify-between">
         <div className="flex items-center space-x-2">
-          <ItemsPerPage limit={filter?.limit} onFilter={value => productsState.setFilter({ page: 1, limit: +value })} />
+          <ItemsPerPage limit={filter?.limit} onFilter={value => setFilter({ ...filter, page: 1, limit: +value })} />
           <PaginationInfo amount={meta?.paging?.totalItems} text={t('product_records')} />
         </div>
         <Pagination
           totalItems={meta?.paging?.totalItems || 0}
           currentPage={meta?.paging?.currentPage}
           itemPerPage={meta?.paging?.itemsPerPage}
-          onChange={page => productsState.setFilter({ page })}
+          onChange={page => setFilter({ ...filter, page })}
         />
       </div>
       <ModalConfirm
@@ -259,11 +314,14 @@ const ProductList: FC<ComponentBaseProps> = ({ className }) => {
         content={
           <>
             <span>{t('product_delete_message')}</span>
-            <strong className="ml-1">{action.data?.name}?</strong>
+            <strong className="space-x-1">{action.data?.nameLocalized.find(x => x.lang === locale)?.value}</strong>
           </>
         }
         onYes={() => {
-          productsState.destroyRequest(action.data?.id as string);
+          destroyMutation(action.data?.id as string, {
+            onSuccess: onDeleteSuccess,
+            onError: onDeleteFailure,
+          });
           setAction({ name: '' });
         }}
         onNo={() => setAction({ name: '' })}
@@ -273,11 +331,15 @@ const ProductList: FC<ComponentBaseProps> = ({ className }) => {
         title={t('bulk_delete')}
         content={<span>{t('product_bulk_delete_message')}</span>}
         onYes={() => {
-          productsState.bulkDestroyRequest({ ids: productsState.selected });
+          bulkDestroyMutation(selected, {
+            onSuccess: onBulkDeleteSuccess,
+            onError: onBulkDeleteFailure,
+          });
           setAction({ name: '' });
         }}
         onNo={() => setAction({ name: '' })}
       />
+      <ProductDetailModal id={viewDetailId} visible={!!viewDetailId} onCancel={() => setViewDetailId('')} />
     </div>
   );
 };

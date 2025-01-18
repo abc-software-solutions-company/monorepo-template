@@ -1,22 +1,31 @@
 import { FC, useEffect, useRef, useState } from 'react';
+import axios from 'axios';
 import { Editor } from 'ckeditor5';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
+import { toast } from 'sonner';
 import { useLocale, useTranslations } from 'use-intl';
 import { zodResolver } from '@hookform/resolvers/zod';
-import FormFieldCKEditor from '@repo/react-web-ui-shadcn/components/form-fields/form-field-ckeditor';
-import FormFieldInput from '@repo/react-web-ui-shadcn/components/form-fields/form-field-input';
 import FormFieldInputSlug from '@repo/react-web-ui-shadcn/components/form-fields/form-field-input-slug';
+import FormFieldCKEditorMultiLanguage from '@repo/react-web-ui-shadcn/components/form-fields-ahua/form-field-ckeditor-multi-language';
+import FormFieldInputMultiLanguage from '@repo/react-web-ui-shadcn/components/form-fields-ahua/form-field-input-multi-language';
 import ModalLoading from '@repo/react-web-ui-shadcn/components/modals/modal-loading';
 import { Card, CardContent } from '@repo/react-web-ui-shadcn/components/ui/card';
 import { Form } from '@repo/react-web-ui-shadcn/components/ui/form';
+import { getLanguages } from '@repo/shared-universal/utils/language.util';
 import { objectToQueryString } from '@repo/shared-universal/utils/string.util';
 
 import { CategoryFormData } from '../interfaces/categories.interface';
 
 import { CATEGORY_STATUS, CATEGORY_STATUSES, CATEGORY_TYPE, CATEGORY_TYPES } from '../constants/categories.constant';
 
-import useCategories from '../hooks/use-categories';
+import {
+  useCreateCategoryMutation,
+  useGetCategoriesByTypeQuery,
+  useGetCategoriesQuery,
+  useGetCategoryQuery,
+  useUpdateCategoryMutation,
+} from '../hooks/use-category-queries';
 
 import EditorFileDialog from '@/components/editor-file-dialog';
 import FormFieldCardCover from '@/components/form-fields/form-field-card-cover';
@@ -29,8 +38,7 @@ import FormToolbar from '@/components/form-toolbar';
 
 import { FileEntity } from '@/modules/files/interfaces/files.interface';
 
-import { useCategoriesState } from '../states/categories.state';
-import { categoryFormValidator } from '../validators/category-form.validator';
+import { categoryFormLocalizeSchema } from '../validators/category-form.validator';
 
 type CategoryFormProps = {
   isEdit: boolean;
@@ -44,46 +52,100 @@ const CategoryForm: FC<CategoryFormProps> = ({ isEdit }) => {
   const locale = useLocale();
   const editorRef = useRef<Editor | null>(null);
   const [isFileManagerVisible, setIsFileManagerVisible] = useState(false);
-  const categoriesState = useCategoriesState();
-  const { category, categories, isFetching, refetchCategories } = useCategories({
-    isEdit,
-    categoryId: params.id as string,
-  });
+  const { data: content, isFetching } = useGetCategoryQuery({ id: params.id as string, enabled: !!params.id });
+  const { data: categories, isFetching: isCategoriesFetching } = useGetCategoriesQuery({ type: CATEGORY_TYPE.POST });
+  const { data: categoriesByType, isFetching: isCategoriesByTypeFetching } = useGetCategoriesByTypeQuery(
+    { type: content?.data.type },
+    content?.data.id
+  );
+  const { mutate: createMutation } = useCreateCategoryMutation();
+  const { mutate: updateMutation } = useUpdateCategoryMutation();
+
+  const languages = getLanguages(locale);
 
   const defaultValues: CategoryFormData = {
-    status: category?.status ?? CATEGORY_STATUS.VISIBLED,
-    name: category?.name ?? '',
-    slug: category?.slug ?? '',
-    cover: category?.cover ?? '',
-    images: category?.images ?? ([] as FileEntity[]),
-    description: category?.description ?? '',
-    body: category?.body ?? '',
-    type: category?.type ?? ('' as CATEGORY_TYPE),
-    parentId: category?.parent?.id ?? undefined,
-    seoMeta: category?.seoMeta ?? { title: '', description: '', keywords: '' },
+    status: content?.data.status ?? CATEGORY_STATUS.VISIBLED,
+    slug: content?.data.slug ?? '',
+    type: content?.data.type ?? ('' as CATEGORY_TYPE),
+    coverLocalized: content?.data.coverLocalized ?? [],
+    nameLocalized: content?.data.nameLocalized ?? [],
+    descriptionLocalized: content?.data.descriptionLocalized ?? [],
+    bodyLocalized: content?.data.bodyLocalized ?? [],
+    images: content?.data.images ?? ([] as FileEntity[]),
+    parentId: content?.data.parent?.id ?? undefined,
+    seoMeta: {
+      titleLocalized: content?.data.seoMeta?.titleLocalized ?? [],
+      descriptionLocalized: content?.data.seoMeta?.descriptionLocalized ?? [],
+      keywords: content?.data.seoMeta?.keywords ?? '',
+    },
   };
 
-  const form = useForm<CategoryFormData>({ resolver: zodResolver(categoryFormValidator), defaultValues });
-
-  const onSubmit: SubmitHandler<CategoryFormData> = async formData => {
-    if (isEdit) {
-      categoriesState.updateRequest({ id: params.id as string, data: formData });
-    } else {
-      categoriesState.createRequest(formData);
-    }
-  };
+  const form = useForm<CategoryFormData>({ resolver: zodResolver(categoryFormLocalizeSchema(languages)), defaultValues });
 
   const onBackClick = () => {
     navigate({
       pathname: `/${locale}/categories`,
-      search: `?${objectToQueryString({ sidebar: searchParams.get('sidebar') })}`,
+      search: `?${objectToQueryString({
+        sidebar: searchParams.get('sidebar'),
+      })}`,
     });
   };
 
+  const onCreateSuccess = () => {
+    toast(t('category_create_toast_title'), { description: t('category_create_success') });
+    onBackClick();
+  };
+
+  const onCreateFailure = (error: Error) => {
+    let errorMessage = t('category_create_failure');
+
+    if (axios.isAxiosError(error) && error.response) {
+      errorMessage += `\n${error.response.data.message}`;
+    } else {
+      errorMessage += `\n${error.message}`;
+    }
+
+    toast(t('category_update_toast_title'), { description: errorMessage });
+  };
+
+  const onUpdateSuccess = () => {
+    toast(t('category_update_toast_title'), { description: t('category_update_success') });
+    onBackClick();
+  };
+
+  const onUpdateFailure = (error: Error) => {
+    let errorMessage = t('category_update_failure');
+
+    if (axios.isAxiosError(error) && error.response) {
+      errorMessage += `\n${error.response.data.message}`;
+    } else {
+      errorMessage += `\n${error.message}`;
+    }
+
+    toast(t('category_update_toast_title'), { description: errorMessage });
+  };
+
+  const onSubmit: SubmitHandler<CategoryFormData> = async formData => {
+    if (isEdit) {
+      updateMutation(
+        { id: params.id as string, formData },
+        {
+          onSuccess: onUpdateSuccess,
+          onError: onUpdateFailure,
+        }
+      );
+    } else {
+      createMutation(formData, {
+        onSuccess: onCreateSuccess,
+        onError: onCreateFailure,
+      });
+    }
+  };
+
   useEffect(() => {
-    form.reset(defaultValues, { keepValues: true });
+    form.reset(defaultValues);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [form, category, categories]);
+  }, [form, content, categories]);
 
   return (
     <div data-testid="frm-category">
@@ -93,22 +155,33 @@ const CategoryForm: FC<CategoryFormProps> = ({ isEdit }) => {
           <div className="flex gap-4">
             <Card className="grow">
               <CardContent className="grid gap-4 pt-4">
-                <FormFieldInput form={form} fieldName="name" formLabel={t('form_field_name')} />
-                <FormFieldInputSlug form={form} />
-                <FormFieldCKEditor
+                <FormFieldInputMultiLanguage
                   form={form}
-                  fieldName="description"
+                  fieldName="nameLocalized"
+                  formLabel={t('form_field_name')}
+                  minLength={1}
+                  maxLength={255}
+                  locales={languages}
+                />
+                <FormFieldInputSlug form={form} />
+                <FormFieldCKEditorMultiLanguage
+                  form={form}
+                  fieldName="descriptionLocalized"
                   formLabel={t('form_field_description')}
                   editorRef={editorRef}
                   minHeight={120}
+                  minLength={1}
+                  maxLength={2000}
                   toolbar={['bold', 'italic', 'underline', 'strikethrough']}
+                  locales={languages}
                 />
-                <FormFieldCKEditor
+                <FormFieldCKEditorMultiLanguage
                   form={form}
-                  fieldName="body"
+                  fieldName="bodyLocalized"
                   formLabel={t('form_field_content')}
-                  toolbar={undefined}
                   editorRef={editorRef}
+                  locales={languages}
+                  minLength={1}
                   setVisible={setIsFileManagerVisible}
                 />
               </CardContent>
@@ -119,18 +192,18 @@ const CategoryForm: FC<CategoryFormProps> = ({ isEdit }) => {
             <div className="w-72 shrink-0">
               <div className="grid gap-4">
                 <FormFieldCardSelectStatus form={form} statuses={CATEGORY_STATUSES} />
-                {!category && (
+                {!content && (
                   <FormFieldCardSelectCategoryType
                     form={form}
                     items={CATEGORY_TYPES}
-                    onChange={value => refetchCategories({ type: value as CATEGORY_TYPE })}
+                    // onChange={value => refetchCategories({ type: value as CATEGORY_TYPE })}
                   />
                 )}
                 <FormFieldCardSelectCategory
                   form={form}
                   formLabel={t('form_field_category_parent')}
                   fieldName={'parentId'}
-                  categories={categories ?? []}
+                  categories={categoriesByType?.data ?? []}
                 />
                 <FormFieldCardCover form={form} />
                 <FormFieldCardImages form={form} />
@@ -140,7 +213,7 @@ const CategoryForm: FC<CategoryFormProps> = ({ isEdit }) => {
         </form>
       </Form>
       <EditorFileDialog editorRef={editorRef} visible={isFileManagerVisible} setVisible={setIsFileManagerVisible} />
-      <ModalLoading visible={isFetching} />
+      <ModalLoading visible={isFetching || isCategoriesFetching || isCategoriesByTypeFetching} />
     </div>
   );
 };

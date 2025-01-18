@@ -20,14 +20,14 @@ import { ComponentBaseProps } from '@/interfaces/component.interface';
 
 import { PRODUCT_STATUSES } from '../constants/products.constant';
 
-import ProductFilterStatus from './product-filter-status';
+import { useProducts } from '../hooks/use-products';
 
-import { useProductsState } from '../states/products.state';
+import ProductFilterStatus from './product-filter-status';
 
 const ProductFilters: FC<ComponentBaseProps> = ({ className }) => {
   const t = useTranslations();
   const [searchParams] = useSearchParams();
-  const productsState = useProductsState();
+  const { filter, setFilter } = useProducts();
   const [isOpenSubMenu, setIsOpenSubMenu] = useState<string | null>(null);
 
   const currentStatuses = searchParams.getAll('status');
@@ -50,7 +50,7 @@ const ProductFilters: FC<ComponentBaseProps> = ({ className }) => {
                   <ProductFilterStatus
                     options={PRODUCT_STATUSES}
                     value={currentStatuses}
-                    onChange={statuses => productsState.setFilter({ page: 1, status: statuses })}
+                    onChange={statuses => setFilter({ ...filter, page: 1, status: statuses })}
                     onClose={() => setIsOpenSubMenu(null)}
                   />
                 </DropdownMenuSubContent>

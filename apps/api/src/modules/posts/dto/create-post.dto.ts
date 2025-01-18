@@ -2,10 +2,7 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import { IsArray, IsEnum, IsNotEmpty, IsOptional, IsString, MaxLength, Validate, ValidateNested } from 'class-validator';
 
-import { createTranslationDto } from '@/common/dtos/language.dto';
-import { SeoMetaDto } from '@/common/dtos/seo-meta.dto';
-
-import { Translation } from '@/common/interfaces/language.interface';
+import { TranslationDto } from '@/common/dtos/translation.dto';
 
 import { toSlug } from '@/common/utils/string.util';
 
@@ -16,100 +13,22 @@ import { File } from '@/modules/files/entities/file.entity';
 
 import { POST_STATUS, POST_TYPE } from '../constants/posts.constant';
 
-export class CreatePostDto {
-  // TODO: Will be removed
-  @ApiProperty({ example: 'Post Name' })
-  @IsString()
-  @IsOptional()
-  @MaxLength(255)
-  name: string;
-
-  @ApiPropertyOptional({
-    description: 'Post name multi-language',
-    example: [
-      { lang: 'en-us', value: 'Title' },
-      { lang: 'vi-vn', value: 'Tiêu đề' },
-    ],
-  })
-  @IsOptional()
-  @IsArray()
-  @ValidateNested({ each: true })
-  @Type(() => createTranslationDto(255))
-  nameLocalized?: Translation[];
-
+export class CreatePostDto extends TranslationDto {
   @ApiProperty({ example: toSlug('Post Name') })
   @IsString()
   @IsNotEmpty()
   @MaxLength(255)
   slug: string;
 
-  @ApiPropertyOptional({ example: POST_TYPE.DEFAULT })
-  @IsString()
-  type: POST_TYPE;
-
-  // TODO: Will be removed
-  @ApiPropertyOptional({ example: '<p>description</p>' })
-  @IsString()
+  @ApiPropertyOptional({ enum: POST_TYPE, example: POST_TYPE.DEFAULT })
+  @IsEnum(POST_TYPE)
   @IsOptional()
-  @MaxLength(2000)
-  description: string;
+  type?: POST_TYPE;
 
-  @ApiPropertyOptional({
-    description: 'Post description multi-language',
-    example: [
-      { lang: 'en-us', value: 'Short description' },
-      { lang: 'vi-vn', value: 'Nội dung ngắn' },
-    ],
-  })
-  @IsOptional()
-  @IsArray()
-  @ValidateNested({ each: true })
-  @Type(() => createTranslationDto(2000))
-  descriptionLocalized?: Translation[];
-
-  // TODO: Will be removed
-  @ApiPropertyOptional({ example: '<p>body</p>' })
-  @IsString()
-  @IsOptional()
-  body: string;
-
-  @ApiPropertyOptional({
-    description: 'Post body multi-language',
-    example: [
-      { lang: 'en-us', value: 'Content' },
-      { lang: 'vi-vn', value: 'Nội dung' },
-    ],
-  })
-  @IsOptional()
-  @IsArray()
-  @ValidateNested({ each: true })
-  @Type(() => createTranslationDto(Infinity))
-  bodyLocalized?: Translation[];
-
-  @ApiPropertyOptional({ example: POST_STATUS.DRAFT })
+  @ApiPropertyOptional({ enum: POST_STATUS, example: POST_STATUS.DRAFT })
   @IsEnum(POST_STATUS)
   @IsOptional()
-  status: POST_STATUS;
-
-  // TODO: Will be removed
-  @ApiPropertyOptional({ description: 'Cover image', example: 'sample.jpg' })
-  @IsString()
-  @IsOptional()
-  @MaxLength(1000)
-  cover?: string;
-
-  @ApiPropertyOptional({
-    description: 'Cover image multi-language',
-    example: [
-      { lang: 'en-us', value: 'sample-en.jpg' },
-      { lang: 'vi-vn', value: 'sample-vi.jpg' },
-    ],
-  })
-  @IsOptional()
-  @IsArray()
-  @ValidateNested({ each: true })
-  @Type(() => createTranslationDto(1000))
-  coverLocalized?: Translation[];
+  status?: POST_STATUS;
 
   @ApiPropertyOptional({
     description: 'Array of file ID',
@@ -125,10 +44,4 @@ export class CreatePostDto {
   @IsOptional()
   @Validate(IsUUIDOrEmpty)
   categoryId?: string;
-
-  @ApiPropertyOptional({ type: SeoMetaDto, description: 'SEO Meta Data' })
-  @IsOptional()
-  @ValidateNested()
-  @Type(() => SeoMetaDto)
-  seoMeta?: SeoMetaDto;
 }

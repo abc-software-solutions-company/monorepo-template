@@ -1,4 +1,4 @@
-import { BadRequestException, ConflictException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
@@ -44,13 +44,6 @@ export class CategoriesService {
       throw new NotFoundException('Parent category does not exist.');
     }
 
-    const existingCategory = await this.categoryRepository.findOne({
-      where: { name: createDto.name, type: createDto.type, parent: { id: createDto.parentId } },
-    });
-
-    if (existingCategory) {
-      throw new ConflictException('Category with the same name already exists.');
-    }
     const newCategory = this.categoryRepository.create({ ...createDto, parent: parent });
 
     if (createDto.status) newCategory.status = createDto.status;
@@ -67,19 +60,23 @@ export class CategoriesService {
   }
 
   async findAll(filterDto: FilterCategoryDto) {
-    const { q, type, excludeId, status } = filterDto;
+    const { q, excludeId, status, type } = filterDto;
 
     const queryBuilder = this.createQueryBuilderWithJoins('category');
 
-    if (status) queryBuilder.where('category.status in (:...status)', { status });
-    if (q) {
-      queryBuilder
-        .andWhere('LOWER(category.name) LIKE LOWER(:name)', { name: `%${q}%` })
-        .orWhere('LOWER(category.description) LIKE LOWER(:description)', { description: `%${q}%` })
-        .orWhere('LOWER(category.body) LIKE LOWER(:body)', { body: `%${q}%` });
-    }
     if (type) {
       queryBuilder.andWhere('category.type = :type', { type });
+    }
+    if (status) {
+      queryBuilder.andWhere('category.status in (:...status)', { status });
+    }
+    if (q) {
+      const searchTerm = `%${q}%`;
+
+      queryBuilder.andWhere(
+        "EXISTS (SELECT 1 FROM jsonb_array_elements(category.nameLocalized) AS translation WHERE LOWER(translation->>'value') LIKE LOWER(:searchTerm))",
+        { searchTerm }
+      );
     }
     if (excludeId) {
       queryBuilder.andWhere('category.id != :id', { id: excludeId });
@@ -91,14 +88,20 @@ export class CategoriesService {
   }
 
   async find(filterDto: FilterCategoryDto) {
-    const { q, order, status, sort, type, excludeId, skip, limit } = filterDto;
+    const { q, order, status, sort, excludeId, skip, limit, type } = filterDto;
 
     const queryBuilder = this.createQueryBuilderWithJoins('category');
 
     queryBuilder.where('parent.id IS NULL');
+
     if (status) queryBuilder.andWhere('category.status in (:...status)', { status });
     if (q) {
-      queryBuilder.andWhere('LOWER(category.name) LIKE LOWER(:name)', { name: `%${q}%` });
+      const searchTerm = `%${q}%`;
+
+      queryBuilder.andWhere(
+        "EXISTS (SELECT 1 FROM jsonb_array_elements(category.nameLocalized) AS translation WHERE LOWER(translation->>'value') LIKE LOWER(:searchTerm))",
+        { searchTerm }
+      );
     }
     if (excludeId) {
       queryBuilder.andWhere('category.id != :id', { id: excludeId });
@@ -108,12 +111,12 @@ export class CategoriesService {
     }
     if (sort) {
       if (order) {
-        queryBuilder.orderBy(`post.${sort}`, order);
+        queryBuilder.orderBy(`category.${sort}`, order);
       } else {
-        queryBuilder.orderBy(`post.${sort}`, SORT_ORDER.DESC);
+        queryBuilder.orderBy(`category.${sort}`, SORT_ORDER.DESC);
       }
     } else {
-      queryBuilder.orderBy('post.createdAt', SORT_ORDER.DESC);
+      queryBuilder.orderBy('category.createdAt', SORT_ORDER.DESC);
     }
     queryBuilder.skip(skip).take(limit);
 
@@ -165,8 +168,6 @@ export class CategoriesService {
       throw new BadRequestException('Category Type change is not allowed');
     }
 
-    category.parent = parent;
-
     for (const field of CATEGORY_FIELDS_TO_CREATE_OR_UPDATE) {
       if (updateDto[field] !== undefined) {
         category[field] = updateDto[field];
@@ -175,6 +176,8 @@ export class CategoriesService {
 
     if (updateDto.status) category.status = updateDto.status;
     if (updateDto.seoMeta) category.seoMeta = updateDto.seoMeta;
+
+    category.parent = parent;
 
     const updatedCategory = await this.categoryRepository.save(category);
 

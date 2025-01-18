@@ -16,7 +16,6 @@ import { AppService } from './app.service';
 import { AuditLogsModule } from '../audit-logs/audit-logs.module';
 import { AwsModule } from '../aws/aws.module';
 import { ContactsModule } from '../contacts/contacts.module';
-import { ContentsModule } from '../contents/contents.module';
 import { FaqsModule } from '../faqs/faqs.module';
 import { FilesModule } from '../files/files.module';
 import { NotificationsModule } from '../notifications/notifications.module';
@@ -28,7 +27,6 @@ import { ProductsModule } from '../products/products.module';
     UsersModule,
     AuthModule,
     RefreshTokensModule,
-    ContentsModule,
     PostsModule,
     ProductsModule,
     CategoriesModule,

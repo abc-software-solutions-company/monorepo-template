@@ -1,22 +1,25 @@
 import { FC, useEffect, useRef, useState } from 'react';
+import axios from 'axios';
 import { Editor } from 'ckeditor5';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
+import { toast } from 'sonner';
 import { useLocale, useTranslations } from 'use-intl';
 import { zodResolver } from '@hookform/resolvers/zod';
-import FormFieldCKEditor from '@repo/react-web-ui-shadcn/components/form-fields/form-field-ckeditor';
-import FormFieldInput from '@repo/react-web-ui-shadcn/components/form-fields/form-field-input';
 import FormFieldInputSlug from '@repo/react-web-ui-shadcn/components/form-fields/form-field-input-slug';
+import FormFieldCKEditorMultiLanguage from '@repo/react-web-ui-shadcn/components/form-fields-ahua/form-field-ckeditor-multi-language';
+import FormFieldInputMultiLanguage from '@repo/react-web-ui-shadcn/components/form-fields-ahua/form-field-input-multi-language';
 import ModalLoading from '@repo/react-web-ui-shadcn/components/modals/modal-loading';
 import { Card, CardContent } from '@repo/react-web-ui-shadcn/components/ui/card';
 import { Form } from '@repo/react-web-ui-shadcn/components/ui/form';
+import { getLanguages } from '@repo/shared-universal/utils/language.util';
 import { objectToQueryString } from '@repo/shared-universal/utils/string.util';
 
 import { ProductFormData } from '../interfaces/products.interface';
 
-import { PRODUCT_STATUS, PRODUCT_STATUSES } from '../constants/products.constant';
+import { PRODUCT_STATUS, PRODUCT_STATUSES, PRODUCT_TYPE } from '../constants/products.constant';
 
-import useProducts from '../hooks/use-products';
+import { useCreateProductMutation, useGetProductQuery, useUpdateProductMutation } from '../hooks/use-product-queries';
 
 import EditorFileDialog from '@/components/editor-file-dialog';
 import FormFieldCardCover from '@/components/form-fields/form-field-card-cover';
@@ -26,10 +29,11 @@ import FormFieldCardSelectStatus from '@/components/form-fields/form-field-card-
 import FormFieldCardSeoMeta from '@/components/form-fields/form-field-card-seo-meta';
 import FormToolbar from '@/components/form-toolbar';
 
+import { CATEGORY_TYPE } from '@/modules/categories/constants/categories.constant';
+import { useGetCategoriesQuery } from '@/modules/categories/hooks/use-category-queries';
 import { FileEntity } from '@/modules/files/interfaces/files.interface';
 
-import { useProductsState } from '../states/products.state';
-import { productFormValidator } from '../validators/product-form.validator';
+import { productFormLocalizeSchema } from '../validators/product-form.validator';
 
 type ProductFormProps = {
   isEdit: boolean;
@@ -43,44 +47,97 @@ const ProductForm: FC<ProductFormProps> = ({ isEdit }) => {
   const locale = useLocale();
   const editorRef = useRef<Editor | null>(null);
   const [isFileManagerVisible, setIsFileManagerVisible] = useState(false);
-  const productsState = useProductsState();
-  const { product, categories, isFetching } = useProducts({ isEdit, productId: params.id as string });
+  const { data: content, isFetching } = useGetProductQuery({ id: params.id as string, enabled: !!params.id });
+  const { data: categories, isFetching: isCategoriesFetching } = useGetCategoriesQuery({ type: CATEGORY_TYPE.PRODUCT });
+  const { mutate: createMutation } = useCreateProductMutation();
+  const { mutate: updateMutation } = useUpdateProductMutation();
+
+  const languages = getLanguages(locale);
 
   const defaultValues: ProductFormData = {
-    status: product?.status ?? PRODUCT_STATUS.DRAFT,
-    name: product?.name ?? '',
-    slug: product?.slug ?? '',
-    cover: product?.cover ?? '',
-    images: product?.images ?? ([] as FileEntity[]),
-    description: product?.description ?? '',
-    body: product?.body ?? '',
-    categoryId: product?.category?.id ?? undefined,
-    seoMeta: product?.seoMeta ?? { title: '', description: '', keywords: '' },
+    status: content?.data.status ?? PRODUCT_STATUS.DRAFT,
+    slug: content?.data.slug ?? '',
+    type: content?.data.type ?? (searchParams.get('type') as PRODUCT_TYPE),
+    coverLocalized: content?.data.coverLocalized ?? [],
+    nameLocalized: content?.data.nameLocalized ?? [],
+    descriptionLocalized: content?.data.descriptionLocalized ?? [],
+    bodyLocalized: content?.data.bodyLocalized ?? [],
+    images: content?.data.images ?? ([] as FileEntity[]),
+    categoryId: content?.data.category?.id ?? '',
+    seoMeta: {
+      titleLocalized: content?.data.seoMeta?.titleLocalized ?? [],
+      descriptionLocalized: content?.data.seoMeta?.descriptionLocalized ?? [],
+      keywords: content?.data.seoMeta?.keywords ?? '',
+    },
   };
 
-  const form = useForm<ProductFormData>({ resolver: zodResolver(productFormValidator), defaultValues });
-
-  const onSubmit: SubmitHandler<ProductFormData> = async formData => {
-    formData.images = formData.images.map(item => ({ id: item.id }) as FileEntity);
-
-    if (isEdit) {
-      productsState.updateRequest({ id: params.id as string, data: formData });
-    } else {
-      productsState.createRequest(formData);
-    }
-  };
+  const form = useForm<ProductFormData>({ resolver: zodResolver(productFormLocalizeSchema(languages)), defaultValues });
 
   const onBackClick = () => {
     navigate({
       pathname: `/${locale}/products`,
-      search: `?${objectToQueryString({ sidebar: searchParams.get('sidebar') })}`,
+      search: `?${objectToQueryString({
+        sidebar: searchParams.get('sidebar'),
+        type: searchParams.get('type'),
+      })}`,
     });
+  };
+
+  const onCreateSuccess = () => {
+    toast(t('product_create_toast_title'), { description: t('product_create_success') });
+    onBackClick();
+  };
+
+  const onCreateFailure = (error: Error) => {
+    let errorMessage = t('product_create_failure');
+
+    if (axios.isAxiosError(error) && error.response) {
+      errorMessage += `\n${error.response.data.message}`;
+    } else {
+      errorMessage += `\n${error.message}`;
+    }
+
+    toast(t('product_update_toast_title'), { description: errorMessage });
+  };
+
+  const onUpdateSuccess = () => {
+    toast(t('product_update_toast_title'), { description: t('product_update_success') });
+    onBackClick();
+  };
+
+  const onUpdateFailure = (error: Error) => {
+    let errorMessage = t('product_update_failure');
+
+    if (axios.isAxiosError(error) && error.response) {
+      errorMessage += `\n${error.response.data.message}`;
+    } else {
+      errorMessage += `\n${error.message}`;
+    }
+
+    toast(t('product_update_toast_title'), { description: errorMessage });
+  };
+
+  const onSubmit: SubmitHandler<ProductFormData> = async formData => {
+    if (isEdit) {
+      updateMutation(
+        { id: params.id as string, formData },
+        {
+          onSuccess: onUpdateSuccess,
+          onError: onUpdateFailure,
+        }
+      );
+    } else {
+      createMutation(formData, {
+        onSuccess: onCreateSuccess,
+        onError: onCreateFailure,
+      });
+    }
   };
 
   useEffect(() => {
     form.reset(defaultValues);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [form, product]);
+  }, [form, content, categories]);
 
   return (
     <div data-testid="frm-product">
@@ -90,21 +147,33 @@ const ProductForm: FC<ProductFormProps> = ({ isEdit }) => {
           <div className="flex gap-4">
             <Card className="grow">
               <CardContent className="grid gap-4 pt-4">
-                <FormFieldInput form={form} fieldName="name" formLabel={t('form_field_name')} />
-                <FormFieldInputSlug form={form} />
-                <FormFieldCKEditor
+                <FormFieldInputMultiLanguage
                   form={form}
-                  fieldName="description"
+                  fieldName="nameLocalized"
+                  formLabel={t('form_field_name')}
+                  minLength={1}
+                  maxLength={255}
+                  locales={languages}
+                />
+                <FormFieldInputSlug form={form} />
+                <FormFieldCKEditorMultiLanguage
+                  form={form}
+                  fieldName="descriptionLocalized"
                   formLabel={t('form_field_description')}
                   editorRef={editorRef}
                   minHeight={120}
+                  minLength={1}
+                  maxLength={2000}
                   toolbar={['bold', 'italic', 'underline', 'strikethrough']}
+                  locales={languages}
                 />
-                <FormFieldCKEditor
+                <FormFieldCKEditorMultiLanguage
                   form={form}
-                  fieldName="body"
+                  fieldName="bodyLocalized"
                   formLabel={t('form_field_content')}
                   editorRef={editorRef}
+                  locales={languages}
+                  minLength={1}
                   setVisible={setIsFileManagerVisible}
                 />
               </CardContent>
@@ -115,7 +184,7 @@ const ProductForm: FC<ProductFormProps> = ({ isEdit }) => {
             <div className="w-72 shrink-0">
               <div className="grid gap-4">
                 <FormFieldCardSelectStatus form={form} statuses={PRODUCT_STATUSES} />
-                <FormFieldCardSelectCategory form={form} categories={categories ?? []} />
+                <FormFieldCardSelectCategory form={form} categories={categories?.data ?? []} />
                 <FormFieldCardCover form={form} />
                 <FormFieldCardImages form={form} />
               </div>
@@ -124,7 +193,7 @@ const ProductForm: FC<ProductFormProps> = ({ isEdit }) => {
         </form>
       </Form>
       <EditorFileDialog editorRef={editorRef} visible={isFileManagerVisible} setVisible={setIsFileManagerVisible} />
-      <ModalLoading visible={isFetching} />
+      <ModalLoading visible={isFetching || isCategoriesFetching} />
     </div>
   );
 };

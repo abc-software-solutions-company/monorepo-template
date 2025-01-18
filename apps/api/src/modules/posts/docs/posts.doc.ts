@@ -3,7 +3,7 @@ import { ApiProperty } from '@nestjs/swagger';
 
 import { PaginationDto } from '@/common/dtos/pagination.dto';
 
-import { POST_STATUS } from '../constants/posts.constant';
+import { POST_STATUS, POST_TYPE } from '../constants/posts.constant';
 
 export class CreatePostSuccessDoc {
   @ApiProperty({ enum: HttpStatus, example: HttpStatus.CREATED })
@@ -16,10 +16,8 @@ export class CreatePostSuccessDoc {
     type: 'object',
     example: {
       id: 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx',
-      name: 'This is title of post',
       slug: 'this-is-title-of-post',
-      description: 'Short content here',
-      body: 'Full content here',
+      type: POST_TYPE.DEFAULT,
       status: POST_STATUS.DRAFT,
       createdAt: '2023-11-28T03:03:39.054Z',
       updatedAt: '2023-11-28T03:03:39.054Z',
@@ -45,6 +43,7 @@ export class GetPostsSuccessDoc {
         id: 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx',
         name: 'This is title of post',
         slug: 'this-is-title-of-post',
+        type: POST_TYPE.DEFAULT,
         description: 'Short content here',
         body: 'Full content here',
         status: POST_STATUS.PUBLISHED,
@@ -62,6 +61,7 @@ export class GetPostsSuccessDoc {
         id: 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx',
         name: 'This is title of post 2',
         slug: 'this-is-title-of-post-2',
+        type: POST_TYPE.DEFAULT,
         description: 'Short content here',
         body: 'Full content here',
         status: POST_STATUS.PUBLISHED,
@@ -107,6 +107,7 @@ export class GetPostSuccessDoc {
       id: 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx',
       name: 'This is title of post',
       slug: 'this-is-title-of-post',
+      type: POST_TYPE.DEFAULT,
       description: 'Short content here',
       body: 'Full content here',
       status: POST_STATUS.PUBLISHED,
@@ -144,6 +145,7 @@ export class UpdatePostSuccessDoc {
       id: 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx',
       name: 'This is title of post',
       slug: 'this-is-title-of-post',
+      type: POST_TYPE.DEFAULT,
       description: 'Short content here',
       body: 'Full content here',
       status: POST_STATUS.PUBLISHED,
@@ -170,6 +172,7 @@ export class DeletePostSuccessDoc {
       id: 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx',
       name: 'This is title of post',
       slug: 'this-is-title-of-post',
+      type: POST_TYPE.DEFAULT,
       description: 'Short content here',
       body: 'Full content here',
       status: POST_STATUS.DELETED,
