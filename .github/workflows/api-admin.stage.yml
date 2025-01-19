@@ -17,7 +17,7 @@ env:
   ENV_FILE_PATH: apps/api/.env
   DOCKER_HOST_PORT: 3502 # Change this value if your server is already running a Docker container with this port
   DOCKER_CONTAINER_PORT: 3500 # This is the app port, which command yarn start runs and provides
-  AWS_ECR_REPOSITORY_URI: ${{ secrets.AWS_ECR_REPOSITORY_URI }} # Add this to your GitHub secrets
+  AWS_ECR_REPOSITORY_URI: ${{ secrets.AWS_ECR_REPOSITORY_URI_API_STAGE }}
 
 jobs:
   build-and-deploy:
@@ -95,7 +95,7 @@ jobs:
                 - "${{ env.DOCKER_HOST_PORT }}:${{ env.DOCKER_CONTAINER_PORT }}"
           EOF
 
-      - name: Copy docker-compose and env files to server
+      - name: Copy docker-compose file to server
         uses: appleboy/scp-action@v0.1.4
         with:
           host: ${{ secrets.STAGE_SERVER_HOST }}
