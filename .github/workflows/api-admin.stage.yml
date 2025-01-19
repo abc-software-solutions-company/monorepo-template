@@ -67,7 +67,7 @@ jobs:
           --health-retries=2 \
           ${{ env.AWS_ECR_REPOSITORY_URI }}:${{ github.sha }}
 
-          sleep 10
+          sleep 20
 
           HEALTH_STATUS=$(docker inspect --format='{{json .State.Health.Status}}' ${{ env.APP_NAME }})
 
