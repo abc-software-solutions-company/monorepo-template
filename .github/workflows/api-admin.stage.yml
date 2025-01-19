@@ -3,9 +3,9 @@ name: Deploy Admin API (Stage)
 on:
   push:
     branches:
-      - '90-reduce-time-when-deployment-docker-to-server-vietnam'
-    # paths:
-    #   - 'apps/api/**'
+      - 'main'
+    paths:
+      - 'apps/api/**'
   workflow_dispatch:
 
 env:

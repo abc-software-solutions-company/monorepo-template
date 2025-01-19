@@ -3,9 +3,9 @@ name: Deploy Website (Stage)
 on:
   push:
     branches:
-      - '90-reduce-time-when-deployment-docker-to-server-vietnam'
-    # paths:
-    #   - 'apps/website/**'
+      - 'main'
+    paths:
+      - 'apps/website/**'
   workflow_dispatch:
 
 env:

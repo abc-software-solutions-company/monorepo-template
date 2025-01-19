@@ -3,9 +3,9 @@ name: Deploy Admin Portal (Stage)
 on:
   push:
     branches:
-      - '90-reduce-time-when-deployment-docker-to-server-vietnam'
-    # paths:
-    #   - 'apps/admin-portal/**'
+      - 'main'
+    paths:
+      - 'apps/admin-portal/**'
   workflow_dispatch:
 
 env:
