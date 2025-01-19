@@ -17,7 +17,7 @@ env:
   ENV_FILE_PATH: apps/website/.env
   DOCKER_HOST_PORT: 3004 # Change this value if your server is already run docker container with this port, using command docker ps to check it
   DOCKER_CONTAINER_PORT: 3000
-  AWS_ECR_REPOSITORY_URI: ${{ secrets.AWS_ECR_REPOSITORY_URI_WEBSITE_STAGE }} # Add this to your GitHub secrets
+  AWS_ECR_REPOSITORY_URI: ${{ secrets.AWS_ECR_REPOSITORY_URI_WEBSITE_STAGE }}
 
 jobs:
   build-and-deploy:
