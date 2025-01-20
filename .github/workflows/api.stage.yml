@@ -1,4 +1,4 @@
-name: Deploy Admin API (Stage)
+name: Deploy API (Stage)
 
 on:
   push:
@@ -10,8 +10,8 @@ on:
 
 env:
   APP_ENV: ${{ secrets.API_STAGE }}
-  APP_NAME: api-stage
-  DOCKER_COMPOSE_SERVICE: monorepo-api-stage
+  APP_NAME: monorepo-template-api-stage
+  DOCKER_COMPOSE_SERVICE: monorepo-template-api-stage
   DOCKERFILE_PATH: apps/api/Dockerfile
   DOCKER_COMPOSE_PATH: apps/api/docker-compose.yml
   ENV_FILE_PATH: apps/api/.env

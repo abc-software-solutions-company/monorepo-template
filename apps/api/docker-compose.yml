@@ -1,71 +1,6 @@
 services:
-  app:
-    container_name: nestjs-admin-portal-template
-    image: nest-app-admin-portal
-    restart: always
-    build:
-      context: .
-      dockerfile: Dockerfile
-      args:
-        # APP
-        AP_HOST: ${AP_HOST}
-        AP_PORT: ${AP_PORT}
-        # DOCUMENTATION
-        AP_DOCUMENTATION_ENABLED: ${AP_DOCUMENTATION_ENABLED}
-        # HTTP
-        AP_REQUEST_TIMEOUT: ${AP_REQUEST_TIMEOUT}
-        # RATE LIMIT
-        AP_THROTTLE_TTL: ${AP_THROTTLE_TTL}
-        AP_THROTTLE_LIMIT: ${AP_THROTTLE_LIMIT}
-        # CACHE
-        AP_CACHE_TIME_TO_LIVE: ${AP_CACHE_TIME_TO_LIVE}
-        # AUTH
-        AP_JWT_SECRET_KEY: ${AP_JWT_SECRET_KEY}
-        AP_JWT_EXPIRES_IN: ${AP_JWT_EXPIRES_IN}
-        AP_JWT_REFRESH_SECRET_KEY: ${AP_JWT_REFRESH_SECRET_KEY}
-        AP_JWT_REFRESH_EXPIRES_IN: ${AP_JWT_REFRESH_EXPIRES_IN}
-        AP_OAUTH_FACEBOOK_CLIENT_ID: ${AP_OAUTH_FACEBOOK_CLIENT_ID};
-        AP_OAUTH_FACEBOOK_CLIENT_SECRET: ${AP_OAUTH_FACEBOOK_CLIENT_SECRET};
-        AP_OAUTH_GOOGLE_CLIENT_ID: ${AP_OAUTH_GOOGLE_CLIENT_ID};
-        AP_OAUTH_GOOGLE_CLIENT_SECRET: ${AP_OAUTH_GOOGLE_CLIENT_SECRET};
-        # DEFAULT USER
-        AP_USER_EMAIL: ${AP_USER_EMAIL}
-        AP_USER_PASSWORD: ${AP_USER_PASSWORD}
-        # DATABASE
-        AP_DB_HOST: ${AP_DB_HOST}
-        AP_DB_SSL: ${AP_DB_SSL}
-        AP_DB_PORT: ${AP_DB_PORT}
-        AP_DB_NAME: ${AP_DB_NAME}
-        AP_DB_USERNAME: ${AP_DB_USERNAME}
-        AP_DB_PASSWORD: ${AP_DB_PASSWORD}
-        AP_DB_SCHEMA: ${AP_DB_SCHEMA}
-        AP_DB_LOGS: ${AP_DB_LOGS}
-        # EMAIL
-        AP_EMAIL_HOST: ${AP_EMAIL_HOST}
-        AP_EMAIL_PORT: ${AP_EMAIL_PORT}
-        AP_EMAIL_SECURE: ${AP_EMAIL_SECURE}
-        AP_EMAIL_USERNAME: ${AP_EMAIL_USERNAME}
-        AP_EMAIL_PASSWORD: ${AP_EMAIL_PASSWORD}
-        # REDIS
-        AP_REDIS_HOST: ${AP_REDIS_HOST}
-        AP_REDIS_PORT: ${AP_REDIS_PORT}
-        # AWS
-        AP_AWS_ENDPOINT: ${AP_AWS_ENDPOINT}
-        AP_AWS_REGION: ${AP_AWS_REGION}
-        AP_AWS_ACCESS_KEY_ID: ${AP_AWS_ACCESS_KEY_ID}
-        AP_AWS_SECRET_ACCESS_KEY: ${AP_AWS_SECRET_ACCESS_KEY}
-        AP_AWS_S3_BUCKET_NAME: ${AP_AWS_S3_BUCKET_NAME}
-    env_file:
-      - .env
-    ports:
-      - 3500:3500
-    depends_on:
-      - db
-      - redis
-    command: ['./start.sh']
-
-  db:
-    container_name: nestjs-admin-portal-template-db
+  monorepo-template-db:
+    container_name: monorepo-template-db
     image: postgres
     restart: always
     ports:
@@ -77,10 +12,10 @@ services:
     env_file:
       - .env
     volumes:
-      - postgres:/var/lib/postgresql/data
+      - monorepo-template-posgres-db:/var/lib/postgresql/data
 
-  dbtest:
-    container_name: nest-admin-portal-template-db-test
+  monorepo-template-db-test:
+    container_name: monorepo-template-db-test
     image: postgres
     restart: always
     ports:
@@ -92,29 +27,29 @@ services:
     env_file:
       - .env.test
     volumes:
-      - postgrestest:/var/lib/postgresql/data
+      - monorepo-template-posgres-db-test:/var/lib/postgresql/data
 
-  redis:
-    container_name: nest-admin-portal-template-redis
-    image: redis
-    restart: always
-    ports:
-      - 6379:6379
-    env_file:
-      - .env
+  # monorepo-template-redis:
+  #   container_name: monorepo-template-redis
+  #   image: redis
+  #   restart: always
+  #   ports:
+  #     - 6379:6379
+  #   env_file:
+  #     - .env
 
-  redistest:
-    container_name: nest-admin-portal-template-redis-test
-    image: redis
-    restart: always
-    ports:
-      - 6380:6379
-    env_file:
-      - .env.test
+  # monorepo-template-redis-test:
+  #   container_name: monorepo-template-redis-test
+  #   image: redis
+  #   restart: always
+  #   ports:
+  #     - 6380:6379
+  #   env_file:
+  #     - .env.test
 
-  minio:
+  monorepo-template-minio:
     image: minio/minio:latest
-    container_name: nest-admin-portal-template-minio
+    container_name: monorepo-template-minio
     ports:
       - '9000:9000' # S3-compatible API
       - '9001:9001' # MinIO Console
@@ -122,10 +57,10 @@ services:
       MINIO_ROOT_USER: minioadmin # Access key
       MINIO_ROOT_PASSWORD: minioadmin # Secret key
     volumes:
-      - minio-data:/data
+      - monorepo-template-minio-data:/data
     command: server /data --console-address ":9001"
 
 volumes:
-  postgres:
-  postgrestest:
-  minio-data:
+  monorepo-template-posgres-db:
+  monorepo-template-posgres-db-test:
+  monorepo-template-minio-data:
