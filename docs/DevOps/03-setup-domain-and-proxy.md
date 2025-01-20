@@ -24,7 +24,7 @@ portal, and website. It also includes instructions for redirecting non-www traff
    - Click on **Domain List** in the left sidebar.
    - Find your domain (e.g., `example.com`) and click **Manage**.
 
-3. **Set Up DNS Records:** Under the **DNS Settings** tab, do the following:
+3. **Set Up DNS Records:** Under the **Advanced DNS** tab, add the following DNS record:
 
    | **Type** | **Host** | **Value**     | **TTL**     |
    | -------- | -------- | ------------- | ----------- |
