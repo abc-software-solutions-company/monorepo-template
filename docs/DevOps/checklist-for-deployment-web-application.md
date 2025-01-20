@@ -93,6 +93,18 @@ Before modifying the GitHub Actions workflows in `.github/workflows`, follow the
   - Image should be visually appealing and represent your brand/content
   - Keep file size under 1MB for faster loading
   - Use JPG format for better compression while maintaining quality
+- Configure environment variables for enable SEO in production:
+  - Set `NEXT_PUBLIC_APP_ENV=production` in production environment only
+  - This enables Google crawling and indexing of your website
+  - Keep as `development` in staging/development environments
+  - Example `.env` configuration for production:
+    ```env
+    NEXT_PUBLIC_APP_ENV=production
+    ```
+  - Example `.env` configuration for development/staging:
+    ```env
+    NEXT_PUBLIC_APP_ENV=development
+    ```
 
 ---
 
