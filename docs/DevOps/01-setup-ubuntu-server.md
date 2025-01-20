@@ -132,6 +132,7 @@ sudo apt update && sudo apt upgrade -y
    - Default login:
      - **Email:** `admin@example.com`
      - **Password:** `changeme`
+   - Change default account login for security Nginx Proxy Manager
 
 ---
 

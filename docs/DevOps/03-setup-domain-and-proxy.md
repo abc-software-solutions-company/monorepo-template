@@ -60,13 +60,16 @@ portal, and website. It also includes instructions for redirecting non-www traff
 1. Go to **Proxy Hosts** → Click **Add Proxy Host**.
 2. Fill in the form:
    - **Domain Names:** `api.example.com`.
-   - **Scheme:** Select `http` or `https` based on your backend service.
+   - **Scheme:** Select `http` based on your backend service.
    - **Forward Hostname/IP:** Enter the IP or hostname of the API backend.
    - **Forward Port:** Enter the port your API service is running on (e.g., `3500`).
    - **Websockets Support:** Check this box if your API uses websockets.
 3. **SSL Setup:**
-   - Enable **Force SSL** to redirect HTTP traffic to HTTPS.
+   - Go to tab **SSL**
+   - In the **SSL Certificate**
    - Click **Request a New SSL Certificate** → Select **Let’s Encrypt**.
+   - Enable **Force SSL** to redirect HTTP traffic to HTTPS.
+   - In the **Email Address for Let's Encrypt**
    - Enter your email and agree to the terms.
 4. Save the configuration.
 
