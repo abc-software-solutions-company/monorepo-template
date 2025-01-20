@@ -35,7 +35,7 @@ import { UsersModule } from '@/modules/users/users.module';
 import { adminLogin } from './utils/auth.util';
 import { setupTestingModules } from './utils/setup.util';
 
-const defaultLanguage = 'en-us';
+const defaultLanguage = process.env.AP_LANG_CODE ?? 'en-us';
 
 describe('AdminPostsController (e2e)', () => {
   let app: NestExpressApplication;

@@ -21,7 +21,7 @@ import { Post } from '../entities/post.entity';
 import { PostFile } from '../entities/post-file.entity';
 import { PostsService } from '../posts.service';
 
-const defaultLanguage = 'en-us';
+const defaultLanguage = process.env.AP_LANG_CODE ?? 'en-us';
 
 describe('PostsService', () => {
   let service: PostsService;

@@ -6,11 +6,11 @@ import purify from 'isomorphic-dompurify';
 import { ComponentBaseProps } from '@/interfaces/component.interface';
 import { PostEntity } from '../interfaces/posts.interface';
 
-type BlogDetailProps = {
+type PrivacyPolicyProps = {
   item: PostEntity;
 } & ComponentBaseProps;
 
-const BlogDetail: FC<BlogDetailProps> = ({ className, item }) => {
+const PrivacyPolicy: FC<PrivacyPolicyProps> = ({ className, item }) => {
   const locale = useLocale();
 
   const name = item.nameLocalized?.find(x => x.lang === locale)?.value ?? '';
@@ -19,11 +19,13 @@ const BlogDetail: FC<BlogDetailProps> = ({ className, item }) => {
   if (!item) return <>Something went wrong.</>;
 
   return (
-    <div className={classNames(className)}>
-      <h1 className="mb-6 text-center text-3xl font-bold md:text-4xl">{name}</h1>
-      <div className="wysiwyg prose" dangerouslySetInnerHTML={{ __html: purify.sanitize(body) }} />
+    <div className={classNames('py-12', className)}>
+      <div className="container">
+        <h1 className="mb-6 text-center text-3xl font-bold md:text-4xl">{name}</h1>
+        <div className="wysiwyg prose" dangerouslySetInnerHTML={{ __html: purify.sanitize(body) }} />
+      </div>
     </div>
   );
 };
 
-export default BlogDetail;
+export default PrivacyPolicy;

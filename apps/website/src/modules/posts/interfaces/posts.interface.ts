@@ -24,8 +24,8 @@ export type PostEntity = {
 
 export type CreatePostDto = Omit<PostEntity, 'id'>;
 export type UpdatePostDto = Partial<CreatePostDto>;
-
 export type PostsResponse = ResponseFormat<PostEntity[]>;
 export type PostResponse = ResponseFormat<PostEntity>;
-
-export type PostFilter = BaseFilter;
+export type PostFilter = BaseFilter & {
+  type?: string;
+};

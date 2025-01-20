@@ -4,6 +4,7 @@ declare namespace NodeJS {
     // APP
     AP_HOST: string;
     AP_PORT: string;
+    AP_LANG_CODE: string;
     // HTTP
     AP_REQUEST_TIMEOUT: string;
     // RATE LIMIT

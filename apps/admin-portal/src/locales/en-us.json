@@ -110,7 +110,7 @@
   "appearance_update_failure": "Can't update preference.",
 
   "sidebar_menu_dashboard": "Dashboard",
-  "sidebar_menu_contents": "Contents",
+  "sidebar_menu_pages": "Pages",
   "sidebar_menu_posts": "Posts",
   "sidebar_menu_services": "Services",
   "sidebar_menu_posts_create_new": "Create new post",

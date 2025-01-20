@@ -5,7 +5,7 @@ import { PageBaseProps } from '@/interfaces/page.interface';
 
 import PostApi from '@/modules/posts/api/posts.api';
 import BlogRoot from '@/modules/posts/components/blog-root';
-import { QUERY_POST_LIST } from '@/modules/posts/constants/posts.constant';
+import { POST_TYPE, QUERY_POST_LIST } from '@/modules/posts/constants/posts.constant';
 import { PostFilter } from '@/modules/posts/interfaces/posts.interface';
 
 import { getQueryClient } from '@/utils/query-client.util';
@@ -16,6 +16,7 @@ export default async function BlogPage(pageProps: PageBaseProps) {
   const filter: PostFilter = {
     page: parseInt(pageProps.searchParams.page as string) || 1,
     limit: parseInt(pageProps.searchParams.limit as string) || 10,
+    type: POST_TYPE.DEFAULT,
   };
 
   await queryClient.prefetchQuery({
