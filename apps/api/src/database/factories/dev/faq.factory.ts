@@ -4,7 +4,7 @@ import { FAQ_STATUS } from '@/modules/faqs/constants/faqs.constant';
 import { Faq } from '@/modules/faqs/entities/faq.entity';
 
 const statuses = Object.values(FAQ_STATUS).filter(x => x !== FAQ_STATUS.DELETED);
-const defaultLanguage = 'en-us';
+const defaultLanguage = process.env.AP_LANG_CODE ?? 'en-us';
 
 export function createRandomFaq() {
   const title = faker.lorem.words(10);

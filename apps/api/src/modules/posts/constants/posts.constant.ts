@@ -20,6 +20,7 @@ export enum POST_STATUS {
 
 export enum POST_TYPE {
   DEFAULT = 'default',
+  PAGE = 'page',
   RECRUIT = 'recruit',
   PROMOTION = 'promotion',
   SERVICE = 'service',

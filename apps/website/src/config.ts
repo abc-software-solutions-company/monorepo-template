@@ -1,7 +1,8 @@
 import { LocalePrefix, Pathnames } from 'next-intl/routing';
+import { LANGUAGES } from '@repo/shared-universal/constants/language.constant';
 
 export const localeDetection = false;
-export const defaultLocale = 'en-us';
+export const defaultLocale = LANGUAGES.find(x => x.isDefault)?.code ?? 'en-us';
 export const publicPages = [
   '/',
   '/sign-in',
@@ -15,7 +16,7 @@ export const publicPages = [
   '/privacy-policy',
   '/terms-and-conditions',
 ];
-export const locales = ['en-us', 'vi-vn'] as const;
+export const locales = LANGUAGES.map(x => x.code);
 export const localePrefix = { mode: 'as-needed' } satisfies LocalePrefix<typeof locales>;
 export const pathnames = {
   '/': '/',

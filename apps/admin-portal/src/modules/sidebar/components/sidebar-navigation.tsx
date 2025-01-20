@@ -204,7 +204,7 @@ const SidebarNavigation: FC<SidebarNavigationProps> = ({ className, isExpand, on
               isExpand={isExpand}
               options={{ icon: BookOpenTextIcon, onClick: handleItemClick }}
             >
-              {t('sidebar_menu_contents')}
+              {t('sidebar_menu_pages')}
             </SidebarMenuItem>
             <CollapsibleTrigger asChild>
               <div>
