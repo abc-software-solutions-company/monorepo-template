@@ -78,23 +78,13 @@ export class AuditLogsService {
     try {
       const queryBuilder = this.entityManager.createQueryBuilder();
 
-      if (tableName === AUDIT_LOG_TABLE_NAME.POSTS) {
-        queryBuilder.select('table.nameLocalized', 'titleLocalized');
-        queryBuilder.from(tableName, 'table');
-        queryBuilder.where('table.id = :recordId', { recordId });
+      queryBuilder.select('table.nameLocalized', 'titleLocalized');
+      queryBuilder.from(tableName, 'table');
+      queryBuilder.where('table.id = :recordId', { recordId });
 
-        const result = await queryBuilder.getRawOne();
+      const result = await queryBuilder.getRawOne();
 
-        a = result.titleLocalized?.[0]?.value || '';
-      } else {
-        queryBuilder.select('table.name', 'name');
-        queryBuilder.from(tableName, 'table');
-        queryBuilder.where('table.id = :recordId', { recordId });
-
-        const result = await queryBuilder.getRawOne();
-
-        a = result.name || '';
-      }
+      a = result.titleLocalized?.[0]?.value || '';
 
       return a;
     } catch (error) {
