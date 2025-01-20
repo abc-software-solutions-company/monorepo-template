@@ -1,0 +1,496 @@
+---
+title: Deploy staging environment guide
+description: Deploy staging environment guide
+---
+
+# Setting Up to Deploy Applications to a Staging Environment
+
+## Introduction
+
+This document provides a step-by-step guide to setting up to deploying applications to a staging environment. It also
+includes instructions on configuring secrets and checking Docker processes to select available ports.
+
+## Prerequisites
+
+- A GitHub repository with the necessary application code.
+- Access to a staging server with Docker installed.
+- SSH access to the staging server.
+- Nginx installed on the staging server.
+- Database postgresql installed on the staging server.
+
+## Setting Up GitHub Action Workflows
+
+### Step 1: Define Workflows
+
+Create YAML files in the `.github/workflows` directory of your repository. Below are examples for different applications: Also we can see the full
+workflow code in this repository files. Double check files and folders if exist.
+
+#### Admin Portal Workflow
+
+```yaml:.github/workflows/admin-portal.stage.yml
+name: Deploy Admin Portal (Stage)
+
+on:
+  push:
+    branches:
+      - 'main'
+    paths:
+      - 'apps/admin-portal/**'
+  workflow_dispatch:
+
+env:
+  APP_ENV: ${{ secrets.PORTAL_STAGE }}
+  APP_NAME: admin-portal-stage
+  DOCKER_COMPOSE_SERVICE: admin-portal-stage-deploy
+  DOCKERFILE_PATH: apps/admin-portal/Dockerfile
+  DOCKER_COMPOSE_PATH: apps/admin-portal/docker-compose.yml
+  ENV_FILE_PATH: apps/admin-portal/.env
+  DOCKER_HOST_PORT: 3005 # Change this value if your server is already run docker container with this port, using command docker ps to check it
+  DOCKER_CONTAINER_PORT: 3001 # This is the app port, which command yarn start run and provided
+  AWS_ECR_REPOSITORY_URI: ${{ secrets.AWS_ECR_REPOSITORY_URI_ADMIN_PORTAL_STAGE }}
+
+jobs:
+  build-and-deploy:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Pull code
+        uses: actions/checkout@v3
+
+      - name: Extract env file multi line.
+        run: |
+          rm -r -f ${{ env.ENV_FILE_PATH }}
+          touch ${{ env.ENV_FILE_PATH }}_temp
+          echo $APP_ENV| tee ${{ env.ENV_FILE_PATH }}_temp
+          sed 's/ /\n/g' ${{ env.ENV_FILE_PATH }}_temp >> ${{ env.ENV_FILE_PATH }}
+          rm -r -f ${{ env.ENV_FILE_PATH }}_temp
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ap-southeast-1
+
+      - name: Generate ECR login token
+        id: ecr-login
+        run: |
+          ECR_LOGIN_TOKEN=$(aws ecr get-login-password --region ap-southeast-1)
+          echo "::add-mask::$ECR_LOGIN_TOKEN" # Mask the token in logs
+          echo "ECR_LOGIN_TOKEN=$ECR_LOGIN_TOKEN" >> $GITHUB_ENV # Store the token in an environment variable
+
+      - name: Build Docker Image
+        run: |
+          docker build -f ${{ env.DOCKERFILE_PATH }} -t ${{ env.AWS_ECR_REPOSITORY_URI }}:${{ github.sha }} .
+
+      - name: Push Docker Image to ECR
+        run: |
+          echo "${{ env.ECR_LOGIN_TOKEN }}" | docker login --username AWS --password-stdin ${{ env.AWS_ECR_REPOSITORY_URI }}
+          docker push ${{ env.AWS_ECR_REPOSITORY_URI }}:${{ github.sha }}
+
+      - name: Test Docker Image
+        run: |
+          docker run -d --name ${{ env.APP_NAME }} \
+          --health-cmd="curl -f http://127.0.0.1:${{ env.DOCKER_CONTAINER_PORT}} || exit 1" \
+          --health-interval=5s \
+          --health-timeout=5s \
+          --health-retries=2 \
+          ${{ env.AWS_ECR_REPOSITORY_URI }}:${{ github.sha }}
+
+          # Wait for health check
+          sleep 20
+
+          HEALTH_STATUS=$(docker inspect --format='{{json .State.Health.Status}}' ${{ env.APP_NAME }})
+
+          if [[ "$HEALTH_STATUS" == "\"healthy\"" ]]; then
+              echo "✅ Test container is healthy. Ready to deploy this image to your server..."
+          else
+              echo "❌ Error: Test container is $HEALTH_STATUS"
+              echo "Fetching logs from the test container..."
+              docker logs ${{ env.APP_NAME }}
+              exit 1
+          fi
+
+      - name: Create docker-compose file
+        run: |
+          rm -f ${{ env.DOCKER_COMPOSE_PATH }}
+          cat << EOF > ${{ env.DOCKER_COMPOSE_PATH }}
+          version: '3.8'
+
+          services:
+            ${{ env.DOCKER_COMPOSE_SERVICE }}:
+              image: ${{ env.AWS_ECR_REPOSITORY_URI }}:${{ github.sha }}
+              container_name: ${{ env.APP_NAME }}
+              restart: always
+              ports:
+                - "${{ env.DOCKER_HOST_PORT }}:${{ env.DOCKER_CONTAINER_PORT }}"
+          EOF
+
+      - name: Copy docker-compose file to server
+        uses: appleboy/scp-action@v0.1.4
+        with:
+          host: ${{ secrets.STAGE_SERVER_HOST }}
+          username: ${{ secrets.STAGE_SERVER_USER_NAME }}
+          port: 22
+          password: ${{ secrets.STAGE_SERVER_PASSWORD }}
+          source: '${{ env.DOCKER_COMPOSE_PATH }},${{ env.ENV_FILE_PATH }}'
+          target: '~/${{ env.APP_NAME }}'
+
+      - name: Executing remote ssh commands
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.STAGE_SERVER_HOST }}
+          username: ${{ secrets.STAGE_SERVER_USER_NAME }}
+          port: 22
+          password: ${{ secrets.STAGE_SERVER_PASSWORD }}
+          script_stop: true
+          script: |
+            cd ~/${{ env.APP_NAME }}
+            # Login to AWS ECR using the pre-generated token
+            echo "${{ env.ECR_LOGIN_TOKEN }}" | docker login --username AWS --password-stdin ${{ env.AWS_ECR_REPOSITORY_URI }}
+
+            # Pull the latest image
+            sudo docker compose -f ${{ env.DOCKER_COMPOSE_PATH }} pull
+
+            # Store current running image ID if exists
+            OLD_IMAGE_ID=$(sudo docker inspect --format='{{.Image}}' ${{ env.APP_NAME }} 2>/dev/null || echo "")
+
+            # Deploy new version
+            sudo docker compose -f ${{ env.DOCKER_COMPOSE_PATH }} up -d ${{ env.DOCKER_COMPOSE_SERVICE }} --force-recreate --no-build
+
+            # Remove old image if it exists and is different from current
+            if [ ! -z "$OLD_IMAGE_ID" ]; then
+              NEW_IMAGE_ID=$(sudo docker inspect --format='{{.Image}}' ${{ env.APP_NAME }})
+              if [ "$OLD_IMAGE_ID" != "$NEW_IMAGE_ID" ]; then
+                sudo docker rmi $OLD_IMAGE_ID || true
+              fi
+            fi
+
+```
+
+#### Admin API Workflow
+
+```yaml:.github/workflows/api-admin.stage.yml
+name: Deploy Admin API (Stage)
+
+on:
+  push:
+    branches:
+      - 'main'
+    paths:
+      - 'apps/api/**'
+  workflow_dispatch:
+
+env:
+  APP_ENV: ${{ secrets.API_STAGE }}
+  APP_NAME: api-stage
+  DOCKER_COMPOSE_SERVICE: monorepo-api-stage
+  DOCKERFILE_PATH: apps/api/Dockerfile
+  DOCKER_COMPOSE_PATH: apps/api/docker-compose.yml
+  ENV_FILE_PATH: apps/api/.env
+  DOCKER_HOST_PORT: 3502 # Change this value if your server is already running a Docker container with this port
+  DOCKER_CONTAINER_PORT: 3500 # This is the app port, which command yarn start runs and provides
+  AWS_ECR_REPOSITORY_URI: ${{ secrets.AWS_ECR_REPOSITORY_URI_API_STAGE }}
+
+jobs:
+  build-and-deploy:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Pull code
+        uses: actions/checkout@v3
+
+      - name: Extract env file multi line.
+        run: |
+          rm -r -f ${{ env.ENV_FILE_PATH }}
+          touch ${{ env.ENV_FILE_PATH }}_temp
+          echo $APP_ENV| tee ${{ env.ENV_FILE_PATH }}_temp
+          sed 's/ /\n/g' ${{ env.ENV_FILE_PATH }}_temp >> ${{ env.ENV_FILE_PATH }}
+          rm -r -f ${{ env.ENV_FILE_PATH }}_temp
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ap-southeast-1 # Use your AWS region
+
+      - name: Generate ECR login token
+        id: ecr-login
+        run: |
+          ECR_LOGIN_TOKEN=$(aws ecr get-login-password --region ap-southeast-1)
+          echo "::add-mask::$ECR_LOGIN_TOKEN" # Mask the token in logs
+          echo "ECR_LOGIN_TOKEN=$ECR_LOGIN_TOKEN" >> $GITHUB_ENV # Store the token in an environment variable
+
+      - name: Build Docker Image
+        run: |
+          docker build -f ${{ env.DOCKERFILE_PATH }} -t ${{ env.AWS_ECR_REPOSITORY_URI }}:${{ github.sha }} .
+
+      - name: Push Docker Image to ECR
+        run: |
+          echo "${{ env.ECR_LOGIN_TOKEN }}" | docker login --username AWS --password-stdin ${{ env.AWS_ECR_REPOSITORY_URI }}
+          docker push ${{ env.AWS_ECR_REPOSITORY_URI }}:${{ github.sha }}
+
+      # For API, please choose a suitable health check API route, for example http://127.0.0.1/api/v1
+      - name: Test Docker Image
+        run: |
+          docker run -d --name ${{ env.APP_NAME }} \
+          --health-cmd="curl -f http://127.0.0.1:${{ env.DOCKER_CONTAINER_PORT}}/api/v1 || exit 1" \
+          --health-interval=5s \
+          --health-timeout=5s \
+          --health-retries=2 \
+          ${{ env.AWS_ECR_REPOSITORY_URI }}:${{ github.sha }}
+
+          # Wait for health check
+          sleep 20
+
+          HEALTH_STATUS=$(docker inspect --format='{{json .State.Health.Status}}' ${{ env.APP_NAME }})
+
+          if [[ "$HEALTH_STATUS" == "\"healthy\"" ]]; then
+              echo "✅ Test container is healthy. Ready to deploy this image to your server..."
+          else
+              echo "❌ Error: Test container is $HEALTH_STATUS"
+              echo "Fetching logs from the test container..."
+              docker logs ${{ env.APP_NAME }}
+              exit 1
+          fi
+
+      - name: Create docker-compose file
+        run: |
+          rm -f ${{ env.DOCKER_COMPOSE_PATH }}
+          cat << EOF > ${{ env.DOCKER_COMPOSE_PATH }}
+          version: '3.8'
+
+          services:
+            ${{ env.DOCKER_COMPOSE_SERVICE }}:
+              image: ${{ env.AWS_ECR_REPOSITORY_URI }}:${{ github.sha }}
+              container_name: ${{ env.APP_NAME }}
+              restart: always
+              ports:
+                - "${{ env.DOCKER_HOST_PORT }}:${{ env.DOCKER_CONTAINER_PORT }}"
+          EOF
+
+      - name: Copy docker-compose file to server
+        uses: appleboy/scp-action@v0.1.4
+        with:
+          host: ${{ secrets.STAGE_SERVER_HOST }}
+          username: ${{ secrets.STAGE_SERVER_USER_NAME }}
+          port: 22
+          password: ${{ secrets.STAGE_SERVER_PASSWORD }}
+          source: '${{ env.DOCKER_COMPOSE_PATH }},${{ env.ENV_FILE_PATH }}'
+          target: '~/${{ env.APP_NAME }}'
+
+      - name: Executing remote ssh commands
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.STAGE_SERVER_HOST }}
+          username: ${{ secrets.STAGE_SERVER_USER_NAME }}
+          port: 22
+          password: ${{ secrets.STAGE_SERVER_PASSWORD }}
+          script_stop: true
+          script: |
+            cd ~/${{ env.APP_NAME }}
+            # Login to AWS ECR using the pre-generated token
+            echo "${{ env.ECR_LOGIN_TOKEN }}" | docker login --username AWS --password-stdin ${{ env.AWS_ECR_REPOSITORY_URI }}
+
+            # Pull the latest image
+            sudo docker compose -f ${{ env.DOCKER_COMPOSE_PATH }} pull
+
+            # Store current running image ID if exists
+            OLD_IMAGE_ID=$(sudo docker inspect --format='{{.Image}}' ${{ env.APP_NAME }} 2>/dev/null || echo "")
+
+            # Deploy new version
+            sudo docker compose -f ${{ env.DOCKER_COMPOSE_PATH }} up -d ${{ env.DOCKER_COMPOSE_SERVICE }} --force-recreate --no-build
+
+            # Remove old image if it exists and is different from current
+            if [ ! -z "$OLD_IMAGE_ID" ]; then
+              NEW_IMAGE_ID=$(sudo docker inspect --format='{{.Image}}' ${{ env.APP_NAME }})
+              if [ "$OLD_IMAGE_ID" != "$NEW_IMAGE_ID" ]; then
+                sudo docker rmi $OLD_IMAGE_ID || true
+              fi
+            fi
+
+```
+
+#### Website Workflow
+
+```yaml:.github/workflows/website.stage.yml
+name: Deploy Website (Stage)
+
+on:
+  push:
+    branches:
+      - 'main'
+    paths:
+      - 'apps/website/**'
+  workflow_dispatch:
+
+env:
+  APP_ENV: ${{ secrets.WEBSITE_STAGE }}
+  APP_NAME: website-stage-deploy
+  DOCKER_COMPOSE_SERVICE: website-stage-deploy
+  DOCKERFILE_PATH: apps/website/Dockerfile
+  DOCKER_COMPOSE_PATH: apps/website/docker-compose.yml
+  ENV_FILE_PATH: apps/website/.env
+  DOCKER_HOST_PORT: 3004 # Change this value if your server is already run docker container with this port, using command docker ps to check it
+  DOCKER_CONTAINER_PORT: 3000
+  AWS_ECR_REPOSITORY_URI: ${{ secrets.AWS_ECR_REPOSITORY_URI_WEBSITE_STAGE }}
+
+jobs:
+  build-and-deploy:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Pull code
+        uses: actions/checkout@v3
+
+      - name: Extract env file multi line.
+        run: |
+          rm -r -f ${{ env.ENV_FILE_PATH }}
+          touch ${{ env.ENV_FILE_PATH }}_temp
+          echo $APP_ENV| tee ${{ env.ENV_FILE_PATH }}_temp
+          sed 's/ /\n/g' ${{ env.ENV_FILE_PATH }}_temp >> ${{ env.ENV_FILE_PATH }}
+          rm -r -f ${{ env.ENV_FILE_PATH }}_temp
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ap-southeast-1
+
+      - name: Generate ECR login token
+        id: ecr-login
+        run: |
+          ECR_LOGIN_TOKEN=$(aws ecr get-login-password --region ap-southeast-1)
+          echo "::add-mask::$ECR_LOGIN_TOKEN" # Mask the token in logs
+          echo "ECR_LOGIN_TOKEN=$ECR_LOGIN_TOKEN" >> $GITHUB_ENV # Store the token in an environment variable
+
+      - name: Build Docker Image
+        run: |
+          docker build -f ${{ env.DOCKERFILE_PATH }} -t ${{ env.AWS_ECR_REPOSITORY_URI }}:${{ github.sha }} .
+
+      - name: Push Docker Image to ECR
+        run: |
+          echo "${{ env.ECR_LOGIN_TOKEN }}" | docker login --username AWS --password-stdin ${{ env.AWS_ECR_REPOSITORY_URI }}
+          docker push ${{ env.AWS_ECR_REPOSITORY_URI }}:${{ github.sha }}
+
+      - name: Test Docker Image
+        run: |
+          docker run -d --name ${{ env.APP_NAME }} \
+          --health-cmd="curl -f http://127.0.0.1:${{ env.DOCKER_CONTAINER_PORT}} || exit 1" \
+          --health-interval=5s \
+          --health-timeout=5s \
+          --health-retries=2 \
+          ${{ env.AWS_ECR_REPOSITORY_URI }}:${{ github.sha }}
+
+          # Wait for health check
+          sleep 20
+
+          HEALTH_STATUS=$(docker inspect --format='{{json .State.Health.Status}}' ${{ env.APP_NAME }})
+
+          if [[ "$HEALTH_STATUS" == "\"healthy\"" ]]; then
+              echo "✅ Test container is healthy. Ready to deploy this image to your server..."
+          else
+              echo "❌ Error: Test container is $HEALTH_STATUS"
+              echo "Fetching logs from the test container..."
+              docker logs ${{ env.APP_NAME }}
+              exit 1
+          fi
+
+      - name: Create docker-compose file
+        run: |
+          rm -f ${{ env.DOCKER_COMPOSE_PATH }}
+          cat << EOF > ${{ env.DOCKER_COMPOSE_PATH }}
+          version: '3.8'
+
+          services:
+            ${{ env.DOCKER_COMPOSE_SERVICE }}:
+              image: ${{ env.AWS_ECR_REPOSITORY_URI }}:${{ github.sha }}
+              container_name: ${{ env.APP_NAME }}
+              restart: always
+              ports:
+                - "${{ env.DOCKER_HOST_PORT }}:${{ env.DOCKER_CONTAINER_PORT }}"
+          EOF
+
+      - name: Copy docker-compose file to server
+        uses: appleboy/scp-action@v0.1.4
+        with:
+          host: ${{ secrets.STAGE_SERVER_HOST }}
+          username: ${{ secrets.STAGE_SERVER_USER_NAME }}
+          port: 22
+          password: ${{ secrets.STAGE_SERVER_PASSWORD }}
+          source: '${{ env.DOCKER_COMPOSE_PATH }},${{ env.ENV_FILE_PATH }}'
+          target: '~/${{ env.APP_NAME }}'
+
+      - name: Executing remote ssh commands
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.STAGE_SERVER_HOST }}
+          username: ${{ secrets.STAGE_SERVER_USER_NAME }}
+          port: 22
+          password: ${{ secrets.STAGE_SERVER_PASSWORD }}
+          script_stop: true
+          script: |
+            cd ~/${{ env.APP_NAME }}
+            # Login to AWS ECR using the pre-generated token
+            echo "${{ env.ECR_LOGIN_TOKEN }}" | docker login --username AWS --password-stdin ${{ env.AWS_ECR_REPOSITORY_URI }}
+
+            # Pull the latest image
+            sudo docker compose -f ${{ env.DOCKER_COMPOSE_PATH }} pull
+
+            # Store current running image ID if exists
+            OLD_IMAGE_ID=$(sudo docker inspect --format='{{.Image}}' ${{ env.APP_NAME }} 2>/dev/null || echo "")
+
+            # Deploy new version
+            sudo docker compose -f ${{ env.DOCKER_COMPOSE_PATH }} up -d ${{ env.DOCKER_COMPOSE_SERVICE }} --force-recreate --no-build
+
+            # Remove old image if it exists and is different from current
+            if [ ! -z "$OLD_IMAGE_ID" ]; then
+              NEW_IMAGE_ID=$(sudo docker inspect --format='{{.Image}}' ${{ env.APP_NAME }})
+              if [ "$OLD_IMAGE_ID" != "$NEW_IMAGE_ID" ]; then
+                sudo docker rmi $OLD_IMAGE_ID || true
+              fi
+            fi
+
+```
+
+### Step 2: Configure Secrets
+
+1. Navigate to your GitHub repository.
+2. Go to **Settings → Secrets and variables → Actions**.
+3. Click on **New repository secret**.
+4. Add the following secrets:
+
+   - **`STAGE_SERVER_HOST`**: Hostname or IP address of your staging server.
+   - **`STAGE_SERVER_USER_NAME`**: SSH username for the staging server.
+   - **`STAGE_SERVER_PASSWORD`**: SSH password for the staging server.
+   - **`PORTAL_STAGE`**, **`API_STAGE`**, **`WEBSITE_STAGE`**: Environment variables for each application.
+
+## Checking Docker Processes and Selecting Available Ports
+
+### Step 1: Check Running Docker Containers
+
+SSH into your staging server and run the following command to list all running Docker containers:
+
+```bash
+docker ps
+```
+
+This command will display a list of running containers along with their port mappings.
+
+### Step 2: Identify Available Ports
+
+Review the output of `docker ps` to identify which ports are currently in use. Choose a port that is not listed to avoid conflicts.
+
+### Step 3: Update Workflow Files
+
+Once you have identified an available port, update the `DOCKER_HOST_PORT` environment variable in your workflow files to use this port.
+
+```yaml
+env:
+  DOCKER_HOST_PORT: <available_port>
+```
+
+Replace `<available_port>` with the port you identified as available and your application listens on internally.
+
