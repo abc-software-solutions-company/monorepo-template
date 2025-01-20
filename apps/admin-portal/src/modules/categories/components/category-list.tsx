@@ -58,7 +58,7 @@ const CategoryList: FC<ComponentBaseProps> = ({ className }) => {
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [sorting, setSorting] = useState<SortingState>([]);
-  const [expanded, setExpanded] = useState<ExpandedState>({});
+  const [expanded, setExpanded] = useState<ExpandedState>(true);
   const { items, meta, selected, selectedIds, isFetching, filter, setFilter, toggleSelect, toggleSelectAll, clearSelection } = useCategories();
   const { mutateAsync: destroyMutation } = useDestroyCategoryMutation();
   const { mutateAsync: bulkDestroyMutation } = useBulkDestroyCategoriesMutation();

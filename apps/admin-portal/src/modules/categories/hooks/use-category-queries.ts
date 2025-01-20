@@ -23,7 +23,7 @@ export const useGetCategoriesQuery = (filter: CategoryFilter) => {
   });
 };
 
-export const useGetCategoriesByTypeQuery = (filter: CategoryFilter, excludeId?: string) => {
+export const useGetCategoriesByTypeQuery = (filter: CategoryFilter, excludeId?: string, enabled?: boolean) => {
   return useQuery({
     queryKey: [QUERY_CATEGORY_LIST_BY_TYPE, filter],
     queryFn: async () => {
@@ -31,6 +31,7 @@ export const useGetCategoriesByTypeQuery = (filter: CategoryFilter, excludeId?: 
 
       return response.data;
     },
+    enabled,
     staleTime: 0,
   });
 };
