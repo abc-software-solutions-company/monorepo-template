@@ -10,8 +10,8 @@ on:
 
 env:
   APP_ENV: ${{ secrets.WEBSITE_STAGE }}
-  APP_NAME: website-stage-deploy
-  DOCKER_COMPOSE_SERVICE: website-stage-deploy
+  APP_NAME: monorepo-template-website-stage
+  DOCKER_COMPOSE_SERVICE: monorepo-template-website-stage
   DOCKERFILE_PATH: apps/website/Dockerfile
   DOCKER_COMPOSE_PATH: apps/website/docker-compose.yml
   ENV_FILE_PATH: apps/website/.env

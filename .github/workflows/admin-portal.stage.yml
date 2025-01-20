@@ -10,8 +10,8 @@ on:
 
 env:
   APP_ENV: ${{ secrets.PORTAL_STAGE }}
-  APP_NAME: admin-portal-stage
-  DOCKER_COMPOSE_SERVICE: admin-portal-stage-deploy
+  APP_NAME: monorepo-template-admin-portal-stage
+  DOCKER_COMPOSE_SERVICE: monorepo-template-admin-portal-stage
   DOCKERFILE_PATH: apps/admin-portal/Dockerfile
   DOCKER_COMPOSE_PATH: apps/admin-portal/docker-compose.yml
   ENV_FILE_PATH: apps/admin-portal/.env
