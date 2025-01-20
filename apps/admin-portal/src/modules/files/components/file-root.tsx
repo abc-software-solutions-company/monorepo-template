@@ -17,11 +17,6 @@ import NoData from '@/components/no-data';
 import PaginationInfo from '@/components/pagination-info';
 import Uploader from '@/components/uploader';
 
-import DirectoryTree from '@/modules/categories/components/directory-tree';
-import { CATEGORY_TYPE } from '@/modules/categories/constants/categories.constant';
-import { CategoryEntity } from '@/modules/categories/interfaces/categories.interface';
-import { useCategoriesState } from '@/modules/categories/states/categories.state';
-
 import Filter from './file-filter';
 import FileList from './file-list';
 
@@ -30,18 +25,16 @@ import { useFilesState } from '../states/files.state';
 import { uploadValidator } from '../validators/upload.validator';
 
 type FilesRootTypes = {
-  categoryVisible?: boolean;
   selected?: FileEntity[];
 } & ComponentBaseProps;
 
-const FilesRoot: FC<FilesRootTypes> = ({ className, categoryVisible = true }) => {
+const FilesRoot: FC<FilesRootTypes> = ({ className }) => {
   const t = useTranslations();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const locale = useLocale();
   const { toast } = useToast();
   const filesState = useFilesState();
-  const categoriesState = useCategoriesState();
   const [isUploading, setIsUploading] = useState(false);
 
   const { items, meta, filter, filteredAt } = filesState;
@@ -76,11 +69,6 @@ const FilesRoot: FC<FilesRootTypes> = ({ className, categoryVisible = true }) =>
       });
     }
   };
-
-  useEffect(() => {
-    if (categoryVisible) categoriesState.listRequest({ filter: { type: CATEGORY_TYPE.FILE } });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [categoryVisible]);
 
   useEffect(() => {
     const currentFilter = getFilter();
@@ -123,16 +111,6 @@ const FilesRoot: FC<FilesRootTypes> = ({ className, categoryVisible = true }) =>
         />
       </div>
       <div className="mt-4 flex grow flex-col">
-        {categoryVisible && (
-          <>
-            <div className="h-full flex-col rounded-lg border bg-card p-4">
-              <DirectoryTree
-                data={[{ name: 'All', id: '' } as CategoryEntity, ...categoriesState.items]}
-                onItemClick={node => filesState.setFilter({ categoryId: node.id, page: 1 })}
-              />
-            </div>
-          </>
-        )}
         <div className="flex h-full flex-col rounded-lg border bg-card p-4">
           {filesState.isFetching ? (
             <div className="flex grow items-center justify-center">

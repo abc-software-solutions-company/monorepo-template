@@ -6,8 +6,10 @@ import { BaseFilterDto } from '@/common/dtos/base-filter.dto';
 import { CATEGORY_STATUS, CATEGORY_TYPE } from '../constants/categories.constant';
 
 export class FilterCategoryDto extends BaseFilterDto {
+  @ApiPropertyOptional({ enum: CATEGORY_TYPE, default: CATEGORY_TYPE.POST })
+  @IsEnum(CATEGORY_TYPE)
   @IsOptional()
-  parentId?: string;
+  type?: CATEGORY_TYPE;
 
   @ApiPropertyOptional({
     enum: CATEGORY_STATUS,
@@ -20,10 +22,8 @@ export class FilterCategoryDto extends BaseFilterDto {
   @IsOptional()
   status?: CATEGORY_STATUS[];
 
-  @ApiPropertyOptional({ enum: CATEGORY_TYPE, default: CATEGORY_TYPE.POST })
-  @IsEnum(CATEGORY_TYPE)
   @IsOptional()
-  type?: CATEGORY_TYPE;
+  parentId?: string;
 
   @ApiPropertyOptional({ description: 'Category ID', example: 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx' })
   @IsOptional()

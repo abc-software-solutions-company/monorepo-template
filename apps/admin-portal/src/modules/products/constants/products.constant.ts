@@ -3,6 +3,9 @@ import { CheckCircle2Icon, CircleSlashIcon, XCircleIcon } from 'lucide-react';
 import { OptionType } from '@/interfaces/status.interface';
 import { ProductFilter } from '../interfaces/products.interface';
 
+export const QUERY_PRODUCT_LIST = 'products';
+export const QUERY_PRODUCT_DETAIL = 'product';
+
 export enum PRODUCT_STATUS {
   PUBLISHED = 'published',
   DRAFT = 'draft',
@@ -10,8 +13,7 @@ export enum PRODUCT_STATUS {
 }
 
 export enum PRODUCT_TYPE {
-  UNCATEGORIZED = 'uncategorized',
-  FILE = 'file',
+  DEFAULT = 'default',
 }
 
 export enum PRODUCT_ACTION {
@@ -26,6 +28,7 @@ export const PRODUCT_DEFAULT_FILTER: ProductFilter = {
   limit: 50,
   order: 'DESC',
   status: [],
+  type: PRODUCT_TYPE.DEFAULT,
 };
 
 export const PRODUCT_STATUSES: OptionType[] = [

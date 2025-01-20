@@ -6,7 +6,6 @@ import {
   BookUserIcon,
   CircleHelpIcon,
   FileCode2Icon,
-  FileTextIcon,
   FoldersIcon,
   LayoutGridIcon,
   ListTreeIcon,
@@ -26,16 +25,18 @@ import { ComponentBaseProps } from '@/interfaces/component.interface';
 import { SUB_MENU_ALIGN_OFFSET, SUB_MENU_SIDE_OFFSET } from '../constants/sidebar.constant';
 
 import { POST_TYPE } from '@/modules/posts/constants/posts.constant';
+import { PRODUCT_TYPE } from '@/modules/products/constants/products.constant';
 
 import SidebarMenuIndicator from './sidebar-menu-indicator';
 import SidebarMenuItem from './sidebar-menu-item';
 import CategoriesSubMenu from './sub-menu-categories';
 import DocumentationSubMenu from './sub-menu-documentation';
 import NotificationsSubMenu from './sub-menu-notifications';
+import SubMenuPages from './sub-menu-pages';
 import PostsSubMenu from './sub-menu-posts';
 import ProductsSubMenu from './sub-menu-products';
 import SubMenuProfile from './sub-menu-profile';
-import SubMenuServices from './sub-menu-service';
+import SubMenuServices from './sub-menu-services';
 import SettingsSubMenu from './sub-menu-settings';
 import UsersSubMenu from './sub-menu-users';
 
@@ -55,6 +56,7 @@ const SidebarNavigation: FC<SidebarNavigationProps> = ({ className, isExpand, on
     categories: false,
     contents: false,
     posts: false,
+    pages: false,
     services: false,
     products: false,
     users: false,
@@ -74,9 +76,10 @@ const SidebarNavigation: FC<SidebarNavigationProps> = ({ className, isExpand, on
       dashboard: pathname.includes(`/${locale}/dashboard`),
       categories: pathname.includes(`/${locale}/categories`),
       contents: pathname.includes(`/${locale}/contents`),
-      posts: pathname.includes(`/${locale}/posts`) && searchParams.get('type') === 'default',
-      services: pathname.includes(`/${locale}/posts`) && searchParams.get('type') === 'service',
-      products: pathname.includes(`/${locale}/products`),
+      posts: pathname.includes(`/${locale}/posts`) && searchParams.get('type') === POST_TYPE.DEFAULT,
+      pages: pathname.includes(`/${locale}/posts`) && searchParams.get('type') === POST_TYPE.PAGE,
+      services: pathname.includes(`/${locale}/posts`) && searchParams.get('type') === POST_TYPE.SERVICE,
+      products: pathname.includes(`/${locale}/products`) && searchParams.get('type') === PRODUCT_TYPE.DEFAULT,
       users: pathname.includes(`/${locale}/users`),
       notifications: pathname.includes(`/${locale}/notifications`),
       files: pathname.includes(`/${locale}/files`),
@@ -149,23 +152,6 @@ const SidebarNavigation: FC<SidebarNavigationProps> = ({ className, isExpand, on
           </HoverCard>
         </div>
         {/*************************************************************
-          CONTENTS
-          **************************************************************/}
-        <div className="relative my-0.5 px-3">
-          <Collapsible open={isOpenSubMenu.contents} onOpenChange={value => setIsOpenSubMenu(prevState => ({ ...prevState, contents: value }))}>
-            <SidebarMenuItem url={`/${locale}/contents`} isExpand={isExpand} options={{ icon: FileTextIcon, onClick: handleItemClick }}>
-              {t('sidebar_menu_contents')}
-            </SidebarMenuItem>
-          </Collapsible>
-          <HoverCard openDelay={250} closeDelay={250}>
-            <HoverCardTrigger asChild className={classNames('absolute top-0 opacity-0', isExpand && 'invisible')}>
-              <div>
-                <SidebarMenuItem url={`/${locale}/contents`} isExpand={isExpand} options={{ icon: FileTextIcon, onClick: handleItemClick }} />
-              </div>
-            </HoverCardTrigger>
-          </HoverCard>
-        </div>
-        {/*************************************************************
           POSTS
           **************************************************************/}
         <div className="relative my-0.5 px-3">
@@ -204,6 +190,48 @@ const SidebarNavigation: FC<SidebarNavigationProps> = ({ className, isExpand, on
             </HoverCardTrigger>
             <HoverCardContent className="w-52 p-1" sideOffset={SUB_MENU_SIDE_OFFSET} alignOffset={SUB_MENU_ALIGN_OFFSET} side="right" align="start">
               <PostsSubMenu type="dropdown" onNavigate={handleItemClick} />
+            </HoverCardContent>
+          </HoverCard>
+        </div>
+        {/*************************************************************
+          POSTS (PAGES)
+          **************************************************************/}
+        <div className="relative my-0.5 px-3">
+          <Collapsible open={isOpenSubMenu.pages && isExpand} onOpenChange={value => setIsOpenSubMenu(prevState => ({ ...prevState, pages: value }))}>
+            <SidebarMenuItem
+              url={`/${locale}/posts`}
+              queryParams={{ type: POST_TYPE.PAGE }}
+              isExpand={isExpand}
+              options={{ icon: BookOpenTextIcon, onClick: handleItemClick }}
+            >
+              {t('sidebar_menu_contents')}
+            </SidebarMenuItem>
+            <CollapsibleTrigger asChild>
+              <div>
+                <SidebarMenuIndicator isExpand={isExpand} isActive={isOpenSubMenu.pages} isOpen={isOpenSubMenu.pages} />
+              </div>
+            </CollapsibleTrigger>
+            <CollapsibleContent
+              className={classNames(
+                'mt-1 overflow-hidden rounded [&[data-state=closed]]:animate-collapsible-up [&[data-state=open]]:animate-collapsible-down'
+              )}
+            >
+              <SubMenuPages type="list" onNavigate={handleItemClick} />
+            </CollapsibleContent>
+          </Collapsible>
+          <HoverCard openDelay={250} closeDelay={250}>
+            <HoverCardTrigger asChild className={classNames('absolute top-0 opacity-0', isExpand && 'invisible')}>
+              <div>
+                <SidebarMenuItem
+                  url={`/${locale}/posts`}
+                  queryParams={{ type: POST_TYPE.PAGE }}
+                  isExpand={isExpand}
+                  options={{ icon: BookOpenTextIcon, onClick: handleItemClick }}
+                />
+              </div>
+            </HoverCardTrigger>
+            <HoverCardContent className="w-52 p-1" sideOffset={SUB_MENU_SIDE_OFFSET} alignOffset={SUB_MENU_ALIGN_OFFSET} side="right" align="start">
+              <SubMenuPages type="dropdown" onNavigate={handleItemClick} />
             </HoverCardContent>
           </HoverCard>
         </div>
@@ -260,7 +288,12 @@ const SidebarNavigation: FC<SidebarNavigationProps> = ({ className, isExpand, on
             open={isOpenSubMenu.products && isExpand}
             onOpenChange={value => setIsOpenSubMenu(prevState => ({ ...prevState, products: value }))}
           >
-            <SidebarMenuItem url={`/${locale}/products`} isExpand={isExpand} options={{ icon: PackageIcon, onClick: handleItemClick }}>
+            <SidebarMenuItem
+              url={`/${locale}/products`}
+              queryParams={{ type: PRODUCT_TYPE.DEFAULT }}
+              isExpand={isExpand}
+              options={{ icon: PackageIcon, onClick: handleItemClick }}
+            >
               {t('sidebar_menu_products')}
             </SidebarMenuItem>
             <CollapsibleTrigger asChild>
@@ -279,7 +312,12 @@ const SidebarNavigation: FC<SidebarNavigationProps> = ({ className, isExpand, on
           <HoverCard openDelay={250} closeDelay={250}>
             <HoverCardTrigger asChild className={classNames('absolute top-0 opacity-0', isExpand && 'invisible')}>
               <div>
-                <SidebarMenuItem url={`/${locale}/products`} isExpand={isExpand} options={{ icon: PackageIcon, onClick: handleItemClick }} />
+                <SidebarMenuItem
+                  url={`/${locale}/products`}
+                  queryParams={{ type: PRODUCT_TYPE.DEFAULT }}
+                  isExpand={isExpand}
+                  options={{ icon: PackageIcon, onClick: handleItemClick }}
+                />
               </div>
             </HoverCardTrigger>
             <HoverCardContent className="w-52 p-1" sideOffset={SUB_MENU_SIDE_OFFSET} alignOffset={SUB_MENU_ALIGN_OFFSET} side="right" align="start">

@@ -3,12 +3,8 @@ import { combineReducers } from 'redux';
 import createSagaMiddleware from 'redux-saga';
 import { addListener, configureStore, createListenerMiddleware, ListenerEffectAPI, TypedAddListener, TypedStartListening } from '@reduxjs/toolkit';
 
-import { categoriesData } from '@/modules/categories/states/categories.data';
-import categorySlice from '@/modules/categories/states/categories.slice';
 import { filesData } from '@/modules/files/states/files.data';
 import fileSlice from '@/modules/files/states/files.slice';
-import { productsData } from '@/modules/products/states/products.data';
-import productSlice from '@/modules/products/states/products.slice';
 import { usersData } from '@/modules/users/states/users.data';
 import userSlice from '@/modules/users/states/users.slice';
 
@@ -19,15 +15,11 @@ const sagaMiddleware = createSagaMiddleware();
 const rootReducer = combineReducers({
   [userSlice.name]: userSlice.reducer,
   [fileSlice.name]: fileSlice.reducer,
-  [categorySlice.name]: categorySlice.reducer,
-  [productSlice.name]: productSlice.reducer,
 });
 
 const preloadedState = {
   [userSlice.name]: usersData,
   [fileSlice.name]: filesData,
-  [categorySlice.name]: categoriesData,
-  [productSlice.name]: productsData,
 };
 const listenerMiddlewareInstance = createListenerMiddleware();
 

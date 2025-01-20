@@ -1,7 +1,9 @@
-import { FC, useEffect, useMemo, useState } from 'react';
+import { FC, useMemo, useState } from 'react';
+import axios from 'axios';
 import classNames from 'classnames';
 import { ChevronDown, ChevronRight } from 'lucide-react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import { toast } from 'sonner';
 import { useLocale, useTranslations } from 'use-intl';
 import ModalConfirm from '@repo/react-web-ui-shadcn/components/modals/modal-confirm';
 import { Badge } from '@repo/react-web-ui-shadcn/components/ui/badge';
@@ -25,9 +27,12 @@ import {
 } from '@tanstack/react-table';
 
 import { ComponentBaseProps } from '@/interfaces/component.interface';
-import { CategoryEntity, CategoryFilter } from '../interfaces/categories.interface';
+import { CategoriesResponse, CategoryEntity, CategoryResponse } from '../interfaces/categories.interface';
 
-import { CATEGORY_ACTION, CATEGORY_DEFAULT_FILTER, CATEGORY_STATUSES } from '../constants/categories.constant';
+import { CATEGORY_ACTION, CATEGORY_STATUS, CATEGORY_STATUSES, QUERY_CATEGORY_LIST } from '../constants/categories.constant';
+
+import { useCategories } from '../hooks/use-categories';
+import { useBulkDestroyCategoriesMutation, useDestroyCategoryMutation } from '../hooks/use-category-queries';
 
 import { DataTable } from '@/components/data-table/data-table';
 import { DataTableColumnHeader } from '@/components/data-table/data-table-column-header';
@@ -35,26 +40,28 @@ import DataTableRowAction from '@/components/data-table/data-table-row-action';
 import ItemsPerPage from '@/components/item-per-page';
 import PaginationInfo from '@/components/pagination-info';
 
+import { getQueryClient } from '@/utils/query-client.util';
+
+import CategoryDetailModal from './category-detail-modal';
 import CategoryListToolbar from './category-list-toolbar';
 import CategoryRowStatus from './category-row-status';
 
-import { useCategoriesState } from '../states/categories.state';
+const queryClient = getQueryClient();
 
 const CategoryList: FC<ComponentBaseProps> = ({ className }) => {
   const t = useTranslations();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const locale = useLocale();
-  const categoriesState = useCategoriesState();
+  const [viewDetailId, setViewDetailId] = useState('');
   const [action, setAction] = useState<{ name: string; data?: CategoryEntity }>({ name: '' });
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [sorting, setSorting] = useState<SortingState>([]);
   const [expanded, setExpanded] = useState<ExpandedState>({});
-
-  const { items, filter, meta, fetchedAt, filteredAt, deletedAt, isFetching, selected, selectSingle, selectAll } = categoriesState;
-  const selectedIds = selected.reduce((row, id) => ({ ...row, [id]: true }), {});
-
+  const { items, meta, selected, selectedIds, isFetching, filter, setFilter, toggleSelect, toggleSelectAll, clearSelection } = useCategories();
+  const { mutateAsync: destroyMutation } = useDestroyCategoryMutation();
+  const { mutateAsync: bulkDestroyMutation } = useBulkDestroyCategoriesMutation();
   const [rowSelection, setRowSelection] = useState<RowSelectionState>(selectedIds);
   const columns = useMemo<ColumnDef<CategoryEntity>[]>(
     () => [
@@ -68,7 +75,7 @@ const CategoryList: FC<ComponentBaseProps> = ({ className }) => {
             className="translate-y-[2px]"
             onCheckedChange={value => {
               table.toggleAllRowsSelected(!!value);
-              selectAll(value ? items.map(x => x.id) : []);
+              toggleSelectAll(!!value);
             }}
           />
         ),
@@ -80,7 +87,7 @@ const CategoryList: FC<ComponentBaseProps> = ({ className }) => {
             className="translate-y-[2px]"
             onCheckedChange={value => {
               row.toggleSelected(!!value);
-              selectSingle(row.original.id);
+              toggleSelect(row.original.id);
             }}
           />
         ),
@@ -90,6 +97,9 @@ const CategoryList: FC<ComponentBaseProps> = ({ className }) => {
         size: 0,
         header: ({ column }) => <DataTableColumnHeader column={column} title={t('category_title')} />,
         cell: ({ row }) => {
+          const name = row.original.nameLocalized?.find(x => x.lang === locale)?.value ?? '';
+          const fallbackName = row.original.nameLocalized?.[0]?.value ?? '';
+
           return (
             <div className="flex items-center space-x-1">
               <button
@@ -103,7 +113,7 @@ const CategoryList: FC<ComponentBaseProps> = ({ className }) => {
               >
                 <span>
                   {repeatStr('└', '─', row.depth)}
-                  {row.getValue('name')}
+                  {name || fallbackName}
                 </span>
               </button>
               {row.getCanExpand() && (
@@ -111,6 +121,9 @@ const CategoryList: FC<ComponentBaseProps> = ({ className }) => {
                   {row.getIsExpanded() ? <ChevronDown size={18} className="text-primary" /> : <ChevronRight size={18} className="text-primary" />}
                 </button>
               )}
+              <button className="p-1.5" onClick={() => setViewDetailId(row.original.id)}>
+                <span className="text-primary">({t('view_detail')})</span>
+              </button>
             </div>
           );
         },
@@ -154,6 +167,27 @@ const CategoryList: FC<ComponentBaseProps> = ({ className }) => {
         },
         filterFn: (row, id, value) => {
           return value.includes(row.getValue(id));
+        },
+      },
+      {
+        accessorKey: 'creator',
+        size: 0,
+        header: ({ column }) => <DataTableColumnHeader column={column} title={t('category_author')} />,
+        cell: ({ row }) => {
+          const creator = row.original.creator;
+
+          return (
+            <div className="flex space-x-2">
+              <div className="max-w-64 truncate leading-none">
+                {creator && (
+                  <>
+                    <p>{creator.name}</p>
+                    <p className="text-xs text-muted-foreground">{creator.email}</p>
+                  </>
+                )}
+              </div>
+            </div>
+          );
         },
       },
       {
@@ -207,55 +241,72 @@ const CategoryList: FC<ComponentBaseProps> = ({ className }) => {
     getExpandedRowModel: getExpandedRowModel(),
   });
 
-  const getFilter = (): CategoryFilter => {
-    return {
-      q: searchParams.get('q') || CATEGORY_DEFAULT_FILTER.q,
-      page: parseInt(searchParams.get('page') as string) || CATEGORY_DEFAULT_FILTER.page,
-      limit: parseInt(searchParams.get('limit') as string) || CATEGORY_DEFAULT_FILTER.limit,
-      order: searchParams.get('order') || CATEGORY_DEFAULT_FILTER.order,
-      status: searchParams.getAll('status') || CATEGORY_DEFAULT_FILTER.status,
-    };
+  const onDeleteSuccess = async (resp: CategoryResponse, id: string) => {
+    queryClient.setQueryData<CategoriesResponse>([QUERY_CATEGORY_LIST, filter], cached => {
+      if (!cached || !cached.data) return cached;
+
+      const updatedData = cached.data.map(item => (item.id === id ? { ...item, status: CATEGORY_STATUS.DELETED } : item));
+
+      return { ...cached, data: updatedData };
+    });
+
+    toast(t('category_delete_toast_title'), { description: t('category_delete_success') });
   };
 
-  useEffect(() => {
-    const currentFilter = getFilter();
+  const onDeleteFailure = (error: Error, _id: string) => {
+    let errorMessage = t('category_delete_failure');
 
-    if (filter) {
-      const queryString = objectToQueryString({ ...filter, sidebar: searchParams.get('sidebar') });
-
-      navigate({
-        pathname: `/${locale}/categories`,
-        search: `?${queryString}`,
-      });
-
-      categoriesState.listRequest({ filter });
+    if (axios.isAxiosError(error) && error.response) {
+      errorMessage += `\n${error.response.data.message}`;
     } else {
-      categoriesState.setFilter(currentFilter);
+      errorMessage += `\n${error.message}`;
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filteredAt]);
 
-  useEffect(() => {
-    if (categoriesState.deletedAt) table.resetRowSelection(false);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [deletedAt]);
+    toast(t('category_delete_toast_title'), { description: errorMessage });
+  };
+
+  const onBulkDeleteSuccess = (_resp: CategoriesResponse, ids: string[]) => {
+    queryClient.setQueryData<CategoriesResponse>([QUERY_CATEGORY_LIST, filter], cached => {
+      if (!cached || !cached.data) return cached;
+
+      const updatedData = cached.data.map(item => (ids.includes(item.id) ? { ...item, status: CATEGORY_STATUS.DELETED } : item));
+
+      return { ...cached, data: updatedData };
+    });
+
+    table.resetRowSelection(false);
+    clearSelection();
+    toast(t('category_delete_toast_title'), { description: t('category_delete_success') });
+  };
+
+  const onBulkDeleteFailure = (error: Error) => {
+    let errorMessage = t('category_bulk_delete_failure');
+
+    if (axios.isAxiosError(error) && error.response) {
+      errorMessage += `\n${error.response.data.message}`;
+    } else {
+      errorMessage += `\n${error.message}`;
+    }
+
+    toast(t('category_delete_toast_title'), { description: errorMessage });
+  };
 
   return (
     <div className={classNames('categories-list flex grow flex-col rounded-lg border bg-card p-4 text-card-foreground shadow-sm', className)}>
       <div className="relative flex h-full grow flex-col">
         <CategoryListToolbar table={table} onBulkDelete={() => setAction({ name: CATEGORY_ACTION.BULK_DELETE })} />
-        <DataTable containerClassName="mt-4" table={table} columns={columns} isFetching={isFetching || !fetchedAt} />
+        <DataTable containerClassName="mt-4" table={table} columns={columns} isFetching={isFetching} />
       </div>
       <div className="mt-3 flex justify-between">
         <div className="flex items-center space-x-2">
-          <ItemsPerPage limit={filter?.limit} onFilter={value => categoriesState.setFilter({ page: 1, limit: +value })} />
+          <ItemsPerPage limit={filter?.limit} onFilter={value => setFilter({ ...filter, page: 1, limit: +value })} />
           <PaginationInfo amount={meta?.paging?.totalItems} text={t('category_records')} />
         </div>
         <Pagination
           totalItems={meta?.paging?.totalItems || 0}
           currentPage={meta?.paging?.currentPage}
           itemPerPage={meta?.paging?.itemsPerPage}
-          onChange={page => categoriesState.setFilter({ page })}
+          onChange={page => setFilter({ ...filter, page })}
         />
       </div>
       <ModalConfirm
@@ -264,11 +315,14 @@ const CategoryList: FC<ComponentBaseProps> = ({ className }) => {
         content={
           <>
             <span>{t('category_delete_message')}</span>
-            <strong className="space-x-1">{action.data?.name}?</strong>
+            <strong className="space-x-1">{action.data?.nameLocalized.find(x => x.lang === locale)?.value}</strong>
           </>
         }
         onYes={() => {
-          categoriesState.destroyRequest(action.data?.id as string);
+          destroyMutation(action.data?.id as string, {
+            onSuccess: onDeleteSuccess,
+            onError: onDeleteFailure,
+          });
           setAction({ name: '' });
         }}
         onNo={() => setAction({ name: '' })}
@@ -278,11 +332,15 @@ const CategoryList: FC<ComponentBaseProps> = ({ className }) => {
         title={t('bulk_delete')}
         content={<span>{t('category_bulk_delete_message')}</span>}
         onYes={() => {
-          categoriesState.bulkDestroyRequest({ ids: categoriesState.selected });
+          bulkDestroyMutation(selected, {
+            onSuccess: onBulkDeleteSuccess,
+            onError: onBulkDeleteFailure,
+          });
           setAction({ name: '' });
         }}
         onNo={() => setAction({ name: '' })}
       />
+      <CategoryDetailModal id={viewDetailId} visible={!!viewDetailId} onCancel={() => setViewDetailId('')} />
     </div>
   );
 };

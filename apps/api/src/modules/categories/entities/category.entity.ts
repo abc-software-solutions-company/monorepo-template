@@ -1,8 +1,7 @@
 import { Exclude, Expose } from 'class-transformer';
 import { AfterLoad, Column, Entity, ManyToOne, OneToMany } from 'typeorm';
 
-import { AbstractEntity } from '@/common/entities/abstract.entity';
-import { SeoMeta } from '@/common/entities/seo-meta.entity';
+import { TranslationEntity } from '@/common/entities/translation.entity';
 
 import { File } from '@/modules/files/entities/file.entity';
 import { Post } from '@/modules/posts/entities/post.entity';
@@ -14,27 +13,15 @@ import { CategoryFile } from './category-file.entity';
 import { CATEGORY_STATUS, CATEGORY_TYPE } from '../constants/categories.constant';
 
 @Entity({ name: 'categories' })
-export class Category extends AbstractEntity {
-  @Column()
-  name: string;
-
+export class Category extends TranslationEntity {
   @Column({ type: 'varchar', unique: true, length: 255 })
   slug: string;
 
   @Column({ type: 'enum', enum: CATEGORY_TYPE, default: CATEGORY_TYPE.POST })
   type: CATEGORY_TYPE;
 
-  @Column({ type: 'varchar', nullable: true, length: 2000 })
-  description: string;
-
-  @Column({ type: 'text', nullable: true })
-  body: string;
-
   @Column({ type: 'enum', enum: CATEGORY_STATUS, default: CATEGORY_STATUS.VISIBLED })
   status: CATEGORY_STATUS;
-
-  @Column({ type: 'varchar', nullable: true, length: 1000 })
-  cover: string;
 
   @Expose()
   images: File[];
@@ -56,9 +43,6 @@ export class Category extends AbstractEntity {
 
   @OneToMany(() => Product, product => product.category)
   products: Product[];
-
-  @Column({ type: 'json', nullable: true })
-  seoMeta: SeoMeta;
 
   // Ref: https://orkhan.gitbook.io/typeorm/docs/many-to-many-relations#many-to-many-relations-with-custom-properties
   @OneToMany(() => CategoryFile, categoryFile => categoryFile.category)

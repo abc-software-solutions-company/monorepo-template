@@ -1,6 +1,7 @@
 import { FC, Fragment, useState } from 'react';
 import classNames from 'classnames';
 import { FolderClosedIcon } from 'lucide-react';
+import { useLocale } from 'use-intl';
 
 import { ComponentBaseProps } from '@/interfaces/component.interface';
 
@@ -13,6 +14,7 @@ type TreeNodeProps = {
 } & ComponentBaseProps;
 
 const TreeNode: FC<TreeNodeProps> = ({ className, node, depth = 0, onItemClick }) => {
+  const locale = useLocale();
   const [isOpen, setIsOpen] = useState(true);
 
   const handleToggle = () => {
@@ -26,7 +28,7 @@ const TreeNode: FC<TreeNodeProps> = ({ className, node, depth = 0, onItemClick }
           <span onClick={handleToggle}>
             <FolderClosedIcon className="text-amber-600" size={20} />
           </span>
-          <p onClick={() => onItemClick?.(node)}>{node.name}</p>
+          <p onClick={() => onItemClick?.(node)}>{node.nameLocalized.find(x => x.lang === locale)?.value}</p>
         </div>
       </div>
       {isOpen && node.children && (

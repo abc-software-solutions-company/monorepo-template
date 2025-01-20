@@ -1,14 +1,14 @@
 import PageWrapper from '@/components/pages/page-wrapper';
 
 import CategoryList from '@/modules/categories/components/category-list';
-import useCategoryToast from '@/modules/categories/hooks/use-category-toast';
+import { CategoryProvider } from '@/modules/categories/contexts/categories.context';
 
 const PageCategoryList = () => {
-  useCategoryToast();
-
   return (
     <PageWrapper>
-      <CategoryList />
+      <CategoryProvider>
+        <CategoryList />
+      </CategoryProvider>
     </PageWrapper>
   );
 };

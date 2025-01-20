@@ -20,14 +20,14 @@ import { ComponentBaseProps } from '@/interfaces/component.interface';
 
 import { CATEGORY_STATUSES } from '../constants/categories.constant';
 
-import CategoryFilterStatus from './category-filter-status';
+import { useCategories } from '../hooks/use-categories';
 
-import { useCategoriesState } from '../states/categories.state';
+import CategoryFilterStatus from './category-filter-status';
 
 const CategoryFilters: FC<ComponentBaseProps> = ({ className }) => {
   const t = useTranslations();
   const [searchParams] = useSearchParams();
-  const categoriesState = useCategoriesState();
+  const { filter, setFilter } = useCategories();
   const [isOpenSubMenu, setIsOpenSubMenu] = useState<string | null>(null);
 
   const currentStatuses = searchParams.getAll('status');
@@ -50,7 +50,7 @@ const CategoryFilters: FC<ComponentBaseProps> = ({ className }) => {
                   <CategoryFilterStatus
                     options={CATEGORY_STATUSES}
                     value={currentStatuses}
-                    onChange={statuses => categoriesState.setFilter({ page: 1, status: statuses })}
+                    onChange={statuses => setFilter({ ...filter, page: 1, status: statuses })}
                     onClose={() => setIsOpenSubMenu(null)}
                   />
                 </DropdownMenuSubContent>

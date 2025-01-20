@@ -5,53 +5,53 @@ import useDeepCompareEffect from '@repo/shared-universal/hooks/use-deep-compare-
 import { objectToQueryString } from '@repo/shared-universal/utils/string.util';
 
 import { ResponseMeta } from '@/interfaces/api-response.interface';
-import { PostEntity, PostFilter } from '../interfaces/posts.interface';
+import { ProductEntity, ProductFilter } from '../interfaces/products.interface';
 
-import { POST_DEFAULT_FILTER, POST_TYPE } from '../constants/posts.constant';
+import { PRODUCT_DEFAULT_FILTER, PRODUCT_TYPE } from '../constants/products.constant';
 
-import { useGetPostsQuery } from '../hooks/use-post-queries';
+import { useGetProductsQuery } from '../hooks/use-product-queries';
 
-type PostContextType = {
-  filter: PostFilter;
+type ProductContextType = {
+  filter: ProductFilter;
   isFetching: boolean;
   isError: boolean;
   error: Error | null;
   meta?: ResponseMeta;
-  items: PostEntity[];
+  items: ProductEntity[];
   selected: string[];
   selectedIds: Record<string, boolean>;
-  setFilter: React.Dispatch<React.SetStateAction<PostFilter>>;
+  setFilter: React.Dispatch<React.SetStateAction<ProductFilter>>;
   toggleSelect: (id: string) => void;
   toggleSelectAll: (value: boolean) => void;
   clearSelection: () => void;
 };
 
-export const PostContext = createContext<PostContextType | undefined>(undefined);
+export const ProductContext = createContext<ProductContextType | undefined>(undefined);
 
-type PostProviderProps = {
+type ProductProviderProps = {
   children: React.ReactNode;
 };
 
-export const PostProvider: React.FC<PostProviderProps> = ({ children }) => {
+export const ProductProvider: React.FC<ProductProviderProps> = ({ children }) => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const locale = useLocale();
-  const [filter, setFilter] = useState<PostFilter>({
-    q: searchParams.get('q') || POST_DEFAULT_FILTER.q,
-    page: parseInt(searchParams.get('page') as string) || POST_DEFAULT_FILTER.page,
-    limit: parseInt(searchParams.get('limit') as string) || POST_DEFAULT_FILTER.limit,
-    order: searchParams.get('order') || POST_DEFAULT_FILTER.order,
-    status: searchParams.getAll('status') || POST_DEFAULT_FILTER.status,
-    type: (searchParams.get('type') as POST_TYPE) || POST_DEFAULT_FILTER.type,
+  const [filter, setFilter] = useState<ProductFilter>({
+    q: searchParams.get('q') || PRODUCT_DEFAULT_FILTER.q,
+    page: parseInt(searchParams.get('page') as string) || PRODUCT_DEFAULT_FILTER.page,
+    limit: parseInt(searchParams.get('limit') as string) || PRODUCT_DEFAULT_FILTER.limit,
+    order: searchParams.get('order') || PRODUCT_DEFAULT_FILTER.order,
+    status: searchParams.getAll('status') || PRODUCT_DEFAULT_FILTER.status,
+    type: (searchParams.get('type') as PRODUCT_TYPE) || PRODUCT_DEFAULT_FILTER.type,
   });
 
   const [selected, setSelected] = useState<string[]>([]);
-  const { data, isFetching, isError, error } = useGetPostsQuery(filter);
+  const { data, isFetching, isError, error } = useGetProductsQuery(filter);
 
   useDeepCompareEffect(() => {
     const queryString = objectToQueryString({ ...filter, sidebar: searchParams.get('sidebar') });
 
-    navigate({ pathname: `/${locale}/posts`, search: `?${queryString}` });
+    navigate({ pathname: `/${locale}/products`, search: `?${queryString}` });
   }, [filter, navigate, locale, searchParams]);
 
   const toggleSelect = (id: string) => {
@@ -95,5 +95,5 @@ export const PostProvider: React.FC<PostProviderProps> = ({ children }) => {
     [filter, isFetching, isError, error, data, selected]
   );
 
-  return <PostContext.Provider value={contextValue}>{children}</PostContext.Provider>;
+  return <ProductContext.Provider value={contextValue}>{children}</ProductContext.Provider>;
 };

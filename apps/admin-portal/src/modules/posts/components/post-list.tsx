@@ -25,7 +25,7 @@ import {
 import { ComponentBaseProps } from '@/interfaces/component.interface';
 import { PostEntity, PostResponse, PostsResponse } from '../interfaces/posts.interface';
 
-import { POST_ACTION, POST_STATUS, POST_STATUSES, QUERY_POST_LIST } from '../constants/posts.constant';
+import { POST_ACTION, POST_STATUS, POST_STATUSES, POST_TYPE, QUERY_POST_LIST } from '../constants/posts.constant';
 
 import { useBulkDestroyPostsMutation, useDestroyPostMutation } from '../hooks/use-post-queries';
 import { usePosts } from '../hooks/use-posts';
@@ -38,7 +38,7 @@ import PaginationInfo from '@/components/pagination-info';
 
 import { getQueryClient } from '@/utils/query-client.util';
 
-import PostDialogDetail from './post-dialog-detail';
+import PostDetailModal from './post-detail-modal';
 import PostListToolbar from './post-list-toolbar';
 import PostRowStatus from './post-row-status';
 
@@ -121,8 +121,9 @@ const PostList: FC<ComponentBaseProps> = ({ className }) => {
         header: ({ column }) => <DataTableColumnHeader column={column} title={t('post_category')} />,
         cell: ({ row }) => {
           const category = row.original.category;
+          const cateName = category?.nameLocalized.find(x => x.lang === locale)?.value;
 
-          return <p>{category?.name}</p>;
+          return <p>{cateName}</p>;
         },
       },
       {
@@ -216,7 +217,7 @@ const PostList: FC<ComponentBaseProps> = ({ className }) => {
     getFacetedUniqueValues: getFacetedUniqueValues(),
   });
 
-  const onDeletePostSuccess = async (resp: PostResponse, id: string) => {
+  const onDeleteSuccess = async (resp: PostResponse, id: string) => {
     queryClient.setQueryData<PostsResponse>([QUERY_POST_LIST, filter], cached => {
       if (!cached || !cached.data) return cached;
 
@@ -240,7 +241,7 @@ const PostList: FC<ComponentBaseProps> = ({ className }) => {
     toast(t('post_delete_toast_title'), { description: errorMessage });
   };
 
-  const onBulkDeleteSuccess = (resp: PostsResponse, ids: string[]) => {
+  const onBulkDeleteSuccess = (_resp: PostsResponse, ids: string[]) => {
     queryClient.setQueryData<PostsResponse>([QUERY_POST_LIST, filter], cached => {
       if (!cached || !cached.data) return cached;
 
@@ -267,7 +268,7 @@ const PostList: FC<ComponentBaseProps> = ({ className }) => {
   };
 
   useEffect(() => {
-    setFilter({ ...filter, type: searchParams.get('type') || undefined });
+    setFilter({ ...filter, type: searchParams.get('type') as POST_TYPE });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchParams]);
 
@@ -295,12 +296,12 @@ const PostList: FC<ComponentBaseProps> = ({ className }) => {
         content={
           <>
             <span>{t('post_delete_message')}</span>
-            <strong className="ml-1">{action.data?.name}?</strong>
+            <strong className="space-x-1">{action.data?.nameLocalized.find(x => x.lang === locale)?.value}</strong>
           </>
         }
         onYes={() => {
           destroyMutation(action.data?.id as string, {
-            onSuccess: onDeletePostSuccess,
+            onSuccess: onDeleteSuccess,
             onError: onDeleteFailure,
           });
           setAction({ name: '' });
@@ -320,7 +321,7 @@ const PostList: FC<ComponentBaseProps> = ({ className }) => {
         }}
         onNo={() => setAction({ name: '' })}
       />
-      <PostDialogDetail id={viewDetailId} visible={!!viewDetailId} onCancel={() => setViewDetailId('')} />
+      <PostDetailModal id={viewDetailId} visible={!!viewDetailId} onCancel={() => setViewDetailId('')} />
     </div>
   );
 };

@@ -41,7 +41,10 @@ export default function PostListToolbar<TData>({ table, onBulkDelete }: PostList
           onClick={() =>
             navigate({
               pathname: `/${locale}/posts/new`,
-              search: `?${objectToQueryString({ sidebar: searchParams.get('sidebar'), type: searchParams.get('type') })}`,
+              search: `?${objectToQueryString({
+                sidebar: searchParams.get('sidebar'),
+                type: searchParams.get('type'),
+              })}`,
             })
           }
         >

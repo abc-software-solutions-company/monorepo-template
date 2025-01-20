@@ -1,50 +1,33 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import { IsArray, IsEnum, IsNotEmpty, IsOptional, IsString, IsUUID, MaxLength, ValidateNested } from 'class-validator';
+import { IsArray, IsEnum, IsNotEmpty, IsOptional, IsString, MaxLength, Validate, ValidateNested } from 'class-validator';
 
-import { SeoMetaDto } from '@/common/dtos/seo-meta.dto';
+import { TranslationDto } from '@/common/dtos/translation.dto';
 
 import { toSlug } from '@/common/utils/string.util';
+
+import { IsUUIDOrEmpty } from '@/common/validators/is-uuid-or-emptystring.validator';
 
 import { FileDto } from '@/modules/files/dto/file.dto';
 import { File } from '@/modules/files/entities/file.entity';
 
-import { PRODUCT_STATUS } from '../constants/products.constant';
+import { PRODUCT_STATUS, PRODUCT_TYPE } from '../constants/products.constant';
 
-export class CreateProductDto {
-  @ApiProperty({ example: 'Product Name' })
-  @IsString()
-  @IsNotEmpty()
-  @MaxLength(255)
-  name: string;
-
-  @ApiProperty({ example: toSlug('Product Name') })
+export class CreateProductDto extends TranslationDto {
+  @ApiProperty({ example: toSlug('Name') })
   @IsString()
   @IsNotEmpty()
   @MaxLength(255)
   slug: string;
 
-  @ApiPropertyOptional({ example: '<p>description</p>' })
+  @ApiPropertyOptional({ example: PRODUCT_TYPE.DEFAULT })
   @IsString()
-  @IsOptional()
-  @MaxLength(2000)
-  description: string;
-
-  @ApiPropertyOptional({ example: '<p>body</p>' })
-  @IsString()
-  @IsOptional()
-  body: string;
+  type: PRODUCT_TYPE;
 
   @ApiPropertyOptional({ example: PRODUCT_STATUS.DRAFT })
   @IsEnum(PRODUCT_STATUS)
   @IsOptional()
   status: PRODUCT_STATUS;
-
-  @ApiPropertyOptional({ description: 'File ID', example: 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx' })
-  @IsString()
-  @IsOptional()
-  @MaxLength(1000)
-  cover?: string;
 
   @ApiPropertyOptional({
     description: 'Array of file ID',
@@ -58,12 +41,6 @@ export class CreateProductDto {
 
   @ApiPropertyOptional({ description: 'Category ID', example: 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx' })
   @IsOptional()
-  @IsUUID('4')
+  @Validate(IsUUIDOrEmpty)
   categoryId?: string;
-
-  @ApiPropertyOptional({ type: SeoMetaDto, description: 'SEO Meta Data' })
-  @IsOptional()
-  @ValidateNested()
-  @Type(() => SeoMetaDto)
-  seoMeta?: SeoMetaDto;
 }

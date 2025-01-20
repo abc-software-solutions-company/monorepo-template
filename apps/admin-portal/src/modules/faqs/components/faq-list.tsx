@@ -201,7 +201,7 @@ const FaqList: FC<ComponentBaseProps> = ({ className }) => {
     toast(t('faq_delete_toast_title'), { description: errorMessage });
   };
 
-  const onBulkDeleteSuccess = (resp: FaqsResponse, ids: string[]) => {
+  const onBulkDeleteSuccess = (_resp: FaqsResponse, ids: string[]) => {
     queryClient.setQueryData<FaqsResponse>([QUERY_FAQ_LIST, filter], cached => {
       if (!cached || !cached.data) return cached;
 

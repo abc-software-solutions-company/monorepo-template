@@ -1,6 +1,6 @@
 import { Fragment, useMemo } from 'react';
 import { FieldValues, Path, UseFormReturn } from 'react-hook-form';
-import { useTranslations } from 'use-intl';
+import { useLocale, useTranslations } from 'use-intl';
 import { Card, CardContent, CardHeader, CardTitle } from '@repo/react-web-ui-shadcn/components/ui/card';
 import { FormControl, FormField, FormItem, FormMessage } from '@repo/react-web-ui-shadcn/components/ui/form';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@repo/react-web-ui-shadcn/components/ui/select';
@@ -8,16 +8,20 @@ import { repeatStr } from '@repo/shared-universal/utils/string.util';
 
 import { CategoryEntity } from '@/modules/categories/interfaces/categories.interface';
 
-const renderCategories = (cates: CategoryEntity[], depth = 0) => {
-  return cates.map(category => (
-    <Fragment key={category.id}>
-      <SelectItem value={category.id}>
-        {repeatStr('└', '─', depth)}
-        {category.name}
-      </SelectItem>
-      {category.children && renderCategories(category.children, depth + 1)}
-    </Fragment>
-  ));
+const renderCategories = (cates: CategoryEntity[], depth = 0, locale?: string) => {
+  return cates.map(category => {
+    const name = category.nameLocalized.find(x => x.lang === locale)?.value;
+
+    return (
+      <Fragment key={category.id}>
+        <SelectItem value={category.id}>
+          {repeatStr('└', '─', depth)}
+          {name}
+        </SelectItem>
+        {category.children && renderCategories(category.children, depth + 1)}
+      </Fragment>
+    );
+  });
 };
 
 type FormFieldCardSelectCategoryProps<T extends FieldValues> = {
@@ -36,7 +40,8 @@ export default function FormFieldCardSelectCategory<T extends FieldValues>({
   onChange,
 }: FormFieldCardSelectCategoryProps<T>) {
   const t = useTranslations();
-  const memoizedCategories = useMemo(() => renderCategories(categories), [categories]);
+  const locale = useLocale();
+  const memoizedCategories = useMemo(() => renderCategories(categories, 0, locale), [categories, locale]);
 
   return (
     <Card>

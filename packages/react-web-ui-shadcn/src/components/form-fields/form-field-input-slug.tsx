@@ -26,7 +26,7 @@ export default function FormFieldInputSlug<T extends FieldValues>({
   const nameValue = useWatch({ control: form.control, name: watchFieldName });
 
   useEffect(() => {
-    const slugValue = toSlug(nameValue) as PathValue<T, Path<T>>;
+    const slugValue = toSlug(nameValue ?? '') as PathValue<T, Path<T>>;
 
     form.setValue(fieldName, slugValue);
     form.formState.isSubmitted && form.trigger(fieldName);

@@ -5,51 +5,52 @@ import useDeepCompareEffect from '@repo/shared-universal/hooks/use-deep-compare-
 import { objectToQueryString } from '@repo/shared-universal/utils/string.util';
 
 import { ResponseMeta } from '@/interfaces/api-response.interface';
-import { ContentEntity, ContentFilter } from '../interfaces/contents.interface';
+import { CategoryEntity, CategoryFilter } from '../interfaces/categories.interface';
 
-import { CONTENT_DEFAULT_FILTER } from '../constants/contents.constant';
+import { CATEGORY_DEFAULT_FILTER } from '../constants/categories.constant';
 
-import { useGetContentsQuery } from '../hooks/use-content-queries';
+import { useGetCategoriesQuery } from '../hooks/use-category-queries';
 
-type ContentContextType = {
-  filter: ContentFilter;
+type CategoryContextType = {
+  filter: CategoryFilter;
   isFetching: boolean;
   isError: boolean;
   error: Error | null;
   meta?: ResponseMeta;
-  items: ContentEntity[];
+  items: CategoryEntity[];
   selected: string[];
   selectedIds: Record<string, boolean>;
-  setFilter: React.Dispatch<React.SetStateAction<ContentFilter>>;
+  setFilter: React.Dispatch<React.SetStateAction<CategoryFilter>>;
   toggleSelect: (id: string) => void;
   toggleSelectAll: (value: boolean) => void;
   clearSelection: () => void;
 };
 
-export const ContentContext = createContext<ContentContextType | undefined>(undefined);
+export const CategoryContext = createContext<CategoryContextType | undefined>(undefined);
 
-type ContentProviderProps = {
+type CategoryProviderProps = {
   children: React.ReactNode;
 };
 
-export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) => {
+export const CategoryProvider: React.FC<CategoryProviderProps> = ({ children }) => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const locale = useLocale();
-  const [filter, setFilter] = useState<ContentFilter>({
-    q: searchParams.get('q') || CONTENT_DEFAULT_FILTER.q,
-    page: parseInt(searchParams.get('page') as string) || CONTENT_DEFAULT_FILTER.page,
-    limit: parseInt(searchParams.get('limit') as string) || CONTENT_DEFAULT_FILTER.limit,
-    order: searchParams.get('order') || CONTENT_DEFAULT_FILTER.order,
-    status: searchParams.getAll('status') || CONTENT_DEFAULT_FILTER.status,
+  const [filter, setFilter] = useState<CategoryFilter>({
+    q: searchParams.get('q') || CATEGORY_DEFAULT_FILTER.q,
+    page: parseInt(searchParams.get('page') as string) || CATEGORY_DEFAULT_FILTER.page,
+    limit: parseInt(searchParams.get('limit') as string) || CATEGORY_DEFAULT_FILTER.limit,
+    order: searchParams.get('order') || CATEGORY_DEFAULT_FILTER.order,
+    status: searchParams.getAll('status') || CATEGORY_DEFAULT_FILTER.status,
   });
+
   const [selected, setSelected] = useState<string[]>([]);
-  const { data, isFetching, isError, error } = useGetContentsQuery(filter);
+  const { data, isFetching, isError, error } = useGetCategoriesQuery(filter);
 
   useDeepCompareEffect(() => {
     const queryString = objectToQueryString({ ...filter, sidebar: searchParams.get('sidebar') });
 
-    navigate({ pathname: `/${locale}/contents`, search: `?${queryString}` });
+    navigate({ pathname: `/${locale}/categories`, search: `?${queryString}` });
   }, [filter, navigate, locale, searchParams]);
 
   const toggleSelect = (id: string) => {
@@ -93,5 +94,5 @@ export const ContentProvider: React.FC<ContentProviderProps> = ({ children }) =>
     [filter, isFetching, isError, error, data, selected]
   );
 
-  return <ContentContext.Provider value={contextValue}>{children}</ContentContext.Provider>;
+  return <CategoryContext.Provider value={contextValue}>{children}</CategoryContext.Provider>;
 };

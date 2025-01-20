@@ -8,6 +8,7 @@ export const QUERY_POST_DETAIL = 'post';
 
 export enum POST_TYPE {
   DEFAULT = 'default',
+  PAGE = 'page',
   RECRUIT = 'recruit',
   PROMOTION = 'promotion',
   SERVICE = 'service',
@@ -32,7 +33,7 @@ export const POST_DEFAULT_FILTER: PostFilter = {
   limit: 50,
   order: 'DESC',
   status: [],
-  type: 'default',
+  type: POST_TYPE.DEFAULT,
 };
 
 export const POST_STATUSES: OptionType[] = [

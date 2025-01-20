@@ -20,10 +20,6 @@ const PageCategoryList = lazy(() => import('./pages/categories'));
 const PageCategoryEdit = lazy(() => import('./pages/categories/edit'));
 const PageCategoryNew = lazy(() => import('./pages/categories/new'));
 
-const PageContentList = lazy(() => import('./pages/contents'));
-const PageContentEdit = lazy(() => import('./pages/contents/edit'));
-const PageContentNew = lazy(() => import('./pages/contents/new'));
-
 const PageFaqsList = lazy(() => import('./pages/faqs'));
 const PageFaqEdit = lazy(() => import('./pages/faqs/edit'));
 const PageFaqNew = lazy(() => import('./pages/faqs/new'));
@@ -92,9 +88,6 @@ const App = () => (
             <Route path="/:locale/posts" element={<PagePostList />} />
             <Route path="/:locale/posts/new" element={<PagePostNew />} />
             <Route path="/:locale/posts/:id/edit" element={<PagePostEdit />} />
-            <Route path="/:locale/contents" element={<PageContentList />} />
-            <Route path="/:locale/contents/new" element={<PageContentNew />} />
-            <Route path="/:locale/contents/:id/edit" element={<PageContentEdit />} />
             <Route path="/:locale/products" element={<PageProductList />} />
             <Route path="/:locale/products/new" element={<PageProductNew />} />
             <Route path="/:locale/products/:id/edit" element={<PageProductEdit />} />

@@ -21,6 +21,8 @@ import { Post } from '../entities/post.entity';
 import { PostFile } from '../entities/post-file.entity';
 import { PostsService } from '../posts.service';
 
+const defaultLanguage = 'en-us';
+
 describe('PostsService', () => {
   let service: PostsService;
 
@@ -82,14 +84,20 @@ describe('PostsService', () => {
 
   describe('create', () => {
     const creator = { id: '1', name: 'User' } as User;
-    const category = { id: '1', name: 'Category' } as Category;
-    const post: Post = { id: '1', name: 'Test Post', slug: 'test-post', body: 'Test Body', status: POST_STATUS.PUBLISHED } as Post;
+    const category = { id: '1', nameLocalized: [{ lang: defaultLanguage, value: 'Category' }] } as Category;
+    const post = {
+      id: '1',
+      slug: 'test-post',
+      nameLocalized: [{ lang: defaultLanguage, value: 'Test Name' }],
+      bodyLocalized: [{ lang: defaultLanguage, value: 'Test Body' }],
+      status: POST_STATUS.PUBLISHED,
+    } as Post;
     const baseCreateDto: CreatePostDto = {
-      name: 'Test Post',
       slug: 'test-post',
       type: POST_TYPE.DEFAULT,
-      description: 'Test Description',
-      body: 'Test Body',
+      nameLocalized: [{ lang: defaultLanguage, value: 'Test Post' }],
+      descriptionLocalized: [{ lang: defaultLanguage, value: 'Test Description' }],
+      bodyLocalized: [{ lang: defaultLanguage, value: 'Test Body' }],
       status: POST_STATUS.PUBLISHED,
       images: [{ id: '1' }, { id: '2' }] as File[],
     };
@@ -104,11 +112,11 @@ describe('PostsService', () => {
 
       expect(mockPostRepository.save).toHaveBeenCalledWith(
         expect.objectContaining({
-          name: createDto.name,
           slug: createDto.slug,
-          description: createDto.description,
-          body: createDto.body,
           status: createDto.status,
+          nameLocalized: createDto.nameLocalized,
+          descriptionLocalized: createDto.descriptionLocalized,
+          bodyLocalized: createDto.bodyLocalized,
         })
       );
       expect(service.sortImages).toHaveBeenCalledWith(createDto.images, post.id);
@@ -128,11 +136,11 @@ describe('PostsService', () => {
       expect(mockCategoriesService.findOne).toHaveBeenCalledWith(createDto.categoryId);
       expect(mockPostRepository.save).toHaveBeenCalledWith(
         expect.objectContaining({
-          name: createDto.name,
           slug: createDto.slug,
-          description: createDto.description,
-          body: createDto.body,
           status: createDto.status,
+          nameLocalized: createDto.nameLocalized,
+          descriptionLocalized: createDto.descriptionLocalized,
+          bodyLocalized: createDto.bodyLocalized,
           category,
         })
       );
@@ -152,10 +160,10 @@ describe('PostsService', () => {
       expect(mockCategoriesService.findOne).not.toHaveBeenCalled();
       expect(mockPostRepository.save).toHaveBeenCalledWith(
         expect.objectContaining({
-          name: createDto.name,
           slug: createDto.slug,
-          description: createDto.description,
-          body: createDto.body,
+          nameLocalized: createDto.nameLocalized,
+          descriptionLocalized: createDto.descriptionLocalized,
+          bodyLocalized: createDto.bodyLocalized,
           status: createDto.status,
         })
       );
@@ -174,10 +182,7 @@ describe('PostsService', () => {
 
       expect(mockPostRepository.save).toHaveBeenCalledWith(
         expect.objectContaining({
-          name: createDto.name,
           slug: createDto.slug,
-          description: createDto.description,
-          body: createDto.body,
         })
       );
       expect(service.sortImages).toHaveBeenCalledWith(createDto.images, post.id);
@@ -290,7 +295,7 @@ describe('PostsService', () => {
     });
 
     it('should return a list of posts depending on the pagination and sort filter', async () => {
-      const filterDto = { page: 1, limit: 10, status: [POST_STATUS.PUBLISHED], sort: 'name', order: SORT_ORDER.ASC } as FilterPostDto;
+      const filterDto = { page: 1, limit: 10, status: [POST_STATUS.PUBLISHED], sort: 'createdAt', order: SORT_ORDER.ASC } as FilterPostDto;
       const posts = [
         { id: 'post1', status: POST_STATUS.PUBLISHED },
         { id: 'post2', status: POST_STATUS.PUBLISHED },
@@ -322,7 +327,7 @@ describe('PostsService', () => {
       expect(mockQueryBuilder.andWhere).toHaveBeenCalledWith('post.status IN (:...status)', { status: filterDto.status });
       expect(mockQueryBuilder.skip).toHaveBeenCalledWith(filterDto.skip);
       expect(mockQueryBuilder.take).toHaveBeenCalledWith(filterDto.limit);
-      expect(mockQueryBuilder.orderBy).toHaveBeenCalledWith('post.name', SORT_ORDER.ASC);
+      expect(mockQueryBuilder.orderBy).toHaveBeenCalledWith('post.createdAt', SORT_ORDER.ASC);
       expect(mockQueryBuilder.getCount).toHaveBeenCalled();
       expect(mockQueryBuilder.getRawAndEntities).toHaveBeenCalled();
       expect(result).toEqual(
@@ -336,7 +341,7 @@ describe('PostsService', () => {
     });
 
     it('should return a list of posts depending on the pagination and sort filter with default order', async () => {
-      const filterDto = { page: 1, limit: 10, status: [POST_STATUS.PUBLISHED], sort: 'name' } as FilterPostDto;
+      const filterDto = { page: 1, limit: 10, status: [POST_STATUS.PUBLISHED], sort: 'createdAt' } as FilterPostDto;
       const posts = [
         { id: 'post1', status: POST_STATUS.PUBLISHED },
         { id: 'post2', status: POST_STATUS.PUBLISHED },
@@ -368,7 +373,7 @@ describe('PostsService', () => {
       expect(mockQueryBuilder.andWhere).toHaveBeenCalledWith('post.status IN (:...status)', { status: filterDto.status });
       expect(mockQueryBuilder.skip).toHaveBeenCalledWith(filterDto.skip);
       expect(mockQueryBuilder.take).toHaveBeenCalledWith(filterDto.limit);
-      expect(mockQueryBuilder.orderBy).toHaveBeenCalledWith('post.name', SORT_ORDER.DESC);
+      expect(mockQueryBuilder.orderBy).toHaveBeenCalledWith('post.createdAt', SORT_ORDER.DESC);
       expect(mockQueryBuilder.getCount).toHaveBeenCalled();
       expect(mockQueryBuilder.getRawAndEntities).toHaveBeenCalled();
       expect(result).toEqual(
@@ -382,7 +387,7 @@ describe('PostsService', () => {
     });
 
     it('should return a list of posts depending on the pagination and q filter', async () => {
-      const filterDto = { page: 1, limit: 10, q: 'test', status: [POST_STATUS.PUBLISHED], sort: 'name', order: SORT_ORDER.ASC } as FilterPostDto;
+      const filterDto = { page: 1, limit: 10, q: 'test', status: [POST_STATUS.PUBLISHED], sort: 'createdAt', order: SORT_ORDER.ASC } as FilterPostDto;
       const posts = [
         { id: 'post1', status: POST_STATUS.PUBLISHED },
         { id: 'post2', status: POST_STATUS.PUBLISHED },
@@ -415,15 +420,13 @@ describe('PostsService', () => {
       expect(mockQueryBuilder.leftJoin).toHaveBeenCalledWith('postFile.image', 'image');
       expect(mockQueryBuilder.where).toHaveBeenCalledWith('post.type = :type', { type: filterDto.type });
       expect(mockQueryBuilder.andWhere).toHaveBeenCalledWith('post.status IN (:...status)', { status: filterDto.status });
-      expect(mockQueryBuilder.andWhere).toHaveBeenCalledWith('LOWER(post.name) LIKE LOWER(:searchTerm)', { searchTerm });
-      expect(mockQueryBuilder.orWhere).toHaveBeenCalledWith('LOWER(post.description) LIKE LOWER(:searchTerm)', { searchTerm });
-      expect(mockQueryBuilder.orWhere).toHaveBeenCalledWith(
+      expect(mockQueryBuilder.andWhere).toHaveBeenCalledWith(
         "EXISTS (SELECT 1 FROM jsonb_array_elements(post.nameLocalized) AS translation WHERE LOWER(translation->>'value') LIKE LOWER(:searchTerm))",
         { searchTerm }
       );
       expect(mockQueryBuilder.skip).toHaveBeenCalledWith(filterDto.skip);
       expect(mockQueryBuilder.take).toHaveBeenCalledWith(filterDto.limit);
-      expect(mockQueryBuilder.orderBy).toHaveBeenCalledWith('post.name', SORT_ORDER.ASC);
+      expect(mockQueryBuilder.orderBy).toHaveBeenCalledWith('post.createdAt', SORT_ORDER.ASC);
       expect(mockQueryBuilder.getCount).toHaveBeenCalled();
       expect(mockQueryBuilder.getRawAndEntities).toHaveBeenCalled();
       expect(result).toEqual(
@@ -453,7 +456,7 @@ describe('PostsService', () => {
     });
 
     it('should retrieve a post by ID', async () => {
-      const post = { id: '1', name: 'Post 1' } as Post;
+      const post = { id: '1', nameLocalized: [{ lang: defaultLanguage, value: 'Test Name' }] } as Post;
 
       const mockQueryBuilder = {
         select: jest.fn().mockReturnThis(),
@@ -496,7 +499,7 @@ describe('PostsService', () => {
     });
 
     it('should use default status if none is provided', async () => {
-      const post = { id: '1', slug: 'post-1', name: 'Post 1' } as Post;
+      const post = { id: '1', slug: 'post-1', nameLocalized: [{ lang: defaultLanguage, value: 'Test Name' }] } as Post;
 
       const mockQueryBuilder = {
         select: jest.fn().mockReturnThis(),
@@ -524,7 +527,7 @@ describe('PostsService', () => {
     });
 
     it('should retrieve a post by slug', async () => {
-      const post = { id: '1', slug: 'post-1', name: 'Post 1' } as Post;
+      const post = { id: '1', slug: 'post-1', nameLocalized: [{ lang: defaultLanguage, value: 'Test Name' }] } as Post;
       const status = POST_STATUS.PUBLISHED;
 
       const mockQueryBuilder = {
@@ -555,10 +558,10 @@ describe('PostsService', () => {
 
   describe('update', () => {
     it('should update an existing post and return it', async () => {
-      const updateDto: UpdatePostDto = { name: 'Updated Title' };
+      const updateDto: UpdatePostDto = { nameLocalized: [{ lang: defaultLanguage, value: 'Updated Name' }] };
       const postId = 'post-id';
       const creator = { id: 'user-id' } as User;
-      const existingPost = { id: postId, name: 'Old Title' } as Post;
+      const existingPost = { id: postId, nameLocalized: [{ lang: defaultLanguage, value: 'Old Name' }] } as Post;
       const savedPost = { ...existingPost, ...updateDto } as Post;
 
       mockPostRepository.findOneBy.mockResolvedValue(existingPost);
@@ -575,7 +578,7 @@ describe('PostsService', () => {
     });
 
     it('should throw NotFoundException if post is not found', async () => {
-      const updateDto: UpdatePostDto = { name: 'Updated Title' };
+      const updateDto: UpdatePostDto = { nameLocalized: [{ lang: defaultLanguage, value: 'Old Name' }] };
       const postId = 'post-id';
       const creator = { id: 'user-id' } as User;
 
@@ -665,7 +668,7 @@ describe('PostsService', () => {
 
     it('should delete a post by ID', async () => {
       const creator = { id: '1', name: 'User' } as User;
-      const originalPost = { id: '1', name: 'Original Title', status: POST_STATUS.PUBLISHED } as Post;
+      const originalPost = { id: '1', nameLocalized: [{ lang: defaultLanguage, value: 'Original Name' }], status: POST_STATUS.PUBLISHED } as Post;
       const originalPostClone = structuredClone(originalPost);
       const deletedPost = { ...originalPost, status: POST_STATUS.DELETED } as Post;
 

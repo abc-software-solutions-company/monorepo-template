@@ -4,7 +4,6 @@ import { MigrationInterface, QueryRunner } from 'typeorm';
 
 import { Category } from '@/modules/categories/entities/category.entity';
 import { Contact } from '@/modules/contacts/entities/contact.entity';
-import { Content } from '@/modules/contents/entities/content.entity';
 import { Faq } from '@/modules/faqs/entities/faq.entity';
 import { FILE_ROOT_PATH, THUMBNAIL_PATH } from '@/modules/files/constants/files.constant';
 import { File } from '@/modules/files/entities/file.entity';
@@ -15,7 +14,6 @@ import { User } from '@/modules/users/entities/user.entity';
 
 import { categoryFactory } from '../factories/dev/category.factory';
 import { contactFactory } from '../factories/dev/contact.factory';
-import { contentFactory } from '../factories/dev/content.factory';
 import { faqFactory } from '../factories/dev/faq.factory';
 import { fileFactory } from '../factories/dev/file.factory';
 import { postFactory } from '../factories/dev/post.factory';
@@ -30,7 +28,6 @@ export class InitSeeds1689265344543 implements MigrationInterface {
     await queryRunner.manager.getRepository(Post).save(postFactory);
     await queryRunner.manager.getRepository(Product).save(productFactory);
     await queryRunner.manager.getRepository(Faq).save(faqFactory);
-    await queryRunner.manager.getRepository(Content).save(contentFactory);
     await queryRunner.manager.getRepository(Contact).save(contactFactory);
 
     generateAssets();
@@ -38,7 +35,6 @@ export class InitSeeds1689265344543 implements MigrationInterface {
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await Promise.all(contactFactory.map(async (x: Contact) => await queryRunner.manager.getRepository(Contact).remove(x)));
-    await Promise.all(contentFactory.map(async (x: Content) => await queryRunner.manager.getRepository(Content).remove(x)));
     await Promise.all(faqFactory.map(async (x: Faq) => await queryRunner.manager.getRepository(Faq).remove(x)));
     await Promise.all(productFactory.map(async (x: Product) => await queryRunner.manager.getRepository(Product).remove(x)));
     await Promise.all(postFactory.map(async (x: Post) => await queryRunner.manager.getRepository(Post).remove(x)));

@@ -35,6 +35,8 @@ import { UsersModule } from '@/modules/users/users.module';
 import { adminLogin } from './utils/auth.util';
 import { setupTestingModules } from './utils/setup.util';
 
+const defaultLanguage = 'en-us';
+
 describe('AdminPostsController (e2e)', () => {
   let app: NestExpressApplication;
   let userRepository: Repository<User>;
@@ -119,11 +121,11 @@ describe('AdminPostsController (e2e)', () => {
 
     it('should throw BadRequest if categoryId is not a UUID', async () => {
       const createPostDto: CreatePostDto = {
-        name: 'Invalid Category',
         slug: 'invalid-category',
         type: POST_TYPE.DEFAULT,
-        description: 'This post has a non-UUID categoryId.',
-        body: 'Full content with non-UUID categoryId.',
+        nameLocalized: [{ lang: defaultLanguage, value: 'Invalid Category' }],
+        descriptionLocalized: [{ lang: defaultLanguage, value: 'This post has a non-UUID categoryId.' }],
+        bodyLocalized: [{ lang: defaultLanguage, value: 'Full content with non-UUID categoryId.' }],
         status: POST_STATUS.DRAFT,
         categoryId: 'wrong-uuid-format',
       };
@@ -141,11 +143,11 @@ describe('AdminPostsController (e2e)', () => {
 
     it('should throw Unauthorized if accessToken is missing', async () => {
       const createPostDto: CreatePostDto = {
-        name: 'NestJS',
         slug: 'nestjs',
         type: POST_TYPE.DEFAULT,
-        description: 'short',
-        body: 'full',
+        nameLocalized: [{ lang: defaultLanguage, value: 'NestJS' }],
+        descriptionLocalized: [{ lang: defaultLanguage, value: 'short' }],
+        bodyLocalized: [{ lang: defaultLanguage, value: 'full' }],
         status: POST_STATUS.PUBLISHED,
       };
 
@@ -159,11 +161,11 @@ describe('AdminPostsController (e2e)', () => {
 
     it('should assign category to the post if categoryId is valid', async () => {
       const createPostDto: CreatePostDto = {
-        name: 'NestJS',
         slug: 'nestjs',
         type: POST_TYPE.DEFAULT,
-        description: 'short',
-        body: 'full content',
+        nameLocalized: [{ lang: defaultLanguage, value: 'NestJS' }],
+        descriptionLocalized: [{ lang: defaultLanguage, value: 'short' }],
+        bodyLocalized: [{ lang: defaultLanguage, value: 'full content' }],
         status: POST_STATUS.DRAFT,
         categoryId: category.id,
       };
@@ -175,15 +177,15 @@ describe('AdminPostsController (e2e)', () => {
 
       expect(response.body.data).toMatchObject({
         id: expect.any(String),
-        name: createPostDto.name,
         slug: createPostDto.slug,
-        description: createPostDto.description,
-        body: createPostDto.body,
+        nameLocalized: createPostDto.nameLocalized,
+        descriptionLocalized: createPostDto.descriptionLocalized,
+        bodyLocalized: createPostDto.bodyLocalized,
         status: createPostDto.status,
         category: {
           id: category.id,
-          name: category.name,
-        },
+          nameLocalized: category.nameLocalized,
+        } as Category,
         cover: null,
         createdAt: expect.any(String),
         updatedAt: expect.any(String),
@@ -192,11 +194,11 @@ describe('AdminPostsController (e2e)', () => {
 
     it('should not assign category to the post if categoryId is invalid', async () => {
       const createPostDto: CreatePostDto = {
-        name: 'NestJS',
         slug: 'nestjs',
         type: POST_TYPE.DEFAULT,
-        description: 'short',
-        body: 'full',
+        nameLocalized: [{ lang: defaultLanguage, value: 'NestJS' }],
+        descriptionLocalized: [{ lang: defaultLanguage, value: 'short' }],
+        bodyLocalized: [{ lang: defaultLanguage, value: 'full' }],
         status: POST_STATUS.PUBLISHED,
         categoryId: uuidv4(),
       };
@@ -214,11 +216,11 @@ describe('AdminPostsController (e2e)', () => {
 
     it('should throw NotFoundException if categoryId does not exist', async () => {
       const createPostDto: CreatePostDto = {
-        name: 'Test Post',
         slug: 'test-post',
         type: POST_TYPE.DEFAULT,
-        description: 'Test Description',
-        body: 'Test Body',
+        nameLocalized: [{ lang: defaultLanguage, value: 'Test Post' }],
+        descriptionLocalized: [{ lang: defaultLanguage, value: 'Test Description' }],
+        bodyLocalized: [{ lang: defaultLanguage, value: 'Test Body' }],
         status: POST_STATUS.PUBLISHED,
         categoryId: uuidv4(),
       };
@@ -235,11 +237,11 @@ describe('AdminPostsController (e2e)', () => {
 
     it('should create a new post successfully without categoryId', async () => {
       const createPostDto: CreatePostDto = {
-        name: 'Test Post',
         slug: 'test-post',
         type: POST_TYPE.DEFAULT,
-        description: 'Test Description',
-        body: 'Test Body',
+        nameLocalized: [{ lang: defaultLanguage, value: 'Test Post' }],
+        descriptionLocalized: [{ lang: defaultLanguage, value: 'Test Description' }],
+        bodyLocalized: [{ lang: defaultLanguage, value: 'Test Body' }],
         status: POST_STATUS.PUBLISHED,
       };
 
@@ -257,11 +259,11 @@ describe('AdminPostsController (e2e)', () => {
 
     it('should create a new post successfully with all fields provided', async () => {
       const createPostDto: CreatePostDto = {
-        name: 'Test Post',
         slug: 'test-post',
         type: POST_TYPE.DEFAULT,
-        description: 'Test Description',
-        body: 'Test Body',
+        nameLocalized: [{ lang: defaultLanguage, value: 'Test Post' }],
+        descriptionLocalized: [{ lang: defaultLanguage, value: 'Test Description' }],
+        bodyLocalized: [{ lang: defaultLanguage, value: 'Test Body' }],
         status: POST_STATUS.PUBLISHED,
         categoryId: category.id,
         images: [{ id: file1.id }, { id: file2.id }] as File[],
@@ -283,8 +285,8 @@ describe('AdminPostsController (e2e)', () => {
           id: expect.any(String),
           category: {
             id: category.id,
-            name: category.name,
-          },
+            nameLocalized: category.nameLocalized,
+          } as Category,
           status: POST_STATUS.PUBLISHED,
           cover: null,
           createdAt: expect.any(String),
@@ -471,7 +473,10 @@ describe('AdminPostsController (e2e)', () => {
     });
 
     it('should throw Unauthorized if accessToken is missing', async () => {
-      const updatePostDto: UpdatePostDto = { name: 'New NestJS', body: 'full content' };
+      const updatePostDto: UpdatePostDto = {
+        nameLocalized: [{ lang: defaultLanguage, value: 'New NestJS' }],
+        bodyLocalized: [{ lang: defaultLanguage, value: 'full content' }],
+      };
 
       const response = await supertest(app.getHttpServer()).patch(`/api/v1/admin/posts/${post.id}`).send(updatePostDto);
 
@@ -482,7 +487,10 @@ describe('AdminPostsController (e2e)', () => {
     });
 
     it('should throw Not Found if post does not exist', async () => {
-      const updatePostDto: UpdatePostDto = { name: 'New NestJS', body: 'full content' };
+      const updatePostDto: UpdatePostDto = {
+        nameLocalized: [{ lang: defaultLanguage, value: 'New NestJS' }],
+        bodyLocalized: [{ lang: defaultLanguage, value: 'full content' }],
+      };
 
       const response = await supertest(app.getHttpServer())
         .patch(`/api/v1/admin/posts/${uuidv4()}`)
@@ -496,7 +504,11 @@ describe('AdminPostsController (e2e)', () => {
     });
 
     it('should update post with status successfully', async () => {
-      const updatePostDto: UpdatePostDto = { name: 'New NestJS', body: 'full content', status: POST_STATUS.PUBLISHED };
+      const updatePostDto: UpdatePostDto = {
+        nameLocalized: [{ lang: defaultLanguage, value: 'New NestJS' }],
+        bodyLocalized: [{ lang: defaultLanguage, value: 'full content' }],
+        status: POST_STATUS.PUBLISHED,
+      };
 
       const response = await supertest(app.getHttpServer())
         .patch(`/api/v1/admin/posts/${post.id}`)
@@ -511,7 +523,11 @@ describe('AdminPostsController (e2e)', () => {
     });
 
     it('should update post with category successfully', async () => {
-      const updatePostDto: UpdatePostDto = { name: 'New NestJS', body: 'full content', categoryId: category.id };
+      const updatePostDto: UpdatePostDto = {
+        nameLocalized: [{ lang: defaultLanguage, value: 'New NestJS' }],
+        bodyLocalized: [{ lang: defaultLanguage, value: 'full content' }],
+        categoryId: category.id,
+      };
 
       const response = await supertest(app.getHttpServer())
         .patch(`/api/v1/admin/posts/${post.id}`)
@@ -528,15 +544,18 @@ describe('AdminPostsController (e2e)', () => {
           id: expect.any(String),
           category: {
             id: category.id,
-            name: category.name,
-          },
+            nameLocalized: category.nameLocalized,
+          } as Category,
           cover: null,
         },
       });
     });
 
     it('should update post with images successfully', async () => {
-      const updatePostDto: UpdatePostDto = { name: 'New NestJS', images: [{ id: file1.id }, { id: file2.id }, { id: file3.id }] as File[] };
+      const updatePostDto: UpdatePostDto = {
+        nameLocalized: [{ lang: defaultLanguage, value: 'New NestJS' }],
+        images: [{ id: file1.id }, { id: file2.id }, { id: file3.id }] as File[],
+      };
 
       const response = await supertest(app.getHttpServer())
         .patch(`/api/v1/admin/posts/${post.id}`)
@@ -557,7 +576,10 @@ describe('AdminPostsController (e2e)', () => {
     });
 
     it('should update post successfully', async () => {
-      const updatePostDto: UpdatePostDto = { name: 'New NestJS', body: 'full content' };
+      const updatePostDto: UpdatePostDto = {
+        nameLocalized: [{ lang: defaultLanguage, value: 'New NestJS' }],
+        bodyLocalized: [{ lang: defaultLanguage, value: 'full content' }],
+      };
 
       const response = await supertest(app.getHttpServer())
         .patch(`/api/v1/admin/posts/${post.id}`)

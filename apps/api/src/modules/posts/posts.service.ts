@@ -49,6 +49,7 @@ export class PostsService {
 
     if (createDto.status) newPost.status = createDto.status;
     if (createDto.seoMeta) newPost.seoMeta = createDto.seoMeta;
+
     newPost.creator = creator;
 
     const createdPost = await this.postRepository.save(newPost);
@@ -74,13 +75,10 @@ export class PostsService {
     if (q) {
       const searchTerm = `%${q}%`;
 
-      queryBuilder
-        .andWhere('LOWER(post.name) LIKE LOWER(:searchTerm)', { searchTerm })
-        .orWhere('LOWER(post.description) LIKE LOWER(:searchTerm)', { searchTerm })
-        .orWhere(
-          "EXISTS (SELECT 1 FROM jsonb_array_elements(post.nameLocalized) AS translation WHERE LOWER(translation->>'value') LIKE LOWER(:searchTerm))",
-          { searchTerm }
-        );
+      queryBuilder.andWhere(
+        "EXISTS (SELECT 1 FROM jsonb_array_elements(post.nameLocalized) AS translation WHERE LOWER(translation->>'value') LIKE LOWER(:searchTerm))",
+        { searchTerm }
+      );
     }
     if (sort) {
       if (order) {
@@ -137,6 +135,7 @@ export class PostsService {
         post[field] = updateDto[field];
       }
     }
+
     if (updateDto.categoryId) {
       const category = await this.categoriesService.findOne(updateDto.categoryId);
 

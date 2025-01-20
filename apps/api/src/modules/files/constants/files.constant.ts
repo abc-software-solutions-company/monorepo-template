@@ -2,7 +2,7 @@ import path from 'path';
 
 export const FILE_GET_FIELDS = [
   ['file.id file.caption file.uniqueName file.mime file.ext file.size file.isTemp file.status file.createdAt'],
-  ['category.id category.name'],
+  ['category.id category.nameLocalized'],
 ]
   .flat()
   .flatMap(item => item.trim().split(/\s+/));

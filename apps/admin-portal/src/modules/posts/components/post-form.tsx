@@ -18,7 +18,7 @@ import { objectToQueryString } from '@repo/shared-universal/utils/string.util';
 
 import { PostFormData } from '../interfaces/posts.interface';
 
-import { POST_STATUS, POST_STATUSES } from '../constants/posts.constant';
+import { POST_STATUS, POST_STATUSES, POST_TYPE } from '../constants/posts.constant';
 
 import { useCreatePostMutation, useGetPostQuery, useUpdatePostMutation } from '../hooks/use-post-queries';
 
@@ -57,23 +57,15 @@ const PostForm: FC<PostFormProps> = ({ isEdit }) => {
 
   const defaultValues: PostFormData = {
     status: content?.data.status ?? POST_STATUS.DRAFT,
-    name: content?.data.name ?? '',
     slug: content?.data.slug ?? '',
-    type: content?.data.type ?? searchParams.get('type'),
-    cover: content?.data.cover ?? '',
+    type: content?.data.type ?? (searchParams.get('type') as POST_TYPE),
     coverLocalized: content?.data.coverLocalized ?? [],
-    images: content?.data.images ?? ([] as FileEntity[]),
-    description: content?.data.description ?? '',
-    body: content?.data.body ?? '',
-    categoryId: content?.data.category?.id ?? '',
     nameLocalized: content?.data.nameLocalized ?? [],
     descriptionLocalized: content?.data.descriptionLocalized ?? [],
     bodyLocalized: content?.data.bodyLocalized ?? [],
+    images: content?.data.images ?? ([] as FileEntity[]),
+    categoryId: content?.data.category?.id ?? '',
     seoMeta: {
-      // TODO: Will be removed
-      title: content?.data.seoMeta?.title ?? '',
-      // TODO: Will be removed
-      description: content?.data.seoMeta?.description ?? '',
       titleLocalized: content?.data.seoMeta?.titleLocalized ?? [],
       descriptionLocalized: content?.data.seoMeta?.descriptionLocalized ?? [],
       keywords: content?.data.seoMeta?.keywords ?? '',

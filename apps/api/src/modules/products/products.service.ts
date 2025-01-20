@@ -50,6 +50,8 @@ export class ProductsService {
     if (createDto.status) newProduct.status = createDto.status;
     if (createDto.seoMeta) newProduct.seoMeta = createDto.seoMeta;
 
+    newProduct.creator = creator;
+
     const createdProduct = await this.productRepository.save(newProduct);
 
     await Promise.all([
@@ -61,18 +63,22 @@ export class ProductsService {
   }
 
   async find(filterDto: FilterProductDto) {
-    const { q, order, status, sort, skip, limit } = filterDto;
+    const { q, order, status, sort, skip, limit, type } = filterDto;
 
     const queryBuilder = this.createQueryBuilderWithJoins('product');
 
+    queryBuilder.where('product.type = :type', { type });
+
     if (status) {
-      queryBuilder.where('product.status IN (:...status)', { status });
+      queryBuilder.andWhere('product.status IN (:...status)', { status });
     }
     if (q) {
-      queryBuilder
-        .andWhere('LOWER(product.name) LIKE LOWER(:name)', { name: `%${q}%` })
-        .orWhere('LOWER(product.description) LIKE LOWER(:description)', { description: `%${q}%` })
-        .orWhere('LOWER(product.body) LIKE LOWER(:body)', { body: `%${q}%` });
+      const searchTerm = `%${q}%`;
+
+      queryBuilder.andWhere(
+        "EXISTS (SELECT 1 FROM jsonb_array_elements(product.nameLocalized) AS translation WHERE LOWER(translation->>'value') LIKE LOWER(:searchTerm))",
+        { searchTerm }
+      );
     }
     if (sort) {
       if (order) {
@@ -185,13 +191,21 @@ export class ProductsService {
 
     const deletedProducts = await this.productRepository.save(products);
 
-    await this.auditLogsService.auditLogDelete(creator, originalProducts, deletedProducts, AUDIT_LOG_TABLE_NAME.POSTS);
+    await this.auditLogsService.auditLogDelete(creator, originalProducts, deletedProducts, AUDIT_LOG_TABLE_NAME.PRODUCTS);
 
     return deletedProducts;
   }
 
   async sortImages(images: File[] | undefined, productId: string) {
     if (!images) return;
+
+    const existingFiles = await this.productFileRepository.find({ where: { productId } });
+    const newFileIds = images.map(image => image.id);
+    const filesToRemove = existingFiles.filter(file => !newFileIds.includes(file.fileId));
+
+    if (filesToRemove.length > 0) {
+      await this.productFileRepository.remove(filesToRemove);
+    }
 
     for (let i = 0; i < images.length; i++) {
       const existingFile = await this.productFileRepository.findOne({ where: { fileId: images[i].id, productId } });
