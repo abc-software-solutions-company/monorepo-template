@@ -93,6 +93,18 @@ Before modifying the GitHub Actions workflows in `.github/workflows`, follow the
   - Image should be visually appealing and represent your brand/content
   - Keep file size under 1MB for faster loading
   - Use JPG format for better compression while maintaining quality
+- Configure environment variables for enable SEO in production:
+  - Set `NEXT_PUBLIC_APP_ENV=production` in production environment only
+  - This enables Google crawling and indexing of your website
+  - Keep as `development` in staging/development environments
+  - Example `.env` configuration for production:
+    ```env
+    NEXT_PUBLIC_APP_ENV=production
+    ```
+  - Example `.env` configuration for development/staging:
+    ```env
+    NEXT_PUBLIC_APP_ENV=development
+    ```
 
 ---
 
@@ -103,18 +115,73 @@ Before modifying the GitHub Actions workflows in `.github/workflows`, follow the
 
 ---
 
-## 7. **Email Service Setup**
+# 7. **Email Service Setup**
 
-- Prepare email configurations using AWS SNS, including:
-  - Setting up email sender and receiver accounts.
-  - Registering the email sender in AWS SNS to verify its identity.
-- Configure email service environment variables for backend:
-  - Set `AP_EMAIL_HOST` to your SMTP server host
-  - Configure `AP_EMAIL_PORT` (default 587 for TLS)
-  - Set `AP_EMAIL_SECURE` to true/false based on your email provider's requirements
-  - Add `AP_EMAIL_USERNAME` for authentication
-  - Set `AP_EMAIL_PASSWORD` for authentication
-- Test email configuration by sending a test email through the system
+## Setting Up Email Configuration with AWS SES
+
+This guide provides a step-by-step process to configure email services using Amazon Simple Email Service (SES). It includes setting up email sender
+and receiver accounts, registering the email sender in AWS SES, configuring environment variables for the backend, and testing the email
+configuration.
+
+---
+
+### **Step 1: Set Up Email Sender and Receiver Accounts**
+
+#### **1.1 Register the Email Sender in AWS SES**
+
+1. Log in to the **AWS Management Console**.
+2. Navigate to **Amazon SES** under the **Services** menu.
+3. In the left-hand menu, select **Identities** under the **Configuration** section.
+4. Click **Create Identity**.
+5. In the **Identity details** section:
+   - Choose **Email address** as the identity type.
+   - Enter the email address you want to use as the sender.
+6. Click **Create Identity**.
+7. **AWS SES** will send a verification email to the provided email address. Open the email and click the verification link to confirm the email
+   address.
+
+---
+
+### **Step 2: Create SMTP Credentials for Email Sending**
+
+#### **2.1 Generate SMTP Credentials**
+
+1. In the AWS SES console, go to the **SMTP Settings** tab.
+2. Click **Create SMTP Credentials**.
+3. Enter a **Username** for the SMTP credentials.
+4. Review the permissions policy for the user group. Ensure it includes the following permissions:
+   ```json
+   {
+     "Version": "2012-10-17",
+     "Statement": [
+       {
+         "Effect": "Allow",
+         "Action": "ses:SendRawEmail",
+         "Resource": "*"
+       }
+     ]
+   }
+   ```
+5. Click **Create User**.
+6. In the **Retrieve SMTP Credentials** step, download the `.csv` file containing the credentials. The file includes:
+   - **IAM User Name**
+   - **SMTP Username**
+   - **SMTP Password**
+
+---
+
+### **Step 3: Configure Email Service Environment Variables for Backend**
+
+Map the SMTP credentials and settings to your backend environment variables as follows:
+
+```plaintext
+# EMAIL CONFIGURATION
+AP_EMAIL_HOST=email-smtp.<region>.amazonaws.com  # Replace <region> with your AWS region (e.g., us-east-1)
+AP_EMAIL_PORT=587                                # Default port for TLS
+AP_EMAIL_SECURE=false                            # Set to true if using SSL
+AP_EMAIL_USERNAME=<SMTP Username>                # From the downloaded .csv file
+AP_EMAIL_PASSWORD=<SMTP Password>                # From the downloaded .csv file
+```
 
 ---
 
