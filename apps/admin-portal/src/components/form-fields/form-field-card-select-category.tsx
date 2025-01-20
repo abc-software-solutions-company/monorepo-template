@@ -18,7 +18,7 @@ const renderCategories = (cates: CategoryEntity[], depth = 0, locale?: string) =
           {repeatStr('└', '─', depth)}
           {name}
         </SelectItem>
-        {category.children && renderCategories(category.children, depth + 1)}
+        {category.children && renderCategories(category.children, depth + 1, locale)}
       </Fragment>
     );
   });
@@ -56,6 +56,7 @@ export default function FormFieldCardSelectCategory<T extends FieldValues>({
             <FormItem>
               <FormControl>
                 <Select
+                  {...field}
                   value={field.value}
                   onValueChange={value => {
                     const val = value === 'root' ? '' : value;

@@ -43,46 +43,30 @@ export function renameDirectorySync(oldPath: string, newPath: string) {
   }
 }
 
-export function getCategoryInfo(categories: Category[], categoryId: string, locale?: string): { path: string; depth: number } {
+export function getCategoryInfo(categories: Category[], categoryId: string): { depth: number } {
   const category = categories.find(cat => cat.id === categoryId);
-  const name = category.nameLocalized.find(x => x.lang === locale)?.value;
 
   if (!category) {
-    return { path: '', depth: 0 };
+    return { depth: 0 };
   }
 
-  let catePath = `/${name}`;
   let depth = 0;
 
   if (category.parent) {
     const parentInfo = getCategoryInfo(categories, category.parent.id);
 
-    catePath = `${parentInfo.path}${path}`;
     depth = parentInfo.depth + 1;
   }
 
-  return { path: catePath, depth };
+  return { depth };
 }
 
-export function buildTree(categories: Category[], id: string, basePath: string, locale?: string) {
-  const tree: Category[] = [];
+export function buildTree(categories: Category[], parentId: string | null = null): Category[] {
+  const nodes = categories.filter(category => (category.parent ? category.parent.id : null) === parentId);
 
-  categories.forEach(category => {
-    const parentId = category.parent && category.parent.id;
-    const name = category.nameLocalized.find(x => x.lang === locale)?.value;
+  return nodes.map(node => {
+    const children = buildTree(categories, node.id);
 
-    if (parentId === id) {
-      const fullPath = basePath === '/' ? basePath + name : basePath + '/' + name;
-      const children = buildTree(categories, category.id, fullPath);
-
-      tree.push({
-        ...category,
-        children: children.length > 0 ? children : null,
-        path: fullPath,
-        depth: fullPath.split('/').length - 2,
-      } as Category & { path: string; depth: number });
-    }
+    return Object.assign(new Category(), { ...node, children });
   });
-
-  return tree;
 }

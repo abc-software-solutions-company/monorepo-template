@@ -49,6 +49,8 @@ export class CategoriesService {
     if (createDto.status) newCategory.status = createDto.status;
     if (createDto.seoMeta) newCategory.seoMeta = createDto.seoMeta;
 
+    newCategory.creator = creator;
+
     const categoryResponse = await this.categoryRepository.save({ ...newCategory });
 
     await Promise.all([
@@ -129,7 +131,7 @@ export class CategoriesService {
   async getTrees(filterDto: FilterCategoryDto) {
     const categories = await this.findAll(filterDto);
 
-    return buildTree(categories, filterDto.parentId || null, '/');
+    return buildTree(categories, filterDto.parentId);
   }
 
   async findOne(id: string) {

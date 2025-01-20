@@ -6,6 +6,7 @@ import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { toast } from 'sonner';
 import { useLocale, useTranslations } from 'use-intl';
 import { zodResolver } from '@hookform/resolvers/zod';
+import Debugger from '@repo/react-web-ui-shadcn/components/debugger';
 import FormFieldInputSlug from '@repo/react-web-ui-shadcn/components/form-fields/form-field-input-slug';
 import FormFieldCKEditorMultiLanguage from '@repo/react-web-ui-shadcn/components/form-fields-ahua/form-field-ckeditor-multi-language';
 import FormFieldInputMultiLanguage from '@repo/react-web-ui-shadcn/components/form-fields-ahua/form-field-input-multi-language';
@@ -22,7 +23,6 @@ import { CATEGORY_STATUS, CATEGORY_STATUSES, CATEGORY_TYPE, CATEGORY_TYPES } fro
 import {
   useCreateCategoryMutation,
   useGetCategoriesByTypeQuery,
-  useGetCategoriesQuery,
   useGetCategoryQuery,
   useUpdateCategoryMutation,
 } from '../hooks/use-category-queries';
@@ -52,11 +52,13 @@ const CategoryForm: FC<CategoryFormProps> = ({ isEdit }) => {
   const locale = useLocale();
   const editorRef = useRef<Editor | null>(null);
   const [isFileManagerVisible, setIsFileManagerVisible] = useState(false);
+  const [selectedType, setSelectedType] = useState<CATEGORY_TYPE | undefined>(undefined);
+
   const { data: content, isFetching } = useGetCategoryQuery({ id: params.id as string, enabled: !!params.id });
-  const { data: categories, isFetching: isCategoriesFetching } = useGetCategoriesQuery({ type: CATEGORY_TYPE.POST });
   const { data: categoriesByType, isFetching: isCategoriesByTypeFetching } = useGetCategoriesByTypeQuery(
-    { type: content?.data.type },
-    content?.data.id
+    { type: selectedType },
+    content?.data.id,
+    selectedType !== undefined
   );
   const { mutate: createMutation } = useCreateCategoryMutation();
   const { mutate: updateMutation } = useUpdateCategoryMutation();
@@ -81,6 +83,10 @@ const CategoryForm: FC<CategoryFormProps> = ({ isEdit }) => {
   };
 
   const form = useForm<CategoryFormData>({ resolver: zodResolver(categoryFormLocalizeSchema(languages)), defaultValues });
+
+  const handleTypeChange = (newType: CATEGORY_TYPE) => {
+    setSelectedType(newType);
+  };
 
   const onBackClick = () => {
     navigate({
@@ -145,7 +151,7 @@ const CategoryForm: FC<CategoryFormProps> = ({ isEdit }) => {
   useEffect(() => {
     form.reset(defaultValues);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [form, content, categories]);
+  }, [form, content]);
 
   return (
     <div data-testid="frm-category">
@@ -192,12 +198,8 @@ const CategoryForm: FC<CategoryFormProps> = ({ isEdit }) => {
             <div className="w-72 shrink-0">
               <div className="grid gap-4">
                 <FormFieldCardSelectStatus form={form} statuses={CATEGORY_STATUSES} />
-                {!content && (
-                  <FormFieldCardSelectCategoryType
-                    form={form}
-                    items={CATEGORY_TYPES}
-                    // onChange={value => refetchCategories({ type: value as CATEGORY_TYPE })}
-                  />
+                {!content?.data && (
+                  <FormFieldCardSelectCategoryType form={form} items={CATEGORY_TYPES} onChange={value => handleTypeChange(value as CATEGORY_TYPE)} />
                 )}
                 <FormFieldCardSelectCategory
                   form={form}
@@ -210,10 +212,12 @@ const CategoryForm: FC<CategoryFormProps> = ({ isEdit }) => {
               </div>
             </div>
           </div>
+          <Debugger text={JSON.stringify(form.formState.errors, null, 2)} />
+          <Debugger text={JSON.stringify(form.watch(), null, 2)} />
         </form>
       </Form>
       <EditorFileDialog editorRef={editorRef} visible={isFileManagerVisible} setVisible={setIsFileManagerVisible} />
-      <ModalLoading visible={isFetching || isCategoriesFetching || isCategoriesByTypeFetching} />
+      <ModalLoading visible={isFetching || isCategoriesByTypeFetching} />
     </div>
   );
 };

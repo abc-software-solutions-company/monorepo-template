@@ -37,6 +37,7 @@ export default function FormFieldCardSelectCategoryType<T extends FieldValues>({
             <FormItem>
               <FormControl>
                 <Select
+                  {...field}
                   value={field.value}
                   onValueChange={value => {
                     field.onChange(value);
