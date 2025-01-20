@@ -36,7 +36,7 @@ portal, and website. It also includes instructions for redirecting non-www traff
    > **Note:**
 
    - `@` represents the root domain (e.g., `example.com`).
-   - Subdomains (`www`, `api`, `admin`) also point to your server.
+   - Subdomains (`www`, `api`, `admin`) also point to your IP address server.
 
 4. **Save Changes:**
 
