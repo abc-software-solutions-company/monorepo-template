@@ -164,14 +164,61 @@ Before modifying the GitHub Actions workflows in `.github/workflows`, follow the
 ## 11. **Backend Environment Variables**
 
 - Define all required environment variables for the backend, including:
-  - Database connection details.
-  - AWS S3 credentials for file storage.
-  - Default admin user credentials.
+  - Database connection details:
+    - `AP_DB_HOST`: Database host URL
+    - `AP_DB_PORT`: Database port (default: 5432)
+    - `AP_DB_USERNAME`: Database username
+    - `AP_DB_PASSWORD`: Database password
+    - `AP_DB_NAME`: Database name
+  - AWS S3 credentials for file storage:
+    - `AP_AWS_ENDPOINT`: S3 endpoint URL
+    - `AP_AWS_REGION`: AWS region
+    - `AP_AWS_ACCESS_KEY_ID`: AWS access key
+    - `AP_AWS_SECRET_ACCESS_KEY`: AWS secret key
+    - `AP_AWS_S3_BUCKET_NAME`: S3 bucket name
+  - Default admin user credentials:
+    - `AP_USER_EMAIL`: Admin email
+    - `AP_USER_PASSWORD`: Admin password
+  - Email configuration:
+    - `AP_EMAIL_HOST`: SMTP host
+    - `AP_EMAIL_PORT`: SMTP port
+    - `AP_EMAIL_SECURE`: Use TLS/SSL
+    - `AP_EMAIL_USERNAME`: SMTP username
+    - `AP_EMAIL_PASSWORD`: SMTP password
+  - CORS settings:
+    - `AP_ALLOW_WEB_APP_ORIGIN`: Web app URL
+    - `AP_ALLOW_ADMIN_PORTAL_ORIGIN`: Admin portal URL
+  - Application settings:
+    - `AP_PORT`: Backend server port
+    - `AP_JWT_SECRET`: JWT signing secret
+    - `AP_JWT_EXPIRES_IN`: JWT expiration time
+    - `AP_THROTTLE_TTL`: Rate limit window (seconds)
+    - `AP_THROTTLE_LIMIT`: Max requests per window
+- Ensure all environment variables are properly set in deployment environment
+- Consider using a .env file for local development and secure secrets management for production
 
 ---
 
 ## 12. **Frontend Preparation**
 
+- Configure frontend environment variables based on .env.template:
+  - Set `NEXT_PUBLIC_APP_ENV`: Application environment (development/staging/production)
+  - Set `NEXT_PUBLIC_API_URL`: Backend API URL
+  - Set `NEXT_PUBLIC_SITE_URL`: Frontend application URL
+  - Configure authentication (If your application have function login with google, facebook)
+    - `NEXTAUTH_URL`: Authentication callback URL
+    - `NEXTAUTH_SECRET`: Secret key for NextAuth
+    - `NEXTAUTH_EXPIRES_IN`: Session expiration time
+    - `AUTH_FACEBOOK_ID` and `AUTH_FACEBOOK_SECRET`: Facebook OAuth credentials
+    - `AUTH_GOOGLE_ID` and `AUTH_GOOGLE_SECRET`: Google OAuth credentials
+  - Set up tracking:
+    - `NEXT_PUBLIC_GOOGLE_TRACKING`: Google Analytics tracking ID
+    - `NEXT_PUBLIC_SEGMENT_TRACKING`: Segment tracking ID
+  - Configure maps:
+    - `NEXT_PUBLIC_GOONG_MAP_API_KEY`: Goong Maps API key
+    - `NEXT_PUBLIC_GOOGLE_MAP_API_KEY`: Google Maps API key
+  - Set up chat:
+    - `NEXT_PUBLIC_MESSENGER_PAGE_ID`: Facebook Messenger page ID
 - Ensure the constants file includes all necessary website details, such as the URL, name, description, and Open Graph image.
 - Generate and include favicons for different devices and platforms.
 - Create and add image thumbnails to improve the user experience.
