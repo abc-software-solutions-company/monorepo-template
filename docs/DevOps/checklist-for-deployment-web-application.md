@@ -54,9 +54,48 @@ Before modifying the GitHub Actions workflows in `.github/workflows`, follow the
    - Update **`DOCKER_COMPOSE_SERVICE`** to match your service name
 
 3. **Required Changes** The following variables **must** be updated in each workflow file:
+
    - **`DOCKER_HOST_PORT`**: The port your container will use on the host machine
    - **`APP_NAME`**: The name of your Docker container/application
    - **`DOCKER_COMPOSE_SERVICE`**: The service name in your docker-compose file
+
+4. **Configure Branch Deployment**
+
+   For proper deployment control between environments:
+
+   - **Staging Environment**:
+
+     - Deploys from the `main` branch
+     - Triggered on every push to `main`
+     - Used for testing new features and changes
+     - Example workflow trigger configuration:
+       ```yaml
+       on:
+         push:
+           branches:
+             - 'main'
+         workflow_dispatch:
+       ```
+
+   - **Production Environment**:
+     - Deploys from the `release` branch
+     - More controlled deployment process
+     - Only deploys stable, tested code
+     - Example workflow trigger configuration:
+       ```yaml
+       on:
+         push:
+           branches:
+             - 'release'
+         workflow_dispatch:
+       ```
+
+   This separation ensures that:
+
+   - New features are properly tested in staging before production
+   - Production deployments are intentional and controlled
+   - Development team can continuously integrate to `main` without affecting production
+   - Release process is clear and documented through branch management
 
 ---
 
