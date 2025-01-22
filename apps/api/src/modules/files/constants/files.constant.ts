@@ -9,6 +9,10 @@ export const FILE_GET_FIELDS = [
 
 export const FILE_ROOT_PATH = path.resolve(process.cwd(), 'uploads');
 export const THUMBNAIL_PATH = path.join(FILE_ROOT_PATH, 'thumbnails');
+export enum FILE_PROVIDER {
+  S3 = 's3',
+  SELF_HOSTED = 'self-hosted',
+}
 
 export const MAX_FILES_TO_UPLOAD = 5;
 export const MAX_FILE_SIZE_IN_BYTES = 10 * 1024 * 1024;
