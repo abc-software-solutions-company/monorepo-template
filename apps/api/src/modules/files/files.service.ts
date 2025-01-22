@@ -148,20 +148,6 @@ export class FilesService {
     const mime = file.mimetype;
     const size = file.size;
     const uniqueName = `${toSlug(caption)}-${Date.now()}${ext}`;
-    let url = '';
-    let thumbnailUrl = '';
-
-    if (this.isS3) {
-      url = `${this.s3Url}/${uniqueName}`;
-      thumbnailUrl = VALID_IMAGE_MIME_TYPES.includes(mime) ? `${this.s3Url}/thumbnails/${uniqueName}` : null;
-    }
-
-    if (this.isSelfHosted) {
-      const baseURl = process.env.AP_URL || '';
-
-      url = `${baseURl}/${uniqueName}`;
-      thumbnailUrl = VALID_IMAGE_MIME_TYPES.includes(mime) ? `${baseURl}/thumbnails/${uniqueName}` : null;
-    }
 
     const fileInfo = {
       name: originalName,
@@ -171,8 +157,6 @@ export class FilesService {
       ext,
       mime,
       isTemp: false,
-      thumbnailUrl,
-      url,
     } as File;
 
     if (categoryId) {
