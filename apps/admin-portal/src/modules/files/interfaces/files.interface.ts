@@ -14,8 +14,7 @@ export type FileEntity = {
   ext: string;
   size: number;
   status: FILE_STATUS;
-  url: string;
-  thumbnailUrl?: string;
+  bucketPath: string;
   category: CategoryEntity;
   createdAt: string;
   updatedAt: string;

@@ -157,6 +157,7 @@ export class FilesService {
       ext,
       mime,
       isTemp: false,
+      bucketPath: this.s3Url,
     } as File;
 
     if (categoryId) {
