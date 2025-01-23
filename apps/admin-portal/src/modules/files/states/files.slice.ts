@@ -175,6 +175,8 @@ const slice = createSlice({
     bulkDestroySuccess(state, action: PayloadAction<FilesResponse>) {
       const { data, message, statusCode } = action.payload;
 
+      console.log('🚀 ~ bulkDestroySuccess ~ data:', data);
+
       state.isDeleting = false;
       state.deletedAt = new Date().toISOString();
       state.message = message;

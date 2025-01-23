@@ -106,16 +106,6 @@ const FilesRoot: FC<FilesRootTypes> = ({ className }) => {
   return (
     <div className={classNames('flex grow flex-col', className)}>
       <div className="mt-4 flex grow flex-col">
-        {categoryVisible && (
-          <>
-            <div className="h-full flex-col rounded-lg border bg-card p-4">
-              <DirectoryTree
-                data={[{ name: 'All', id: '' } as CategoryEntity, ...categoriesState.items]}
-                onItemClick={node => filesState.setFilter({ categoryId: node.id, page: 1 })}
-              />
-            </div>
-          </>
-        )}
         <div className="flex h-full flex-col gap-4 rounded-lg border bg-card p-4">
           <div className="flex items-center justify-between">
             <Filter
