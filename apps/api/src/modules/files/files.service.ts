@@ -141,7 +141,7 @@ export class FilesService {
   async bulkDelete(bulkDeleteFileDto: BulkDeleteDto) {
     const queryBuilder = this.fileRepository.createQueryBuilder().update(File).set({ status: FILE_STATUS.DELETED }).whereInIds(bulkDeleteFileDto.ids);
 
-    const data = await queryBuilder.returning('id, status, uniqueName, thumbnailUrl').execute();
+    const data = await queryBuilder.returning('id, status, uniqueName').execute();
 
     //TODO: not move to trash folder, handle this later
     // await this.awsService.moveToTrashObjects(data.raw.map(x => x.unique_name));
