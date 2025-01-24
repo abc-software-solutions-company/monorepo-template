@@ -5,7 +5,7 @@ RUN apk update && apk add --no-cache libc6-compat curl
 # Builder stage
 FROM base AS builder
 WORKDIR /app
-RUN yarn global add turbo
+RUN yarn global add turbo@2.3.3
 COPY . .
 RUN turbo prune admin-portal --docker
 
