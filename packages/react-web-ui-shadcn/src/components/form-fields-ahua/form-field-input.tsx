@@ -5,6 +5,7 @@ import { FormControl, FormField, FormItem, FormMessage } from '@repo/react-web-u
 
 import { CharacterCount } from '../form-fields-base/character-count';
 import { HelperText } from '../form-fields-base/helper-text';
+import { AutocompleteTypes } from '@repo/shared-web/interfaces/autocomplete.interface';
 
 interface IFormFieldInputProps<T extends FieldValues> extends Omit<IInputProps, 'form' | 'onChange' | 'pattern'> {
   messageClassName?: string;
@@ -14,6 +15,7 @@ interface IFormFieldInputProps<T extends FieldValues> extends Omit<IInputProps, 
   visibled?: boolean;
   multiple?: boolean;
   required?: boolean;
+  autoComplete?: AutocompleteTypes;
   showErrorMessage?: boolean;
   helperText?: string;
   showCharacterCount?: boolean;

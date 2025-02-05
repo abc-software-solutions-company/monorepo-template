@@ -43,7 +43,7 @@ export const productFormLocalizeSchema = (languages: Language[]) => {
     descriptionLocalized: localizedField({
       min: 1,
       max: 2000,
-      required: true,
+      required: false,
       requiredMessage: 'validator_product_description',
       minMessage: 'validator_minimum_n_characters_allowed',
       maxMessage: 'validator_maximum_n_characters_allowed',
@@ -51,7 +51,7 @@ export const productFormLocalizeSchema = (languages: Language[]) => {
     bodyLocalized: localizedField({
       min: 1,
       max: Infinity,
-      required: true,
+      required: false,
       requiredMessage: 'validator_product_body',
       minMessage: 'validator_minimum_n_characters_allowed',
       maxMessage: 'validator_maximum_n_characters_allowed',

@@ -51,6 +51,7 @@ export const postFactory = [
     ],
     status: POST_STATUS.PUBLISHED,
     type: POST_TYPE.PAGE,
+    creator: userFactory[0],
     createdAt: faker.date.recent(),
   },
   {
@@ -74,6 +75,7 @@ export const postFactory = [
     ],
     status: POST_STATUS.PUBLISHED,
     type: POST_TYPE.PAGE,
+    creator: userFactory[0],
     createdAt: faker.date.recent(),
   },
   {
@@ -97,6 +99,7 @@ export const postFactory = [
     ],
     status: POST_STATUS.PUBLISHED,
     type: POST_TYPE.PAGE,
+    creator: userFactory[0],
     createdAt: faker.date.recent(),
   },
 ];

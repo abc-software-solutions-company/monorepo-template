@@ -201,3 +201,10 @@
     @apply ml-0 mr-auto;
   }
 }
+
+@media (forced-colors: none) {
+  .ck .ck-editor__nested-editable.ck-editor__nested-editable_focused,
+  .ck .ck-editor__nested-editable:focus {
+    background-color: var(--ck-color-base-background);
+  }
+}

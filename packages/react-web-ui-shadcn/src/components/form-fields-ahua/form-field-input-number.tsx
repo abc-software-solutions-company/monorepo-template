@@ -1,27 +1,21 @@
 import { ControllerRenderProps, FieldValues, Path, UseFormReturn } from 'react-hook-form';
 import { useTranslations } from 'use-intl';
-import { Input } from '@repo/react-web-ui-shadcn/components/ahua/input';
+import { IInputProps, Input } from '@repo/react-web-ui-shadcn/components/ahua/input';
 import { FormControl, FormField, FormItem, FormMessage } from '@repo/react-web-ui-shadcn/components/ui/form';
+
 import { HelperText } from '../form-fields-base/helper-text';
 import { AutocompleteTypes } from '@repo/shared-web/interfaces/autocomplete.interface';
 
-interface FormFieldInputNumberProps<T extends FieldValues> {
-  className?: string;
+interface FormFieldInputNumberProps<T extends FieldValues> extends Omit<IInputProps, 'form' | 'onChange' | 'pattern'> {
   messageClassName?: string;
   form: UseFormReturn<T>;
   formLabel?: string;
   fieldName: Path<T>;
-  placeholder?: string;
-  disabled?: boolean;
-  readOnly?: boolean;
   visible?: boolean;
-  size?: 'default' | 'sm';
   required?: boolean;
   autoComplete?: AutocompleteTypes;
   showErrorMessage?: boolean;
   helperText?: string;
-  minLength?: number;
-  maxLength?: number;
   min?: number;
   max?: number;
   allowDecimal?: boolean;

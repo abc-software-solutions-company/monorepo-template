@@ -8,7 +8,6 @@ import { Logger as PinoLogger } from 'nestjs-pino';
 import { join } from 'path';
 
 import { QueryFailedErrorFilter } from './common/filters/query-failed-error.filter';
-import { WsExceptionFilter } from './common/filters/ws-exception.filter';
 import { IConfigs } from './common/interfaces/configs.interface';
 
 export class Application {
@@ -20,11 +19,14 @@ export class Application {
 
   async setupGlobals() {
     const reflector = this.app.get(Reflector);
-
     const configService = this.app.get(ConfigService);
     const {
       cors: { allowHeaders, allowMethods, allowOrigin },
     } = configService.get<IConfigs['middlewares']>('middlewares');
+
+    if (process.env.NODE_ENV !== 'test') {
+      this.app.useLogger(this.app.get(PinoLogger));
+    }
 
     this.app.enable('trust proxy');
     this.app.enableCors({
@@ -33,7 +35,6 @@ export class Application {
       methods: allowMethods,
       allowedHeaders: allowHeaders,
     });
-    if (process.env.NODE_ENV !== 'test') this.app.useLogger(this.app.get(PinoLogger));
     this.app.useGlobalPipes(
       new ValidationPipe({
         whitelist: true,
@@ -47,7 +48,8 @@ export class Application {
         transformOptions: { enableImplicitConversion: true },
       })
     );
-    this.app.useGlobalFilters(new QueryFailedErrorFilter(), new WsExceptionFilter());
+
+    this.app.useGlobalFilters(new QueryFailedErrorFilter());
     this.app.useGlobalInterceptors(new ClassSerializerInterceptor(reflector));
     this.app.setGlobalPrefix('/api');
     this.app.enableVersioning({ type: VersioningType.URI, prefix: 'v', defaultVersion: '1' });
