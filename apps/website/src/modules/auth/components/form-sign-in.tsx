@@ -38,7 +38,7 @@ const FormSignIn = () => {
     <div className="flex flex-col items-center justify-center">
       <div className="w-full max-w-xl">
         <Form {...form}>
-          <form className="p-6 md:p-8" onSubmit={form.handleSubmit(onSubmit)}>
+          <form data-testid="frm-sign-in" className="p-6 md:p-8" onSubmit={form.handleSubmit(onSubmit)}>
             <div className="flex flex-col">
               <div className="flex flex-col items-center text-center">
                 <h1 className="text-2xl font-bold">Welcome back</h1>
