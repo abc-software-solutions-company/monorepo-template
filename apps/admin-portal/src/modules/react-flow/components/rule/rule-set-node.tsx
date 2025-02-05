@@ -1,9 +1,9 @@
 import { useCallback, useEffect, useState } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import FormFieldDateRangePicker from '@repo/react-web-ui-shadcn/components/form-fields-ahua/form-field-date-range-picker';
+import FormFieldRadio from '@repo/react-web-ui-shadcn/components/form-fields/form-field-radio';
+import FormFieldInputDateRangePicker from '@repo/react-web-ui-shadcn/components/form-fields-ahua/form-field-input-date-range-picker';
 import FormFieldInputNumber from '@repo/react-web-ui-shadcn/components/form-fields-ahua/form-field-input-number';
-import FormFieldRadio from '@repo/react-web-ui-shadcn/components/form-fields-ahua/form-field-radio';
 import FormFieldSelect from '@repo/react-web-ui-shadcn/components/form-fields-ahua/form-field-select';
 import FormFieldSelectTag from '@repo/react-web-ui-shadcn/components/form-fields-ahua/form-field-select-tag';
 import { Block } from '@repo/react-web-ui-shadcn/components/ui/block';
@@ -187,7 +187,7 @@ export function RuleSet({ id, data }: NodeProps<RuleSetNode>) {
                       { value: 'specific_date', label: 'Specific date' },
                     ]}
                   />
-                  <FormFieldDateRangePicker
+                  <FormFieldInputDateRangePicker
                     required
                     showErrorMessage
                     form={form}

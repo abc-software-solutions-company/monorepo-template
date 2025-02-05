@@ -36,7 +36,7 @@ export class UsersService {
   async create(creator: User, createDto: CreateUserDto) {
     const newUser = new User();
 
-    for (const field of USER_FIELDS_TO_CREATE_OR_UPDATE) {
+    for (const field of USER_FIELDS_TO_CREATE_OR_UPDATE as string[]) {
       if (createDto[field] !== undefined) {
         newUser[field] = createDto[field];
       }
@@ -150,7 +150,7 @@ export class UsersService {
       user.deviceTokens.push(updateDto.deviceToken);
     }
 
-    for (const field of USER_FIELDS_TO_CREATE_OR_UPDATE) {
+    for (const field of USER_FIELDS_TO_CREATE_OR_UPDATE as string[]) {
       if (updateDto[field] !== undefined) {
         user[field] = updateDto[field];
       }

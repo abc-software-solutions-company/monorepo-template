@@ -311,7 +311,7 @@ const ProductList: FC<ComponentBaseProps> = ({ className }) => {
       <ModalConfirm
         visible={action.name === PRODUCT_ACTION.DELETE}
         title={t('delete')}
-        content={
+        message={
           <>
             <span>{t('product_delete_message')}</span>
             <strong className="space-x-1">{action.data?.nameLocalized.find(x => x.lang === locale)?.value}</strong>
@@ -329,7 +329,7 @@ const ProductList: FC<ComponentBaseProps> = ({ className }) => {
       <ModalConfirm
         visible={action.name === PRODUCT_ACTION.BULK_DELETE}
         title={t('bulk_delete')}
-        content={<span>{t('product_bulk_delete_message')}</span>}
+        message={<span>{t('product_bulk_delete_message')}</span>}
         onYes={() => {
           bulkDestroyMutation(selected, {
             onSuccess: onBulkDeleteSuccess,

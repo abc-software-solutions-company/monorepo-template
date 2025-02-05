@@ -260,7 +260,7 @@ const UserList: FC<ComponentBaseProps> = ({ className }) => {
       <ModalConfirm
         visible={action.name === USER_ACTION.DELETE}
         title={t('delete')}
-        content={
+        message={
           <>
             <span>{t('user_delete_message')}</span>
             <strong className="ml-1">{action.data?.name}?</strong>
@@ -275,7 +275,7 @@ const UserList: FC<ComponentBaseProps> = ({ className }) => {
       <ModalConfirm
         visible={action.name === USER_ACTION.BULK_DELETE}
         title={t('bulk_delete')}
-        content={<span>{t('user_bulk_delete_message')}</span>}
+        message={<span>{t('user_bulk_delete_message')}</span>}
         onYes={() => {
           usersState.bulkDestroyRequest({ ids: usersState.selected });
           setAction({ name: '' });

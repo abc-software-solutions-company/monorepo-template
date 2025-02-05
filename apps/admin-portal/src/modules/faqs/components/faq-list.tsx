@@ -90,6 +90,9 @@ const FaqList: FC<ComponentBaseProps> = ({ className }) => {
         size: 0,
         header: ({ column }) => <DataTableColumnHeader column={column} title={t('faq_title')} />,
         cell: ({ row }) => {
+          const name = row.original.titleLocalized?.find(x => x.lang === locale)?.value ?? '';
+          const fallbackName = row.original.titleLocalized?.[0]?.value ?? '';
+
           return (
             <div className="flex items-center">
               <button
@@ -101,7 +104,7 @@ const FaqList: FC<ComponentBaseProps> = ({ className }) => {
                   })
                 }
               >
-                {row.getValue('title')}
+                {name || fallbackName}
               </button>
             </div>
           );
@@ -248,10 +251,10 @@ const FaqList: FC<ComponentBaseProps> = ({ className }) => {
       <ModalConfirm
         visible={action.name === FAQ_ACTION.DELETE}
         title={t('delete')}
-        content={
+        message={
           <>
             <span>{t('faq_delete_message')}</span>
-            <strong className="ml-1">{action.data?.title}?</strong>
+            <strong className="space-x-1">{action.data?.titleLocalized.find(x => x.lang === locale)?.value}</strong>
           </>
         }
         onYes={() => {
@@ -266,7 +269,7 @@ const FaqList: FC<ComponentBaseProps> = ({ className }) => {
       <ModalConfirm
         visible={action.name === FAQ_ACTION.BULK_DELETE}
         title={t('bulk_delete')}
-        content={<span>{t('faq_bulk_delete_message')}</span>}
+        message={<span>{t('faq_bulk_delete_message')}</span>}
         onYes={() => {
           bulkDestroyMutation(selected, {
             onSuccess: onBulkDeleteSuccess,

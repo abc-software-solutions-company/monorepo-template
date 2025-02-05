@@ -1,7 +1,6 @@
 import { FieldValues, Path, UseFormReturn } from 'react-hook-form';
-import { useTranslations } from 'use-intl';
-import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@repo/react-web-ui-shadcn/components/ui/form';
-import { Input } from '@repo/react-web-ui-shadcn/components/ui/input';
+import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '../../components/ui/form';
+import { Input } from '../../components/ui/input';
 
 import { CharacterCount } from '../form-fields-base/character-count';
 import { HelperText } from '../form-fields-base/helper-text';
@@ -25,6 +24,7 @@ type FormFieldInputProps<T extends FieldValues> = {
   minLength?: number;
   maxLength?: number;
   pattern?: { regex: RegExp; message?: string };
+  translator?: any;
   onChange?: (value: string) => void;
 };
 
@@ -47,10 +47,9 @@ export default function FormFieldInput<T extends FieldValues>({
   minLength,
   maxLength,
   pattern,
+  translator,
   onChange,
 }: FormFieldInputProps<T>) {
-  const t = useTranslations();
-
   if (!visibled) return null;
 
   const inputValue = form.watch(fieldName);
@@ -104,7 +103,7 @@ export default function FormFieldInput<T extends FieldValues>({
             </>
           )}
           {showErrorMessage && error?.message && (
-            <FormMessage className={messageClassName} message={t(error.message, { min: minLength, max: maxLength })} />
+            <FormMessage className={messageClassName} message={translator?.(error.message, { min: minLength, max: maxLength })} />
           )}
         </FormItem>
       )}

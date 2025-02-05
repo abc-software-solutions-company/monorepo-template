@@ -5,11 +5,11 @@ import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, Command
 import { Popover, PopoverContent, PopoverTrigger } from '@repo/react-web-ui-shadcn/components/ui/popover';
 import { Separator } from '@repo/react-web-ui-shadcn/components/ui/separator';
 import { cn } from '../../lib/utils';
-import { InputLabel } from './input-base';
+import { InputLabel, InputLabelOutside } from './input-base';
 import { Button } from '../ui/button';
 import { Loading } from '../ui/loading';
 
-const formControlVariants = cva('h-6 relative rounded-md border border-input bg-background ring-input', {
+const formControlVariants = cva('h-6 relative rounded-md border border-input bg-background ring-offset-background', {
   variants: {
     size: {
       default: 'h-14',
@@ -17,9 +17,9 @@ const formControlVariants = cva('h-6 relative rounded-md border border-input bg-
     },
     state: {
       default: '',
-      focused: 'ring-2 ring-ring ring-offset-2 ring-offset-background',
+      focused: 'ring-2 ring-ring ring-offset-2',
       disabled: 'cursor-not-allowed bg-muted',
-      readOnly: 'cursor-not-allowed bg-muted',
+      readOnly: 'cursor-not-allowed bg-muted text-foreground',
       error: 'border-destructive bg-destructive/10',
       errorFocused: 'bg-destructive/10 ring-2 ring-destructive ring-offset-2',
     },
@@ -156,15 +156,16 @@ const Tag: FC<TagProps> = ({ className, label, value, size = 'default', onRemove
   </span>
 );
 
-type OptionType = Record<string, string>;
+export type OptionType = Record<string, string>;
 
-type SelectTagProps<T extends OptionType> = {
+export type SelectTagProps<T extends OptionType> = {
   dataTestId?: string;
   className?: string;
   options: T[];
   value: T[];
   placeholder?: string;
   label?: string;
+  labelDisplay?: 'inside' | 'outside';
   labelClassName?: string;
   maxVisible?: number;
   required?: boolean;
@@ -191,6 +192,8 @@ const SelectTag = forwardRef(
     {
       dataTestId,
       className,
+      label,
+      labelDisplay = 'inside',
       labelClassName,
       options,
       value,
@@ -200,7 +203,6 @@ const SelectTag = forwardRef(
       maxVisible = 2,
       disabled = false,
       readOnly = false,
-      label,
       required = false,
       size = 'default',
       error = false,
@@ -222,6 +224,8 @@ const SelectTag = forwardRef(
     const selectRef = useRef<HTMLDivElement>(null);
     const popoverRef = useRef<HTMLDivElement>(null);
     const triggerRef = useRef<HTMLButtonElement>(null);
+
+    const ID = new Date().getTime();
 
     const selectedValues = useMemo(() => {
       return new Set(value.map(item => item[valueField]));
@@ -345,103 +349,110 @@ const SelectTag = forwardRef(
     }, [handleClickOutside]);
 
     return (
-      <div
-        data-testid={dataTestId}
-        ref={ref}
-        className={cn(
-          formControlVariants({
-            size,
-            state: getFormControlState(),
-            className,
-          })
+      <>
+        {label && labelDisplay === 'outside' && (
+          <InputLabelOutside htmlFor={`input-${ID}`} label={label} required={required} className={cn(labelClassName)} />
         )}
-      >
-        <div ref={selectRef} className="grid items-center">
-          <Popover open={isOpen && !disabled} onOpenChange={handleOpenChange}>
-            <PopoverTrigger asChild>
-              <button
-                ref={triggerRef}
-                className={cn(triggerVariants({ size }), disabled && 'cursor-not-allowed')}
-                role="combobox"
-                aria-expanded={isOpen}
-                disabled={disabled}
-                type="button"
-                aria-label="select-tag"
-                onClick={() => !disabled && setIsFocused(true)}
-                onFocus={handleFocus}
-                onBlur={handleBlur}
-              >
-                <ChevronDownIcon className={triggerIconVariants({ size: 'default', state: disabled ? 'disabled' : 'default' })} />
-                {label && <InputLabel label={label} required={required} size={size} className={cn(labelClassName)} />}
-                <p className={cn(contentVariants({ size }), selectedItems.length === 0 && 'text-muted-foreground', disabled && 'opacity-50')}>
-                  {selectedItems.length === 0 && placeholder}
-                  {selectedItems.length > 0 && renderSelectedTags()}
-                </p>
-              </button>
-            </PopoverTrigger>
-            <PopoverContent ref={popoverRef} className="w-[--radix-popover-trigger-width] p-0">
-              <Command>
-                {showSearch && (
-                  <CommandInput
-                    placeholder={searchText}
-                    className={commandInputVariants({ size: 'default' })}
-                    onFocus={() => setIsFocused(true)}
-                    onValueChange={value => onSearch?.(value)}
-                  />
-                )}
-                <CommandList className="scrollbar max-h-[300px] overflow-auto" onScroll={handleScroll}>
-                  <CommandEmpty>No results found.</CommandEmpty>
-                  {showSelectAll && (
-                    <CommandGroup className="p-0">
-                      <CommandItem className={cn(commandItemVariants({ size: 'default', selected: isAllSelected }))} onSelect={handleSelectAll}>
-                        <span>{isAllSelected ? 'Deselect All' : 'Select All'}</span>
-                        <div className={commandIconVariants({ size: 'default', selected: isAllSelected })}>
-                          <CheckIcon />
-                        </div>
-                      </CommandItem>
-                      <Separator />
-                    </CommandGroup>
+        <div
+          data-testid={dataTestId}
+          ref={ref}
+          className={cn(
+            formControlVariants({
+              size,
+              state: getFormControlState(),
+              className,
+            })
+          )}
+        >
+          <div ref={selectRef} className="grid items-center">
+            <Popover open={isOpen && !disabled} onOpenChange={handleOpenChange}>
+              <PopoverTrigger asChild>
+                <button
+                  ref={triggerRef}
+                  className={cn(triggerVariants({ size }), disabled && 'cursor-not-allowed')}
+                  role="combobox"
+                  aria-expanded={isOpen}
+                  disabled={disabled}
+                  type="button"
+                  aria-label="select-tag"
+                  onClick={() => !disabled && setIsFocused(true)}
+                  onFocus={handleFocus}
+                  onBlur={handleBlur}
+                >
+                  <ChevronDownIcon className={triggerIconVariants({ size: 'default', state: disabled ? 'disabled' : 'default' })} />
+                  {label && labelDisplay === 'inside' && (
+                    <InputLabel htmlFor={`input-${ID}`} label={label} required={required} size={size} className={cn(labelClassName)} />
                   )}
-                  <CommandGroup className="p-0">
-                    {options.map((option, index) => {
-                      const isSelected = selectedValues.has(option[valueField]);
-
-                      return (
-                        <CommandItem
-                          tabIndex={index}
-                          key={option[valueField]}
-                          className={cn(commandItemVariants({ size: 'default', selected: isSelected }))}
-                          onSelect={() => handleToggleOption(option)}
-                        >
-                          <span>{option[displayField]}</span>
-                          <div className={commandIconVariants({ size: 'default', selected: isSelected })}>
+                  <p className={cn(contentVariants({ size }), selectedItems.length === 0 && 'text-muted-foreground', disabled && 'opacity-50')}>
+                    {selectedItems.length === 0 && placeholder}
+                    {selectedItems.length > 0 && renderSelectedTags()}
+                  </p>
+                </button>
+              </PopoverTrigger>
+              <PopoverContent ref={popoverRef} className="w-[--radix-popover-trigger-width] p-0">
+                <Command>
+                  {showSearch && (
+                    <CommandInput
+                      placeholder={searchText}
+                      className={commandInputVariants({ size: 'default' })}
+                      onFocus={() => setIsFocused(true)}
+                      onValueChange={value => onSearch?.(value)}
+                    />
+                  )}
+                  <CommandList className="scrollbar max-h-[300px] overflow-auto" onScroll={handleScroll}>
+                    <CommandEmpty>No results found.</CommandEmpty>
+                    {showSelectAll && (
+                      <CommandGroup className="p-0">
+                        <CommandItem className={cn(commandItemVariants({ size: 'default', selected: isAllSelected }))} onSelect={handleSelectAll}>
+                          <span>{isAllSelected ? 'Deselect All' : 'Select All'}</span>
+                          <div className={commandIconVariants({ size: 'default', selected: isAllSelected })}>
                             <CheckIcon />
                           </div>
                         </CommandItem>
-                      );
-                    })}
-                  </CommandGroup>
-                  {loading && (
-                    <div className="flex items-center justify-center p-2">
-                      <Loading size="xs" />
-                    </div>
-                  )}
-                </CommandList>
-                {showClearAll && selectedValues.size > 0 && (
-                  <>
-                    <Separator />
-                    <CommandGroup>
-                      <Button className="w-full" size="sm" variant="secondary" onClick={handleClearAll}>
-                        Clear all
-                      </Button>
+                        <Separator />
+                      </CommandGroup>
+                    )}
+                    <CommandGroup className="p-0">
+                      {options.map((option, index) => {
+                        const isSelected = selectedValues.has(option[valueField]);
+
+                        return (
+                          <CommandItem
+                            tabIndex={index}
+                            key={option[valueField]}
+                            className={cn(commandItemVariants({ size: 'default', selected: isSelected }))}
+                            onSelect={() => handleToggleOption(option)}
+                          >
+                            <span>{option[displayField]}</span>
+                            <div className={commandIconVariants({ size: 'default', selected: isSelected })}>
+                              <CheckIcon />
+                            </div>
+                          </CommandItem>
+                        );
+                      })}
                     </CommandGroup>
-                  </>
-                )}
-              </Command>
-            </PopoverContent>
-          </Popover>
+                    {loading && (
+                      <div className="flex items-center justify-center p-2">
+                        <Loading size="xs" />
+                      </div>
+                    )}
+                  </CommandList>
+                  {showClearAll && selectedValues.size > 0 && (
+                    <>
+                      <Separator />
+                      <CommandGroup>
+                        <Button className="w-full" size="sm" variant="secondary" onClick={handleClearAll}>
+                          Clear all
+                        </Button>
+                      </CommandGroup>
+                    </>
+                  )}
+                </Command>
+              </PopoverContent>
+            </Popover>
+          </div>
         </div>
-      </div>
+      </>
     );
   }
 );

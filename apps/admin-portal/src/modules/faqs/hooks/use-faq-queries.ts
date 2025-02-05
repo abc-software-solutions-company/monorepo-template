@@ -24,7 +24,7 @@ export const useGetFaqQuery = ({ id, enabled = true }: { id: string; enabled?: b
     queryFn: async () => {
       const response = await FaqApi.read(id);
 
-      return response.data.data;
+      return response.data;
     },
     enabled,
     staleTime: 0,

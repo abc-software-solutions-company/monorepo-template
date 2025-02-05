@@ -3,7 +3,7 @@ import { cva } from 'class-variance-authority';
 import { format, isValid, Locale } from 'date-fns';
 import { CalendarDaysIcon } from 'lucide-react';
 import { DateRange, Matcher } from 'react-day-picker';
-import { InputLabel } from './input-base';
+import { InputLabel, InputLabelOutside } from './input-base';
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
 import { cn } from '../../lib/utils';
 import { Calendar } from '../ui/calendar';
@@ -79,6 +79,7 @@ type DateRangeValue = DateRange | undefined;
 interface InputDateRangeProps extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, 'size' | 'value' | 'onChange'> {
   value: DateRangeValue;
   label?: string;
+  labelDisplay?: 'inside' | 'outside';
   required?: boolean;
   disabled?: boolean;
   size?: 'default' | 'sm';
@@ -98,6 +99,7 @@ const InputDateRange = React.forwardRef<HTMLButtonElement, InputDateRangeProps>(
     {
       value,
       label,
+      labelDisplay = 'inside',
       required = false,
       disabled = false,
       size = 'default',
@@ -121,7 +123,9 @@ const InputDateRange = React.forwardRef<HTMLButtonElement, InputDateRangeProps>(
     const containerRef = useRef<HTMLDivElement>(null);
     const popoverRef = useRef<HTMLDivElement>(null);
 
-    const formattedDateRange = useMemo(() => {
+    const ID = new Date().getTime();
+
+    const formattedDateValue = useMemo(() => {
       if (!value?.from || !isValid(value.from)) return '';
       try {
         const fromStr = format(value.from, dateFormat);
@@ -195,56 +199,58 @@ const InputDateRange = React.forwardRef<HTMLButtonElement, InputDateRangeProps>(
     }, [handleClickOutside]);
 
     return (
-      <div ref={containerRef} className={cn(formControlVariants({ size, state: getFormControlState() }), className)}>
-        <div>
-          <Popover open={isOpen} onOpenChange={handleOpenChange}>
-            <PopoverTrigger asChild>
-              <button
-                {...props}
-                ref={ref}
-                aria-label="input-date-range"
-                className={cn(triggerVariants({ size }), disabled && 'cursor-not-allowed')}
-                aria-expanded={isOpen}
-                disabled={disabled}
-                type="button"
-                onClick={() => !disabled && setIsFocused(true)}
-                onFocus={handleFocus}
-                onBlur={handleBlur}
-              >
-                <CalendarDaysIcon
-                  className={triggerIconVariants({
-                    size: 'default',
-                    state: disabled ? 'disabled' : 'default',
-                  })}
-                />
-                {label && <InputLabel label={label} required={required} size={size} className={cn(labelClassName)} />}
-                <p className={cn(contentVariants({ size }), disabled && 'opacity-50')}>
-                  {formattedDateRange ? (
-                    <span className="text-foreground">{formattedDateRange}</span>
-                  ) : (
-                    <span className="text-muted-foreground">{placeholder}</span>
+      <>
+        {label && labelDisplay === 'outside' && (
+          <InputLabelOutside htmlFor={`input-${ID}`} label={label} required={required} className={cn(labelClassName)} />
+        )}
+        <div ref={containerRef} className={cn(formControlVariants({ size, state: getFormControlState() }), className)}>
+          <div>
+            <Popover open={isOpen} onOpenChange={handleOpenChange}>
+              <PopoverTrigger asChild>
+                <button
+                  {...props}
+                  ref={ref}
+                  aria-label="input-date-range"
+                  className={cn(triggerVariants({ size }), disabled && 'cursor-not-allowed')}
+                  aria-expanded={isOpen}
+                  disabled={disabled}
+                  type="button"
+                  onClick={() => !disabled && setIsFocused(true)}
+                  onFocus={handleFocus}
+                  onBlur={handleBlur}
+                >
+                  <CalendarDaysIcon className={triggerIconVariants({ size: 'default', state: disabled ? 'disabled' : 'default' })} />
+                  {label && labelDisplay === 'inside' && (
+                    <InputLabel htmlFor={`input-${ID}`} label={label} required={required} size={size} className={cn(labelClassName)} />
                   )}
-                </p>
-              </button>
-            </PopoverTrigger>
-            <PopoverContent ref={popoverRef} className="w-auto p-0" align="end">
-              <Calendar
-                locale={locale}
-                initialFocus
-                mode="range"
-                numberOfMonths={2}
-                selected={value}
-                defaultMonth={value?.from}
-                captionLayout="dropdown-buttons"
-                fromYear={fromYear}
-                toYear={toYear}
-                disabled={{ before: disableBefore } as Matcher}
-                onSelect={handleSelect}
-              />
-            </PopoverContent>
-          </Popover>
+                  <p className={cn(contentVariants({ size }), disabled && 'opacity-50')}>
+                    {value?.from || value?.to ? (
+                      <span className="text-foreground">{formattedDateValue}</span>
+                    ) : (
+                      <span className="text-muted-foreground">{placeholder}</span>
+                    )}
+                  </p>
+                </button>
+              </PopoverTrigger>
+              <PopoverContent ref={popoverRef} className="w-auto p-0" align="end">
+                <Calendar
+                  locale={locale}
+                  initialFocus
+                  mode="range"
+                  numberOfMonths={2}
+                  selected={value}
+                  defaultMonth={value?.from}
+                  captionLayout="dropdown-buttons"
+                  fromYear={fromYear}
+                  toYear={toYear}
+                  disabled={{ before: disableBefore } as Matcher}
+                  onSelect={handleSelect}
+                />
+              </PopoverContent>
+            </Popover>
+          </div>
         </div>
-      </div>
+      </>
     );
   }
 );

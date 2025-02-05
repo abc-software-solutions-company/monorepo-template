@@ -1,42 +1,32 @@
 import { FieldValues, Path, UseFormReturn } from 'react-hook-form';
-import { GroupOption, SelectGroup } from '@repo/react-web-ui-shadcn/components/ahua/select-group';
+import { GroupOption, OptionType, SelectGroup, SelectGroupProps } from '@repo/react-web-ui-shadcn/components/ahua/select-group';
 import { FormControl, FormField, FormItem, FormMessage } from '@repo/react-web-ui-shadcn/components/ui/form';
-
-type OptionType = Record<string, string>;
+import { HelperText } from '../form-fields-base/helper-text';
 
 type StringKeyOf<T> = Extract<keyof T, string>;
 
-type FormFieldSelectGroupProps<T extends FieldValues, O extends OptionType> = {
-  dataTestId?: string;
-  className?: string;
+type FormFieldSelectGroupProps<T extends FieldValues, O extends OptionType> = Omit<
+  SelectGroupProps<O>,
+  'form' | 'onChange' | 'value' | 'valueField' | 'displayField'
+> & {
+  labelClassName?: string;
   messageClassName?: string;
   form: UseFormReturn<T>;
   formLabel?: string;
   fieldName: Path<T>;
   options: GroupOption<O>[];
-  placeholder?: string;
-  disabled?: boolean;
-  readOnly?: boolean;
   visibled?: boolean;
   valueField?: StringKeyOf<O>;
   displayField?: StringKeyOf<O>;
   size?: 'default' | 'sm';
   required?: boolean;
-  showSearch?: boolean;
-  showClearAll?: boolean;
-  showSelectAll?: boolean;
-  showSelectedTags?: boolean;
   showErrorMessage?: boolean;
-  labelClassName?: string;
-  loading?: boolean;
-  onSearch?: (value: string) => void;
-  onFocus?: React.FocusEventHandler<HTMLButtonElement>;
-  onLoadMore?: () => void;
+  helperText?: string;
+  translator?: any;
   onChange?: (value: unknown[]) => void;
 };
 
 export default function FormFieldSelectGroup<T extends FieldValues, O extends OptionType>({
-  dataTestId,
   className,
   messageClassName,
   form,
@@ -56,7 +46,9 @@ export default function FormFieldSelectGroup<T extends FieldValues, O extends Op
   showSelectAll = false,
   showSelectedTags = false,
   showErrorMessage = true,
+  helperText,
   loading = false,
+  translator,
   onSearch,
   onFocus,
   onLoadMore,
@@ -74,7 +66,6 @@ export default function FormFieldSelectGroup<T extends FieldValues, O extends Op
             <FormControl>
               <SelectGroup
                 {...field}
-                dataTestId={dataTestId}
                 placeholder={placeholder}
                 label={formLabel}
                 valueField={valueField}
@@ -100,7 +91,10 @@ export default function FormFieldSelectGroup<T extends FieldValues, O extends Op
                 onLoadMore={onLoadMore}
               />
             </FormControl>
-            {showErrorMessage && <FormMessage className={messageClassName} />}
+            {!error && <HelperText text={helperText} />}
+            {showErrorMessage && error?.message && (
+              <FormMessage className={messageClassName} message={translator ? translator(error.message || '') : error.message} />
+            )}
           </FormItem>
         );
       }}

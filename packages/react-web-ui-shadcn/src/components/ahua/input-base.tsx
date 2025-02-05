@@ -1,6 +1,7 @@
 import { cva } from 'class-variance-authority';
 import { FC, LabelHTMLAttributes } from 'react';
 import { cn } from '../../lib/utils';
+import { FormLabel } from '../ui/form';
 
 const inputLabelVariants = cva('block text-muted-foreground px-3 font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70', {
   variants: {
@@ -21,8 +22,15 @@ interface IInputLabelProps extends LabelHTMLAttributes<HTMLLabelElement> {
 }
 
 export const InputLabel: FC<IInputLabelProps> = ({ className, label, required, size = 'default', ...rest }) => (
-  <label className={cn(inputLabelVariants({ size }), className)} {...rest}>
+  <FormLabel className={cn(inputLabelVariants({ size }), className)} {...rest}>
     {label}
     {required && <span className="ml-0.5 text-destructive">*</span>}
-  </label>
+  </FormLabel>
+);
+
+export const InputLabelOutside: FC<IInputLabelProps> = ({ className, label, required, ...rest }) => (
+  <FormLabel className={cn(className)} {...rest}>
+    {label}
+    {required && <span className="ml-0.5 text-destructive">*</span>}
+  </FormLabel>
 );

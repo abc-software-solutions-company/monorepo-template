@@ -1,41 +1,31 @@
 import { FieldValues, Path, UseFormReturn } from 'react-hook-form';
-import { SelectTag } from '@repo/react-web-ui-shadcn/components/ahua/select-tag';
+import { OptionType, SelectTag, SelectTagProps } from '@repo/react-web-ui-shadcn/components/ahua/select-tag';
 import { FormControl, FormField, FormItem, FormMessage } from '@repo/react-web-ui-shadcn/components/ui/form';
+import { HelperText } from '../form-fields-base/helper-text';
 
-type OptionType = Record<string, string>;
+type StringKeyOf<T> = Extract<keyof T, string>;
 
-type FormFieldSelectTagProps<T extends FieldValues, O extends OptionType> = {
-  dataTestId?: string;
-  className?: string;
+type FormFieldSelectTagProps<T extends FieldValues, O extends OptionType> = Omit<
+  SelectTagProps<O>,
+  'form' | 'onChange' | 'value' | 'valueField' | 'displayField'
+> & {
   messageClassName?: string;
   form: UseFormReturn<T>;
   formLabel?: string;
   fieldName: Path<T>;
   options: O[];
-  placeholder?: string;
-  disabled?: boolean;
-  readOnly?: boolean;
   visibled?: boolean;
-  valueField?: Extract<keyof O, string>;
-  displayField?: Extract<keyof O, string>;
+  valueField?: StringKeyOf<O>;
+  displayField?: StringKeyOf<O>;
   size?: 'default' | 'sm';
   required?: boolean;
-  showSearch?: boolean;
-  showClearAll?: boolean;
-  showSelectAll?: boolean;
   showErrorMessage?: boolean;
-  maxVisible?: number;
-  multiple?: boolean;
-  loading?: boolean;
-  hasMore?: boolean;
-  onSearch?: (value: string) => void;
-  onFocus?: React.FocusEventHandler<HTMLButtonElement>;
-  onLoadMore?: () => void;
+  helperText?: string;
+  translator?: any;
   onChange?: (value: unknown[]) => void;
 };
 
 export default function FormFieldSelectTag<T extends FieldValues, O extends OptionType>({
-  dataTestId,
   className,
   messageClassName,
   form,
@@ -54,8 +44,10 @@ export default function FormFieldSelectTag<T extends FieldValues, O extends Opti
   showClearAll = false,
   showSelectAll = false,
   showErrorMessage = true,
+  helperText,
   maxVisible,
   loading = false,
+  translator,
   onSearch,
   onFocus,
   onLoadMore,
@@ -73,7 +65,6 @@ export default function FormFieldSelectTag<T extends FieldValues, O extends Opti
             <FormControl>
               <SelectTag
                 {...field}
-                dataTestId={dataTestId}
                 required={required}
                 placeholder={placeholder}
                 label={formLabel}
@@ -99,7 +90,10 @@ export default function FormFieldSelectTag<T extends FieldValues, O extends Opti
                 onLoadMore={onLoadMore}
               />
             </FormControl>
-            {showErrorMessage && <FormMessage className={messageClassName} />}
+            {!error && <HelperText text={helperText} />}
+            {showErrorMessage && error?.message && (
+              <FormMessage className={messageClassName} message={translator ? translator(error.message || '') : error.message} />
+            )}
           </FormItem>
         );
       }}

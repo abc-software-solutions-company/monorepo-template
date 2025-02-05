@@ -48,7 +48,7 @@ const ProductForm: FC<ProductFormProps> = ({ isEdit }) => {
   const editorRef = useRef<Editor | null>(null);
   const [isFileManagerVisible, setIsFileManagerVisible] = useState(false);
   const { data: content, isFetching } = useGetProductQuery({ id: params.id as string, enabled: !!params.id });
-  const { data: categories, isFetching: isCategoriesFetching } = useGetCategoriesQuery({ type: CATEGORY_TYPE.PRODUCT });
+  const { data: categories, isFetching: isCategoriesFetching } = useGetCategoriesQuery({ filter: { type: CATEGORY_TYPE.PRODUCT } });
   const { mutate: createMutation } = useCreateProductMutation();
   const { mutate: updateMutation } = useUpdateProductMutation();
 
@@ -155,7 +155,7 @@ const ProductForm: FC<ProductFormProps> = ({ isEdit }) => {
                   maxLength={255}
                   locales={languages}
                 />
-                <FormFieldInputSlug form={form} />
+                <FormFieldInputSlug form={form} fieldName={'slug'} watchFieldName={'nameLocalized.0.value'} minLength={1} maxLength={255} />
                 <FormFieldCKEditorMultiLanguage
                   form={form}
                   fieldName="descriptionLocalized"
@@ -184,7 +184,7 @@ const ProductForm: FC<ProductFormProps> = ({ isEdit }) => {
             <div className="w-72 shrink-0">
               <div className="grid gap-4">
                 <FormFieldCardSelectStatus form={form} statuses={PRODUCT_STATUSES} />
-                <FormFieldCardSelectCategory form={form} categories={categories?.data ?? []} />
+                <FormFieldCardSelectCategory form={form} fieldName="categoryId" formLabel={t('form_field_category')} items={categories?.data ?? []} />
                 <FormFieldCardCover form={form} />
                 <FormFieldCardImages form={form} />
               </div>

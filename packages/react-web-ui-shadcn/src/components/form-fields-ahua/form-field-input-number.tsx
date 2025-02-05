@@ -6,7 +6,6 @@ import { HelperText } from '../form-fields-base/helper-text';
 import { AutocompleteTypes } from '@repo/shared-web/interfaces/autocomplete.interface';
 
 interface FormFieldInputNumberProps<T extends FieldValues> {
-  dataTestId?: string;
   className?: string;
   messageClassName?: string;
   form: UseFormReturn<T>;
@@ -27,11 +26,11 @@ interface FormFieldInputNumberProps<T extends FieldValues> {
   max?: number;
   allowDecimal?: boolean;
   allowNegative?: boolean;
+  translator?: any;
   onChange?: (value: string) => void;
 }
 
 export default function FormFieldInputNumber<T extends FieldValues>({
-  dataTestId,
   className,
   messageClassName,
   form,
@@ -47,11 +46,12 @@ export default function FormFieldInputNumber<T extends FieldValues>({
   showErrorMessage = true,
   helperText,
   minLength,
-  maxLength = 5,
+  maxLength = 10,
   min,
   max,
   allowDecimal = false,
   allowNegative = false,
+  translator,
   onChange,
 }: FormFieldInputNumberProps<T>) {
   const t = useTranslations();
@@ -182,7 +182,6 @@ export default function FormFieldInputNumber<T extends FieldValues>({
           <FormControl>
             <Input
               {...field}
-              dataTestId={dataTestId}
               autoComplete={autoComplete}
               required={required}
               placeholder={placeholder}
@@ -199,7 +198,10 @@ export default function FormFieldInputNumber<T extends FieldValues>({
           </FormControl>
           {!error && <HelperText text={helperText} />}
           {showErrorMessage && error?.message && (
-            <FormMessage className={messageClassName} message={t(error.message, { min: min ?? minLength, max: max ?? maxLength })} />
+            <FormMessage
+              className={messageClassName}
+              message={translator ? translator?.(error.message, { min: minLength, max: maxLength }) : error.message}
+            />
           )}
         </FormItem>
       )}

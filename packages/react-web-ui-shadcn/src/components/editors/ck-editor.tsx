@@ -77,8 +77,8 @@ export const DEFAULT_TOOLBAR = [
   'insertTable',
   'mediaEmbed',
   'fileManager',
-  'sourceEditing',
   'insertLayout',
+  'sourceEditing',
 ];
 
 export const EDITOR_PLUGINS = [

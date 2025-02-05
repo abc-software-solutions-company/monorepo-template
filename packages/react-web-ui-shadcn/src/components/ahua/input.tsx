@@ -1,7 +1,7 @@
 import React, { FC, useState } from 'react';
 import { cva } from 'class-variance-authority';
 import { cn } from '../../lib/utils';
-import { InputLabel } from './input-base';
+import { InputLabel, InputLabelOutside } from './input-base';
 
 const formControlVariants = cva(
   'grid items-center relative w-full rounded-md border border-input bg-background leading-none ring-offset-background',
@@ -42,22 +42,22 @@ const inputContentVariants = cva(
   }
 );
 
-interface IInputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'size'> {
-  dataTestId?: string;
-  size?: 'default' | 'sm';
+export interface IInputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'size'> {
   label?: string;
+  labelDisplay?: 'inside' | 'outside';
   required?: boolean;
-  error?: boolean;
+  size?: 'default' | 'sm';
   labelClassName?: string;
+  error?: boolean;
 }
 
 const Input = React.forwardRef<HTMLInputElement, IInputProps>(
   (
     {
-      dataTestId,
       className,
       type,
       label,
+      labelDisplay = 'inside',
       labelClassName,
       required = false,
       size = 'default',
@@ -72,6 +72,7 @@ const Input = React.forwardRef<HTMLInputElement, IInputProps>(
     ref
   ) => {
     const [isFocused, setIsFocused] = useState(false);
+
     const ID = new Date().getTime();
 
     const getFormControlState = () => {
@@ -87,26 +88,32 @@ const Input = React.forwardRef<HTMLInputElement, IInputProps>(
     };
 
     return (
-      <div className={cn(formControlVariants({ size, state: getFormControlState() }), className)}>
-        <div>
-          {label && <InputLabel htmlFor={`input-${ID}`} label={label} required={required} size={size} className={cn(labelClassName)} />}
-          <input
-            {...props}
-            id={`input-${ID}`}
-            data-testid={dataTestId}
-            ref={ref}
-            type={type}
-            disabled={disabled}
-            readOnly={readOnly}
-            maxLength={maxLength}
-            value={value}
-            className={cn(inputContentVariants({ size }), 'peer', disabled && 'opacity-50')}
-            onFocus={() => setIsFocused(true)}
-            onBlur={() => setIsFocused(false)}
-            onChange={handleChange}
-          />
+      <>
+        {label && labelDisplay === 'outside' && (
+          <InputLabelOutside htmlFor={`input-${ID}`} label={label} required={required} className={cn(labelClassName)} />
+        )}
+        <div className={cn(formControlVariants({ size, state: getFormControlState() }), className)}>
+          <div>
+            {label && labelDisplay === 'inside' && (
+              <InputLabel htmlFor={`input-${ID}`} label={label} required={required} size={size} className={cn(labelClassName)} />
+            )}
+            <input
+              {...props}
+              id={`input-${ID}`}
+              ref={ref}
+              type={type}
+              disabled={disabled}
+              readOnly={readOnly}
+              maxLength={maxLength}
+              value={value}
+              className={cn(inputContentVariants({ size }), 'peer', disabled && 'opacity-50')}
+              onFocus={() => setIsFocused(true)}
+              onBlur={() => setIsFocused(false)}
+              onChange={handleChange}
+            />
+          </div>
         </div>
-      </div>
+      </>
     );
   }
 );

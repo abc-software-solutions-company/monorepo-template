@@ -1,29 +1,65 @@
+import { FieldValues, Path, PathValue, UseFormReturn } from 'react-hook-form';
+import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '../../components/ui/form';
+import { Input } from '../../components/ui/input';
+
+import { CharacterCount } from '../form-fields-base/character-count';
+import { HelperText } from '../form-fields-base/helper-text';
 import { useEffect } from 'react';
-import { FieldValues, Path, PathValue, UseFormReturn, useWatch } from 'react-hook-form';
-import { useTranslations } from 'use-intl';
-import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@repo/react-web-ui-shadcn/components/ui/form';
-import { Input } from '@repo/react-web-ui-shadcn/components/ui/input';
 import { toSlug } from '@repo/shared-universal/utils/string.util';
 
 type FormFieldInputSlugProps<T extends FieldValues> = {
+  dataTestId?: string;
+  className?: string;
+  messageClassName?: string;
   form: UseFormReturn<T>;
   formLabel?: string;
-  fieldName?: Path<T>;
-  watchFieldName?: Path<T>;
+  fieldName: Path<T>;
+  watchFieldName: Path<T>;
+  placeholder?: string;
+  disabled?: boolean;
+  readOnly?: boolean;
+  visibled?: boolean;
+  size?: 'default';
+  required?: boolean;
+  showErrorMessage?: boolean;
+  helperText?: string;
+  showCharacterCount?: boolean;
   minLength?: number;
   maxLength?: number;
+  pattern?: { regex: RegExp; message?: string };
+  translator?: any;
+  onChange?: (value: string) => void;
 };
 
 export default function FormFieldInputSlug<T extends FieldValues>({
+  dataTestId,
+  className,
+  messageClassName,
   form,
   formLabel,
-  fieldName = 'slug' as Path<T>,
-  watchFieldName = 'name' as Path<T>,
-  minLength = 1,
-  maxLength = 255,
+  fieldName,
+  watchFieldName,
+  placeholder = '',
+  visibled = true,
+  disabled,
+  readOnly,
+  size = 'default',
+  required,
+  showErrorMessage = true,
+  helperText,
+  showCharacterCount = false,
+  minLength,
+  maxLength,
+  pattern,
+  translator,
+  onChange,
 }: FormFieldInputSlugProps<T>) {
-  const t = useTranslations();
-  const nameValue = useWatch({ control: form.control, name: watchFieldName });
+  if (!visibled) return null;
+
+  const inputValue = form.watch(fieldName);
+  const nameValue = form.watch(watchFieldName);
+  const shouldShowCount = !helperText && showCharacterCount && maxLength !== undefined;
+  const currentLength = inputValue?.length || 0;
 
   useEffect(() => {
     const slugValue = toSlug(nameValue ?? '') as PathValue<T, Path<T>>;
@@ -35,14 +71,52 @@ export default function FormFieldInputSlug<T extends FieldValues>({
   return (
     <FormField
       control={form.control}
-      name={fieldName}
+      name={fieldName as Path<T>}
       render={({ field, fieldState: { error } }) => (
-        <FormItem>
-          <FormLabel>{formLabel ?? t('form_field_slug')}</FormLabel>
+        <FormItem className={className}>
+          <FormLabel>{formLabel}</FormLabel>
           <FormControl>
-            <Input {...field} error={!!error} />
+            <Input
+              {...field}
+              dataTestId={dataTestId}
+              required={required}
+              placeholder={placeholder}
+              value={field.value ?? ''}
+              disabled={disabled}
+              readOnly={readOnly}
+              size={size}
+              error={!!error}
+              maxLength={maxLength}
+              onKeyDown={e => {
+                if (pattern?.regex) {
+                  const char = e.key;
+
+                  if (!pattern.regex.test(char)) {
+                    e.preventDefault();
+
+                    return;
+                  }
+                }
+              }}
+              onChange={e => {
+                const value = e.target.value;
+
+                if (maxLength && value.length > maxLength) return;
+
+                onChange?.(value);
+                field.onChange(value);
+              }}
+            />
           </FormControl>
-          {error?.message && <FormMessage message={t(error.message, { min: minLength, max: maxLength })} />}
+          {!error && (
+            <>
+              <HelperText text={helperText} />
+              <CharacterCount current={currentLength} max={maxLength} visibled={shouldShowCount} />
+            </>
+          )}
+          {showErrorMessage && error?.message && (
+            <FormMessage className={messageClassName} message={translator?.(error.message, { min: minLength, max: maxLength })} />
+          )}
         </FormItem>
       )}
     />

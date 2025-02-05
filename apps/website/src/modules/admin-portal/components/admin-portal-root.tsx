@@ -20,7 +20,7 @@ const AdminPortalRoot: FC<ComponentBaseProps> = () => {
   return (
     <div className="container">
       <div className="grid gap-6 overflow-hidden">
-        <div className="glow-effect top-50 z-0 h-96 w-96"></div>
+        {/* <div className="glow-effect top-50 z-0 h-96 w-96"></div> */}
         <FeatureDashboard />
         <FeatureCategories />
         <FeatureContents />

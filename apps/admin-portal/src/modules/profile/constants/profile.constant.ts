@@ -1,1 +1,1 @@
-export const CURRENT_YEAR = new Date().getFullYear();
+export const QUERY_PROFILE_ME = 'me';

@@ -1,4 +1,4 @@
-import { FC, useEffect, useRef, useState } from 'react';
+import { FC, useEffect, useRef } from 'react';
 import axios from 'axios';
 import { Editor } from 'ckeditor5';
 import { SubmitHandler, useForm } from 'react-hook-form';
@@ -6,11 +6,12 @@ import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { toast } from 'sonner';
 import { useLocale, useTranslations } from 'use-intl';
 import { zodResolver } from '@hookform/resolvers/zod';
-import FormFieldCKEditor from '@repo/react-web-ui-shadcn/components/form-fields/form-field-ckeditor';
-import FormFieldInputName from '@repo/react-web-ui-shadcn/components/form-fields/form-field-input-name';
+import FormFieldCKEditorMultiLanguage from '@repo/react-web-ui-shadcn/components/form-fields-ahua/form-field-ckeditor-multi-language';
+import FormFieldInputMultiLanguage from '@repo/react-web-ui-shadcn/components/form-fields-ahua/form-field-input-multi-language';
 import ModalLoading from '@repo/react-web-ui-shadcn/components/modals/modal-loading';
 import { Card, CardContent } from '@repo/react-web-ui-shadcn/components/ui/card';
 import { Form } from '@repo/react-web-ui-shadcn/components/ui/form';
+import { getLanguages } from '@repo/shared-universal/utils/language.util';
 import { objectToQueryString } from '@repo/shared-universal/utils/string.util';
 
 import { FaqFormData } from '../interfaces/faqs.interface';
@@ -19,11 +20,10 @@ import { FAQ_STATUS, FAQ_STATUSES } from '../constants/faqs.constant';
 
 import { useCreateFaqMutation, useGetFaqQuery, useUpdateFaqMutation } from '../hooks/use-faq-queries';
 
-import EditorFileDialog from '@/components/editor-file-dialog';
 import FormFieldCardSelectStatus from '@/components/form-fields/form-field-card-select-status';
 import FormToolbar from '@/components/form-toolbar';
 
-import { faqFormValidator } from '../validators/faq-form.validator';
+import { faqFormLocalizeSchema } from '../validators/faq-form.validator';
 
 type FaqFormProps = {
   isEdit: boolean;
@@ -36,18 +36,19 @@ const FaqForm: FC<FaqFormProps> = ({ isEdit }) => {
   const params = useParams();
   const locale = useLocale();
   const editorRef = useRef<Editor | null>(null);
-  const [isFileManagerVisible, setIsFileManagerVisible] = useState(false);
-  const { data: faq, isFetching } = useGetFaqQuery({ id: params.id as string, enabled: !!params.id });
+  const { data: content, isFetching } = useGetFaqQuery({ id: params.id as string, enabled: !!params.id });
   const { mutate: createMutation } = useCreateFaqMutation();
   const { mutate: updateMutation } = useUpdateFaqMutation();
 
+  const languages = getLanguages(locale);
+
   const defaultValues: FaqFormData = {
-    title: faq?.title ?? '',
-    content: faq?.content ?? '',
-    status: faq?.status ?? FAQ_STATUS.DRAFT,
+    titleLocalized: content?.data.titleLocalized ?? [],
+    descriptionLocalized: content?.data.descriptionLocalized ?? [],
+    status: content?.data.status ?? FAQ_STATUS.DRAFT,
   };
 
-  const form = useForm<FaqFormData>({ resolver: zodResolver(faqFormValidator), defaultValues });
+  const form = useForm<FaqFormData>({ resolver: zodResolver(faqFormLocalizeSchema(languages)), defaultValues });
 
   const onBackClick = () => {
     navigate({
@@ -110,7 +111,7 @@ const FaqForm: FC<FaqFormProps> = ({ isEdit }) => {
   useEffect(() => {
     form.reset(defaultValues);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [form, faq]);
+  }, [form, content]);
 
   return (
     <div data-testid="frm-faq">
@@ -120,8 +121,25 @@ const FaqForm: FC<FaqFormProps> = ({ isEdit }) => {
           <div className="flex gap-4">
             <Card className="grow">
               <CardContent className="grid gap-4 pt-4">
-                <FormFieldInputName form={form} fieldName={'title'} />
-                <FormFieldCKEditor form={form} editorRef={editorRef} setVisible={setIsFileManagerVisible} fieldName={'content'} />
+                <FormFieldInputMultiLanguage
+                  form={form}
+                  fieldName="titleLocalized"
+                  formLabel={t('form_field_name')}
+                  minLength={1}
+                  maxLength={255}
+                  locales={languages}
+                />
+                <FormFieldCKEditorMultiLanguage
+                  form={form}
+                  fieldName="descriptionLocalized"
+                  formLabel={t('form_field_description')}
+                  editorRef={editorRef}
+                  minHeight={120}
+                  minLength={1}
+                  maxLength={2000}
+                  toolbar={['bold', 'italic', 'underline', 'strikethrough']}
+                  locales={languages}
+                />
               </CardContent>
             </Card>
             <div className="w-72 shrink-0">
@@ -132,7 +150,6 @@ const FaqForm: FC<FaqFormProps> = ({ isEdit }) => {
           </div>
         </form>
       </Form>
-      <EditorFileDialog editorRef={editorRef} visible={isFileManagerVisible} setVisible={setIsFileManagerVisible} />
       <ModalLoading visible={isFetching} />
     </div>
   );

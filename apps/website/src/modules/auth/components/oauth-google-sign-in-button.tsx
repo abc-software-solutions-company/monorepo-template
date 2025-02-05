@@ -10,6 +10,7 @@ const OAuthGoogleSignInButton = ({ ...rest }) => {
   return (
     <Button
       data-testid="btn-signin-google"
+      variant="outline"
       onClick={e => {
         e.preventDefault();
         authState.googleSignIn({ redirect: true, callbackUrl: '/' });

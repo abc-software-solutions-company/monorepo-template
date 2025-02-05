@@ -15,7 +15,7 @@ export type UserEntity = {
   password: string;
   emailVerified: boolean;
   locale: string;
-  dateOfBirth: string;
+  dateOfBirth?: Date;
   country: string;
   bio: string;
   lastLogin: string;

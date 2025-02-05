@@ -1,4 +1,4 @@
-import { FC, useEffect } from 'react';
+import { FC } from 'react';
 import classNames from 'classnames';
 import { NavLink, useLocation, useSearchParams } from 'react-router-dom';
 import { useLocale, useTranslations } from 'use-intl';
@@ -8,6 +8,8 @@ import { objectToQueryString } from '@repo/shared-universal/utils/string.util';
 import { useQuery } from '@tanstack/react-query';
 
 import { ComponentBaseProps } from '@/interfaces/component.interface';
+
+import { QUERY_PROFILE_ME } from '../constants/profile.constant';
 
 import Box from '@/components/box';
 import CommingSoon from '@/components/comming-soon';
@@ -31,19 +33,15 @@ const ProfileRoot: FC<ComponentBaseProps> = ({ className }) => {
   const locale = useLocale();
   const authState = useAuthState();
 
-  const { data: user, refetch } = useQuery({
-    queryKey: ['me'],
+  const { data: user } = useQuery({
+    queryKey: [QUERY_PROFILE_ME],
     queryFn: async () => {
       const res = await ProfileApi.me();
 
       return res.data.data;
     },
-    gcTime: 0,
+    staleTime: 0,
   });
-
-  useEffect(() => {
-    refetch();
-  }, [pathname, refetch]);
 
   if (!authState.user || !user) return null;
 

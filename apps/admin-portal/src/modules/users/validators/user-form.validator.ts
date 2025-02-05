@@ -12,7 +12,7 @@ const createPasswordSchema = z
     message: 'validator_maximum_n_characters_allowed',
   })
   .refine(value => /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).+$/.test(value), {
-    message: 'validator_user_password_rule',
+    message: 'validator_password_rule',
   });
 
 const editPasswordSchema = z
@@ -24,7 +24,7 @@ const editPasswordSchema = z
     message: 'validator_maximum_n_characters_allowed',
   })
   .refine(value => value === '' || /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).+$/.test(value), {
-    message: 'validator_user_password_rule',
+    message: 'validator_password_rule',
   });
 
 export const userFormValidator = (isEdit: boolean) => {
@@ -39,7 +39,7 @@ export const userFormValidator = (isEdit: boolean) => {
       confirmPassword: isEdit ? editPasswordSchema : createPasswordSchema,
     })
     .refine(data => data.password === data.confirmPassword, {
-      message: 'validator_user_password_do_not_match',
+      message: 'validator_password_do_not_match',
       path: ['confirmPassword'],
     });
 };

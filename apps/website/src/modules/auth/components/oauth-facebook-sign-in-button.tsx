@@ -13,6 +13,7 @@ const OAuthFacebookSignInButton: FC<ComponentBaseProps> = ({ ...rest }) => {
   return (
     <Button
       data-testid="btn-signin-facebook"
+      variant="outline"
       onClick={e => {
         e.preventDefault();
         authState.facebookSignIn({ redirect: true, callbackUrl: '/' });

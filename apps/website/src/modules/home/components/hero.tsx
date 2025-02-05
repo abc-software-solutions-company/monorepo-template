@@ -12,7 +12,7 @@ import fileManImg from '@/assets/images/home-file-man.png';
 const Hero: FC<ComponentBaseProps> = ({ className }) => {
   return (
     <div id="hero" className={classNames('relative overflow-hidden py-14 md:py-32', className)}>
-      <div className="glow-effect top-40 z-0 h-80 w-60"></div>
+      {/* <div className="glow-effect top-40 z-0 h-80 w-60"></div> */}
       <section className="container grid place-items-center gap-10 lg:grid-cols-2">
         <div className="text-center lg:text-start">
           <strong className="rounded-md bg-primary/20 px-2 py-0.5 text-xs text-primary">Over 200 highly customizable components</strong>

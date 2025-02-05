@@ -1,19 +1,32 @@
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsNotEmpty, IsOptional, IsString, MaxLength } from 'class-validator';
+import { ApiPropertyOptional } from '@nestjs/swagger';
+import { Type } from 'class-transformer';
+import { IsArray, IsOptional, IsString, ValidateNested } from 'class-validator';
+
+import { createTranslationDto } from '@/common/dtos/language.dto';
+
+import { Translation } from '@/common/interfaces/language.interface';
 
 import { FAQ_STATUS } from '../constants/faqs.constant';
 
 export class CreateFaqDto {
-  @ApiProperty({ example: 'What is Lorem Ipsum?' })
-  @IsString()
-  @IsNotEmpty()
-  @MaxLength(255)
-  title: string;
+  @IsOptional()
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => createTranslationDto(255))
+  titleLocalized?: Translation[];
 
-  @ApiProperty({ example: 'Lorem ipsum dolor sit amet. consectetur adipisicing elit. sed do eiusmod tempor.' })
-  @IsString()
-  @MaxLength(2000)
-  content: string;
+  @ApiPropertyOptional({
+    description: 'Description multi-language',
+    example: [
+      { lang: 'en-us', value: 'Short description' },
+      { lang: 'vi-vn', value: 'Nội dung ngắn' },
+    ],
+  })
+  @IsOptional()
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => createTranslationDto(5000))
+  descriptionLocalized?: Translation[];
 
   @ApiPropertyOptional({ example: FAQ_STATUS.DRAFT })
   @IsString()

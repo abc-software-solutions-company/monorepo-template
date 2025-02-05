@@ -4,10 +4,10 @@ import { SubmitHandler, useForm } from 'react-hook-form';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { useLocale, useTranslations } from 'use-intl';
 import { zodResolver } from '@hookform/resolvers/zod';
+import FormFieldInput from '@repo/react-web-ui-shadcn/components/form-fields/form-field-input';
 import FormFieldInputEmail from '@repo/react-web-ui-shadcn/components/form-fields/form-field-input-email';
 import FormFieldInputPassword from '@repo/react-web-ui-shadcn/components/form-fields/form-field-input-password';
 import FormFieldInputPhoneNumber from '@repo/react-web-ui-shadcn/components/form-fields/form-field-input-phone-number';
-import FormFieldInputUserName from '@repo/react-web-ui-shadcn/components/form-fields/form-field-input-user-name';
 import ModalLoading from '@repo/react-web-ui-shadcn/components/modals/modal-loading';
 import { Card, CardContent } from '@repo/react-web-ui-shadcn/components/ui/card';
 import { Checkbox } from '@repo/react-web-ui-shadcn/components/ui/checkbox';
@@ -86,7 +86,7 @@ const UserForm: FC<UserFormProps> = ({ isEdit }) => {
           <div className="flex gap-4">
             <Card className="grow">
               <CardContent className="grid gap-4 pt-4">
-                <FormFieldInputUserName form={form} />
+                <FormFieldInput form={form} fieldName="name" pattern={{ regex: /^[a-zA-Z0-9s]+$/ }} />
                 <FormFieldInputEmail form={form} />
                 <FormFieldInputPhoneNumber form={form} />
                 <FormFieldSelectUserRole form={form} />

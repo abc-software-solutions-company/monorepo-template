@@ -1,7 +1,6 @@
 import { lazy, Suspense } from 'react';
 import { type Editor } from 'ckeditor5';
 import { FieldValues, Path, UseFormReturn } from 'react-hook-form';
-import { useTranslations } from 'use-intl';
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@repo/react-web-ui-shadcn/components/ui/form';
 import { Loading } from '@repo/react-web-ui-shadcn/components/ui/loading';
 
@@ -19,6 +18,7 @@ type FormFieldCKEditorFullProps<T extends FieldValues> = {
   disabled?: boolean;
   readOnly?: boolean;
   visibled?: boolean;
+  translator?: any;
   setVisible?: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
@@ -34,10 +34,9 @@ export default function FormFieldCKEditor<T extends FieldValues>({
   visibled = true,
   disabled,
   readOnly,
+  translator,
   setVisible,
 }: FormFieldCKEditorFullProps<T>) {
-  const t = useTranslations();
-
   if (!visibled) return null;
 
   return (
@@ -68,7 +67,7 @@ export default function FormFieldCKEditor<T extends FieldValues>({
               />
             </Suspense>
           </FormControl>
-          {error?.message && <FormMessage message={t(error.message, { min: minLength, max: maxLength })} />}
+          {error?.message && <FormMessage message={translator?.(error.message, { min: minLength, max: maxLength })} />}
         </FormItem>
       )}
     />

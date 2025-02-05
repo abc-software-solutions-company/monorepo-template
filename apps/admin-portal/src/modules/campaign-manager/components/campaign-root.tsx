@@ -35,22 +35,19 @@ const CampaignRoot: React.FC = () => {
   });
   const [formData, setFormData] = useState<CampaignFormData>({
     step1: {
-      name: [{ lang: 'en-us', value: 'Title' }],
-      description: [{ lang: 'en-us', value: 'Desc' }],
+      name: [], // [{ lang: 'en-us', value: 'Title' }],
+      description: [], // [{ lang: 'en-us', value: 'Desc' }],
       tnc: [],
       imageUrl: [{ lang: 'en-us', value: 'https://www.w3schools.com/html/pic_trulli.jpg' }],
-      startDate: new Date('2024-11-28T17:00:00.000Z'),
-      endDate: new Date('2024-11-30T16:59:59.999Z'),
+      startDate: undefined, // new Date('2024-11-28T17:00:00.000Z'),
+      endDate: undefined, // new Date('2024-11-30T16:59:59.999Z'),
     },
     step2: {
-      nation: 'vi-vn',
-      country: [{ id: 'vi-vn' }],
+      nation: '', // 'vi-vn',
+      country: [], // [{ id: 'vi-vn' }],
       district: [],
       keyword: '',
-      dateRange: {
-        from: new Date('2024-11-28T17:00:00.000Z'),
-        to: new Date('2024-11-30T16:59:59.999Z'),
-      },
+      dateRange: undefined,
     },
     step3: {
       campaignType: 'milestone',

@@ -338,7 +338,7 @@ export default function FormFieldUploaderMultiLanguage<T extends FieldValues>({
           <ModalConfirm
             visible={isConfirmOpen}
             title="Are you sure?"
-            content="This will permanently delete the file"
+            message="This will permanently delete the file"
             btnYes="Yes"
             btnNo="No"
             onYes={() => handleRemoveActiveContent(field)}

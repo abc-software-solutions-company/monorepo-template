@@ -28,7 +28,7 @@ export default async function AuthLayout({ children, params }: LayoutProps) {
     <Html locale={params.locale} className={session?.user?.preference?.theme}>
       <Head />
       <Body className={classNames(fontNotoSans.variable, session?.user?.preference?.themeColor, 'font-notosans')}>
-        <Root>
+        <Root className="relative">
           <TopBar userSession={session} />
           {children}
           <Footer />

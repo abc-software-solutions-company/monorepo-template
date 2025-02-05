@@ -60,3 +60,17 @@ export const categoryFactory = [
     createdAt: faker.date.past(),
   },
 ] as Category[];
+
+categoryFactory.push({
+  id: 'ca1a9565-a054-4004-a206-2339ffe026f6',
+  slug: toSlug('Phone'),
+  type: CATEGORY_TYPE.PRODUCT,
+  status: statuses[Math.floor(Math.random() * statuses.length)],
+  parent: categoryFactory[0],
+  coverLocalized: null,
+  nameLocalized: [{ lang: defaultLanguage, value: 'Phone' }],
+  descriptionLocalized: [{ lang: defaultLanguage, value: `<p>${faker.lorem.words(20)}</p>` }],
+  bodyLocalized: [{ lang: defaultLanguage, value: `<p>${faker.lorem.words(20)}</p>` }],
+  creator: userFactory[0],
+  createdAt: faker.date.past(),
+} as Category);

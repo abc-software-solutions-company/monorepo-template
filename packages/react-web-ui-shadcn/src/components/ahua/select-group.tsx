@@ -5,7 +5,7 @@ import { cn } from '../../lib/utils';
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '../ui/command';
 import { type VariantProps } from 'class-variance-authority';
 import { Separator } from '../ui/separator';
-import { InputLabel } from './input-base';
+import { InputLabel, InputLabelOutside } from './input-base';
 import { Button } from '../ui/button';
 
 import { cva } from 'class-variance-authority';
@@ -19,9 +19,9 @@ const formControlVariants = cva('relative rounded-md border border-input bg-back
     },
     state: {
       default: '',
-      focused: 'ring-2 ring-ring ring-offset-2 ring-offset-background',
+      focused: 'ring-2 ring-ring ring-offset-2',
       disabled: 'cursor-not-allowed bg-muted',
-      readOnly: 'cursor-not-allowed bg-muted',
+      readOnly: 'cursor-not-allowed bg-muted text-foreground',
       error: 'border-destructive bg-destructive/10',
       errorFocused: 'bg-destructive/10 ring-2 ring-destructive ring-offset-2',
     },
@@ -155,21 +155,22 @@ const tagIconVariants = cva('ml-1 cursor-pointer', {
   },
 });
 
-type BaseOption = Record<string, string>;
+export type OptionType = Record<string, string>;
 
-export interface GroupOption<T extends BaseOption> {
+export interface GroupOption<T extends OptionType> {
   id: string;
   name: string;
-  children: T[];
+  childrens: T[];
 }
 
-interface SelectGroupProps<T extends BaseOption> extends VariantProps<typeof formControlVariants> {
+export interface SelectGroupProps<T extends OptionType> extends VariantProps<typeof formControlVariants> {
   dataTestId?: string;
   className?: string;
   value: T[];
   options: GroupOption<T>[];
   placeholder?: string;
   label?: string;
+  labelDisplay?: 'inside' | 'outside';
   labelClassName?: string;
   tagListClassName?: string;
   required?: boolean;
@@ -193,7 +194,7 @@ interface SelectGroupProps<T extends BaseOption> extends VariantProps<typeof for
 }
 
 const SelectGroup = forwardRef(
-  <T extends BaseOption>(
+  <T extends OptionType>(
     {
       dataTestId,
       className,
@@ -201,6 +202,7 @@ const SelectGroup = forwardRef(
       options,
       placeholder = 'Select items...',
       label,
+      labelDisplay = 'inside',
       labelClassName,
       tagListClassName,
       required = false,
@@ -229,12 +231,14 @@ const SelectGroup = forwardRef(
     const popoverRef = useRef<HTMLDivElement>(null);
     const triggerRef = useRef<HTMLButtonElement>(null);
 
+    const ID = new Date().getTime();
+
     const selectedIds = useMemo(() => new Set(value.map(v => v[valueField])), [value, valueField]);
 
     const groupedTags = useMemo(() => {
       return options.map(group => {
-        const selectedInGroup = value.filter(v => group.children.some(child => child[valueField] === v[valueField]));
-        const isAllSelected = selectedInGroup.length === group.children.length;
+        const selectedInGroup = value.filter(v => group.childrens.some(child => child[valueField] === v[valueField]));
+        const isAllSelected = selectedInGroup.length === group.childrens.length;
 
         return {
           group,
@@ -258,8 +262,8 @@ const SelectGroup = forwardRef(
       }
 
       const groupedSelections = options.map(group => {
-        const selectedInGroup = value.filter(v => group.children.some(child => child[valueField] === v[valueField]));
-        const isAllSelected = selectedInGroup.length === group.children.length;
+        const selectedInGroup = value.filter(v => group.childrens.some(child => child[valueField] === v[valueField]));
+        const isAllSelected = selectedInGroup.length === group.childrens.length;
 
         return { group, selected: selectedInGroup, isAllSelected };
       });
@@ -336,7 +340,7 @@ const SelectGroup = forwardRef(
       if (disabled) return;
 
       const currentSelection = new Set(value);
-      group.children.forEach(child => {
+      group.childrens.forEach(child => {
         if (!selectedIds.has(child[valueField])) {
           currentSelection.add(child);
         }
@@ -348,7 +352,7 @@ const SelectGroup = forwardRef(
       e?.stopPropagation();
       if (disabled) return;
 
-      const groupIds = new Set(group.children.map(child => child[valueField]));
+      const groupIds = new Set(group.childrens.map(child => child[valueField]));
       onChange(value.filter(v => !groupIds.has(v[valueField])));
     };
 
@@ -383,7 +387,10 @@ const SelectGroup = forwardRef(
     }, [handleClickOutside]);
 
     return (
-      <div>
+      <>
+        {label && labelDisplay === 'outside' && (
+          <InputLabelOutside htmlFor={`input-${ID}`} label={label} required={required} className={cn(labelClassName)} />
+        )}
         <div data-testid={dataTestId} ref={ref} className={cn(formControlVariants({ size, state: getFormControlState(), className }))}>
           <div ref={selectRef}>
             <Popover open={isOpen && !disabled} onOpenChange={handleOpenChange}>
@@ -400,7 +407,9 @@ const SelectGroup = forwardRef(
                   onBlur={handleBlur}
                 >
                   <ChevronDownIcon className={triggerIconVariants({ size, state: disabled ? 'disabled' : 'default' })} />
-                  {label && <InputLabel label={label} required={required} size={size} className={cn(labelClassName)} />}
+                  {label && labelDisplay === 'inside' && (
+                    <InputLabel htmlFor={`input-${ID}`} label={label} required={required} size={size} className={cn(labelClassName)} />
+                  )}
                   <p className={cn(contentVariants({ size }), !value.length && 'text-muted-foreground', disabled && 'opacity-50')}>{displayValue}</p>
                 </button>
               </PopoverTrigger>
@@ -443,7 +452,7 @@ const SelectGroup = forwardRef(
                               </div>
                             </div>
                           </div>
-                          {group.children.map(option => {
+                          {group.childrens.map(option => {
                             const isSelected = isOptionSelected(option);
                             return (
                               <CommandItem
@@ -508,7 +517,7 @@ const SelectGroup = forwardRef(
             ))}
           </div>
         )}
-      </div>
+      </>
     );
   }
 );

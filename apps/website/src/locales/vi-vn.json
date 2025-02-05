@@ -15,7 +15,10 @@
   "contact_description": "Vui lòng liên hệ chúng tôi nếu bạn có bất kỳ câu hỏi nào.",
   "contact_name": "Tên",
   "contact_email": "Email",
+  "contact_subject": "Tiêu đề",
   "contact_message": "Nội dung",
+  "contact_title_success": "Tin nhắn đã được gửi",
+  "contact_title_failure": "Gửi tin nhắn thất bại",
   "contact_message_success": "Tin nhắn của bạn đã được gửi thành công",
   "contact_message_failure": "Không thể gửi tin nhắn của bạn",
 
@@ -23,5 +26,16 @@
   "select_store": "Chọn cửa hàng",
   "search_store": "Tìm kiếm cửa hàng",
   "no_store_found": "Không tìm thấy cửa hàng",
-  "no_stores_available": "Không có cửa hàng khả dụng cho {{defaultMessage}}"
+  "no_stores_available": "Không có cửa hàng khả dụng cho {{defaultMessage}}",
+
+  "validator_user_name": "Tên người dùng là bắt buộc",
+  "validator_email": "Email là bắt buộc",
+  "validator_email_invalid": "Email không hợp lệ",
+  "validator_password_rule": "Mật khẩu phải chứa ít nhất một chữ cái viết hoa, một chữ cái viết thường, một số và một ký tự đặc biệt",
+  "validator_password_do_not_match": "Mật khẩu không khớp",
+  "validator_contact_name": "Tên là bắt buộc",
+  "validator_contact_subject": "Tiêu đề là bắt buộc",
+  "validator_contact_message": "Nội dung là bắt buộc",
+  "validator_minimum_n_characters_allowed": "Bạn hãy nhập ít nhất {min} ký tự",
+  "validator_maximum_n_characters_allowed": "Bạn chỉ được nhập tối đa {max} ký tự"
 }

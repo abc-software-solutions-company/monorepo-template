@@ -71,6 +71,20 @@ export function getFormatRelative(date: Date, locale = 'en-us') {
   return formatRelative(date, new Date(), { locale: currentLocale });
 }
 
+export function getFormatByLocale(locale = 'en-us') {
+  let formatString;
+
+  switch (locale) {
+    case 'vi-vn':
+      formatString = 'dd/MM/yyyy';
+      break;
+    default:
+      formatString = 'MM/dd/yyyy';
+  }
+
+  return formatString;
+}
+
 export function toDateTime(date: Date, locale = 'en-us', showTime = true): string {
   let options: Intl.DateTimeFormatOptions = {
     year: 'numeric',

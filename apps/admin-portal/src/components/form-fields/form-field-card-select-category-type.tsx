@@ -19,7 +19,7 @@ export default function FormFieldCardSelectCategoryType<T extends FieldValues>({
   form,
   formLabel,
   items,
-  fieldName = 'type' as Path<T>,
+  fieldName,
   onChange,
 }: FormFieldCardSelectCategoryTypeProps<T>) {
   const t = useTranslations();
@@ -32,12 +32,11 @@ export default function FormFieldCardSelectCategoryType<T extends FieldValues>({
       <CardContent>
         <FormField
           control={form.control}
-          name={fieldName}
+          name={fieldName as Path<T>}
           render={({ field, fieldState: { error } }) => (
             <FormItem>
               <FormControl>
                 <Select
-                  {...field}
                   value={field.value}
                   onValueChange={value => {
                     field.onChange(value);

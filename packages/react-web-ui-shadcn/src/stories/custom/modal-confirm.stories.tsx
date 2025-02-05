@@ -23,7 +23,7 @@ const meta = {
       control: 'text',
       description: 'The title of the modal',
     },
-    content: {
+    message: {
       control: 'text',
       description: 'The content/description of the modal',
     },
@@ -65,7 +65,7 @@ export const Default: Story = {
   render: ModalTemplate,
   args: {
     title: 'Are you sure?',
-    content: 'This action cannot be undone.',
+    message: 'This action cannot be undone.',
   },
 } as unknown as Story;
 
@@ -73,7 +73,7 @@ export const CustomButtons: Story = {
   render: ModalTemplate,
   args: {
     title: 'Delete Item',
-    content: 'Are you sure you want to delete this item? This action cannot be undone.',
+    message: 'Are you sure you want to delete this item? This action cannot be undone.',
     btnYes: 'Delete',
     btnNo: 'Cancel',
     visible: true,
@@ -84,7 +84,7 @@ export const WithHTMLContent: Story = {
   render: ModalTemplate,
   args: {
     title: 'Terms & Conditions',
-    content: (
+    message: (
       <div>
         <p className="mb-2">By clicking accept, you agree to our terms and conditions:</p>
         <ul className="list-disc pl-4">

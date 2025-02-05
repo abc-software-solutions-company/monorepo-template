@@ -113,6 +113,10 @@
     @apply h-0 w-0;
   }
 }
+/* CKEDITOR */
+.ck.ck-toolbar.ck-toolbar_grouping > .ck-toolbar__items {
+  @apply flex-wrap #{!important};
+}
 /* QUILL EDITOR */
 .quill-simple.borderless .ql-container.ql-snow {
   @apply border-none;

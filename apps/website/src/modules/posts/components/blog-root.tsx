@@ -31,22 +31,26 @@ const BlogRoot: FC<BlogRootProps> = ({ className, filter }) => {
 
   if (!data)
     return (
-      <div className="flex items-center justify-center p-3">
-        <Loading />
+      <div className="container">
+        <div className="flex items-center justify-center p-3">
+          <Loading />
+        </div>
       </div>
     );
 
   return (
     <div className={classNames(className)}>
-      <BlogList items={data.data} />
-      <div className="mt-12 flex justify-center">
-        <Pagination
-          className="text-center"
-          totalItems={data.meta?.paging?.totalItems}
-          currentPage={data.meta?.paging?.currentPage}
-          itemPerPage={data.meta?.paging?.itemsPerPage}
-          onChange={page => router.push({ pathname: '/blog', query: { page } })}
-        />
+      <div className="container">
+        <BlogList items={data.data} />
+        <div className="mt-12 flex justify-center">
+          <Pagination
+            className="text-center"
+            totalItems={data.meta?.paging?.totalItems}
+            currentPage={data.meta?.paging?.currentPage}
+            itemPerPage={data.meta?.paging?.itemsPerPage}
+            onChange={page => router.push({ pathname: '/blog', query: { page } })}
+          />
+        </div>
       </div>
     </div>
   );
