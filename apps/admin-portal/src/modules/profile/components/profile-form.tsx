@@ -6,10 +6,9 @@ import { toast } from 'sonner';
 import { useLocale, useTranslations } from 'use-intl';
 import { zodResolver } from '@hookform/resolvers/zod';
 import Debugger from '@repo/react-web-ui-shadcn/components/debugger';
-import FormFieldInput from '@repo/react-web-ui-shadcn/components/form-fields/form-field-input';
-import FormFieldInputPhoneNumber from '@repo/react-web-ui-shadcn/components/form-fields/form-field-input-phone-number';
-import FormFieldTextArea from '@repo/react-web-ui-shadcn/components/form-fields/form-field-text-area';
+import FormFieldInput from '@repo/react-web-ui-shadcn/components/form-fields-ahua/form-field-input';
 import FormFieldInputDatePicker from '@repo/react-web-ui-shadcn/components/form-fields-ahua/form-field-input-date-picker';
+import FormFieldTextArea from '@repo/react-web-ui-shadcn/components/form-fields-ahua/form-field-text-area';
 import { Button } from '@repo/react-web-ui-shadcn/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@repo/react-web-ui-shadcn/components/ui/card';
 import { Form } from '@repo/react-web-ui-shadcn/components/ui/form';
@@ -93,8 +92,23 @@ const ProfileForm: FC<ProfileFormProps> = ({ className, user }) => {
           <Form {...form}>
             <form className="grid gap-4" onSubmit={form.handleSubmit(onSubmit)}>
               <div className="grid grid-cols-2 gap-4">
-                <FormFieldInput form={form} formLabel={t('profile_name')} fieldName="name" pattern={{ regex: /^[a-zA-Z0-9s]+$/ }} />
-                <FormFieldInputPhoneNumber form={form} formLabel={t('profile_phone_number')} fieldName="phoneNumber" />
+                <FormFieldInput
+                  form={form}
+                  formLabel={t('profile_name')}
+                  fieldName="name"
+                  pattern={{ regex: /^[a-zA-Z0-9s]+$/ }}
+                  labelDisplay="outside"
+                  size="sm"
+                  translator={t}
+                />
+                <FormFieldInput
+                  form={form}
+                  formLabel={t('profile_phone_number')}
+                  fieldName="phoneNumber"
+                  labelDisplay="outside"
+                  size="sm"
+                  translator={t}
+                />
                 <FormFieldInputDatePicker
                   form={form}
                   formLabel={t('profile_date_of_birth')}
@@ -107,7 +121,7 @@ const ProfileForm: FC<ProfileFormProps> = ({ className, user }) => {
                 <FormFieldSelectCountry form={form} formLabel={t('profile_country')} fieldName="country" />
               </div>
               <div>
-                <FormFieldTextArea inputClassName="min-h-24" form={form} formLabel={t('profile_bio')} fieldName="bio" />
+                <FormFieldTextArea form={form} formLabel={t('profile_bio')} fieldName="bio" labelDisplay="outside" translator={t} />
               </div>
               <div className="flex justify-end">
                 <Button className="min-w-48" type="submit">

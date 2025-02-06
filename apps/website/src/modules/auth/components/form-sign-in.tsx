@@ -3,8 +3,8 @@
 import { useTranslations } from 'next-intl';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import FormFieldInputEmail from '@repo/react-web-ui-shadcn/components/form-fields/form-field-input-email';
-import FormFieldInputPassword from '@repo/react-web-ui-shadcn/components/form-fields/form-field-input-password';
+import FormFieldInput from '@repo/react-web-ui-shadcn/components/form-fields-ahua/form-field-input';
+import FormFieldInputPassword from '@repo/react-web-ui-shadcn/components/form-fields-ahua/form-field-input-password';
 import { Button } from '@repo/react-web-ui-shadcn/components/ui/button';
 import { Form } from '@repo/react-web-ui-shadcn/components/ui/form';
 
@@ -45,8 +45,15 @@ const FormSignIn = () => {
                 <p className="text-balance text-muted-foreground">Login to your account</p>
               </div>
               <div className="grid gap-4">
-                <FormFieldInputEmail form={form} fieldName="email" formLabel="Email" translator={t} />
-                <FormFieldInputPassword form={form} fieldName="password" formLabel="Password" translator={t} />
+                <FormFieldInput form={form} fieldName="email" formLabel="Email" labelDisplay="outside" size="sm" translator={t} />
+                <FormFieldInputPassword
+                  form={form}
+                  formLabel={t('form_field_password')}
+                  labelDisplay="outside"
+                  size="sm"
+                  fieldName="password"
+                  translator={t}
+                />
                 <Button className="w-full" type="submit">
                   {t('signin')}
                 </Button>

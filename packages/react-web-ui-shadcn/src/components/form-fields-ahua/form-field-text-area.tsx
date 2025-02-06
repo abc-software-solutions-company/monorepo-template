@@ -1,18 +1,17 @@
 import { FieldValues, Path, UseFormReturn } from 'react-hook-form';
-import { IInputProps, Input } from '@repo/react-web-ui-shadcn/components/ahua/input';
 import { FormControl, FormField, FormItem, FormMessage } from '@repo/react-web-ui-shadcn/components/ui/form';
 
 import { CharacterCount } from '../form-fields-base/character-count';
 import { HelperText } from '../form-fields-base/helper-text';
 import { AutocompleteTypes } from '@repo/shared-web/interfaces/autocomplete.interface';
+import { ITextareaProps, Textarea } from '../ahua/textarea';
 
-interface IFormFieldInputProps<T extends FieldValues> extends Omit<IInputProps, 'form' | 'onChange' | 'pattern'> {
+interface IFormFieldTextAreaProps<T extends FieldValues> extends Omit<ITextareaProps, 'form' | 'onChange' | 'pattern'> {
   messageClassName?: string;
   form: UseFormReturn<T>;
   formLabel?: string;
   fieldName: Path<T>;
   visibled?: boolean;
-  multiple?: boolean;
   required?: boolean;
   autoComplete?: AutocompleteTypes;
   showErrorMessage?: boolean;
@@ -26,9 +25,10 @@ interface IFormFieldInputProps<T extends FieldValues> extends Omit<IInputProps, 
   onChange?: (value: string) => void;
 }
 
-export default function FormFieldInput<T extends FieldValues>({
+export default function FormFieldTextArea<T extends FieldValues>({
   className,
   messageClassName,
+  textareaClassName,
   form,
   formLabel,
   fieldName,
@@ -38,7 +38,6 @@ export default function FormFieldInput<T extends FieldValues>({
   disabled,
   readOnly,
   size = 'default',
-  multiple,
   required,
   showErrorMessage = true,
   helperText,
@@ -48,7 +47,7 @@ export default function FormFieldInput<T extends FieldValues>({
   pattern,
   translator,
   onChange,
-}: IFormFieldInputProps<T>) {
+}: IFormFieldTextAreaProps<T>) {
   if (!visibled) return null;
 
   const inputValue = form.watch(fieldName);
@@ -63,10 +62,10 @@ export default function FormFieldInput<T extends FieldValues>({
         return (
           <FormItem className={className}>
             <FormControl>
-              <Input
+              <Textarea
                 {...field}
+                textareaClassName={textareaClassName}
                 labelDisplay={labelDisplay}
-                multiple={multiple}
                 required={required}
                 placeholder={placeholder}
                 label={formLabel}

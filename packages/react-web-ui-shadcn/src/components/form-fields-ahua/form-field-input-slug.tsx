@@ -1,16 +1,19 @@
-import { FieldValues, Path, UseFormReturn } from 'react-hook-form';
+import { FieldValues, Path, PathValue, UseFormReturn } from 'react-hook-form';
 import { IInputProps, Input } from '@repo/react-web-ui-shadcn/components/ahua/input';
 import { FormControl, FormField, FormItem, FormMessage } from '@repo/react-web-ui-shadcn/components/ui/form';
 
 import { CharacterCount } from '../form-fields-base/character-count';
 import { HelperText } from '../form-fields-base/helper-text';
 import { AutocompleteTypes } from '@repo/shared-web/interfaces/autocomplete.interface';
+import { toSlug } from '@repo/shared-universal/utils/string.util';
+import { useEffect } from 'react';
 
-interface IFormFieldInputProps<T extends FieldValues> extends Omit<IInputProps, 'form' | 'onChange' | 'pattern'> {
+interface IFormFieldInputSlugProps<T extends FieldValues> extends Omit<IInputProps, 'form' | 'onChange' | 'pattern'> {
   messageClassName?: string;
   form: UseFormReturn<T>;
   formLabel?: string;
   fieldName: Path<T>;
+  watchFieldName: Path<T>;
   visibled?: boolean;
   multiple?: boolean;
   required?: boolean;
@@ -26,12 +29,13 @@ interface IFormFieldInputProps<T extends FieldValues> extends Omit<IInputProps, 
   onChange?: (value: string) => void;
 }
 
-export default function FormFieldInput<T extends FieldValues>({
+export default function FormFieldInputSlug<T extends FieldValues>({
   className,
   messageClassName,
   form,
   formLabel,
   fieldName,
+  watchFieldName,
   placeholder = '',
   visibled = true,
   labelDisplay = 'inside',
@@ -48,12 +52,20 @@ export default function FormFieldInput<T extends FieldValues>({
   pattern,
   translator,
   onChange,
-}: IFormFieldInputProps<T>) {
+}: IFormFieldInputSlugProps<T>) {
   if (!visibled) return null;
 
   const inputValue = form.watch(fieldName);
+  const nameValue = form.watch(watchFieldName);
   const shouldShowCount = !helperText && showCharacterCount && maxLength !== undefined;
   const currentLength = inputValue?.length || 0;
+
+  useEffect(() => {
+    const slugValue = toSlug(nameValue ?? '') as PathValue<T, Path<T>>;
+
+    form.setValue(fieldName, slugValue);
+    form.formState.isSubmitted && form.trigger(fieldName);
+  }, [nameValue, form, fieldName]);
 
   return (
     <FormField

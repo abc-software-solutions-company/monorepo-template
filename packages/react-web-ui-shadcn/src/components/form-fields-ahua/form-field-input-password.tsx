@@ -6,7 +6,7 @@ import { CharacterCount } from '../form-fields-base/character-count';
 import { HelperText } from '../form-fields-base/helper-text';
 import { AutocompleteTypes } from '@repo/shared-web/interfaces/autocomplete.interface';
 
-interface IFormFieldInputProps<T extends FieldValues> extends Omit<IInputProps, 'form' | 'onChange' | 'pattern'> {
+interface IFormFieldInputPasswordProps<T extends FieldValues> extends Omit<IInputProps, 'form' | 'onChange' | 'pattern'> {
   messageClassName?: string;
   form: UseFormReturn<T>;
   formLabel?: string;
@@ -26,15 +26,15 @@ interface IFormFieldInputProps<T extends FieldValues> extends Omit<IInputProps, 
   onChange?: (value: string) => void;
 }
 
-export default function FormFieldInput<T extends FieldValues>({
+export default function FormFieldInputPassword<T extends FieldValues>({
   className,
   messageClassName,
   form,
   formLabel,
   fieldName,
+  labelDisplay = 'inside',
   placeholder = '',
   visibled = true,
-  labelDisplay = 'inside',
   disabled,
   readOnly,
   size = 'default',
@@ -43,12 +43,12 @@ export default function FormFieldInput<T extends FieldValues>({
   showErrorMessage = true,
   helperText,
   showCharacterCount = false,
-  minLength,
-  maxLength,
+  minLength = 8,
+  maxLength = 255,
   pattern,
   translator,
   onChange,
-}: IFormFieldInputProps<T>) {
+}: IFormFieldInputPasswordProps<T>) {
   if (!visibled) return null;
 
   const inputValue = form.watch(fieldName);

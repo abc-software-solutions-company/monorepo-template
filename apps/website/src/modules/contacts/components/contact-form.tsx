@@ -3,8 +3,8 @@ import { useTranslations } from 'next-intl';
 import classNames from 'classnames';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import FormFieldInput from '@repo/react-web-ui-shadcn/components/form-fields/form-field-input';
-import FormFieldTextArea from '@repo/react-web-ui-shadcn/components/form-fields/form-field-text-area';
+import FormFieldInput from '@repo/react-web-ui-shadcn/components/form-fields-ahua/form-field-input';
+import FormFieldTextArea from '@repo/react-web-ui-shadcn/components/form-fields-ahua/form-field-text-area';
 import ModalError from '@repo/react-web-ui-shadcn/components/modals/modal-error';
 import ModalSuccess from '@repo/react-web-ui-shadcn/components/modals/modal-success';
 import { Button } from '@repo/react-web-ui-shadcn/components/ui/button';
@@ -63,13 +63,31 @@ const ContactForm: FC<ComponentBaseProps> = ({ className }) => {
       <Form {...form}>
         <form className="grid gap-4" onSubmit={form.handleSubmit(onSubmit)}>
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-            <FormFieldInput form={form} formLabel={t('contact_name')} fieldName="name" minLength={1} maxLength={255} translator={t} />
-            <FormFieldInput form={form} formLabel={t('contact_email')} fieldName="email" minLength={1} maxLength={320} translator={t} />
+            <FormFieldInput
+              form={form}
+              formLabel={t('contact_name')}
+              fieldName="name"
+              minLength={1}
+              maxLength={255}
+              labelDisplay="outside"
+              size="sm"
+              translator={t}
+            />
+            <FormFieldInput
+              form={form}
+              formLabel={t('contact_email')}
+              fieldName="email"
+              minLength={1}
+              maxLength={320}
+              labelDisplay="outside"
+              size="sm"
+              translator={t}
+            />
           </div>
           <div>
-            <FormFieldInput form={form} formLabel={t('contact_subject')} fieldName="subject" translator={t} />
+            <FormFieldInput form={form} formLabel={t('contact_subject')} fieldName="subject" labelDisplay="outside" size="sm" translator={t} />
           </div>
-          <FormFieldTextArea inputClassName="min-h-24" form={form} formLabel={t('contact_message')} fieldName="message" translator={t} />
+          <FormFieldTextArea form={form} formLabel={t('contact_message')} fieldName="message" labelDisplay="outside" translator={t} />
           <div className="flex justify-center">
             <Button className="min-w-64" type="submit">
               {t('btn_send')}

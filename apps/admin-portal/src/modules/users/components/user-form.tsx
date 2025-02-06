@@ -4,10 +4,8 @@ import { SubmitHandler, useForm } from 'react-hook-form';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { useLocale, useTranslations } from 'use-intl';
 import { zodResolver } from '@hookform/resolvers/zod';
-import FormFieldInput from '@repo/react-web-ui-shadcn/components/form-fields/form-field-input';
-import FormFieldInputEmail from '@repo/react-web-ui-shadcn/components/form-fields/form-field-input-email';
-import FormFieldInputPassword from '@repo/react-web-ui-shadcn/components/form-fields/form-field-input-password';
-import FormFieldInputPhoneNumber from '@repo/react-web-ui-shadcn/components/form-fields/form-field-input-phone-number';
+import FormFieldInput from '@repo/react-web-ui-shadcn/components/form-fields-ahua/form-field-input';
+import FormFieldInputPassword from '@repo/react-web-ui-shadcn/components/form-fields-ahua/form-field-input-password';
 import ModalLoading from '@repo/react-web-ui-shadcn/components/modals/modal-loading';
 import { Card, CardContent } from '@repo/react-web-ui-shadcn/components/ui/card';
 import { Checkbox } from '@repo/react-web-ui-shadcn/components/ui/checkbox';
@@ -86,9 +84,33 @@ const UserForm: FC<UserFormProps> = ({ isEdit }) => {
           <div className="flex gap-4">
             <Card className="grow">
               <CardContent className="grid gap-4 pt-4">
-                <FormFieldInput form={form} fieldName="name" pattern={{ regex: /^[a-zA-Z0-9s]+$/ }} />
-                <FormFieldInputEmail form={form} />
-                <FormFieldInputPhoneNumber form={form} />
+                <FormFieldInput
+                  form={form}
+                  fieldName="name"
+                  formLabel={t('form_field_name')}
+                  pattern={{ regex: /^[a-zA-Z0-9s]+$/ }}
+                  labelDisplay="outside"
+                  size="sm"
+                  translator={t}
+                />
+                <FormFieldInput
+                  form={form}
+                  fieldName="email"
+                  formLabel={t('form_field_email')}
+                  labelDisplay="outside"
+                  size="sm"
+                  minLength={3}
+                  maxLength={320}
+                  translator={t}
+                />
+                <FormFieldInput
+                  form={form}
+                  fieldName="phoneNumber"
+                  formLabel={t('form_field_phone_number')}
+                  labelDisplay="outside"
+                  size="sm"
+                  translator={t}
+                />
                 <FormFieldSelectUserRole form={form} />
                 {shouldShowCheckbox && (
                   <div className={classNames('flex items-center space-x-2')}>
@@ -99,12 +121,23 @@ const UserForm: FC<UserFormProps> = ({ isEdit }) => {
                 )}
                 {shouldShowPasswordFields && (
                   <div className={classNames('grid grid-cols-2 gap-4')}>
-                    <FormFieldInputPassword form={form} disabled={!isAllowChangePassword} />
+                    <FormFieldInputPassword
+                      form={form}
+                      disabled={!isAllowChangePassword}
+                      formLabel={t('form_field_password')}
+                      labelDisplay="outside"
+                      size="sm"
+                      fieldName="password"
+                      translator={t}
+                    />
                     <FormFieldInputPassword
                       form={form}
                       disabled={!isAllowChangePassword}
                       formLabel={t('form_field_confirm_password')}
+                      labelDisplay="outside"
+                      size="sm"
                       fieldName="confirmPassword"
+                      translator={t}
                     />
                   </div>
                 )}

@@ -1,8 +1,8 @@
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { useTranslations } from 'use-intl';
 import { zodResolver } from '@hookform/resolvers/zod';
-import FormFieldInput from '@repo/react-web-ui-shadcn/components/form-fields/form-field-input';
-import FormFieldTextArea from '@repo/react-web-ui-shadcn/components/form-fields/form-field-text-area';
+import FormFieldInput from '@repo/react-web-ui-shadcn/components/form-fields-ahua/form-field-input';
+import FormFieldTextArea from '@repo/react-web-ui-shadcn/components/form-fields-ahua/form-field-text-area';
 import { Button } from '@repo/react-web-ui-shadcn/components/ui/button';
 import { Form } from '@repo/react-web-ui-shadcn/components/ui/form';
 import { Loading } from '@repo/react-web-ui-shadcn/components/ui/loading';
@@ -47,8 +47,16 @@ const PushNotificationPlayGround = () => {
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)}>
         <div className="grid gap-4">
-          <FormFieldInput form={form} fieldName="title" formLabel={t('form_field_name')} />
-          <FormFieldTextArea form={form} fieldName={'content'} formLabel={t('form_field_content')} maxLength={250} />
+          <FormFieldInput form={form} fieldName="title" formLabel={t('form_field_name')} labelDisplay="outside" size="sm" translator={t} />
+          <FormFieldTextArea
+            form={form}
+            fieldName="content"
+            formLabel={t('form_field_content')}
+            maxLength={250}
+            labelDisplay="outside"
+            textareaClassName="min-h-32"
+            translator={t}
+          />
           <div>
             <Button type="submit" disabled={mutation.isPending} className="space-x-2">
               {mutation.isPending && <Loading size={'xs'} />}

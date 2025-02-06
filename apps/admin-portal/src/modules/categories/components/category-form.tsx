@@ -7,9 +7,9 @@ import { toast } from 'sonner';
 import { useLocale, useTranslations } from 'use-intl';
 import { zodResolver } from '@hookform/resolvers/zod';
 import Debugger from '@repo/react-web-ui-shadcn/components/debugger';
-import FormFieldInputSlug from '@repo/react-web-ui-shadcn/components/form-fields/form-field-input-slug';
 import FormFieldCKEditorMultiLanguage from '@repo/react-web-ui-shadcn/components/form-fields-ahua/form-field-ckeditor-multi-language';
 import FormFieldInputMultiLanguage from '@repo/react-web-ui-shadcn/components/form-fields-ahua/form-field-input-multi-language';
+import FormFieldInputSlug from '@repo/react-web-ui-shadcn/components/form-fields-ahua/form-field-input-slug';
 import ModalLoading from '@repo/react-web-ui-shadcn/components/modals/modal-loading';
 import { Card, CardContent } from '@repo/react-web-ui-shadcn/components/ui/card';
 import { Form } from '@repo/react-web-ui-shadcn/components/ui/form';
@@ -174,7 +174,17 @@ const CategoryForm: FC<CategoryFormProps> = ({ isEdit }) => {
                   maxLength={255}
                   locales={languages}
                 />
-                <FormFieldInputSlug form={form} fieldName={'slug'} watchFieldName={'nameLocalized.0.value'} minLength={1} maxLength={255} />
+                <FormFieldInputSlug
+                  form={form}
+                  fieldName={'slug'}
+                  watchFieldName={'nameLocalized.0.value'}
+                  formLabel={t('form_field_slug')}
+                  minLength={1}
+                  maxLength={255}
+                  labelDisplay="outside"
+                  size="sm"
+                  translator={t}
+                />
                 <FormFieldCKEditorMultiLanguage
                   form={form}
                   fieldName="descriptionLocalized"
