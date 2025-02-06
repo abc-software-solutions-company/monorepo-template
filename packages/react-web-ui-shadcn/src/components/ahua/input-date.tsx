@@ -221,7 +221,7 @@ const InputDate = React.forwardRef<HTMLButtonElement, InputDateProps>(
                   </p>
                 </button>
               </PopoverTrigger>
-              <PopoverContent ref={popoverRef} className="w-auto p-0" align="end">
+              <PopoverContent ref={popoverRef} className="w-auto p-0" align="start">
                 <Calendar
                   locale={locale}
                   initialFocus

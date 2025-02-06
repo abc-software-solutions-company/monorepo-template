@@ -11,7 +11,7 @@ import { Button } from '../ui/button';
 import { cva } from 'class-variance-authority';
 import { Loading } from '../ui/loading';
 
-const formControlVariants = cva('relative rounded-md border border-input bg-background ring-offset-background', {
+const formControlVariants = cva('relative grid items-center rounded-md border border-input bg-background ring-offset-background', {
   variants: {
     size: {
       default: 'h-14',
@@ -32,7 +32,7 @@ const formControlVariants = cva('relative rounded-md border border-input bg-back
   },
 });
 
-const contentVariants = cva('px-3 text-sm overflow-hidden truncate text-ellipsis whitespace-nowrap font-medium', {
+const contentVariants = cva('px-3 overflow-hidden truncate text-ellipsis whitespace-nowrap ', {
   variants: {
     size: {
       default: '!leading-[24px] h-[28px]',
@@ -89,7 +89,7 @@ const commandItemVariants = cva('flex items-center pl-6 justify-between rounded-
   variants: {
     size: {
       default: 'h-9',
-      sm: 'h-8 text-xs',
+      sm: 'h-8',
     },
     selected: {
       true: 'bg-primary/10',
@@ -102,11 +102,11 @@ const commandItemVariants = cva('flex items-center pl-6 justify-between rounded-
   },
 });
 
-const groupHeaderVariants = cva('flex items-center justify-between px-2 py-2 text-sm font-semibold', {
+const groupHeaderVariants = cva('flex items-center justify-between px-2 py-2 font-semibold', {
   variants: {
     size: {
       default: 'h-9',
-      sm: 'h-8 text-xs',
+      sm: 'h-8',
     },
   },
   defaultVariants: {
@@ -131,17 +131,20 @@ const checkboxVariants = cva('flex items-center justify-center rounded-sm border
   },
 });
 
-const tagVariants = cva('whitespace-nowrap py-1 px-1.5 flex items-center rounded-full border border-primary font-medium bg-primary/10 text-primary', {
-  variants: {
-    size: {
-      default: 'text-xs',
-      sm: 'text-[10px]',
+const tagVariants = cva(
+  'whitespace-nowrap py-[1px] px-1.5 flex items-center rounded-full border border-primary font-medium bg-primary/10 text-primary',
+  {
+    variants: {
+      size: {
+        default: 'text-xs',
+        sm: 'text-[10px]',
+      },
     },
-  },
-  defaultVariants: {
-    size: 'default',
-  },
-});
+    defaultVariants: {
+      size: 'default',
+    },
+  }
+);
 
 const tagIconVariants = cva('ml-1 cursor-pointer', {
   variants: {
@@ -406,14 +409,14 @@ const SelectGroup = forwardRef(
                   onFocus={handleFocus}
                   onBlur={handleBlur}
                 >
-                  <ChevronDownIcon className={triggerIconVariants({ size, state: disabled ? 'disabled' : 'default' })} />
+                  <ChevronDownIcon className={triggerIconVariants({ size: 'default', state: disabled ? 'disabled' : 'default' })} />
                   {label && labelDisplay === 'inside' && (
                     <InputLabel htmlFor={`input-${ID}`} label={label} required={required} size={size} className={cn(labelClassName)} />
                   )}
                   <p className={cn(contentVariants({ size }), !value.length && 'text-muted-foreground', disabled && 'opacity-50')}>{displayValue}</p>
                 </button>
               </PopoverTrigger>
-              <PopoverContent ref={popoverRef} className="w-[--radix-popover-trigger-width] p-0">
+              <PopoverContent ref={popoverRef} className="min-w-[--radix-popover-trigger-width] p-0" sideOffset={6} align="start">
                 <Command>
                   {showSearch && (
                     <CommandInput
@@ -431,7 +434,7 @@ const SelectGroup = forwardRef(
                           <div className={groupHeaderVariants({ size })}>
                             <div className="flex flex-1 items-center justify-between">
                               <span>{group.name}</span>
-                              <div className="flex gap-2 text-xs text-muted-foreground">
+                              <div className="flex gap-2 text-muted-foreground">
                                 <button
                                   aria-label="select-all"
                                   type="button"
@@ -461,9 +464,9 @@ const SelectGroup = forwardRef(
                                 className={commandItemVariants({ size, selected: isSelected })}
                               >
                                 <span>{String(option[displayField])}</span>
-                                <div className={checkboxVariants({ size, selected: isSelected ? 'all' : 'none' })}>
+                                <div className={checkboxVariants({ size: 'default', selected: isSelected ? 'all' : 'none' })}>
                                   <CheckIcon
-                                    className={cn('h-3 w-3 text-primary-foreground', {
+                                    className={cn('h-4 w-4 text-primary-foreground', {
                                       'opacity-100': isSelected,
                                       'opacity-0': !isSelected,
                                     })}
@@ -498,7 +501,7 @@ const SelectGroup = forwardRef(
           </div>
         </div>
         {showSelectedTags && (
-          <div className={cn('mt-2 flex flex-wrap gap-1', tagListClassName)}>
+          <div className={cn('!mt-1.5 flex flex-wrap gap-1', tagListClassName)}>
             {groupedTags.map(({ group, selected, showAllTag, showIndividualTags }) => (
               <Fragment key={group.id}>
                 {showAllTag ? (

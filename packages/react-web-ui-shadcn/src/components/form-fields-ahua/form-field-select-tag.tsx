@@ -31,6 +31,7 @@ export default function FormFieldSelectTag<T extends FieldValues, O extends Opti
   form,
   formLabel,
   fieldName,
+  labelDisplay = 'inside',
   options = [],
   placeholder = '',
   visibled = true,
@@ -68,6 +69,7 @@ export default function FormFieldSelectTag<T extends FieldValues, O extends Opti
                 required={required}
                 placeholder={placeholder}
                 label={formLabel}
+                labelDisplay={labelDisplay}
                 valueField={valueField}
                 displayField={displayField}
                 options={options}

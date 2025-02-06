@@ -144,7 +144,7 @@ const ModalRules: React.FC<ModalRulesProps> = ({ form, visible, editIndex, onClo
                 {isEditMode ? 'Save' : 'Add'}
               </Button>
             </DialogFooter>
-            <pre className="overflow-hidden rounded-md border-green-200 bg-green-100 p-2">{JSON.stringify(modalForm.watch(), null, 2)}</pre>
+            <pre className="overflow-hidden rounded-md border-slate-200 p-2 text-xs">{JSON.stringify(modalForm.watch(), null, 2)}</pre>
           </form>
         </Form>
       </DialogContent>

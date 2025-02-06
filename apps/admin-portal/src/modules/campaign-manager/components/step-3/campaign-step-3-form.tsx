@@ -24,7 +24,7 @@ const CampaignStep3Form: React.FC<CampaignStep3FormProps> = ({ form, onSubmit })
       </Form>
       <Rules className="mt-4" />
       <Milestones className="mt-4" />
-      <ModalLoading visible={form.formState.isSubmitting} />
+      <ModalLoading visible={form.formState.isValid && form.formState.isSubmitting} />
     </>
   );
 };

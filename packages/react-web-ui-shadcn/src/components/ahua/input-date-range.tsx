@@ -33,7 +33,7 @@ const formControlVariants = cva(
   }
 );
 
-const contentVariants = cva('px-3 text-sm whitespace-nowrap font-medium', {
+const contentVariants = cva('px-3 text-sm whitespace-nowrap', {
   variants: {
     size: {
       default: '!leading-[24px] h-[28px]',
@@ -232,7 +232,7 @@ const InputDateRange = React.forwardRef<HTMLButtonElement, InputDateRangeProps>(
                   </p>
                 </button>
               </PopoverTrigger>
-              <PopoverContent ref={popoverRef} className="w-auto p-0" align="end">
+              <PopoverContent ref={popoverRef} className="w-auto p-0" align="start">
                 <Calendar
                   locale={locale}
                   initialFocus

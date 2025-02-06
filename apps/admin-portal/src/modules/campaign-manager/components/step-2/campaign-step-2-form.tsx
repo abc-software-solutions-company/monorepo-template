@@ -51,10 +51,35 @@ const CampaignStep2Form: React.FC<CampaignStep2FormProps> = ({ form, onSubmit })
       <form onSubmit={form.handleSubmit(onSubmit)}>
         <div className="flex space-x-10">
           <div className="w-full max-w-md space-y-4">
-            <FormFieldSelect required form={form} fieldName="nation" formLabel="Nation" placeholder="Select nation" options={languages} />
-            <FormFieldSelect required multiple form={form} fieldName="country" formLabel="Country" placeholder="Select country" options={languages} />
-            <FormFieldInput required form={form} fieldName="keyword" formLabel="Keyword" placeholder="Keyword" />
-            <FormFieldSelectTag required form={form} fieldName="country" formLabel="Country" placeholder="Select country" options={languages} />
+            <FormFieldSelect
+              required
+              form={form}
+              fieldName="nation"
+              formLabel="Nation"
+              placeholder="Select nation"
+              options={languages}
+              translator={t}
+            />
+            <FormFieldSelect
+              required
+              multiple
+              form={form}
+              fieldName="country"
+              formLabel="Country"
+              placeholder="Select country"
+              options={languages}
+              translator={t}
+            />
+            <FormFieldSelectTag
+              required
+              form={form}
+              fieldName="country"
+              formLabel="Country"
+              placeholder="Select country"
+              options={languages}
+              translator={t}
+            />
+            <FormFieldInput required form={form} fieldName="keyword" formLabel="Keyword" placeholder="Keyword" translator={t} />
             <FormFieldSelectGroup
               showSelectedTags
               required
@@ -63,6 +88,7 @@ const CampaignStep2Form: React.FC<CampaignStep2FormProps> = ({ form, onSubmit })
               formLabel="District"
               placeholder="Select district"
               options={districtsItems}
+              translator={t}
             />
             <FormFieldInputDateRangePicker
               required
@@ -76,14 +102,15 @@ const CampaignStep2Form: React.FC<CampaignStep2FormProps> = ({ form, onSubmit })
           <div className="w-full max-w-md space-y-4">
             <div className="w-full space-y-4">
               <h2 className="text-lg font-semibold">Form data</h2>
-              <pre className="overflow-hidden rounded-md border-slate-200 p-2">{JSON.stringify(form.watch(), null, 2)}</pre>
+              <pre className="overflow-hidden rounded-md border-slate-200 p-2 text-xs">{JSON.stringify(form.watch(), null, 2)}</pre>
               <h2 className="text-lg font-semibold">Data send to API</h2>
-              <pre className="overflow-hidden rounded-md border-green-200 p-2">{JSON.stringify(campaignStep2Dto(form.watch()), null, 2)}</pre>
-              <Debugger text={JSON.stringify(form.formState.errors, null, 2)} />
+              <pre className="overflow-hidden rounded-md border-green-200 p-2 text-xs">{JSON.stringify(campaignStep2Dto(form.watch()), null, 2)}</pre>
             </div>
           </div>
         </div>
-        <ModalLoading visible={form.formState.isSubmitting} />
+        <ModalLoading visible={form.formState.isValid && form.formState.isSubmitting} />
+        <Debugger text={JSON.stringify(form.formState.errors, null, 2)} />
+        <Debugger text={JSON.stringify(form.watch(), null, 2)} />
       </form>
     </Form>
   );

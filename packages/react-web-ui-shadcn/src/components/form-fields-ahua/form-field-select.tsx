@@ -29,6 +29,7 @@ export default function FormFieldSelect<T extends FieldValues, O extends OptionT
   form,
   formLabel,
   fieldName,
+  labelDisplay = 'inside',
   options = [],
   placeholder = '',
   visibled = true,
@@ -68,6 +69,7 @@ export default function FormFieldSelect<T extends FieldValues, O extends OptionT
                 required={required}
                 placeholder={placeholder}
                 label={formLabel}
+                labelDisplay={labelDisplay}
                 valueField={valueField}
                 displayField={displayField}
                 options={options}

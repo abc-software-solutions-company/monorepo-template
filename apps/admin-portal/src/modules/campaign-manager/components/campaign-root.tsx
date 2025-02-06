@@ -43,11 +43,14 @@ const CampaignRoot: React.FC = () => {
       endDate: undefined, // new Date('2024-11-30T16:59:59.999Z'),
     },
     step2: {
-      nation: '', // 'vi-vn',
-      country: [], // [{ id: 'vi-vn' }],
+      nation: 'vi-vn',
+      country: [{ id: 'vi-vn' }],
       district: [],
       keyword: '',
-      dateRange: undefined,
+      dateRange: {
+        from: new Date('2024-11-28T17:00:00.000Z'),
+        to: new Date('2024-11-30T16:59:59.999Z'),
+      },
     },
     step3: {
       campaignType: 'milestone',

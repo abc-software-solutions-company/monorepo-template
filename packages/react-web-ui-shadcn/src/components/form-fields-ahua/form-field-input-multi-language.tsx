@@ -235,7 +235,7 @@ export default function FormFieldInputMultiLanguage<T extends FieldValues>({
                               <ChevronDown className="h-4 w-4" />
                             </Button>
                           </PopoverTrigger>
-                          <PopoverContent className="w-48 p-0" side="right" align="end">
+                          <PopoverContent className="w-48 p-0" side="right" align="start">
                             <Command>
                               <CommandList>
                                 <CommandGroup>

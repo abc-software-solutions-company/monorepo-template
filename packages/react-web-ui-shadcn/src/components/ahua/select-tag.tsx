@@ -9,7 +9,7 @@ import { InputLabel, InputLabelOutside } from './input-base';
 import { Button } from '../ui/button';
 import { Loading } from '../ui/loading';
 
-const formControlVariants = cva('h-6 relative rounded-md border border-input bg-background ring-offset-background', {
+const formControlVariants = cva('relative grid items-center rounded-md border border-input bg-background ring-offset-background', {
   variants: {
     size: {
       default: 'h-14',
@@ -389,7 +389,7 @@ const SelectTag = forwardRef(
                   </p>
                 </button>
               </PopoverTrigger>
-              <PopoverContent ref={popoverRef} className="w-[--radix-popover-trigger-width] p-0">
+              <PopoverContent ref={popoverRef} className="min-w-[--radix-popover-trigger-width] p-0" sideOffset={6} align="start">
                 <Command>
                   {showSearch && (
                     <CommandInput
