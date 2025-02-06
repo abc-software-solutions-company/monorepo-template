@@ -234,7 +234,15 @@ export class CategoriesService {
 
     const children = await queryBuilder.getMany();
 
-    return children;
+    const childrenWithSubChildren = await Promise.all(
+      children.map(async child => {
+        const subChildren = await this.getChildCategories(child.id);
+
+        return { ...child, children: subChildren };
+      })
+    );
+
+    return childrenWithSubChildren;
   }
 
   private createQueryBuilderWithJoins(alias: string) {
