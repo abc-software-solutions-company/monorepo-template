@@ -37,9 +37,6 @@ export class QueryFailedErrorFilter implements ExceptionFilter {
         status = HttpStatus.BAD_REQUEST;
         message = 'Required field is missing';
         break;
-      default:
-        status = HttpStatus.INTERNAL_SERVER_ERROR;
-        message = 'An error occurred while processing your request';
     }
 
     response.status(status).json({
