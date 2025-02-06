@@ -10,7 +10,7 @@ type PostgresError = {
   constraint?: string;
 };
 
-@Catch(Error)
+@Catch(QueryFailedError)
 export class QueryFailedErrorFilter implements ExceptionFilter {
   catch(exception: QueryFailedError, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
@@ -26,16 +26,6 @@ export class QueryFailedErrorFilter implements ExceptionFilter {
       case '23505':
         status = HttpStatus.CONFLICT;
         message = 'Duplicate entry: This record already exists';
-        break;
-      // foreign_key_violation
-      case '23503':
-        status = HttpStatus.BAD_REQUEST;
-        message = 'Related record not found';
-        break;
-      // not_null_violation
-      case '23502':
-        status = HttpStatus.BAD_REQUEST;
-        message = 'Required field is missing';
         break;
     }
 
