@@ -98,7 +98,7 @@ describe('AdminPostsController (e2e)', () => {
       description: 'This is a category.',
       body: 'This is the body of the category.',
       type: CATEGORY_TYPE.POST,
-      status: CATEGORY_STATUS.VISIBLED,
+      status: CATEGORY_STATUS.PUBLISHED,
     });
     file1 = await fileRepository.save({ name: 'File A', uniqueName: 'file-a', caption: 'caption', size: 1024, ext: 'jpg', mime: 'image/jpeg' });
     file2 = await fileRepository.save({ name: 'File B', uniqueName: 'file-b', caption: 'caption', size: 1024, ext: 'jpg', mime: 'image/jpeg' });

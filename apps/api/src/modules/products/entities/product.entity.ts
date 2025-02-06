@@ -13,13 +13,13 @@ import { PRODUCT_STATUS } from '../constants/products.constant';
 
 @Entity({ name: 'products' })
 export class Product extends TranslationEntity {
-  @Column({ type: 'varchar', unique: true, length: 255 })
+  @Column({ type: 'varchar', length: 255, unique: true })
   slug: string;
 
-  @Column({ type: 'varchar', nullable: true, length: 50 })
+  @Column({ type: 'varchar', length: 50, nullable: true })
   type: string;
 
-  @Column({ type: 'enum', enum: PRODUCT_STATUS, default: PRODUCT_STATUS.DRAFT })
+  @Column({ type: 'varchar', length: 50, default: PRODUCT_STATUS.DRAFT })
   status: PRODUCT_STATUS;
 
   @Expose()

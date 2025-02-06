@@ -68,7 +68,7 @@ export class GetFilesSuccessDoc {
         slug: 'this-is-title-of-post',
         description: 'Short content here',
         body: 'Full content here',
-        status: FILE_STATUS.VISIBLED,
+        status: FILE_STATUS.PUBLISHED,
         creator: {
           id: '29332240-8d2d-45ad-8bbe-8cfe5906b30a',
           name: 'My Name',

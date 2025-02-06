@@ -21,6 +21,6 @@ export class Contact extends AbstractEntity {
   @Column({ type: 'boolean', default: false })
   isRead: boolean;
 
-  @Column({ type: 'enum', enum: CONTACT_STATUS, default: CONTACT_STATUS.VISIBLED })
+  @Column({ type: 'varchar', length: 50, default: CONTACT_STATUS.PUBLISHED })
   status: CONTACT_STATUS;
 }

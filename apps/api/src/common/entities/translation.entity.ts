@@ -18,6 +18,6 @@ export abstract class TranslationEntity extends AbstractEntity {
   @Column({ type: 'jsonb', nullable: true })
   bodyLocalized: Translation[];
 
-  @Column({ type: 'json', nullable: true })
+  @Column({ type: 'jsonb', nullable: true })
   seoMeta: SeoMeta;
 }

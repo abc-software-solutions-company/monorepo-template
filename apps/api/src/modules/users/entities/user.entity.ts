@@ -15,10 +15,10 @@ import { USER_GENDER, USER_ROLE, USER_STATUS } from '../constants/users.constant
 
 @Entity({ name: 'users' })
 export class User extends AbstractEntity {
-  @Column({ type: 'varchar', nullable: true, length: 50 })
+  @Column({ type: 'varchar', length: 50, nullable: true })
   name: string;
 
-  @Column({ type: 'varchar', nullable: true, unique: true, length: 320 })
+  @Column({ type: 'varchar', length: 320, nullable: true, unique: true })
   email: string;
 
   @Column({ type: 'varchar', nullable: true })
@@ -49,7 +49,7 @@ export class User extends AbstractEntity {
   @Column({ type: 'varchar', nullable: true })
   country: string;
 
-  @Column({ type: 'varchar', nullable: true, length: 2000 })
+  @Column({ type: 'varchar', length: 2000, nullable: true })
   bio: string;
 
   @Column({ type: 'timestamp without time zone', nullable: true })
@@ -61,19 +61,19 @@ export class User extends AbstractEntity {
   @Column({ type: 'varchar', array: true, nullable: true })
   deviceTokens: string[];
 
-  @Column({ type: 'enum', enum: AUTH_PROVIDER, default: AUTH_PROVIDER.CREDENTIALS })
+  @Column({ type: 'varchar', length: 50, enum: AUTH_PROVIDER, default: AUTH_PROVIDER.CREDENTIALS })
   provider: AUTH_PROVIDER;
 
-  @Column({ type: 'enum', enum: AUTH_TYPE, default: AUTH_TYPE.CREDENTIALS })
+  @Column({ type: 'varchar', length: 50, enum: AUTH_TYPE, default: AUTH_TYPE.CREDENTIALS })
   authType: AUTH_TYPE;
 
-  @Column({ type: 'enum', enum: USER_GENDER, default: USER_GENDER.MALE })
+  @Column({ type: 'varchar', length: 50, enum: USER_GENDER, default: USER_GENDER.MALE })
   gender: USER_GENDER;
 
-  @Column({ type: 'enum', enum: USER_STATUS, default: USER_STATUS.INACTIVE })
+  @Column({ type: 'varchar', length: 50, default: USER_STATUS.INACTIVE })
   status: USER_STATUS;
 
-  @Column({ type: 'enum', enum: USER_ROLE, default: USER_ROLE.USER })
+  @Column({ type: 'varchar', length: 50, enum: USER_ROLE, default: USER_ROLE.USER })
   role: USER_ROLE;
 
   @OneToMany(() => Post, post => post.creator)

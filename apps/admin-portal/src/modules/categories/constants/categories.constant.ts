@@ -1,4 +1,4 @@
-import { CheckCircle2Icon, XCircleIcon } from 'lucide-react';
+import { CheckCircle2Icon, CircleSlashIcon, XCircleIcon } from 'lucide-react';
 
 import { OptionType } from '@/interfaces/status.interface';
 import { CategoryFilter } from '../interfaces/categories.interface';
@@ -8,12 +8,12 @@ export const QUERY_CATEGORY_DETAIL = 'category';
 export const QUERY_CATEGORY_LIST_BY_TYPE = 'categories-by-type';
 
 export enum CATEGORY_STATUS {
-  VISIBLED = 'visibled',
+  PUBLISHED = 'published',
+  DRAFT = 'draft',
   DELETED = 'deleted',
 }
 
 export enum CATEGORY_TYPE {
-  FILE = 'file',
   PRODUCT = 'product',
   POST = 'post',
 }
@@ -34,10 +34,6 @@ export const CATEGORY_DEFAULT_FILTER: CategoryFilter = {
 
 export const CATEGORY_TYPES = [
   {
-    label: 'File',
-    value: CATEGORY_TYPE.FILE,
-  },
-  {
     label: 'Product',
     value: CATEGORY_TYPE.PRODUCT,
   },
@@ -49,14 +45,24 @@ export const CATEGORY_TYPES = [
 
 export const CATEGORY_STATUSES: OptionType[] = [
   {
-    label: 'Visibled',
-    value: CATEGORY_STATUS.VISIBLED,
+    label: 'Published',
+    value: CATEGORY_STATUS.PUBLISHED,
     textClassName: 'text-green-500',
     bgClassName: 'bg-green-500/10',
     borderClassName: 'border-green-400',
     activeClassName: 'after:bg-green-400',
     iconClassName: 'text-green-600',
     icon: CheckCircle2Icon,
+  },
+  {
+    label: 'Draft',
+    value: CATEGORY_STATUS.DRAFT,
+    textClassName: 'text-amber-500',
+    bgClassName: 'bg-amber-500/10',
+    borderClassName: 'border-amber-400',
+    activeClassName: 'after:bg-amber-400',
+    iconClassName: 'text-amber-600',
+    icon: CircleSlashIcon,
   },
   {
     label: 'Deleted',

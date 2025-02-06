@@ -1,3 +1,5 @@
+import { Product } from '../entities/product.entity';
+
 export const PRODUCT_GET_FIELDS = [
   [
     'product.id product.slug product.type product.status product.coverLocalized product.nameLocalized product.descriptionLocalized product.bodyLocalized product.seoMeta product.createdAt',
@@ -10,7 +12,14 @@ export const PRODUCT_GET_FIELDS = [
   .flat()
   .flatMap(item => item.trim().split(/\s+/));
 
-export const PRODUCT_FIELDS_TO_CREATE_OR_UPDATE = ['slug', 'type', 'coverLocalized', 'nameLocalized', 'descriptionLocalized', 'bodyLocalized'];
+export const PRODUCT_FIELDS_TO_CREATE_OR_UPDATE = [
+  'slug',
+  'type',
+  'coverLocalized',
+  'nameLocalized',
+  'descriptionLocalized',
+  'bodyLocalized',
+] as (keyof Product)[];
 
 export enum PRODUCT_STATUS {
   PUBLISHED = 'published',

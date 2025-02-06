@@ -23,7 +23,7 @@ export class CreateCategoryDto extends TranslationDto {
   @IsOptional()
   type?: CATEGORY_TYPE;
 
-  @ApiPropertyOptional({ enum: CATEGORY_STATUS, example: CATEGORY_STATUS.VISIBLED })
+  @ApiPropertyOptional({ enum: CATEGORY_STATUS, example: CATEGORY_STATUS.PUBLISHED })
   @IsEnum(CATEGORY_STATUS)
   @IsOptional()
   status?: CATEGORY_STATUS;

@@ -35,7 +35,7 @@ export class PostsService {
   async create(creator: User, createDto: CreatePostDto) {
     const newPost = new Post();
 
-    for (const field of POST_FIELDS_TO_CREATE_OR_UPDATE) {
+    for (const field of POST_FIELDS_TO_CREATE_OR_UPDATE as string[]) {
       if (createDto[field] !== undefined) {
         newPost[field] = createDto[field];
       }
@@ -130,7 +130,7 @@ export class PostsService {
 
     const originalPost = structuredClone(post);
 
-    for (const field of POST_FIELDS_TO_CREATE_OR_UPDATE) {
+    for (const field of POST_FIELDS_TO_CREATE_OR_UPDATE as string[]) {
       if (updateDto[field] !== undefined) {
         post[field] = updateDto[field];
       }

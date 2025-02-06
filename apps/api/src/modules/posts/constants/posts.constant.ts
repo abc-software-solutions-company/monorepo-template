@@ -1,3 +1,5 @@
+import { Post } from '../entities/post.entity';
+
 export const POST_GET_FIELDS = [
   [
     'post.id post.slug post.type post.status post.coverLocalized post.nameLocalized post.descriptionLocalized post.bodyLocalized post.seoMeta post.createdAt',
@@ -10,7 +12,14 @@ export const POST_GET_FIELDS = [
   .flat()
   .flatMap(item => item.trim().split(/\s+/));
 
-export const POST_FIELDS_TO_CREATE_OR_UPDATE = ['type', 'slug', 'coverLocalized', 'nameLocalized', 'descriptionLocalized', 'bodyLocalized'];
+export const POST_FIELDS_TO_CREATE_OR_UPDATE = [
+  'slug',
+  'coverLocalized',
+  'nameLocalized',
+  'descriptionLocalized',
+  'bodyLocalized',
+  'type',
+] as (keyof Post)[];
 
 export enum POST_STATUS {
   PUBLISHED = 'published',
@@ -21,7 +30,5 @@ export enum POST_STATUS {
 export enum POST_TYPE {
   DEFAULT = 'default',
   PAGE = 'page',
-  RECRUIT = 'recruit',
-  PROMOTION = 'promotion',
   SERVICE = 'service',
 }

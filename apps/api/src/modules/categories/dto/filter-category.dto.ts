@@ -14,8 +14,8 @@ export class FilterCategoryDto extends BaseFilterDto {
   @ApiPropertyOptional({
     enum: CATEGORY_STATUS,
     isArray: true,
-    example: [CATEGORY_STATUS.VISIBLED, CATEGORY_STATUS.DELETED],
-    default: [CATEGORY_STATUS.VISIBLED],
+    example: [CATEGORY_STATUS.PUBLISHED, CATEGORY_STATUS.DELETED],
+    default: [CATEGORY_STATUS.PUBLISHED],
   })
   @IsArray()
   @IsEnum(CATEGORY_STATUS, { each: true })

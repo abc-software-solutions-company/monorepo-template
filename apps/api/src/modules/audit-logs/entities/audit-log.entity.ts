@@ -12,19 +12,19 @@ export class AuditLog extends AbstractEntity {
   @Column({ type: 'varchar', nullable: true })
   recordId: string;
 
-  @Column({ type: 'json', nullable: true })
+  @Column({ type: 'jsonb', nullable: true })
   oldValue: Record<string, unknown>;
 
-  @Column({ type: 'json', nullable: true })
+  @Column({ type: 'jsonb', nullable: true })
   newValue: Record<string, unknown>;
 
   @ManyToOne(() => User, user => user.auditLogs)
   user: User;
 
-  @Column({ type: 'enum', enum: AUDIT_LOG_HTTP_METHOD })
+  @Column({ type: 'varchar', length: 50, enum: AUDIT_LOG_HTTP_METHOD })
   action: AUDIT_LOG_HTTP_METHOD;
 
-  @Column({ type: 'enum', enum: AUDIT_LOG_TABLE_NAME })
+  @Column({ type: 'varchar', length: 50, enum: AUDIT_LOG_TABLE_NAME })
   tableName: AUDIT_LOG_TABLE_NAME;
 
   @Expose()

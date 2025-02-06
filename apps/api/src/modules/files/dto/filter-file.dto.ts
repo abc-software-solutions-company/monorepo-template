@@ -17,8 +17,8 @@ export class FilterFileDto extends BaseFilterDto {
   @ApiPropertyOptional({
     enum: FILE_STATUS,
     isArray: true,
-    example: [FILE_STATUS.DELETED, FILE_STATUS.VISIBLED],
-    default: [FILE_STATUS.VISIBLED],
+    example: [FILE_STATUS.DELETED, FILE_STATUS.PUBLISHED],
+    default: [FILE_STATUS.PUBLISHED],
   })
   @IsArray()
   @IsEnum(FILE_STATUS, { each: true })

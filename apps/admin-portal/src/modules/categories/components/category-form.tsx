@@ -65,7 +65,7 @@ const CategoryForm: FC<CategoryFormProps> = ({ isEdit }) => {
   const languages = getLanguages(locale);
 
   const defaultValues: CategoryFormData = {
-    status: content?.data.status ?? CATEGORY_STATUS.VISIBLED,
+    status: content?.data.status ?? CATEGORY_STATUS.PUBLISHED,
     slug: content?.data.slug ?? '',
     type: content?.data.type ?? ('' as CATEGORY_TYPE),
     coverLocalized: content?.data.coverLocalized ?? [],

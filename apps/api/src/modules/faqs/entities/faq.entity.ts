@@ -14,6 +14,6 @@ export class Faq extends AbstractEntity {
   @Column({ type: 'jsonb', nullable: true })
   descriptionLocalized: Translation[];
 
-  @Column({ type: 'enum', enum: FAQ_STATUS, default: FAQ_STATUS.DRAFT })
+  @Column({ type: 'varchar', length: 50, default: FAQ_STATUS.DRAFT })
   status: FAQ_STATUS;
 }

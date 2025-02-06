@@ -24,7 +24,7 @@ export class FaqsService {
   async create(createDto: CreateFaqDto) {
     const newFaq = new Faq();
 
-    for (const field of FAQ_FIELDS_TO_CREATE_OR_UPDATE) {
+    for (const field of FAQ_FIELDS_TO_CREATE_OR_UPDATE as string[]) {
       if (createDto[field] !== undefined) {
         newFaq[field] = createDto[field];
       }
@@ -92,7 +92,7 @@ export class FaqsService {
       throw new NotFoundException('Faq not found');
     }
 
-    for (const field of FAQ_FIELDS_TO_CREATE_OR_UPDATE) {
+    for (const field of FAQ_FIELDS_TO_CREATE_OR_UPDATE as string[]) {
       if (updateDto[field] !== undefined) {
         faq[field] = updateDto[field];
       }

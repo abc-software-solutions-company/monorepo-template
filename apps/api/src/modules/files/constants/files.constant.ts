@@ -42,6 +42,7 @@ export const VALID_ALL_MIME_TYPES = [
 ];
 
 export enum FILE_STATUS {
-  VISIBLED = 'visibled',
+  PUBLISHED = 'published',
+  DRAFT = 'draft',
   DELETED = 'deleted',
 }

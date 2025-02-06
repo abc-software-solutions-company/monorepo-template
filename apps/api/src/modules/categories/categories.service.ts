@@ -148,7 +148,7 @@ export class CategoriesService {
       throw new BadRequestException('Category Type change is not allowed');
     }
 
-    for (const field of CATEGORY_FIELDS_TO_CREATE_OR_UPDATE) {
+    for (const field of CATEGORY_FIELDS_TO_CREATE_OR_UPDATE as string[]) {
       if (updateDto[field] !== undefined) {
         category[field] = updateDto[field];
       }
