@@ -65,17 +65,18 @@ export class CategoriesService {
 
     const queryBuilder = this.createQueryBuilderWithJoins('category');
 
-    queryBuilder.where('parent.id IS NULL');
-
-    if (status) queryBuilder.andWhere('category.status in (:...status)', { status });
     if (q) {
       const searchTerm = `%${q}%`;
 
-      queryBuilder.andWhere(
+      queryBuilder.where(
         "EXISTS (SELECT 1 FROM jsonb_array_elements(category.nameLocalized) AS translation WHERE LOWER(translation->>'value') LIKE LOWER(:searchTerm))",
         { searchTerm }
       );
+    } else {
+      queryBuilder.where('parent.id IS NULL');
     }
+
+    if (status) queryBuilder.andWhere('category.status in (:...status)', { status });
     if (excludeId) {
       queryBuilder.andWhere('category.id != :id', { id: excludeId });
     }
@@ -97,6 +98,9 @@ export class CategoriesService {
 
     const categoriesWithChildren = await Promise.all(
       entities.map(async category => {
+        if (category.parent) {
+          return { ...category, children: [] };
+        }
         const children = await this.getChildCategories(category.id);
 
         return { ...category, children };
