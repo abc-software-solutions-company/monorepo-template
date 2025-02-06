@@ -28,50 +28,6 @@ export class CreateCategorySuccessDoc {
   data: unknown;
 }
 
-export class GetCategoryTreesSuccessDoc {
-  @ApiProperty({ enum: HttpStatus, example: HttpStatus.OK })
-  statusCode: HttpStatus;
-
-  @ApiProperty({ type: String, example: 'Get category tree successfully' })
-  message: string;
-
-  @ApiProperty({
-    type: 'object',
-    example: [
-      {
-        id: 'dc851280-891f-41f4-b763-6b49c457918f',
-        createdAt: '2024-04-13T20:46:03.120Z',
-        name: 'Phone',
-        status: 'visibled',
-        type: 'product',
-        parent: null,
-        children: [
-          {
-            id: 'a2914bc1-2935-4804-9973-f4edb67df3b8',
-            createdAt: '2024-04-13T20:47:57.354Z',
-            name: 'Nokia',
-            status: 'visibled',
-            type: 'product',
-            parent: {
-              id: 'dc851280-891f-41f4-b763-6b49c457918f',
-              createdAt: '2024-04-13T20:46:03.120Z',
-              updatedAt: '2024-04-13T20:46:03.120Z',
-              name: 'Phone',
-              type: 'uncategorized',
-              status: 'visibled',
-            },
-            children: null,
-            path: '/Phone/Nokia',
-            depth: 1,
-          },
-        ],
-        path: '/Phone',
-      },
-    ],
-  })
-  data: unknown;
-}
-
 export class GetCategoriesSuccessDoc {
   @ApiProperty({ enum: HttpStatus, example: HttpStatus.OK })
   statusCode: HttpStatus;

@@ -25,7 +25,6 @@ export const useGetCategoriesQuery = ({ filter, enabled = true }: UseGetCategori
       return response.data;
     },
     enabled,
-    gcTime: 0,
     staleTime: 0,
   });
 };
@@ -45,7 +44,6 @@ export const useGetCategoriesByTypeQuery = ({ filter, excludeId, enabled = true 
       return response.data;
     },
     enabled,
-    gcTime: 0,
     staleTime: 0,
   });
 };
@@ -64,7 +62,6 @@ export const useGetCategoryQuery = ({ id, enabled = true }: UseGetCategoryQueryP
       return response.data;
     },
     enabled,
-    gcTime: 0,
     staleTime: 0,
   });
 };

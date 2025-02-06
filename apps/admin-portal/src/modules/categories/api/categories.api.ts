@@ -7,7 +7,7 @@ import { API_ENDPOINTS } from '@/constants/api-endpoint.constant';
 import axiosClient from '@/http/http-request';
 
 export const list = (filter: CategoryFilter) => {
-  const url = API_ENDPOINTS.CATEGORIES_TREES + '?' + objectToQueryString(filter);
+  const url = API_ENDPOINTS.CATEGORIES + '?' + objectToQueryString(filter);
 
   return axiosClient.get<CategoriesResponse>(url);
 };
