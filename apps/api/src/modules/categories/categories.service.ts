@@ -14,7 +14,6 @@ import { FilterCategoryDto } from './dto/filter-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 import { Category } from './entities/category.entity';
 import { CategoryFile } from './entities/category-file.entity';
-import { buildTree } from './utils/categories.util';
 
 import { AuditLogsService } from '../audit-logs/audit-logs.service';
 import { AUDIT_LOG_TABLE_NAME } from '../audit-logs/constants/audit-logs.constant';
@@ -61,50 +60,23 @@ export class CategoriesService {
     return categoryResponse;
   }
 
-  async findAll(filterDto: FilterCategoryDto) {
-    const { q, excludeId, status, type } = filterDto;
-
-    const queryBuilder = this.createQueryBuilderWithJoins('category');
-
-    if (type) {
-      queryBuilder.andWhere('category.type = :type', { type });
-    }
-    if (status) {
-      queryBuilder.andWhere('category.status in (:...status)', { status });
-    }
-    if (q) {
-      const searchTerm = `%${q}%`;
-
-      queryBuilder.andWhere(
-        "EXISTS (SELECT 1 FROM jsonb_array_elements(category.nameLocalized) AS translation WHERE LOWER(translation->>'value') LIKE LOWER(:searchTerm))",
-        { searchTerm }
-      );
-    }
-    if (excludeId) {
-      queryBuilder.andWhere('category.id != :id', { id: excludeId });
-    }
-
-    const categories = await queryBuilder.getMany();
-
-    return categories;
-  }
-
   async find(filterDto: FilterCategoryDto) {
     const { q, order, status, sort, excludeId, skip, limit, type } = filterDto;
 
     const queryBuilder = this.createQueryBuilderWithJoins('category');
 
-    queryBuilder.where('parent.id IS NULL');
-
-    if (status) queryBuilder.andWhere('category.status in (:...status)', { status });
     if (q) {
       const searchTerm = `%${q}%`;
 
-      queryBuilder.andWhere(
+      queryBuilder.where(
         "EXISTS (SELECT 1 FROM jsonb_array_elements(category.nameLocalized) AS translation WHERE LOWER(translation->>'value') LIKE LOWER(:searchTerm))",
         { searchTerm }
       );
+    } else {
+      queryBuilder.where('parent.id IS NULL');
     }
+
+    if (status) queryBuilder.andWhere('category.status in (:...status)', { status });
     if (excludeId) {
       queryBuilder.andWhere('category.id != :id', { id: excludeId });
     }
@@ -123,15 +95,21 @@ export class CategoriesService {
     queryBuilder.skip(skip).take(limit);
 
     const [{ entities }, totalItems] = await Promise.all([queryBuilder.getRawAndEntities(), queryBuilder.getCount()]);
+
+    const categoriesWithChildren = await Promise.all(
+      entities.map(async category => {
+        if (category.parent) {
+          return { ...category, children: [] };
+        }
+        const children = await this.getChildCategories(category.id);
+
+        return { ...category, children };
+      })
+    );
+
     const paginationDto = new PaginationDto({ totalItems, filterDto });
 
-    return new PaginationResponseDto(entities, { paging: paginationDto });
-  }
-
-  async getTrees(filterDto: FilterCategoryDto) {
-    const categories = await this.findAll(filterDto);
-
-    return buildTree(categories, filterDto.parentId);
+    return new PaginationResponseDto(categoriesWithChildren, { paging: paginationDto });
   }
 
   async findOne(id: string) {
@@ -170,7 +148,7 @@ export class CategoriesService {
       throw new BadRequestException('Category Type change is not allowed');
     }
 
-    for (const field of CATEGORY_FIELDS_TO_CREATE_OR_UPDATE) {
+    for (const field of CATEGORY_FIELDS_TO_CREATE_OR_UPDATE as string[]) {
       if (updateDto[field] !== undefined) {
         category[field] = updateDto[field];
       }
@@ -246,6 +224,25 @@ export class CategoriesService {
         await this.categoryFileRepository.save(newFile);
       }
     }
+  }
+
+  private async getChildCategories(parentId: string) {
+    const queryBuilder = this.createQueryBuilderWithJoins('category');
+
+    queryBuilder.where('parent.id = :parentId', { parentId });
+    queryBuilder.orderBy('category.createdAt', SORT_ORDER.DESC);
+
+    const children = await queryBuilder.getMany();
+
+    const childrenWithSubChildren = await Promise.all(
+      children.map(async child => {
+        const subChildren = await this.getChildCategories(child.id);
+
+        return { ...child, children: subChildren };
+      })
+    );
+
+    return childrenWithSubChildren;
   }
 
   private createQueryBuilderWithJoins(alias: string) {

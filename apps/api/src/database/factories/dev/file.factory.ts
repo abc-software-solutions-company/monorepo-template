@@ -13,7 +13,7 @@ export const fileFactory = [
     size: 62029,
     mime: 'image/jpeg',
     isTemp: false,
-    status: FILE_STATUS.VISIBLED,
+    status: FILE_STATUS.PUBLISHED,
   },
   {
     id: '8df9b6d9-fc62-43e9-b6d4-e7c1bef8563e',
@@ -26,7 +26,7 @@ export const fileFactory = [
     size: 36298,
     mime: 'image/jpeg',
     isTemp: false,
-    status: FILE_STATUS.VISIBLED,
+    status: FILE_STATUS.PUBLISHED,
   },
   {
     id: '32959e7a-5653-4ab1-9b44-acaae355835c',
@@ -39,7 +39,7 @@ export const fileFactory = [
     size: 378183,
     mime: 'image/jpeg',
     isTemp: false,
-    status: FILE_STATUS.VISIBLED,
+    status: FILE_STATUS.PUBLISHED,
   },
   {
     id: 'a54a0225-2143-48ae-85c2-bd4ce4775b67',
@@ -52,7 +52,7 @@ export const fileFactory = [
     size: 45807,
     mime: 'image/jpeg',
     isTemp: false,
-    status: FILE_STATUS.VISIBLED,
+    status: FILE_STATUS.PUBLISHED,
   },
   {
     id: 'f25f6caf-965c-4e30-aca0-4d6819571f75',
@@ -65,7 +65,7 @@ export const fileFactory = [
     size: 38618,
     mime: 'image/jpeg',
     isTemp: false,
-    status: FILE_STATUS.VISIBLED,
+    status: FILE_STATUS.PUBLISHED,
   },
   {
     id: 'd04dd152-a9de-411e-9f84-8f76515fa5aa',
@@ -78,7 +78,7 @@ export const fileFactory = [
     size: 59826,
     mime: 'image/jpeg',
     isTemp: false,
-    status: FILE_STATUS.VISIBLED,
+    status: FILE_STATUS.PUBLISHED,
   },
   {
     id: 'c7eff6c4-7b96-4e69-9323-30293649676e',
@@ -91,7 +91,7 @@ export const fileFactory = [
     size: 87239,
     mime: 'image/jpeg',
     isTemp: false,
-    status: FILE_STATUS.VISIBLED,
+    status: FILE_STATUS.PUBLISHED,
   },
   {
     id: '9c190ac3-adcc-4349-a31b-d622a18ff5f6',
@@ -104,7 +104,7 @@ export const fileFactory = [
     size: 119967,
     mime: 'image/jpeg',
     isTemp: false,
-    status: FILE_STATUS.VISIBLED,
+    status: FILE_STATUS.PUBLISHED,
   },
   {
     id: 'ef3f7552-4138-4494-8716-f2cd64efbf15',
@@ -117,7 +117,7 @@ export const fileFactory = [
     size: 115044,
     mime: 'image/jpeg',
     isTemp: false,
-    status: FILE_STATUS.VISIBLED,
+    status: FILE_STATUS.PUBLISHED,
   },
   {
     id: '3f01495c-b602-4e1c-91d4-99a97cec0a6e',
@@ -130,6 +130,6 @@ export const fileFactory = [
     size: 34701,
     mime: 'image/jpeg',
     isTemp: false,
-    status: FILE_STATUS.VISIBLED,
+    status: FILE_STATUS.PUBLISHED,
   },
 ] as unknown as File[];

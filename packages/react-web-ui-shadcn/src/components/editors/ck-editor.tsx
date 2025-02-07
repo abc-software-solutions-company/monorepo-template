@@ -38,8 +38,8 @@ import FileManager from './file-manager/file-manager';
 
 import 'ckeditor5/ckeditor5.css';
 import './ck-editor.scss';
-import { cn } from '@repo/react-web-ui-shadcn/lib/utils.js';
 import LayoutManager from './layout-manager/layout-manager';
+import { cn } from '../../lib/utils';
 
 interface ICKEditorProps {
   className?: string;
@@ -77,8 +77,8 @@ export const DEFAULT_TOOLBAR = [
   'insertTable',
   'mediaEmbed',
   'fileManager',
-  'sourceEditing',
   'insertLayout',
+  'sourceEditing',
 ];
 
 export const EDITOR_PLUGINS = [

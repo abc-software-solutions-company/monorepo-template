@@ -1,7 +1,6 @@
 import { FC, useCallback, useState } from 'react';
 import Cropper, { type Area } from 'react-easy-crop';
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
-import { useTranslations } from 'use-intl';
 import { Button } from '@repo/react-web-ui-shadcn/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@repo/react-web-ui-shadcn/components/ui/dialog';
 import { Slider } from '@repo/react-web-ui-shadcn/components/ui/slider';
@@ -10,13 +9,13 @@ type ModalCropImageProps = {
   visible: boolean;
   image: string;
   btnClose?: string;
+  btnDone?: string;
   isLoading?: boolean;
   onClose?: () => void;
   onCropComplete?: (blob: Blob) => void;
 };
 
-const ModalCropImage: FC<ModalCropImageProps> = ({ visible = false, image, btnClose, onClose, onCropComplete, isLoading = false }) => {
-  const t = useTranslations();
+const ModalCropImage: FC<ModalCropImageProps> = ({ visible = false, image, btnClose, btnDone, onClose, onCropComplete, isLoading = false }) => {
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
   const [rotation, setRotation] = useState(0);
@@ -72,10 +71,10 @@ const ModalCropImage: FC<ModalCropImageProps> = ({ visible = false, image, btnCl
         </div>
         <DialogFooter>
           <Button variant="outline" onClick={onClose}>
-            {btnClose ?? t('btn_close')}
+            {btnClose ?? 'Close'}
           </Button>
           <Button onClick={handleUploadClick} disabled={isLoading}>
-            {t('btn_done')}
+            {btnDone ?? 'Done'}
           </Button>
         </DialogFooter>
       </DialogContent>

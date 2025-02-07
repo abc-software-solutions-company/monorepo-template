@@ -7,16 +7,26 @@ export const baseValidator = {
   userName: stringSchema({
     min: 1,
     max: 50,
-    minMessage: 'validator_user_name',
+    required: true,
+    minMessage: 'validator_minimum_n_characters_allowed',
     maxMessage: 'validator_maximum_n_characters_allowed',
+    requiredMessage: 'validator_user_name',
   }),
   email: stringSchema({
     min: 1,
     max: 320,
-    minMessage: 'validator_user_email',
+    minMessage: 'validator_minimum_n_characters_allowed',
     maxMessage: 'validator_maximum_n_characters_allowed',
-  }).email('validator_user_email_invalid'),
-  password: passwordSchema(),
+    requiredMessage: 'validator_email',
+  }).email('validator_email_invalid'),
+  password: passwordSchema({
+    min: 8,
+    max: 50,
+  }),
+  confirmPassword: passwordSchema({
+    min: 8,
+    max: 50,
+  }),
   phoneNumber: phoneNumberSchema(),
 };
 
@@ -95,15 +105,35 @@ export function phoneNumberSchema(options: Partial<PhoneNumberValidatorOptions> 
 
 export function passwordSchema(options: Partial<PasswordValidatorOptions> = {}) {
   const {
-    min = 8,
-    max = 255,
-    minMessage = 'validator_user_password_at_least_n_character',
-    maxMessage = 'validator_maximum_n_characters_allowed',
+    min,
+    max,
+    required = false,
     pattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).+$/,
-    patternMessage = 'validator_user_password_rule',
+    minMessage = 'validator_minimum_n_characters_allowed',
+    maxMessage = 'validator_maximum_n_characters_allowed',
+    requiredMessage = 'validator_required',
+    patternMessage = 'validator_password_rule',
   } = options;
 
-  return z.string().min(min, minMessage).max(max, maxMessage).regex(pattern, patternMessage);
+  let schema = z.string();
+
+  if (pattern !== undefined) {
+    schema = schema.regex(pattern, patternMessage);
+  }
+
+  if (required) {
+    schema = schema.min(min ?? 1, requiredMessage);
+  }
+
+  if (min !== undefined) {
+    schema = schema.min(min, minMessage);
+  }
+
+  if (max !== undefined) {
+    schema = schema.max(max, maxMessage);
+  }
+
+  return schema;
 }
 
 export const createLocalizedField =

@@ -24,7 +24,7 @@ export class FaqsService {
   async create(createDto: CreateFaqDto) {
     const newFaq = new Faq();
 
-    for (const field of FAQ_FIELDS_TO_CREATE_OR_UPDATE) {
+    for (const field of FAQ_FIELDS_TO_CREATE_OR_UPDATE as string[]) {
       if (createDto[field] !== undefined) {
         newFaq[field] = createDto[field];
       }
@@ -40,14 +40,18 @@ export class FaqsService {
   async find(filterDto: FilterFaqDto) {
     const { q, order, status, sort, skip, limit } = filterDto;
 
-    const queryBuilder = this.faqRepository.createQueryBuilder('faq');
+    const queryBuilder = this.createQueryBuilderWithJoins('faq');
 
-    queryBuilder.select(FAQ_GET_FIELDS);
-    if (status) queryBuilder.where('faq.status in (:...status)', { status });
+    if (status) {
+      queryBuilder.andWhere('faq.status in (:...status)', { status });
+    }
     if (q) {
-      queryBuilder
-        .andWhere('LOWER(faq.title) LIKE LOWER(:title)', { title: `%${q}%` })
-        .orWhere('LOWER(faq.content) LIKE LOWER(:content)', { content: `%${q}%` });
+      const searchTerm = `%${q}%`;
+
+      queryBuilder.andWhere(
+        "EXISTS (SELECT 1 FROM jsonb_array_elements(faq.titleLocalized) AS translation WHERE LOWER(translation->>'value') LIKE LOWER(:searchTerm))",
+        { searchTerm }
+      );
     }
 
     if (sort) {
@@ -68,9 +72,8 @@ export class FaqsService {
   }
 
   async findOne(id: string) {
-    const queryBuilder = this.faqRepository.createQueryBuilder('faq');
+    const queryBuilder = this.createQueryBuilderWithJoins('faq');
 
-    queryBuilder.select(FAQ_GET_FIELDS);
     queryBuilder.where('faq.id = :id', { id });
 
     const faq = await queryBuilder.getOne();
@@ -89,7 +92,7 @@ export class FaqsService {
       throw new NotFoundException('Faq not found');
     }
 
-    for (const field of FAQ_FIELDS_TO_CREATE_OR_UPDATE) {
+    for (const field of FAQ_FIELDS_TO_CREATE_OR_UPDATE as string[]) {
       if (updateDto[field] !== undefined) {
         faq[field] = updateDto[field];
       }
@@ -126,5 +129,9 @@ export class FaqsService {
     const deletedFaqs = await this.faqRepository.save(faqs);
 
     return deletedFaqs;
+  }
+
+  private createQueryBuilderWithJoins(alias: string) {
+    return this.faqRepository.createQueryBuilder(alias).select(FAQ_GET_FIELDS);
   }
 }

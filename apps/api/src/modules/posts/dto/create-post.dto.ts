@@ -20,7 +20,7 @@ export class CreatePostDto extends TranslationDto {
   @MaxLength(255)
   slug: string;
 
-  @ApiPropertyOptional({ enum: POST_TYPE, example: POST_TYPE.DEFAULT })
+  @ApiPropertyOptional({ enum: POST_TYPE, example: POST_TYPE.NEWS })
   @IsEnum(POST_TYPE)
   @IsOptional()
   type?: POST_TYPE;

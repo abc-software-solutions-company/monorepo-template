@@ -1,3 +1,5 @@
+import { Category } from '../entities/category.entity';
+
 export const CATEGORY_GET_FIELDS = [
   [
     'category.id category.slug category.type category.status category.parent category.coverLocalized category.nameLocalized category.descriptionLocalized category.bodyLocalized category.seoMeta category.createdAt',
@@ -10,16 +12,23 @@ export const CATEGORY_GET_FIELDS = [
   .flat()
   .flatMap(item => item.trim().split(/\s+/));
 
-export const CATEGORY_FIELDS_TO_CREATE_OR_UPDATE = ['slug', 'coverLocalized', 'nameLocalized', 'descriptionLocalized', 'bodyLocalized'];
+export const CATEGORY_FIELDS_TO_CREATE_OR_UPDATE = [
+  'slug',
+  'coverLocalized',
+  'nameLocalized',
+  'descriptionLocalized',
+  'bodyLocalized',
+] as (keyof Category)[];
 
 export enum CATEGORY_STATUS {
-  VISIBLED = 'visibled',
+  PUBLISHED = 'published',
+  DRAFT = 'draft',
   DELETED = 'deleted',
 }
 
 export enum CATEGORY_TYPE {
-  DEFAULT = 'default',
-  FILE = 'file',
+  NEWS = 'news',
+  PAGE = 'page',
+  SERVICE = 'service',
   PRODUCT = 'product',
-  POST = 'post',
 }

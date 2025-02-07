@@ -15,6 +15,8 @@ export const publicPages = [
   '/game',
   '/privacy-policy',
   '/terms-and-conditions',
+  '/about-us',
+  '/contact-us',
 ];
 export const locales = LANGUAGES.map(x => x.code);
 export const localePrefix = { mode: 'as-needed' } satisfies LocalePrefix<typeof locales>;
@@ -30,4 +32,6 @@ export const pathnames = {
   '/game': '/game',
   '/privacy-policy': '/privacy-policy',
   '/terms-and-conditions': '/terms-and-conditions',
+  '/about-us': '/about-us',
+  '/contact-us': '/contact-us',
 } satisfies Pathnames<typeof locales>;

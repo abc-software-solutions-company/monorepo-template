@@ -1,6 +1,8 @@
 import { UseFormReturn } from 'react-hook-form';
-import FormFieldDateRangePicker from '@repo/react-web-ui-shadcn/components/form-fields-ahua/form-field-date-range-picker';
+import { useTranslations } from 'use-intl';
+import Debugger from '@repo/react-web-ui-shadcn/components/debugger';
 import FormFieldInput from '@repo/react-web-ui-shadcn/components/form-fields-ahua/form-field-input';
+import FormFieldInputDateRangePicker from '@repo/react-web-ui-shadcn/components/form-fields-ahua/form-field-input-date-range-picker';
 import FormFieldSelect from '@repo/react-web-ui-shadcn/components/form-fields-ahua/form-field-select';
 import FormFieldSelectGroup from '@repo/react-web-ui-shadcn/components/form-fields-ahua/form-field-select-group';
 import FormFieldSelectTag from '@repo/react-web-ui-shadcn/components/form-fields-ahua/form-field-select-tag';
@@ -17,13 +19,13 @@ type CampaignStep2FormProps = {
 };
 
 const CampaignStep2Form: React.FC<CampaignStep2FormProps> = ({ form, onSubmit }) => {
-  const locale = form.watch('nation');
+  const t = useTranslations();
 
   const districtsItems = [
     {
       id: 'region-a',
       name: 'Region A',
-      children: [
+      childrens: [
         { id: 'd-a-1', name: 'District A1' },
         { id: 'd-a-2', name: 'District A2' },
         { id: 'd-a-3', name: 'District A3' },
@@ -33,7 +35,7 @@ const CampaignStep2Form: React.FC<CampaignStep2FormProps> = ({ form, onSubmit })
     {
       id: 'region-b',
       name: 'Region B',
-      children: [
+      childrens: [
         { id: 'd-b-1', name: 'District B1' },
         { id: 'd-b-2', name: 'District B2' },
         { id: 'd-b-3', name: 'District B3' },
@@ -49,34 +51,85 @@ const CampaignStep2Form: React.FC<CampaignStep2FormProps> = ({ form, onSubmit })
       <form onSubmit={form.handleSubmit(onSubmit)}>
         <div className="flex space-x-10">
           <div className="w-full max-w-md space-y-4">
-            <FormFieldSelect required form={form} fieldName="nation" formLabel="Nation" options={languages} />
-            {locale === 'vi-vn' && (
-              <FormFieldSelect multiple form={form} fieldName="country" formLabel="Country" placeholder="Select country" options={languages} />
-            )}
-            {locale !== 'vi-vn' && <FormFieldInput form={form} fieldName="keyword" formLabel="Keyword" placeholder="Keyword" />}
-            <FormFieldSelectTag form={form} fieldName="country" formLabel="Country" placeholder="Select country" options={languages} />
+            <FormFieldSelect
+              required
+              form={form}
+              fieldName="nation"
+              formLabel="Nation"
+              placeholder="Select nation"
+              options={languages}
+              labelDisplay="outside"
+              size="sm"
+              translator={t}
+            />
+            <FormFieldSelect
+              required
+              multiple
+              form={form}
+              fieldName="country"
+              formLabel="Country"
+              placeholder="Select country"
+              options={languages}
+              labelDisplay="outside"
+              size="sm"
+              translator={t}
+            />
+            <FormFieldSelectTag
+              required
+              form={form}
+              fieldName="country"
+              formLabel="Country"
+              placeholder="Select country"
+              options={languages}
+              labelDisplay="outside"
+              size="sm"
+              translator={t}
+            />
+            <FormFieldInput
+              required
+              form={form}
+              fieldName="keyword"
+              formLabel="Keyword"
+              placeholder="Keyword"
+              translator={t}
+              labelDisplay="outside"
+              size="sm"
+            />
             <FormFieldSelectGroup
               showSelectedTags
+              required
               form={form}
               fieldName="district"
               formLabel="District"
               placeholder="Select district"
               options={districtsItems}
+              labelDisplay="outside"
+              size="sm"
+              translator={t}
             />
-            <FormFieldDateRangePicker form={form} fieldName="dateRange" formLabel="Date Range" />
+            <FormFieldInputDateRangePicker
+              required
+              form={form}
+              fieldName="dateRange"
+              formLabel="Date Range"
+              placeholder="Select date range"
+              labelDisplay="outside"
+              size="sm"
+              translator={t}
+            />
           </div>
           <div className="w-full max-w-md space-y-4">
             <div className="w-full space-y-4">
               <h2 className="text-lg font-semibold">Form data</h2>
-              <pre className="overflow-hidden rounded-md border-slate-200 bg-slate-100 p-2">{JSON.stringify(form.watch(), null, 2)}</pre>
+              <pre className="overflow-hidden rounded-md border-slate-200 p-2 text-xs">{JSON.stringify(form.watch(), null, 2)}</pre>
               <h2 className="text-lg font-semibold">Data send to API</h2>
-              <pre className="overflow-hidden rounded-md border-green-200 bg-green-100 p-2">
-                {JSON.stringify(campaignStep2Dto(form.watch()), null, 2)}
-              </pre>
+              <pre className="overflow-hidden rounded-md border-green-200 p-2 text-xs">{JSON.stringify(campaignStep2Dto(form.watch()), null, 2)}</pre>
             </div>
           </div>
         </div>
-        <ModalLoading visible={form.formState.isSubmitting} />
+        <ModalLoading visible={form.formState.isValid && form.formState.isSubmitting} />
+        <Debugger text={JSON.stringify(form.formState.errors, null, 2)} />
+        <Debugger text={JSON.stringify(form.watch(), null, 2)} />
       </form>
     </Form>
   );

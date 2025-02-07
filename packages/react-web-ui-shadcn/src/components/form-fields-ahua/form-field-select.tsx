@@ -1,53 +1,42 @@
 import { FieldValues, Path, UseFormReturn } from 'react-hook-form';
-import { Select } from '@repo/react-web-ui-shadcn/components/ahua/select';
+import { Select, SelectProps, type OptionType } from '@repo/react-web-ui-shadcn/components/ahua/select';
 import { FormControl, FormField, FormItem, FormMessage } from '@repo/react-web-ui-shadcn/components/ui/form';
+import { HelperText } from '../form-fields-base/helper-text';
 
-type OptionType = Record<string, string>;
+type StringKeyOf<T> = Extract<keyof T, string>;
 
-type FormFieldSelectProps<T extends FieldValues, O extends OptionType> = {
-  dataTestId?: string;
-  className?: string;
+type FormFieldSelectProps<T extends FieldValues, O extends OptionType> = Omit<
+  SelectProps<O>,
+  'form' | 'onChange' | 'value' | 'valueField' | 'displayField'
+> & {
   messageClassName?: string;
   form: UseFormReturn<T>;
   formLabel?: string;
   fieldName: Path<T>;
-  options: O[];
-  placeholder?: string;
-  disabled?: boolean;
-  readOnly?: boolean;
   visibled?: boolean;
-  valueField?: Extract<keyof O, string>;
-  displayField?: Extract<keyof O, string>;
-  size?: 'default' | 'sm';
-  required?: boolean;
-  multiple?: boolean;
-  showSearch?: boolean;
-  showClearAll?: boolean;
-  showSelectAll?: boolean;
-  showSelectedTags?: boolean;
   showErrorMessage?: boolean;
-  loading?: boolean;
-  hasMore?: boolean;
-  onSearch?: (value: string) => void;
-  onFocus?: React.FocusEventHandler<HTMLButtonElement>;
-  onLoadMore?: () => void;
+  helperText?: string;
+  valueField?: StringKeyOf<O>;
+  displayField?: StringKeyOf<O>;
+  value?: unknown | unknown[];
+  translator?: any;
   onChange?: (value: unknown | unknown[]) => void;
 };
 
 export default function FormFieldSelect<T extends FieldValues, O extends OptionType>({
-  dataTestId,
   className,
   messageClassName,
   form,
   formLabel,
   fieldName,
+  labelDisplay = 'inside',
   options = [],
   placeholder = '',
   visibled = true,
   disabled,
   readOnly,
-  valueField = 'id' as Extract<keyof O, string>,
-  displayField = 'name' as Extract<keyof O, string>,
+  valueField = 'id' as StringKeyOf<O>,
+  displayField = 'name' as StringKeyOf<O>,
   size = 'default',
   required,
   multiple = false,
@@ -56,7 +45,9 @@ export default function FormFieldSelect<T extends FieldValues, O extends OptionT
   showSelectAll = false,
   showSelectedTags = false,
   showErrorMessage = true,
+  helperText,
   loading = false,
+  translator,
   onSearch,
   onFocus,
   onLoadMore,
@@ -74,11 +65,11 @@ export default function FormFieldSelect<T extends FieldValues, O extends OptionT
             <FormControl>
               <Select
                 {...field}
-                dataTestId={dataTestId}
                 multiple={multiple}
                 required={required}
                 placeholder={placeholder}
                 label={formLabel}
+                labelDisplay={labelDisplay}
                 valueField={valueField}
                 displayField={displayField}
                 options={options}
@@ -105,7 +96,10 @@ export default function FormFieldSelect<T extends FieldValues, O extends OptionT
                 onLoadMore={onLoadMore}
               />
             </FormControl>
-            {showErrorMessage && <FormMessage className={messageClassName} />}
+            {!error && <HelperText text={helperText} />}
+            {showErrorMessage && error?.message && (
+              <FormMessage className={messageClassName} message={translator ? translator(error.message || '') : error.message} />
+            )}
           </FormItem>
         );
       }}

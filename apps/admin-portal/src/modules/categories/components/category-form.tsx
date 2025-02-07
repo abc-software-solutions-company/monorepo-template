@@ -7,9 +7,9 @@ import { toast } from 'sonner';
 import { useLocale, useTranslations } from 'use-intl';
 import { zodResolver } from '@hookform/resolvers/zod';
 import Debugger from '@repo/react-web-ui-shadcn/components/debugger';
-import FormFieldInputSlug from '@repo/react-web-ui-shadcn/components/form-fields/form-field-input-slug';
 import FormFieldCKEditorMultiLanguage from '@repo/react-web-ui-shadcn/components/form-fields-ahua/form-field-ckeditor-multi-language';
 import FormFieldInputMultiLanguage from '@repo/react-web-ui-shadcn/components/form-fields-ahua/form-field-input-multi-language';
+import FormFieldInputSlug from '@repo/react-web-ui-shadcn/components/form-fields-ahua/form-field-input-slug';
 import ModalLoading from '@repo/react-web-ui-shadcn/components/modals/modal-loading';
 import { Card, CardContent } from '@repo/react-web-ui-shadcn/components/ui/card';
 import { Form } from '@repo/react-web-ui-shadcn/components/ui/form';
@@ -53,20 +53,19 @@ const CategoryForm: FC<CategoryFormProps> = ({ isEdit }) => {
   const editorRef = useRef<Editor | null>(null);
   const [isFileManagerVisible, setIsFileManagerVisible] = useState(false);
   const [selectedType, setSelectedType] = useState<CATEGORY_TYPE | undefined>(undefined);
-
   const { data: content, isFetching } = useGetCategoryQuery({ id: params.id as string, enabled: !!params.id });
-  const { data: categoriesByType, isFetching: isCategoriesByTypeFetching } = useGetCategoriesByTypeQuery(
-    { type: selectedType },
-    content?.data.id,
-    selectedType !== undefined
-  );
+  const { data: categoriesByType, isFetching: isCategoriesByTypeFetching } = useGetCategoriesByTypeQuery({
+    filter: { type: selectedType },
+    excludeId: content?.data.id,
+    enabled: true,
+  });
   const { mutate: createMutation } = useCreateCategoryMutation();
   const { mutate: updateMutation } = useUpdateCategoryMutation();
 
   const languages = getLanguages(locale);
 
   const defaultValues: CategoryFormData = {
-    status: content?.data.status ?? CATEGORY_STATUS.VISIBLED,
+    status: content?.data.status ?? CATEGORY_STATUS.PUBLISHED,
     slug: content?.data.slug ?? '',
     type: content?.data.type ?? ('' as CATEGORY_TYPE),
     coverLocalized: content?.data.coverLocalized ?? [],
@@ -82,7 +81,10 @@ const CategoryForm: FC<CategoryFormProps> = ({ isEdit }) => {
     },
   };
 
-  const form = useForm<CategoryFormData>({ resolver: zodResolver(categoryFormLocalizeSchema(languages)), defaultValues });
+  const form = useForm<CategoryFormData>({
+    resolver: zodResolver(categoryFormLocalizeSchema(languages)),
+    defaultValues,
+  });
 
   const handleTypeChange = (newType: CATEGORY_TYPE) => {
     setSelectedType(newType);
@@ -149,7 +151,10 @@ const CategoryForm: FC<CategoryFormProps> = ({ isEdit }) => {
   };
 
   useEffect(() => {
-    form.reset(defaultValues);
+    setSelectedType(content?.data.type);
+    setTimeout(() => {
+      form.reset(defaultValues);
+    }, 500);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [form, content]);
 
@@ -169,7 +174,17 @@ const CategoryForm: FC<CategoryFormProps> = ({ isEdit }) => {
                   maxLength={255}
                   locales={languages}
                 />
-                <FormFieldInputSlug form={form} />
+                <FormFieldInputSlug
+                  form={form}
+                  fieldName={'slug'}
+                  watchFieldName={'nameLocalized.0.value'}
+                  formLabel={t('form_field_slug')}
+                  minLength={1}
+                  maxLength={255}
+                  labelDisplay="outside"
+                  size="sm"
+                  translator={t}
+                />
                 <FormFieldCKEditorMultiLanguage
                   form={form}
                   fieldName="descriptionLocalized"
@@ -198,14 +213,18 @@ const CategoryForm: FC<CategoryFormProps> = ({ isEdit }) => {
             <div className="w-72 shrink-0">
               <div className="grid gap-4">
                 <FormFieldCardSelectStatus form={form} statuses={CATEGORY_STATUSES} />
-                {!content?.data && (
-                  <FormFieldCardSelectCategoryType form={form} items={CATEGORY_TYPES} onChange={value => handleTypeChange(value as CATEGORY_TYPE)} />
-                )}
+                <FormFieldCardSelectCategoryType
+                  form={form}
+                  fieldName="type"
+                  formLabel={t('form_field_category')}
+                  items={CATEGORY_TYPES}
+                  onChange={value => handleTypeChange(value as CATEGORY_TYPE)}
+                />
                 <FormFieldCardSelectCategory
                   form={form}
+                  fieldName="parentId"
                   formLabel={t('form_field_category_parent')}
-                  fieldName={'parentId'}
-                  categories={categoriesByType?.data ?? []}
+                  items={categoriesByType?.data ?? []}
                 />
                 <FormFieldCardCover form={form} />
                 <FormFieldCardImages form={form} />

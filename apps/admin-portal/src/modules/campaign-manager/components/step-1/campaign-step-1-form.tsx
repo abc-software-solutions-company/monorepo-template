@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { ControllerRenderProps, Path, UseFormReturn } from 'react-hook-form';
-import FormFieldDatePicker from '@repo/react-web-ui-shadcn/components/form-fields-ahua/form-field-date-picker';
+import Debugger from '@repo/react-web-ui-shadcn/components/debugger';
+import FormFieldInputDatePicker from '@repo/react-web-ui-shadcn/components/form-fields-ahua/form-field-input-date-picker';
 import FormFieldInputMultiLanguage from '@repo/react-web-ui-shadcn/components/form-fields-ahua/form-field-input-multi-language';
 import FormFieldQuillMultiLanguage from '@repo/react-web-ui-shadcn/components/form-fields-ahua/form-field-quill-multi-language';
 import FormFieldUploaderMultiLanguage, {
@@ -100,8 +101,32 @@ const CampaignStep1Form: React.FC<CampaignStep1FormProps> = ({ form, onSubmit })
           <div className="w-full max-w-md space-y-4">
             <FormFieldInputMultiLanguage required form={form} fieldName="name" formLabel="Name" locales={LANGUAGES} maxLength={50} />
             <FormFieldInputMultiLanguage required form={form} fieldName="description" formLabel="Description" locales={LANGUAGES} maxLength={300} />
-            <FormFieldDatePicker required form={form} fieldName="startDate" formLabel="Start Date" disableBefore={NEXT_DAY} />
-            <FormFieldDatePicker required form={form} fieldName="endDate" formLabel="End Date" disableBefore={form.watch('startDate') ?? NEXT_DAY} />
+            <FormFieldInputDatePicker required form={form} fieldName="startDate" formLabel="Start Date" disableBefore={NEXT_DAY} />
+            <FormFieldInputDatePicker
+              required
+              form={form}
+              fieldName="startDate"
+              formLabel="Start Date"
+              size="sm"
+              labelDisplay="outside"
+              disableBefore={NEXT_DAY}
+            />
+            <FormFieldInputDatePicker
+              required
+              form={form}
+              fieldName="endDate"
+              formLabel="End Date"
+              disableBefore={form.watch('startDate') ?? NEXT_DAY}
+            />
+            <FormFieldInputDatePicker
+              required
+              form={form}
+              fieldName="endDate"
+              formLabel="End Date"
+              size="sm"
+              labelDisplay="outside"
+              disableBefore={form.watch('startDate') ?? NEXT_DAY}
+            />
             <FormFieldQuillMultiLanguage form={form} fieldName="tnc" formLabel="Terms and conditions" locales={LANGUAGES} maxLength={300} />
           </div>
           <div className="w-full max-w-md space-y-4">
@@ -120,14 +145,14 @@ const CampaignStep1Form: React.FC<CampaignStep1FormProps> = ({ form, onSubmit })
           </div>
           <div className="w-full space-y-4">
             <h2 className="text-lg font-semibold">Form data</h2>
-            <pre className="overflow-hidden rounded-md border-slate-200 bg-slate-100 p-2">{JSON.stringify(form.watch(), null, 2)}</pre>
+            <pre className="overflow-hidden rounded-md border-slate-200 p-2 text-xs">{JSON.stringify(form.watch(), null, 2)}</pre>
             <h2 className="text-lg font-semibold">Data send to API</h2>
-            <pre className="overflow-hidden rounded-md border-green-200 bg-green-100 p-2">
-              {JSON.stringify(campaignStep1Dto(form.watch()), null, 2)}
-            </pre>
+            <pre className="overflow-hidden rounded-md border-slate-200 p-2 text-xs">{JSON.stringify(campaignStep1Dto(form.watch()), null, 2)}</pre>
           </div>
         </div>
-        <ModalLoading visible={form.formState.isSubmitting} />
+        <ModalLoading visible={form.formState.isValid && form.formState.isSubmitting} />
+        <Debugger text={JSON.stringify(form.formState.errors, null, 2)} />
+        <Debugger text={JSON.stringify(form.watch(), null, 2)} />
       </form>
     </Form>
   );

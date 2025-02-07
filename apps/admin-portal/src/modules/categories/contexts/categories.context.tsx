@@ -45,7 +45,7 @@ export const CategoryProvider: React.FC<CategoryProviderProps> = ({ children }) 
   });
 
   const [selected, setSelected] = useState<string[]>([]);
-  const { data, isFetching, isError, error } = useGetCategoriesQuery(filter);
+  const { data, isFetching, isError, error } = useGetCategoriesQuery({ filter });
 
   useDeepCompareEffect(() => {
     const queryString = objectToQueryString({ ...filter, sidebar: searchParams.get('sidebar') });

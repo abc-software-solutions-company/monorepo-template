@@ -2,8 +2,8 @@ import React, { useEffect } from 'react';
 import { SubmitHandler, useForm, UseFormReturn } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
+import FormFieldRadioBlock from '@repo/react-web-ui-shadcn/components/form-fields/form-field-radio-block';
 import FormFieldInput from '@repo/react-web-ui-shadcn/components/form-fields-ahua/form-field-input';
-import FormFieldRadioBlock from '@repo/react-web-ui-shadcn/components/form-fields-ahua/form-field-radio-block';
 import FormFieldSelect from '@repo/react-web-ui-shadcn/components/form-fields-ahua/form-field-select';
 import { Button } from '@repo/react-web-ui-shadcn/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@repo/react-web-ui-shadcn/components/ui/dialog';
@@ -144,7 +144,7 @@ const ModalRules: React.FC<ModalRulesProps> = ({ form, visible, editIndex, onClo
                 {isEditMode ? 'Save' : 'Add'}
               </Button>
             </DialogFooter>
-            <pre className="overflow-hidden rounded-md border-green-200 bg-green-100 p-2">{JSON.stringify(modalForm.watch(), null, 2)}</pre>
+            <pre className="overflow-hidden rounded-md border-slate-200 p-2 text-xs">{JSON.stringify(modalForm.watch(), null, 2)}</pre>
           </form>
         </Form>
       </DialogContent>

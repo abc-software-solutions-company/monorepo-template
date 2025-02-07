@@ -1,7 +1,7 @@
 import React, { FC, ForwardedRef, forwardRef, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { CheckIcon, ChevronDownIcon, InfoIcon, XIcon } from 'lucide-react';
-import { InputLabel } from './input-base';
+import { InputLabel, InputLabelOutside } from './input-base';
 import { cn } from '../../lib/utils';
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '../ui/command';
@@ -10,7 +10,7 @@ import { Tooltip, TooltipArrow, TooltipContent, TooltipProvider, TooltipTrigger 
 import { Button } from '../ui/button';
 import { Loading } from '../ui/loading';
 
-const formControlVariants = cva('h-6 relative rounded-md border border-input bg-background ring-input', {
+const formControlVariants = cva('relative grid items-center rounded-md border border-input bg-background ring-offset-background', {
   variants: {
     size: {
       default: 'h-14',
@@ -18,9 +18,9 @@ const formControlVariants = cva('h-6 relative rounded-md border border-input bg-
     },
     state: {
       default: '',
-      focused: 'ring-2 ring-ring ring-offset-2 ring-offset-background',
+      focused: 'ring-2 ring-ring ring-offset-2',
       disabled: 'cursor-not-allowed bg-muted',
-      readOnly: 'cursor-not-allowed bg-muted',
+      readOnly: 'cursor-not-allowed bg-muted text-foreground',
       error: 'border-destructive bg-destructive/10',
       errorFocused: 'bg-destructive/10 ring-2 ring-destructive ring-offset-2',
     },
@@ -157,7 +157,7 @@ const Tag: FC<TagProps> = ({ className, label, value, size = 'default', onRemove
   </span>
 );
 
-type OptionType = Record<string, string>;
+export type OptionType = Record<string, string>;
 
 type BaseSelectProps<T extends OptionType> = {
   dataTestId?: string;
@@ -165,6 +165,7 @@ type BaseSelectProps<T extends OptionType> = {
   options: T[];
   placeholder?: string;
   label?: string;
+  labelDisplay?: 'inside' | 'outside';
   labelClassName?: string;
   tagListClassName?: string;
   tagItemClassName?: string;
@@ -199,24 +200,25 @@ type MultiSelectProps<T extends OptionType> = BaseSelectProps<T> & {
   onChange: (value: T[]) => void;
 };
 
-type SelectProps<T extends OptionType> = SingleSelectProps<T> | MultiSelectProps<T>;
+export type SelectProps<T extends OptionType> = SingleSelectProps<T> | MultiSelectProps<T>;
 
 const Select = forwardRef(
   <T extends OptionType>(
     {
       dataTestId,
       className,
+      label,
+      labelDisplay = 'inside',
       labelClassName,
       tagListClassName,
       tagItemClassName,
       options,
       value,
-      valueField,
-      displayField,
+      valueField = 'id',
+      displayField = 'name',
       placeholder = 'Select items...',
       disabled = false,
       readOnly = false,
-      label,
       required = false,
       multiple,
       size = 'default',
@@ -240,6 +242,8 @@ const Select = forwardRef(
     const containerRef = useRef<HTMLDivElement>(null);
     const popoverRef = useRef<HTMLDivElement>(null);
     const triggerRef = useRef<HTMLButtonElement>(null);
+
+    const ID = new Date().getTime();
 
     React.useImperativeHandle(ref, () => triggerRef.current as HTMLButtonElement);
 
@@ -380,7 +384,10 @@ const Select = forwardRef(
     }, [handleClickOutside]);
 
     return (
-      <div>
+      <>
+        {label && labelDisplay === 'outside' && (
+          <InputLabelOutside htmlFor={`input-${ID}`} label={label} required={required} className={cn(labelClassName)} />
+        )}
         <div data-testid={dataTestId} ref={containerRef} className={cn(formControlVariants({ size, state: getFormControlState(), className }))}>
           <Popover open={isOpen && !disabled} onOpenChange={handleOpenChange}>
             <PopoverTrigger asChild>
@@ -396,14 +403,16 @@ const Select = forwardRef(
                 onBlur={handleBlur}
               >
                 <ChevronDownIcon className={triggerIconVariants({ size: 'default', state: disabled ? 'disabled' : 'default' })} />
-                {label && <InputLabel label={label} required={required} size={size} className={cn(labelClassName)} />}
+                {label && labelDisplay === 'inside' && (
+                  <InputLabel htmlFor={`input-${ID}`} label={label} required={required} size={size} className={cn(labelClassName)} />
+                )}
                 <p className={cn(contentVariants({ size }), !selectedItems.length && 'text-muted-foreground', disabled && 'opacity-50')}>
                   {!selectedItems.length && placeholder}
                   {selectedItems.length > 0 && selectedItems.map(item => item[displayField]).join(', ')}
                 </p>
               </button>
             </PopoverTrigger>
-            <PopoverContent ref={popoverRef} className="w-[--radix-popover-trigger-width] p-0">
+            <PopoverContent ref={popoverRef} className="min-w-[--radix-popover-trigger-width] p-0" sideOffset={6} align="start">
               <Command>
                 {showSearch && (
                   <CommandInput
@@ -497,7 +506,7 @@ const Select = forwardRef(
             ))}
           </div>
         )}
-      </div>
+      </>
     );
   }
 );

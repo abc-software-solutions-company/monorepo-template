@@ -56,7 +56,7 @@ export class CreateUserDto {
   @ApiPropertyOptional({ example: '' })
   @IsDate()
   @IsOptional()
-  dayOfBirth?: Date;
+  dateOfBirth?: Date;
 
   @ApiPropertyOptional({ example: '' })
   @IsString()

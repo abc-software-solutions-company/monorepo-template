@@ -5,7 +5,7 @@ import { UserEntity } from '@/modules/users/interfaces/users.interface';
 export type ProfileFormData = {
   name: string;
   phoneNumber: string;
-  dateOfBirth: Date;
+  dateOfBirth?: Date;
   country: string;
   bio: string;
 };

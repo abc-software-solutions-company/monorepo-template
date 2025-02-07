@@ -1,5 +1,5 @@
 import { UseFormReturn } from 'react-hook-form';
-import FormFieldRadioBlock from '@repo/react-web-ui-shadcn/components/form-fields-ahua/form-field-radio-block';
+import FormFieldRadioBlock from '@repo/react-web-ui-shadcn/components/form-fields/form-field-radio-block';
 import ModalLoading from '@repo/react-web-ui-shadcn/components/modals/modal-loading';
 import { Form } from '@repo/react-web-ui-shadcn/components/ui/form';
 
@@ -24,7 +24,7 @@ const CampaignStep3Form: React.FC<CampaignStep3FormProps> = ({ form, onSubmit })
       </Form>
       <Rules className="mt-4" />
       <Milestones className="mt-4" />
-      <ModalLoading visible={form.formState.isSubmitting} />
+      <ModalLoading visible={form.formState.isValid && form.formState.isSubmitting} />
     </>
   );
 };

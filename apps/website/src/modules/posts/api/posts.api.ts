@@ -1,22 +1,19 @@
-import { EntityId } from '@reduxjs/toolkit';
 import { objectToQueryString } from '@repo/shared-universal/utils/string.util';
 
-import { PostEntity, PostFilter, PostResponse, PostsResponse } from '../interfaces/posts.interface';
+import { PostFilter, PostResponse, PostsResponse } from '../interfaces/posts.interface';
 
 import { API_ENDPOINTS } from '@/constants/api-endpoint.constant';
 
 import axiosClient from '@/http/http-request';
 
 export const list = (filter: PostFilter) => {
-  const url = [API_ENDPOINTS.POSTS];
+  const url = API_ENDPOINTS.POSTS + '?' + objectToQueryString(filter);
 
-  url.push(`?page=${filter.page}`);
-
-  return axiosClient.get<PostEntity[]>(url.join(''));
+  return axiosClient.get<PostsResponse>(url);
 };
 
-export const read = (id: EntityId) => {
-  return axiosClient.get<PostEntity>(`${API_ENDPOINTS.POSTS}/${id}`);
+export const read = (id: string) => {
+  return axiosClient.get<PostResponse>(`${API_ENDPOINTS.POSTS}/${id}`);
 };
 
 export async function getServerPosts(filter: PostFilter) {

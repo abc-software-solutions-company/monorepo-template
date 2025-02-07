@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { cva } from 'class-variance-authority';
 import { cn } from '../../lib/utils';
 
@@ -83,12 +83,16 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
       props.onChange?.(e);
     };
 
+    useEffect(() => {
+      setInputValue(defaultValue?.toString() || value?.toString() || '');
+    }, [value]);
+
     return (
       <div className={cn(formControlVariants({ size, state: getFormControlState() }), className)}>
         <input
           {...props}
           data-testid={dataTestId}
-          ref={ref as any}
+          ref={ref}
           type={type}
           disabled={disabled}
           readOnly={readOnly}

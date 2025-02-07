@@ -43,7 +43,7 @@ export const postFormLocalizeSchema = (languages: Language[]) => {
     descriptionLocalized: localizedField({
       min: 1,
       max: 2000,
-      required: true,
+      required: false,
       requiredMessage: 'validator_post_description',
       minMessage: 'validator_minimum_n_characters_allowed',
       maxMessage: 'validator_maximum_n_characters_allowed',
@@ -51,7 +51,7 @@ export const postFormLocalizeSchema = (languages: Language[]) => {
     bodyLocalized: localizedField({
       min: 1,
       max: Infinity,
-      required: true,
+      required: false,
       requiredMessage: 'validator_post_body',
       minMessage: 'validator_minimum_n_characters_allowed',
       maxMessage: 'validator_maximum_n_characters_allowed',

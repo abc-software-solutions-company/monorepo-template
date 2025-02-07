@@ -17,10 +17,10 @@ export class Category extends TranslationEntity {
   @Column({ type: 'varchar', unique: true, length: 255 })
   slug: string;
 
-  @Column({ type: 'enum', enum: CATEGORY_TYPE, default: CATEGORY_TYPE.POST })
+  @Column({ type: 'varchar', length: 50, default: CATEGORY_TYPE.NEWS })
   type: CATEGORY_TYPE;
 
-  @Column({ type: 'enum', enum: CATEGORY_STATUS, default: CATEGORY_STATUS.VISIBLED })
+  @Column({ type: 'varchar', length: 50, default: CATEGORY_STATUS.PUBLISHED })
   status: CATEGORY_STATUS;
 
   @Expose()

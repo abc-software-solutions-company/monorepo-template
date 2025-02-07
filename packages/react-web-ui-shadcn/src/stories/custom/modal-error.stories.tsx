@@ -30,7 +30,7 @@ const meta = {
         defaultValue: { summary: 'Close' },
       },
     },
-    content: {
+    message: {
       control: 'text',
       description: 'Content of the modal',
       table: {
@@ -75,7 +75,7 @@ export const Default: Story = {
   args: {
     onClose: () => {},
     title: 'Critical Error',
-    content: 'An unexpected error happened. Please try again later.',
+    message: 'An unexpected error happened. Please try again later.',
     btnClose: 'Dismiss',
     visible: true,
   },
@@ -85,7 +85,7 @@ export const CustomButtons: Story = {
   render: ModalErrorBlock,
   args: {
     title: 'Custom Error',
-    content: 'An unexpected error happened. Please try again later.',
+    message: 'An unexpected error happened. Please try again later.',
     btnClose: 'Close Error',
     visible: true,
   },
@@ -95,7 +95,7 @@ export const WithHTMLContent: Story = {
   render: ModalErrorBlock,
   args: {
     title: 'Terms & Conditions',
-    content: (
+    message: (
       <div>
         <p>Please read the following terms and conditions carefully:</p>
         <ul>

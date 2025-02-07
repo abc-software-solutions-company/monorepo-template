@@ -11,7 +11,12 @@ import { QUERY_CATEGORY_DETAIL, QUERY_CATEGORY_LIST, QUERY_CATEGORY_LIST_BY_TYPE
 
 import CategoryApi from '../api/categories.api';
 
-export const useGetCategoriesQuery = (filter: CategoryFilter) => {
+type UseGetCategoriesQueryProps = {
+  filter: CategoryFilter;
+  enabled?: boolean;
+};
+
+export const useGetCategoriesQuery = ({ filter, enabled = true }: UseGetCategoriesQueryProps) => {
   return useQuery({
     queryKey: [QUERY_CATEGORY_LIST, filter],
     queryFn: async () => {
@@ -19,11 +24,18 @@ export const useGetCategoriesQuery = (filter: CategoryFilter) => {
 
       return response.data;
     },
+    enabled,
     staleTime: 0,
   });
 };
 
-export const useGetCategoriesByTypeQuery = (filter: CategoryFilter, excludeId?: string, enabled?: boolean) => {
+type UseGetCategoriesByTypeQueryProps = {
+  filter: CategoryFilter;
+  excludeId?: string;
+  enabled?: boolean;
+};
+
+export const useGetCategoriesByTypeQuery = ({ filter, excludeId, enabled = true }: UseGetCategoriesByTypeQueryProps) => {
   return useQuery({
     queryKey: [QUERY_CATEGORY_LIST_BY_TYPE, filter],
     queryFn: async () => {
@@ -36,7 +48,12 @@ export const useGetCategoriesByTypeQuery = (filter: CategoryFilter, excludeId?: 
   });
 };
 
-export const useGetCategoryQuery = ({ id, enabled = true }: { id: string; enabled?: boolean }) => {
+type UseGetCategoryQueryProps = {
+  id: string;
+  enabled?: boolean;
+};
+
+export const useGetCategoryQuery = ({ id, enabled = true }: UseGetCategoryQueryProps) => {
   return useQuery({
     queryKey: [QUERY_CATEGORY_DETAIL, id],
     queryFn: async () => {

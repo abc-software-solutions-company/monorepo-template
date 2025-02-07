@@ -1,5 +1,5 @@
 import { Body, Controller, Delete, Get, HttpStatus, Param, Patch, Post, Query, Req, UseGuards } from '@nestjs/common';
-import { ApiBearerAuth, ApiOperation, ApiParam, ApiQuery, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
 import { Request } from 'express';
 
 import { BulkDeleteDto } from '@/common/dtos/bulk-delete.dto';
@@ -16,7 +16,6 @@ import {
   GetCategoriesSuccessDoc,
   GetCategoryFailureDoc,
   GetCategorySuccessDoc,
-  GetCategoryTreesSuccessDoc,
   RemoveCategorySuccessDoc,
   UpdateCategorySuccessDoc,
 } from './docs/categories.doc';
@@ -52,15 +51,6 @@ export class AdminCategoriesController {
   @PaginatedResponse({ message: 'Get categories successfully' })
   find(@Query() filterDto: FilterCategoryDto) {
     return this.categoriesService.find(filterDto);
-  }
-
-  @Get('trees')
-  @ApiOperation({ summary: 'Get category tree' })
-  @ApiDocumentResponse({ status: HttpStatus.OK, message: 'Get category tree successfully', model: GetCategoryTreesSuccessDoc })
-  @Response({ status: HttpStatus.OK, message: 'Get category tree successfully' })
-  @ApiQuery({ name: 'parentId', required: false, description: 'Enter parentId to get tree of a category' })
-  getTrees(@Query() filterDto: FilterCategoryDto) {
-    return this.categoriesService.getTrees(filterDto);
   }
 
   @Get(':id')

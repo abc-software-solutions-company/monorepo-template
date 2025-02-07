@@ -64,7 +64,7 @@ const projectList: IProjectItem[] = [
 const Projects: FC<ComponentBaseProps> = ({ className }) => {
   return (
     <section id="projects" className={classNames('relative overflow-hidden py-14 sm:py-16', className)}>
-      <div className="glow-effect left-40 top-24 z-0 h-80 w-60"></div>
+      {/* <div className="glow-effect left-40 top-24 z-0 h-80 w-60"></div> */}
       <div className="container">
         <h2 className="text-center text-3xl font-bold md:text-4xl">
           <span className="bg-gradient-to-b from-primary/60 to-primary bg-clip-text text-transparent">Projects</span>

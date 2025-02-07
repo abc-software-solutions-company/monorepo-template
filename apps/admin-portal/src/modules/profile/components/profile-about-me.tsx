@@ -1,6 +1,5 @@
 import { FC } from 'react';
 import classNames from 'classnames';
-import { parseISO } from 'date-fns';
 import { useLocale, useTranslations } from 'use-intl';
 import { Card, CardContent, CardHeader, CardTitle } from '@repo/react-web-ui-shadcn/components/ui/card';
 import { Separator } from '@repo/react-web-ui-shadcn/components/ui/separator';
@@ -36,17 +35,18 @@ const ProfileAboutMe: FC<ProfileAboutMeProps> = ({ className, user }) => {
           </div>
           <div className="grid max-w-5xl grid-cols-2 gap-3">
             <div className="flex flex-col">
+              <h3 className="mb-2 font-bold uppercase">{t('profile_email')}</h3>
+              <p>{user.email}</p>
+            </div>
+            <div className="flex flex-col">
               <h3 className="mb-2 font-bold uppercase">{t('profile_phone_number')}</h3>
               <p>{user.phoneNumber ?? t('unknown')}</p>
             </div>
             <div className="flex flex-col">
               <h3 className="mb-2 font-bold uppercase">{t('profile_date_of_birth')}</h3>
-              <p>{user.dateOfBirth ? toDateTime(parseISO(user.dateOfBirth), locale, false) : t('unknown')}</p>
+              <p>{user.dateOfBirth ? toDateTime(new Date(user.dateOfBirth), locale, false) : t('unknown')}</p>
             </div>
-            <div className="flex flex-col">
-              <h3 className="mb-2 font-bold uppercase">{t('profile_email')}</h3>
-              <p>{user.email}</p>
-            </div>
+
             <div className="flex flex-col">
               <h3 className="mb-2 font-bold uppercase">{t('profile_country')}</h3>
               <p>{selectCountryByCode(user.country)?.name ?? t('unknown')}</p>

@@ -1,9 +1,9 @@
+import { z } from 'zod';
+
 import { ResponseFormat } from '@/interfaces/api-response.interface';
 
-export type ContactFormData = {
-  name: string;
-  email: string;
-  message: string;
-};
+import { contactFormSchema } from '../validators/create-contact.validator';
+
+export type ContactFormData = z.infer<typeof contactFormSchema>;
 
 export type CreateContactResponse = ResponseFormat<unknown>;

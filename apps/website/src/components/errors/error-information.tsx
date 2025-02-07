@@ -17,7 +17,7 @@ const ErrorInformation: FC<ErrorInformationType> = ({ code, title, message, stac
   const t = useTranslations();
 
   return (
-    <section className="relative py-24 md:py-44 lg:pb-72 lg:pt-56" data-testid="error-info">
+    <section className="relative py-24" data-testid="error-info">
       <div className="container relative z-10 mx-auto px-4">
         <div className="flex flex-wrap">
           <div className="md:max-w-4xl">

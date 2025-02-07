@@ -13,20 +13,20 @@ import {
 type ModalConfirmProps = {
   visible: boolean;
   title?: string;
-  content?: ReactNode;
+  message?: ReactNode;
   btnYes?: string;
   btnNo?: string;
   onYes: () => void;
   onNo: () => void;
 };
 
-const ModalConfirm: FC<ModalConfirmProps> = ({ visible = false, title, content, btnYes, btnNo, onYes, onNo }) => {
+const ModalConfirm: FC<ModalConfirmProps> = ({ visible = false, title, message, btnYes, btnNo, onYes, onNo }) => {
   return (
     <AlertDialog open={visible}>
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>{title}</AlertDialogTitle>
-          <AlertDialogDescription>{content}</AlertDialogDescription>
+          <AlertDialogDescription>{message}</AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel onClick={onNo}>{btnNo ?? 'No'}</AlertDialogCancel>

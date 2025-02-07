@@ -32,7 +32,7 @@ export class File extends AbstractEntity {
   @Column({ type: 'boolean', default: true })
   isTemp: boolean;
 
-  @Column({ type: 'enum', enum: FILE_STATUS, default: FILE_STATUS.VISIBLED })
+  @Column({ type: 'varchar', length: 50, default: FILE_STATUS.PUBLISHED })
   status: FILE_STATUS;
 
   @ManyToOne(() => Category, category => category.files)

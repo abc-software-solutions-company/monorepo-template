@@ -1,39 +1,32 @@
 import { FieldValues, Path, UseFormReturn } from 'react-hook-form';
-import { useTranslations } from 'use-intl';
-import { Input } from '@repo/react-web-ui-shadcn/components/ahua/input';
+import { IInputProps, Input } from '@repo/react-web-ui-shadcn/components/ahua/input';
 import { FormControl, FormField, FormItem, FormMessage } from '@repo/react-web-ui-shadcn/components/ui/form';
 
 import { CharacterCount } from '../form-fields-base/character-count';
 import { HelperText } from '../form-fields-base/helper-text';
+import { AutocompleteTypes } from '@repo/shared-web/interfaces/autocomplete.interface';
 
-type FormFieldInputProps<T extends FieldValues> = {
-  dataTestId?: string;
-  className?: string;
+interface IFormFieldInputProps<T extends FieldValues> extends Omit<IInputProps, 'form' | 'onChange' | 'pattern'> {
   messageClassName?: string;
   form: UseFormReturn<T>;
   formLabel?: string;
   fieldName: Path<T>;
-  placeholder?: string;
-  disabled?: boolean;
-  readOnly?: boolean;
   visibled?: boolean;
-  size?: 'default' | 'sm';
   multiple?: boolean;
   required?: boolean;
+  autoComplete?: AutocompleteTypes;
   showErrorMessage?: boolean;
   helperText?: string;
   showCharacterCount?: boolean;
-  minLength?: number;
-  maxLength?: number;
   pattern?: {
     regex: RegExp;
     message?: string;
   };
+  translator?: any;
   onChange?: (value: string) => void;
-};
+}
 
 export default function FormFieldInput<T extends FieldValues>({
-  dataTestId,
   className,
   messageClassName,
   form,
@@ -41,6 +34,7 @@ export default function FormFieldInput<T extends FieldValues>({
   fieldName,
   placeholder = '',
   visibled = true,
+  labelDisplay = 'inside',
   disabled,
   readOnly,
   size = 'default',
@@ -52,10 +46,9 @@ export default function FormFieldInput<T extends FieldValues>({
   minLength,
   maxLength,
   pattern,
+  translator,
   onChange,
-}: FormFieldInputProps<T>) {
-  const t = useTranslations();
-
+}: IFormFieldInputProps<T>) {
   if (!visibled) return null;
 
   const inputValue = form.watch(fieldName);
@@ -72,12 +65,12 @@ export default function FormFieldInput<T extends FieldValues>({
             <FormControl>
               <Input
                 {...field}
-                dataTestId={dataTestId}
+                labelDisplay={labelDisplay}
                 multiple={multiple}
                 required={required}
                 placeholder={placeholder}
                 label={formLabel}
-                value={field.value ?? ''}
+                value={field.value}
                 disabled={disabled}
                 readOnly={readOnly}
                 size={size}
@@ -111,7 +104,10 @@ export default function FormFieldInput<T extends FieldValues>({
               </>
             )}
             {showErrorMessage && error?.message && (
-              <FormMessage className={messageClassName} message={t(error.message, { min: minLength, max: maxLength })} />
+              <FormMessage
+                className={messageClassName}
+                message={translator ? translator?.(error.message, { min: minLength, max: maxLength }) : error.message}
+              />
             )}
           </FormItem>
         );

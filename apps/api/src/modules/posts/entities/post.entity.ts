@@ -13,13 +13,13 @@ import { POST_STATUS } from '../constants/posts.constant';
 
 @Entity({ name: 'posts' })
 export class Post extends TranslationEntity {
-  @Column({ type: 'varchar', unique: true, length: 255 })
+  @Column({ type: 'varchar', length: 255, unique: true })
   slug: string;
 
-  @Column({ type: 'varchar', nullable: true, length: 50 })
+  @Column({ type: 'varchar', length: 50, nullable: true })
   type: string;
 
-  @Column({ type: 'enum', enum: POST_STATUS, default: POST_STATUS.DRAFT })
+  @Column({ type: 'varchar', length: 50, default: POST_STATUS.DRAFT })
   status: POST_STATUS;
 
   @Expose()

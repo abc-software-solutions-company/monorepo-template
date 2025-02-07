@@ -1,3 +1,5 @@
+import { User } from '../entities/user.entity';
+
 export const USER_GET_FIELDS = [
   [
     'user.id user.avatar user.name user.email user.phoneNumber user.lastLogin user.dateOfBirth user.country user.bio user.role user.status user.gender user.createdAt',
@@ -12,12 +14,12 @@ export const USER_FIELDS_TO_CREATE_OR_UPDATE = [
   'avatar',
   'phoneNumber',
   'country',
-  'dayOfBirth',
+  'dateOfBirth',
   'bio',
   'gender',
   'status',
   'role',
-] as const;
+] as (keyof User)[];
 
 export enum USER_GENDER {
   MALE = 'male',

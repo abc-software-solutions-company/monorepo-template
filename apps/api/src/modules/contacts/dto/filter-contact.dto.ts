@@ -9,8 +9,8 @@ export class FilterContactDto extends BaseFilterDto {
   @ApiPropertyOptional({
     enum: CONTACT_STATUS,
     isArray: true,
-    example: [CONTACT_STATUS.VISIBLED, CONTACT_STATUS.DELETED],
-    default: [CONTACT_STATUS.VISIBLED],
+    example: [CONTACT_STATUS.PUBLISHED, CONTACT_STATUS.DELETED],
+    default: [CONTACT_STATUS.PUBLISHED],
   })
   @IsArray()
   @IsEnum(CONTACT_STATUS, { each: true })

@@ -217,7 +217,6 @@ const CategoryList: FC<ComponentBaseProps> = ({ className }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [items]
   );
-
   const table = useReactTable({
     data: items,
     columns,
@@ -312,7 +311,7 @@ const CategoryList: FC<ComponentBaseProps> = ({ className }) => {
       <ModalConfirm
         visible={action.name === CATEGORY_ACTION.DELETE}
         title={t('delete')}
-        content={
+        message={
           <>
             <span>{t('category_delete_message')}</span>
             <strong className="space-x-1">{action.data?.nameLocalized.find(x => x.lang === locale)?.value}</strong>
@@ -330,7 +329,7 @@ const CategoryList: FC<ComponentBaseProps> = ({ className }) => {
       <ModalConfirm
         visible={action.name === CATEGORY_ACTION.BULK_DELETE}
         title={t('bulk_delete')}
-        content={<span>{t('category_bulk_delete_message')}</span>}
+        message={<span>{t('category_bulk_delete_message')}</span>}
         onYes={() => {
           bulkDestroyMutation(selected, {
             onSuccess: onBulkDeleteSuccess,

@@ -104,49 +104,59 @@ interface FormMessageProps extends React.HTMLAttributes<HTMLParagraphElement> {
 const getErrorMessage = (error: FieldError | undefined): string | undefined => {
   if (!error) return undefined;
 
-  // Case 1: Direct error object with message
-  if (typeof error === 'object' && error.message) {
+  // Case 1: Direct message property
+  if (typeof error === 'object' && 'message' in error && typeof error.message === 'string') {
     return error.message;
   }
 
-  // Case 2: Array of errors
+  // Case 2: Array of errors (e.g. from Zod array validation)
   if (Array.isArray(error)) {
-    const firstError = error[0]?.value;
-    if (firstError?.message) {
-      return firstError.message;
-    }
+    const messages: string[] = [];
+    error.forEach(item => {
+      if (typeof item === 'object' && item?.message) {
+        messages.push(item.message);
+      }
+    });
+    return messages.length > 0 ? messages[0] : undefined;
   }
 
-  // Case 3: Nested object with message
+  // Case 3: Nested validation errors (e.g. from Zod object validation)
   if (typeof error === 'object') {
-    // Recursive function to find message in nested object
+    // First check if there's a direct message in any of the first-level properties
+    for (const key in error) {
+      const value = (error as any)[key];
+      if (typeof value === 'object' && value?.message) {
+        return value.message;
+      }
+    }
+
+    // If no direct message found, recursively search nested objects
     const findNestedMessage = (obj: any): string | undefined => {
       if (!obj || typeof obj !== 'object') return undefined;
 
-      // Check if current object has message property
-      if (obj.message) return obj.message;
+      // Check current level for message
+      if ('message' in obj && typeof obj.message === 'string') {
+        return obj.message;
+      }
 
-      // Check nested properties
+      // Check all nested properties
       for (const key in obj) {
-        if (typeof obj[key] === 'object') {
-          const nestedMessage = findNestedMessage(obj[key]);
-          if (nestedMessage) return nestedMessage;
-        }
+        const nestedMessage = findNestedMessage(obj[key]);
+        if (nestedMessage) return nestedMessage;
       }
 
       return undefined;
     };
 
-    const nestedMessage = findNestedMessage(error);
-    if (nestedMessage) return nestedMessage;
+    return findNestedMessage(error);
   }
 
-  // Case 4: Error is a string
+  // Case 4: String error
   if (typeof error === 'string') {
     return error;
   }
 
-  // Default case: stringify the error
+  // Default: stringify the error
   return String(error);
 };
 

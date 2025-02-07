@@ -9,15 +9,18 @@ export class Contact extends AbstractEntity {
   @Column({ type: 'varchar', length: 255 })
   name: string;
 
-  @Column({ type: 'varchar', length: 255 })
+  @Column({ type: 'varchar', length: 320 })
   email: string;
 
-  @Column({ type: 'varchar', length: 1000 })
+  @Column({ type: 'varchar', length: 255, nullable: true })
+  subject: string;
+
+  @Column({ type: 'varchar', length: 5000 })
   message: string;
 
   @Column({ type: 'boolean', default: false })
   isRead: boolean;
 
-  @Column({ type: 'enum', enum: CONTACT_STATUS, default: CONTACT_STATUS.VISIBLED })
+  @Column({ type: 'varchar', length: 50, default: CONTACT_STATUS.PUBLISHED })
   status: CONTACT_STATUS;
 }

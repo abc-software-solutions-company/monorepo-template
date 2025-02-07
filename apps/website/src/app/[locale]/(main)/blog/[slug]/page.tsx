@@ -1,5 +1,6 @@
 import React from 'react';
 import { Metadata } from 'next';
+import { notFound } from 'next/navigation';
 import { LANGUAGES } from '@repo/shared-universal/constants/language.constant';
 
 import { PageBaseProps } from '@/interfaces/page.interface';
@@ -21,6 +22,8 @@ type PageProps = {
 export default async function PostDetailPage(pageProps: PageProps) {
   const response = await PostApi.getServerPost(pageProps.params.slug);
 
+  if (!response.data) notFound();
+
   return (
     <div className="grow">
       <div className="container">
@@ -31,7 +34,7 @@ export default async function PostDetailPage(pageProps: PageProps) {
 }
 
 export async function generateStaticParams() {
-  const postsResponse = await PostApi.getServerPosts({ page: 1, limit: 30, type: POST_TYPE.DEFAULT });
+  const postsResponse = await PostApi.getServerPosts({ page: 1, limit: 30, type: POST_TYPE.NEWS });
 
   return postsResponse.data.map(post => ({ slug: post.slug }));
 }

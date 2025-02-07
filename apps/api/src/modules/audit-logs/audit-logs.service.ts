@@ -73,22 +73,32 @@ export class AuditLogsService {
 
   async getRecordTitle(tableName: AUDIT_LOG_TABLE_NAME, recordId: string): Promise<string> {
     if (!Object.values(AUDIT_LOG_TABLE_NAME).includes(tableName)) return '';
-    let a = '';
+    let title = '';
 
     try {
       const queryBuilder = this.entityManager.createQueryBuilder();
 
-      queryBuilder.select('table.nameLocalized', 'titleLocalized');
-      queryBuilder.from(tableName, 'table');
-      queryBuilder.where('table.id = :recordId', { recordId });
+      if (tableName === AUDIT_LOG_TABLE_NAME.USERS || tableName === AUDIT_LOG_TABLE_NAME.FILES) {
+        queryBuilder.select('table.name', 'name');
+        queryBuilder.from(tableName, 'table');
+        queryBuilder.where('table.id = :recordId', { recordId });
 
-      const result = await queryBuilder.getRawOne();
+        const result = await queryBuilder.getRawOne();
 
-      a = result.titleLocalized?.[0]?.value || '';
+        title = result.name || '';
+      } else {
+        queryBuilder.select('table.nameLocalized', 'titleLocalized');
+        queryBuilder.from(tableName, 'table');
+        queryBuilder.where('table.id = :recordId', { recordId });
 
-      return a;
+        const result = await queryBuilder.getRawOne();
+
+        title = result.titleLocalized?.[0]?.value || '';
+      }
+
+      return title;
     } catch (error) {
-      return a;
+      return title;
     }
   }
 

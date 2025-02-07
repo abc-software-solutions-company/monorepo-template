@@ -24,13 +24,13 @@ export class ContactsService {
   async create(createDto: CreateContactDto) {
     const newContact = new Contact();
 
-    for (const field of CONTACT_FIELDS_TO_CREATE_OR_UPDATE) {
+    for (const field of CONTACT_FIELDS_TO_CREATE_OR_UPDATE as string[]) {
       if (createDto[field] !== undefined) {
         newContact[field] = createDto[field];
       }
     }
 
-    newContact.status = CONTACT_STATUS.VISIBLED;
+    newContact.status = CONTACT_STATUS.PUBLISHED;
 
     const createdContact = await this.contactRepository.save(newContact);
 

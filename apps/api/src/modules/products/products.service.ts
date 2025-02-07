@@ -35,7 +35,7 @@ export class ProductsService {
   async create(creator: User, createDto: CreateProductDto) {
     const newProduct = new Product();
 
-    for (const field of PRODUCT_FIELDS_TO_CREATE_OR_UPDATE) {
+    for (const field of PRODUCT_FIELDS_TO_CREATE_OR_UPDATE as string[]) {
       if (createDto[field] !== undefined) {
         newProduct[field] = createDto[field];
       }
@@ -133,7 +133,7 @@ export class ProductsService {
 
     const originalProduct = structuredClone(product);
 
-    for (const field of PRODUCT_FIELDS_TO_CREATE_OR_UPDATE) {
+    for (const field of PRODUCT_FIELDS_TO_CREATE_OR_UPDATE as string[]) {
       if (updateDto[field] !== undefined) {
         product[field] = updateDto[field];
       }

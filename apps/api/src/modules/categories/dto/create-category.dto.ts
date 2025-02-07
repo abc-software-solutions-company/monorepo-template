@@ -18,12 +18,12 @@ export class CreateCategoryDto extends TranslationDto {
   @MaxLength(255)
   slug: string;
 
-  @ApiPropertyOptional({ enum: CATEGORY_TYPE, example: CATEGORY_TYPE.POST })
+  @ApiPropertyOptional({ enum: CATEGORY_TYPE, example: CATEGORY_TYPE.NEWS })
   @IsEnum(CATEGORY_TYPE)
   @IsOptional()
   type?: CATEGORY_TYPE;
 
-  @ApiPropertyOptional({ enum: CATEGORY_STATUS, example: CATEGORY_STATUS.VISIBLED })
+  @ApiPropertyOptional({ enum: CATEGORY_STATUS, example: CATEGORY_STATUS.PUBLISHED })
   @IsEnum(CATEGORY_STATUS)
   @IsOptional()
   status?: CATEGORY_STATUS;

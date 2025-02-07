@@ -97,8 +97,8 @@ describe('AdminPostsController (e2e)', () => {
       slug: 'category-a',
       description: 'This is a category.',
       body: 'This is the body of the category.',
-      type: CATEGORY_TYPE.POST,
-      status: CATEGORY_STATUS.VISIBLED,
+      type: CATEGORY_TYPE.NEWS,
+      status: CATEGORY_STATUS.PUBLISHED,
     });
     file1 = await fileRepository.save({ name: 'File A', uniqueName: 'file-a', caption: 'caption', size: 1024, ext: 'jpg', mime: 'image/jpeg' });
     file2 = await fileRepository.save({ name: 'File B', uniqueName: 'file-b', caption: 'caption', size: 1024, ext: 'jpg', mime: 'image/jpeg' });
@@ -122,7 +122,7 @@ describe('AdminPostsController (e2e)', () => {
     it('should throw BadRequest if categoryId is not a UUID', async () => {
       const createPostDto: CreatePostDto = {
         slug: 'invalid-category',
-        type: POST_TYPE.DEFAULT,
+        type: POST_TYPE.NEWS,
         nameLocalized: [{ lang: defaultLanguage, value: 'Invalid Category' }],
         descriptionLocalized: [{ lang: defaultLanguage, value: 'This post has a non-UUID categoryId.' }],
         bodyLocalized: [{ lang: defaultLanguage, value: 'Full content with non-UUID categoryId.' }],
@@ -144,7 +144,7 @@ describe('AdminPostsController (e2e)', () => {
     it('should throw Unauthorized if accessToken is missing', async () => {
       const createPostDto: CreatePostDto = {
         slug: 'nestjs',
-        type: POST_TYPE.DEFAULT,
+        type: POST_TYPE.NEWS,
         nameLocalized: [{ lang: defaultLanguage, value: 'NestJS' }],
         descriptionLocalized: [{ lang: defaultLanguage, value: 'short' }],
         bodyLocalized: [{ lang: defaultLanguage, value: 'full' }],
@@ -162,7 +162,7 @@ describe('AdminPostsController (e2e)', () => {
     it('should assign category to the post if categoryId is valid', async () => {
       const createPostDto: CreatePostDto = {
         slug: 'nestjs',
-        type: POST_TYPE.DEFAULT,
+        type: POST_TYPE.NEWS,
         nameLocalized: [{ lang: defaultLanguage, value: 'NestJS' }],
         descriptionLocalized: [{ lang: defaultLanguage, value: 'short' }],
         bodyLocalized: [{ lang: defaultLanguage, value: 'full content' }],
@@ -195,7 +195,7 @@ describe('AdminPostsController (e2e)', () => {
     it('should not assign category to the post if categoryId is invalid', async () => {
       const createPostDto: CreatePostDto = {
         slug: 'nestjs',
-        type: POST_TYPE.DEFAULT,
+        type: POST_TYPE.NEWS,
         nameLocalized: [{ lang: defaultLanguage, value: 'NestJS' }],
         descriptionLocalized: [{ lang: defaultLanguage, value: 'short' }],
         bodyLocalized: [{ lang: defaultLanguage, value: 'full' }],
@@ -217,7 +217,7 @@ describe('AdminPostsController (e2e)', () => {
     it('should throw NotFoundException if categoryId does not exist', async () => {
       const createPostDto: CreatePostDto = {
         slug: 'test-post',
-        type: POST_TYPE.DEFAULT,
+        type: POST_TYPE.NEWS,
         nameLocalized: [{ lang: defaultLanguage, value: 'Test Post' }],
         descriptionLocalized: [{ lang: defaultLanguage, value: 'Test Description' }],
         bodyLocalized: [{ lang: defaultLanguage, value: 'Test Body' }],
@@ -238,7 +238,7 @@ describe('AdminPostsController (e2e)', () => {
     it('should create a new post successfully without categoryId', async () => {
       const createPostDto: CreatePostDto = {
         slug: 'test-post',
-        type: POST_TYPE.DEFAULT,
+        type: POST_TYPE.NEWS,
         nameLocalized: [{ lang: defaultLanguage, value: 'Test Post' }],
         descriptionLocalized: [{ lang: defaultLanguage, value: 'Test Description' }],
         bodyLocalized: [{ lang: defaultLanguage, value: 'Test Body' }],
@@ -260,7 +260,7 @@ describe('AdminPostsController (e2e)', () => {
     it('should create a new post successfully with all fields provided', async () => {
       const createPostDto: CreatePostDto = {
         slug: 'test-post',
-        type: POST_TYPE.DEFAULT,
+        type: POST_TYPE.NEWS,
         nameLocalized: [{ lang: defaultLanguage, value: 'Test Post' }],
         descriptionLocalized: [{ lang: defaultLanguage, value: 'Test Description' }],
         bodyLocalized: [{ lang: defaultLanguage, value: 'Test Body' }],

@@ -15,6 +15,11 @@ export class CreateContactDto {
 
   @ApiProperty({ example: 'Hello' })
   @IsString()
-  @MaxLength(2000)
+  @MaxLength(255)
+  subject: string;
+
+  @ApiProperty({ example: 'Message' })
+  @IsString()
+  @MaxLength(5000)
   message: string;
 }

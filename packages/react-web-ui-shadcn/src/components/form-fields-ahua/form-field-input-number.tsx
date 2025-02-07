@@ -1,37 +1,30 @@
 import { ControllerRenderProps, FieldValues, Path, UseFormReturn } from 'react-hook-form';
 import { useTranslations } from 'use-intl';
-import { Input } from '@repo/react-web-ui-shadcn/components/ahua/input';
+import { IInputProps, Input } from '@repo/react-web-ui-shadcn/components/ahua/input';
 import { FormControl, FormField, FormItem, FormMessage } from '@repo/react-web-ui-shadcn/components/ui/form';
+
 import { HelperText } from '../form-fields-base/helper-text';
 import { AutocompleteTypes } from '@repo/shared-web/interfaces/autocomplete.interface';
 
-interface FormFieldInputNumberProps<T extends FieldValues> {
-  dataTestId?: string;
-  className?: string;
+interface FormFieldInputNumberProps<T extends FieldValues> extends Omit<IInputProps, 'form' | 'onChange' | 'pattern'> {
   messageClassName?: string;
   form: UseFormReturn<T>;
   formLabel?: string;
   fieldName: Path<T>;
-  placeholder?: string;
-  disabled?: boolean;
-  readOnly?: boolean;
   visible?: boolean;
-  size?: 'default' | 'sm';
   required?: boolean;
   autoComplete?: AutocompleteTypes;
   showErrorMessage?: boolean;
   helperText?: string;
-  minLength?: number;
-  maxLength?: number;
   min?: number;
   max?: number;
   allowDecimal?: boolean;
   allowNegative?: boolean;
+  translator?: any;
   onChange?: (value: string) => void;
 }
 
 export default function FormFieldInputNumber<T extends FieldValues>({
-  dataTestId,
   className,
   messageClassName,
   form,
@@ -47,11 +40,12 @@ export default function FormFieldInputNumber<T extends FieldValues>({
   showErrorMessage = true,
   helperText,
   minLength,
-  maxLength = 5,
+  maxLength = 10,
   min,
   max,
   allowDecimal = false,
   allowNegative = false,
+  translator,
   onChange,
 }: FormFieldInputNumberProps<T>) {
   const t = useTranslations();
@@ -182,7 +176,6 @@ export default function FormFieldInputNumber<T extends FieldValues>({
           <FormControl>
             <Input
               {...field}
-              dataTestId={dataTestId}
               autoComplete={autoComplete}
               required={required}
               placeholder={placeholder}
@@ -199,7 +192,10 @@ export default function FormFieldInputNumber<T extends FieldValues>({
           </FormControl>
           {!error && <HelperText text={helperText} />}
           {showErrorMessage && error?.message && (
-            <FormMessage className={messageClassName} message={t(error.message, { min: min ?? minLength, max: max ?? maxLength })} />
+            <FormMessage
+              className={messageClassName}
+              message={translator ? translator?.(error.message, { min: minLength, max: maxLength }) : error.message}
+            />
           )}
         </FormItem>
       )}

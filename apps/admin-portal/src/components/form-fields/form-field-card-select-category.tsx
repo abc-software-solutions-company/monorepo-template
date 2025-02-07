@@ -28,25 +28,25 @@ type FormFieldCardSelectCategoryProps<T extends FieldValues> = {
   form: UseFormReturn<T>;
   formLabel?: string;
   fieldName?: Path<T>;
-  categories: CategoryEntity[];
+  items: CategoryEntity[];
   onChange?: (value?: string) => void;
 };
 
 export default function FormFieldCardSelectCategory<T extends FieldValues>({
   form,
   formLabel,
-  categories,
+  items,
   fieldName = 'categoryId' as Path<T>,
   onChange,
 }: FormFieldCardSelectCategoryProps<T>) {
   const t = useTranslations();
   const locale = useLocale();
-  const memoizedCategories = useMemo(() => renderCategories(categories, 0, locale), [categories, locale]);
+  const memoizedCategories = useMemo(() => renderCategories(items, 0, locale), [items, locale]);
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle>{formLabel ?? t('form_field_category')}</CardTitle>
+        <CardTitle>{formLabel}</CardTitle>
       </CardHeader>
       <CardContent>
         <FormField
@@ -56,7 +56,6 @@ export default function FormFieldCardSelectCategory<T extends FieldValues>({
             <FormItem>
               <FormControl>
                 <Select
-                  {...field}
                   value={field.value}
                   onValueChange={value => {
                     const val = value === 'root' ? '' : value;

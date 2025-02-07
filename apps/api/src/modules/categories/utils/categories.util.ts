@@ -60,13 +60,3 @@ export function getCategoryInfo(categories: Category[], categoryId: string): { d
 
   return { depth };
 }
-
-export function buildTree(categories: Category[], parentId: string | null = null): Category[] {
-  const nodes = categories.filter(category => (category.parent ? category.parent.id : null) === parentId);
-
-  return nodes.map(node => {
-    const children = buildTree(categories, node.id);
-
-    return Object.assign(new Category(), { ...node, children });
-  });
-}

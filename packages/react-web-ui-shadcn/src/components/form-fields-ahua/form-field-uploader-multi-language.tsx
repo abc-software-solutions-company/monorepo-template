@@ -265,7 +265,7 @@ export default function FormFieldUploaderMultiLanguage<T extends FieldValues>({
                           <ChevronDown className="h-4 w-4" />
                         </Button>
                       </PopoverTrigger>
-                      <PopoverContent className="w-48 p-0" side="right" align="end">
+                      <PopoverContent className="w-48 p-0" side="right" align="start">
                         <Command>
                           <CommandList>
                             <CommandGroup>
@@ -338,7 +338,7 @@ export default function FormFieldUploaderMultiLanguage<T extends FieldValues>({
           <ModalConfirm
             visible={isConfirmOpen}
             title="Are you sure?"
-            content="This will permanently delete the file"
+            message="This will permanently delete the file"
             btnYes="Yes"
             btnNo="No"
             onYes={() => handleRemoveActiveContent(field)}

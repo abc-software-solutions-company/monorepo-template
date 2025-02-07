@@ -1,30 +1,24 @@
-import { Locale } from 'date-fns';
 import { FieldValues, Path, UseFormReturn } from 'react-hook-form';
-import { InputDateRange } from '@repo/react-web-ui-shadcn/components/ahua/input-date-range';
+import { InputDate, InputDateProps } from '@repo/react-web-ui-shadcn/components/ahua/input-date';
 import { FormControl, FormField, FormItem, FormMessage } from '@repo/react-web-ui-shadcn/components/ui/form';
+import { HelperText } from '../form-fields-base/helper-text';
 
-interface IFormFieldDateRangePickerProps<T extends FieldValues> {
-  dataTestId?: string;
-  className?: string;
+interface IFormFieldInputDatePickerProps<T extends FieldValues> extends Omit<InputDateProps, 'form' | 'onChange'> {
   messageClassName?: string;
   form: UseFormReturn<T>;
   formLabel?: string;
   fieldName: Path<T>;
-  placeholder?: string;
-  disabled?: boolean;
   visibled?: boolean;
-  size?: 'default' | 'sm';
-  required?: boolean;
   showErrorMessage?: boolean;
-  disableBefore?: Date;
-  dateFormat?: string;
-  locale?: Locale;
+  helperText?: string;
+  translator?: any;
+  onChange?: (date?: Date) => void;
 }
 
-const FormFieldDateRangePicker = <T extends FieldValues>({
-  dataTestId,
+const FormFieldInputDatePicker = <T extends FieldValues>({
   className,
   messageClassName,
+  labelDisplay = 'inside',
   form,
   formLabel,
   fieldName,
@@ -34,10 +28,13 @@ const FormFieldDateRangePicker = <T extends FieldValues>({
   size = 'default',
   required = false,
   showErrorMessage = true,
+  helperText,
   disableBefore,
   dateFormat,
   locale,
-}: IFormFieldDateRangePickerProps<T>) => {
+  translator,
+  onChange,
+}: IFormFieldInputDatePickerProps<T>) => {
   if (!visibled) return null;
 
   return (
@@ -48,11 +45,11 @@ const FormFieldDateRangePicker = <T extends FieldValues>({
         return (
           <FormItem className={className}>
             <FormControl>
-              <InputDateRange
+              <InputDate
                 {...field}
-                data-testid={dataTestId}
                 locale={locale}
                 label={formLabel}
+                labelDisplay={labelDisplay}
                 value={field.value}
                 placeholder={placeholder}
                 disabled={disabled}
@@ -61,9 +58,16 @@ const FormFieldDateRangePicker = <T extends FieldValues>({
                 error={!!error}
                 disableBefore={disableBefore}
                 dateFormat={dateFormat}
+                onChange={date => {
+                  field.onChange(date);
+                  onChange?.(date);
+                }}
               />
             </FormControl>
-            {showErrorMessage && <FormMessage className={messageClassName} />}
+            {!error && <HelperText text={helperText} />}
+            {showErrorMessage && error?.message && (
+              <FormMessage className={messageClassName} message={translator ? translator(error.message || '') : error.message} />
+            )}
           </FormItem>
         );
       }}
@@ -71,4 +75,4 @@ const FormFieldDateRangePicker = <T extends FieldValues>({
   );
 };
 
-export default FormFieldDateRangePicker;
+export default FormFieldInputDatePicker;

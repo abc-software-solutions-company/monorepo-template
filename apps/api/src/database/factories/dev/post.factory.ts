@@ -18,7 +18,7 @@ export function createRandomPost() {
   return {
     id: faker.string.uuid(),
     slug: toSlug(name),
-    type: POST_TYPE.DEFAULT,
+    type: POST_TYPE.NEWS,
     status: statuses[Math.floor(Math.random() * statuses.length)],
     coverLocalized: null,
     nameLocalized: [{ lang: defaultLanguage, value: name }],
@@ -51,6 +51,7 @@ export const postFactory = [
     ],
     status: POST_STATUS.PUBLISHED,
     type: POST_TYPE.PAGE,
+    creator: userFactory[0],
     createdAt: faker.date.recent(),
   },
   {
@@ -74,6 +75,31 @@ export const postFactory = [
     ],
     status: POST_STATUS.PUBLISHED,
     type: POST_TYPE.PAGE,
+    creator: userFactory[0],
+    createdAt: faker.date.recent(),
+  },
+  {
+    id: '6cefe7a6-af7a-4622-bda3-168bd16f3aa2',
+    slug: 'about-us',
+    nameLocalized: [{ lang: defaultLanguage, value: 'About Us' }],
+    descriptionLocalized: [{ lang: defaultLanguage, value: '<p>About Us</p>' }],
+    bodyLocalized: [
+      {
+        lang: defaultLanguage,
+        value: `
+          <p>Integer eget suscipit metus. Cras et elementum augue, a cursus velit. Morbi vitae magna commodo, vulputate ligula vitae, egestas nunc. Proin non placerat risus. Etiam gravida eget ipsum a dapibus. Ut nec porta nisi. Vivamus dui augue, mollis ac tempor quis, auctor ut metus. Donec dolor mauris, interdum vitae lobortis sit amet, pharetra vitae nulla.</p>
+          <p>Duis pharetra tortor eu mauris rhoncus lobortis ac nec est. Suspendisse potenti. Integer dapibus odio id urna porttitor, eget dignissim dui efficitur. Maecenas mattis, metus non suscipit malesuada, dui lacus maximus lacus, eget ultricies mi dolor sit amet dui. Nunc lacinia tellus id congue pretium. Suspendisse nisl sapien, mollis quis erat ut, vulputate bibendum lacus. Etiam maximus, risus a rhoncus pharetra, ligula mi tincidunt nisi, a suscipit tortor diam ut erat. Suspendisse vulputate ipsum in rhoncus malesuada. Nulla a mauris in massa rhoncus lacinia. Mauris posuere congue commodo. Nunc ut ex sed elit sollicitudin fringilla nec quis sapien. Sed et commodo nisl, nec pellentesque enim. Etiam hendrerit magna at ipsum convallis, non semper sem aliquam. Nunc ut convallis est, vitae hendrerit ex.</p>
+          <p>Mauris congue eleifend nibh eu pharetra. Nam feugiat in risus in auctor. Sed id massa lacinia, pretium turpis ac, posuere erat. Proin quis nulla aliquet, sollicitudin justo et, maximus ligula. Sed at elementum ligula. Etiam vitae massa condimentum, accumsan odio eget, condimentum diam. Proin congue metus aliquet, luctus diam eu, hendrerit diam. Integer placerat ut leo aliquam ornare. Vivamus aliquet semper tortor, quis vestibulum nunc euismod in. Aenean laoreet egestas urna ut tincidunt.</p>
+          <p>Ut varius porta metus et vulputate. Morbi a arcu orci. Duis lacinia varius nisi sit amet eleifend. In nec convallis ante. In eu congue justo. Sed vel dolor lacus. Cras a ipsum risus. Vestibulum cursus magna sed laoreet varius. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.</p>
+          <p>Phasellus in malesuada arcu. Cras condimentum mattis libero a lacinia. Donec ex nisi, gravida et fermentum vitae, cursus id risus. Nullam mattis velit facilisis mattis congue. Nunc porttitor aliquam vehicula. Nunc lobortis fringilla ex fringilla consequat. Nullam sed aliquam erat. Vestibulum pellentesque massa ipsum, et rutrum quam mollis sed. Suspendisse aliquam lacus massa, in tincidunt nisl accumsan ac. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Fusce quis bibendum nulla.</p>
+          <p>Integer in pretium urna, ac molestie dolor. Integer egestas quis arcu et mollis. Duis volutpat, augue non blandit convallis, diam nunc rutrum orci, non gravida magna magna in odio. Donec vitae augue urna. Aenean ornare risus mauris, vel vehicula sapien aliquet ut. Sed dui risus, mattis sed ornare molestie, hendrerit dignissim ante. Sed hendrerit interdum ipsum, vel porta justo. Integer porta ullamcorper lobortis.</p>
+          <p>Duis suscipit blandit leo. Aliquam ultricies risus tempus libero mollis fermentum. Suspendisse non viverra orci. Aliquam varius enim id faucibus laoreet. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Proin vel elit vitae massa bibendum ultricies. Etiam lacinia augue lacus, quis mollis elit placerat sit amet. Pellentesque malesuada rutrum tortor. Ut mauris orci, facilisis eu arcu id, volutpat maximus urna.</p>
+        `,
+      },
+    ],
+    status: POST_STATUS.PUBLISHED,
+    type: POST_TYPE.PAGE,
+    creator: userFactory[0],
     createdAt: faker.date.recent(),
   },
 ];

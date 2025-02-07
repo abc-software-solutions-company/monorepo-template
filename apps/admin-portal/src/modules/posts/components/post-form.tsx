@@ -7,9 +7,9 @@ import { toast } from 'sonner';
 import { useLocale, useTranslations } from 'use-intl';
 import { zodResolver } from '@hookform/resolvers/zod';
 import Debugger from '@repo/react-web-ui-shadcn/components/debugger';
-import FormFieldInputSlug from '@repo/react-web-ui-shadcn/components/form-fields/form-field-input-slug';
 import FormFieldCKEditorMultiLanguage from '@repo/react-web-ui-shadcn/components/form-fields-ahua/form-field-ckeditor-multi-language';
 import FormFieldInputMultiLanguage from '@repo/react-web-ui-shadcn/components/form-fields-ahua/form-field-input-multi-language';
+import FormFieldInputSlug from '@repo/react-web-ui-shadcn/components/form-fields-ahua/form-field-input-slug';
 import ModalLoading from '@repo/react-web-ui-shadcn/components/modals/modal-loading';
 import { Card, CardContent } from '@repo/react-web-ui-shadcn/components/ui/card';
 import { Form } from '@repo/react-web-ui-shadcn/components/ui/form';
@@ -49,7 +49,11 @@ const PostForm: FC<PostFormProps> = ({ isEdit }) => {
   const editorRef = useRef<Editor | null>(null);
   const [isFileManagerVisible, setIsFileManagerVisible] = useState(false);
   const { data: content, isFetching } = useGetPostQuery({ id: params.id as string, enabled: !!params.id });
-  const { data: categories, isFetching: isCategoriesFetching } = useGetCategoriesQuery({ type: CATEGORY_TYPE.POST });
+  const { data: categories, isFetching: isCategoriesFetching } = useGetCategoriesQuery({
+    filter: {
+      type: searchParams.get('type') as CATEGORY_TYPE,
+    },
+  });
   const { mutate: createMutation } = useCreatePostMutation();
   const { mutate: updateMutation } = useUpdatePostMutation();
 
@@ -156,7 +160,17 @@ const PostForm: FC<PostFormProps> = ({ isEdit }) => {
                   maxLength={255}
                   locales={languages}
                 />
-                <FormFieldInputSlug form={form} />
+                <FormFieldInputSlug
+                  form={form}
+                  fieldName={'slug'}
+                  watchFieldName={'nameLocalized.0.value'}
+                  formLabel={t('form_field_slug')}
+                  minLength={1}
+                  maxLength={255}
+                  labelDisplay="outside"
+                  size="sm"
+                  translator={t}
+                />
                 <FormFieldCKEditorMultiLanguage
                   form={form}
                   fieldName="descriptionLocalized"
@@ -185,7 +199,7 @@ const PostForm: FC<PostFormProps> = ({ isEdit }) => {
             <div className="w-72 shrink-0">
               <div className="grid gap-4">
                 <FormFieldCardSelectStatus form={form} statuses={POST_STATUSES} />
-                <FormFieldCardSelectCategory form={form} categories={categories?.data ?? []} />
+                <FormFieldCardSelectCategory form={form} fieldName="categoryId" formLabel={t('form_field_category')} items={categories?.data ?? []} />
                 <FormFieldCardCoverMultiLanguage form={form} fieldName="coverLocalized" formLabel="Cover Image" locales={languages} maxVisible={2} />
                 <FormFieldCardImages form={form} />
               </div>

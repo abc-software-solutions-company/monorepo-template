@@ -15,7 +15,10 @@
   "contact_description": "Please feel free to contact us if you have any questions.",
   "contact_name": "Name",
   "contact_email": "Email",
+  "contact_subject": "Subject",
   "contact_message": "Message",
+  "contact_title_success": "Message sent",
+  "contact_title_failure": "Message failed",
   "contact_message_success": "Your message has been sent successfully",
   "contact_message_failure": "Your message could not be sent",
 
@@ -23,5 +26,16 @@
   "select_store": "Select Store",
   "search_store": "Search Store",
   "no_store_found": "No store found",
-  "no_stores_available": "No stores available for {{defaultMessage}}"
+  "no_stores_available": "No stores available for {{defaultMessage}}",
+
+  "validator_user_name": "Username is mandatory",
+  "validator_email": "Email is mandatory",
+  "validator_email_invalid": "Email is invalid",
+  "validator_password_rule": "Password should contain at least one uppercase letter, one lowercase letter, one number and one special character",
+  "validator_password_do_not_match": "Passwords do not match",
+  "validator_contact_name": "Name is mandatory",
+  "validator_contact_subject": "Subject is mandatory",
+  "validator_contact_message": "Message is mandatory",
+  "validator_minimum_n_characters_allowed": "Please enter at least {min, plural, =1 {# character} other {# characters}}",
+  "validator_maximum_n_characters_allowed": "Maximum {max} characters allowed"
 }
