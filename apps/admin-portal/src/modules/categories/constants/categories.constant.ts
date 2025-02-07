@@ -16,6 +16,7 @@ export enum CATEGORY_STATUS {
 export enum CATEGORY_TYPE {
   PRODUCT = 'product',
   POST = 'post',
+  SERVICE = 'service',
 }
 
 export enum CATEGORY_ACTION {
