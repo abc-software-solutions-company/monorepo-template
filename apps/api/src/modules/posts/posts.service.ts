@@ -63,7 +63,7 @@ export class PostsService {
   }
 
   async find(filterDto: FilterPostDto) {
-    const { q, order, status, sort, skip, limit, type } = filterDto;
+    const { q, order, status, sort, skip, limit, type, categoryId } = filterDto;
 
     const queryBuilder = this.createQueryBuilderWithJoins('post');
 
@@ -71,6 +71,9 @@ export class PostsService {
 
     if (status) {
       queryBuilder.andWhere('post.status IN (:...status)', { status });
+    }
+    if (categoryId) {
+      queryBuilder.andWhere('category.id = :categoryId', { categoryId });
     }
     if (q) {
       const searchTerm = `%${q}%`;

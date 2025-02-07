@@ -11,6 +11,11 @@ export class FilterProductDto extends BaseFilterDto {
   @IsString()
   type: string;
 
+  @ApiPropertyOptional()
+  @IsString()
+  @IsOptional()
+  categoryId?: string;
+
   @ApiPropertyOptional({
     enum: PRODUCT_STATUS,
     isArray: true,
