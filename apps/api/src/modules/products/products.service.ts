@@ -63,14 +63,18 @@ export class ProductsService {
   }
 
   async find(filterDto: FilterProductDto) {
-    const { q, order, status, sort, skip, limit, type } = filterDto;
+    const { q, order, status, sort, skip, limit, type, categoryId } = filterDto;
 
     const queryBuilder = this.createQueryBuilderWithJoins('product');
 
-    queryBuilder.where('product.type = :type', { type });
-
+    if (type) {
+      queryBuilder.andWhere('post.type = :type', { type });
+    }
     if (status) {
       queryBuilder.andWhere('product.status IN (:...status)', { status });
+    }
+    if (categoryId) {
+      queryBuilder.andWhere('category.id = :categoryId', { categoryId });
     }
     if (q) {
       const searchTerm = `%${q}%`;

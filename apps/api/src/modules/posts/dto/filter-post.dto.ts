@@ -11,6 +11,11 @@ export class FilterPostDto extends BaseFilterDto {
   @IsString()
   type: string;
 
+  @ApiPropertyOptional()
+  @IsString()
+  @IsOptional()
+  categoryId?: string;
+
   @ApiPropertyOptional({
     enum: POST_STATUS,
     isArray: true,
