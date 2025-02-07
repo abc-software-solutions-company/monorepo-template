@@ -1,6 +1,6 @@
 import { FieldValues, Path, UseFormReturn } from 'react-hook-form';
 import { useTranslations } from 'use-intl';
-import FormFieldInputMultiLanguage from '@repo/react-web-ui-shadcn/components/form-fields-ahua/form-field-input-multi-language';
+import FormFieldInputMultiLanguage from '@repo/react-web-ui-shadcn/components/form-fields/form-field-input-multi-language';
 import { Card, CardContent, CardDescription, CardHeader } from '@repo/react-web-ui-shadcn/components/ui/card';
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@repo/react-web-ui-shadcn/components/ui/form';
 import { InputTag } from '@repo/react-web-ui-shadcn/components/ui/input-tag';
