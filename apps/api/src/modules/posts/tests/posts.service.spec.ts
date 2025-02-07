@@ -32,10 +32,13 @@ describe('PostsService', () => {
       leftJoin: jest.fn().mockReturnThis(),
       where: jest.fn().mockReturnThis(),
       andWhere: jest.fn().mockReturnThis(),
+      orWhere: jest.fn().mockReturnThis(),
       orderBy: jest.fn().mockReturnThis(),
-      getOne: jest.fn(),
-      getRawAndEntities: jest.fn(),
+      skip: jest.fn().mockReturnThis(),
+      take: jest.fn().mockReturnThis(),
       getCount: jest.fn(),
+      getRawAndEntities: jest.fn(),
+      getOne: jest.fn(),
     }),
     create: jest.fn(),
     save: jest.fn(),
@@ -103,7 +106,14 @@ describe('PostsService', () => {
     };
 
     it('should create a new post successfully with all fields provided', async () => {
-      const createDto = baseCreateDto;
+      const createDto = {
+        ...baseCreateDto,
+        seoMeta: {
+          title: 'SEO Title',
+          description: 'SEO Description',
+          keywords: 'keyword1, keyword2',
+        },
+      };
 
       mockPostRepository.save.mockResolvedValue(post);
       jest.spyOn(service, 'sortImages').mockResolvedValue();
@@ -117,6 +127,7 @@ describe('PostsService', () => {
           nameLocalized: createDto.nameLocalized,
           descriptionLocalized: createDto.descriptionLocalized,
           bodyLocalized: createDto.bodyLocalized,
+          seoMeta: createDto.seoMeta,
         })
       );
       expect(service.sortImages).toHaveBeenCalledWith(createDto.images, post.id);
@@ -207,13 +218,15 @@ describe('PostsService', () => {
 
   describe('find', () => {
     it('should return a list of posts depending on the pagination', async () => {
-      const filterDto = { page: 1, limit: 10 } as FilterPostDto;
+      const filterDto = { page: 1, limit: 10, type: POST_TYPE.NEWS } as FilterPostDto;
       const posts = [{ id: 'post1' }, { id: 'post2' }] as Post[];
 
       const mockQueryBuilder = {
         select: jest.fn().mockReturnThis(),
-        where: jest.fn().mockReturnThis(),
         leftJoin: jest.fn().mockReturnThis(),
+        where: jest.fn().mockReturnThis(),
+        andWhere: jest.fn().mockReturnThis(),
+        orWhere: jest.fn().mockReturnThis(),
         orderBy: jest.fn().mockReturnThis(),
         skip: jest.fn().mockReturnThis(),
         take: jest.fn().mockReturnThis(),
@@ -249,7 +262,7 @@ describe('PostsService', () => {
     });
 
     it('should return a list of posts depending on the pagination and status filter', async () => {
-      const filterDto = { page: 1, limit: 10, status: [POST_STATUS.PUBLISHED] } as FilterPostDto;
+      const filterDto = { page: 1, limit: 10, status: [POST_STATUS.PUBLISHED], type: POST_TYPE.NEWS } as FilterPostDto;
       const posts = [
         { id: 'post1', status: POST_STATUS.PUBLISHED },
         { id: 'post2', status: POST_STATUS.PUBLISHED },
@@ -260,6 +273,7 @@ describe('PostsService', () => {
         leftJoin: jest.fn().mockReturnThis(),
         where: jest.fn().mockReturnThis(),
         andWhere: jest.fn().mockReturnThis(),
+        orWhere: jest.fn().mockReturnThis(),
         orderBy: jest.fn().mockReturnThis(),
         skip: jest.fn().mockReturnThis(),
         take: jest.fn().mockReturnThis(),
@@ -295,7 +309,14 @@ describe('PostsService', () => {
     });
 
     it('should return a list of posts depending on the pagination and sort filter', async () => {
-      const filterDto = { page: 1, limit: 10, status: [POST_STATUS.PUBLISHED], sort: 'createdAt', order: SORT_ORDER.ASC } as FilterPostDto;
+      const filterDto = {
+        page: 1,
+        limit: 10,
+        status: [POST_STATUS.PUBLISHED],
+        sort: 'createdAt',
+        order: SORT_ORDER.ASC,
+        type: POST_TYPE.NEWS,
+      } as FilterPostDto;
       const posts = [
         { id: 'post1', status: POST_STATUS.PUBLISHED },
         { id: 'post2', status: POST_STATUS.PUBLISHED },
@@ -306,6 +327,7 @@ describe('PostsService', () => {
         leftJoin: jest.fn().mockReturnThis(),
         where: jest.fn().mockReturnThis(),
         andWhere: jest.fn().mockReturnThis(),
+        orWhere: jest.fn().mockReturnThis(),
         orderBy: jest.fn().mockReturnThis(),
         skip: jest.fn().mockReturnThis(),
         take: jest.fn().mockReturnThis(),
@@ -341,7 +363,7 @@ describe('PostsService', () => {
     });
 
     it('should return a list of posts depending on the pagination and sort filter with default order', async () => {
-      const filterDto = { page: 1, limit: 10, status: [POST_STATUS.PUBLISHED], sort: 'createdAt' } as FilterPostDto;
+      const filterDto = { page: 1, limit: 10, status: [POST_STATUS.PUBLISHED], sort: 'createdAt', type: POST_TYPE.NEWS } as FilterPostDto;
       const posts = [
         { id: 'post1', status: POST_STATUS.PUBLISHED },
         { id: 'post2', status: POST_STATUS.PUBLISHED },
@@ -352,6 +374,7 @@ describe('PostsService', () => {
         leftJoin: jest.fn().mockReturnThis(),
         where: jest.fn().mockReturnThis(),
         andWhere: jest.fn().mockReturnThis(),
+        orWhere: jest.fn().mockReturnThis(),
         orderBy: jest.fn().mockReturnThis(),
         skip: jest.fn().mockReturnThis(),
         take: jest.fn().mockReturnThis(),
@@ -387,7 +410,15 @@ describe('PostsService', () => {
     });
 
     it('should return a list of posts depending on the pagination and q filter', async () => {
-      const filterDto = { page: 1, limit: 10, q: 'test', status: [POST_STATUS.PUBLISHED], sort: 'createdAt', order: SORT_ORDER.ASC } as FilterPostDto;
+      const filterDto = {
+        page: 1,
+        limit: 10,
+        q: 'test',
+        status: [POST_STATUS.PUBLISHED],
+        sort: 'createdAt',
+        order: SORT_ORDER.ASC,
+        type: POST_TYPE.NEWS,
+      } as FilterPostDto;
       const posts = [
         { id: 'post1', status: POST_STATUS.PUBLISHED },
         { id: 'post2', status: POST_STATUS.PUBLISHED },
@@ -438,6 +469,55 @@ describe('PostsService', () => {
         })
       );
     });
+
+    it('should return a list of posts depending on the pagination and categoryId filter', async () => {
+      const filterDto = { page: 1, limit: 10, type: POST_TYPE.NEWS, categoryId: 'category-1' } as FilterPostDto;
+      const posts = [{ id: 'post1' }, { id: 'post2' }] as Post[];
+
+      const mockQueryBuilder = {
+        select: jest.fn().mockReturnThis(),
+        leftJoin: jest.fn().mockReturnThis(),
+        where: jest.fn().mockReturnThis(),
+        andWhere: jest.fn().mockReturnThis(),
+        orderBy: jest.fn().mockReturnThis(),
+        skip: jest.fn().mockReturnThis(),
+        take: jest.fn().mockReturnThis(),
+        getRawAndEntities: jest.fn().mockResolvedValue({ entities: posts }),
+        getCount: jest.fn().mockResolvedValue(posts.length),
+      };
+
+      mockPostRepository.createQueryBuilder.mockReturnValue(mockQueryBuilder);
+
+      const result = await service.find(filterDto);
+
+      expect(mockQueryBuilder.where).toHaveBeenCalledWith('post.type = :type', { type: filterDto.type });
+      expect(mockQueryBuilder.andWhere).toHaveBeenCalledWith('category.id = :categoryId', { categoryId: filterDto.categoryId });
+      expect(result.data).toEqual(posts);
+    });
+
+    it('should return a list of posts with default sort order when no order is provided', async () => {
+      const filterDto = { page: 1, limit: 10, type: POST_TYPE.NEWS, sort: 'createdAt' } as FilterPostDto;
+      const posts = [{ id: 'post1' }, { id: 'post2' }] as Post[];
+
+      const mockQueryBuilder = {
+        select: jest.fn().mockReturnThis(),
+        leftJoin: jest.fn().mockReturnThis(),
+        where: jest.fn().mockReturnThis(),
+        andWhere: jest.fn().mockReturnThis(),
+        orderBy: jest.fn().mockReturnThis(),
+        skip: jest.fn().mockReturnThis(),
+        take: jest.fn().mockReturnThis(),
+        getRawAndEntities: jest.fn().mockResolvedValue({ entities: posts }),
+        getCount: jest.fn().mockResolvedValue(posts.length),
+      };
+
+      mockPostRepository.createQueryBuilder.mockReturnValue(mockQueryBuilder);
+
+      const result = await service.find(filterDto);
+
+      expect(mockQueryBuilder.orderBy).toHaveBeenCalledWith('post.createdAt', SORT_ORDER.DESC);
+      expect(result.data).toEqual(posts);
+    });
   });
 
   describe('findOne', () => {
@@ -446,7 +526,13 @@ describe('PostsService', () => {
         select: jest.fn().mockReturnThis(),
         leftJoin: jest.fn().mockReturnThis(),
         where: jest.fn().mockReturnThis(),
+        andWhere: jest.fn().mockReturnThis(),
+        orWhere: jest.fn().mockReturnThis(),
         orderBy: jest.fn().mockReturnThis(),
+        skip: jest.fn().mockReturnThis(),
+        take: jest.fn().mockReturnThis(),
+        getCount: jest.fn(),
+        getRawAndEntities: jest.fn(),
         getOne: jest.fn().mockResolvedValue(null),
       };
 
@@ -462,7 +548,13 @@ describe('PostsService', () => {
         select: jest.fn().mockReturnThis(),
         leftJoin: jest.fn().mockReturnThis(),
         where: jest.fn().mockReturnThis(),
+        andWhere: jest.fn().mockReturnThis(),
+        orWhere: jest.fn().mockReturnThis(),
         orderBy: jest.fn().mockReturnThis(),
+        skip: jest.fn().mockReturnThis(),
+        take: jest.fn().mockReturnThis(),
+        getCount: jest.fn(),
+        getRawAndEntities: jest.fn(),
         getOne: jest.fn().mockResolvedValue(post),
       };
 
@@ -489,7 +581,12 @@ describe('PostsService', () => {
         leftJoin: jest.fn().mockReturnThis(),
         where: jest.fn().mockReturnThis(),
         andWhere: jest.fn().mockReturnThis(),
+        orWhere: jest.fn().mockReturnThis(),
         orderBy: jest.fn().mockReturnThis(),
+        skip: jest.fn().mockReturnThis(),
+        take: jest.fn().mockReturnThis(),
+        getCount: jest.fn(),
+        getRawAndEntities: jest.fn(),
         getOne: jest.fn().mockResolvedValue(null),
       };
 
@@ -506,7 +603,12 @@ describe('PostsService', () => {
         leftJoin: jest.fn().mockReturnThis(),
         where: jest.fn().mockReturnThis(),
         andWhere: jest.fn().mockReturnThis(),
+        orWhere: jest.fn().mockReturnThis(),
         orderBy: jest.fn().mockReturnThis(),
+        skip: jest.fn().mockReturnThis(),
+        take: jest.fn().mockReturnThis(),
+        getCount: jest.fn(),
+        getRawAndEntities: jest.fn(),
         getOne: jest.fn().mockResolvedValue(post),
       };
 
@@ -535,7 +637,12 @@ describe('PostsService', () => {
         leftJoin: jest.fn().mockReturnThis(),
         where: jest.fn().mockReturnThis(),
         andWhere: jest.fn().mockReturnThis(),
+        orWhere: jest.fn().mockReturnThis(),
         orderBy: jest.fn().mockReturnThis(),
+        skip: jest.fn().mockReturnThis(),
+        take: jest.fn().mockReturnThis(),
+        getCount: jest.fn(),
+        getRawAndEntities: jest.fn(),
         getOne: jest.fn().mockResolvedValue(post),
       };
 
@@ -644,16 +751,55 @@ describe('PostsService', () => {
       await service.update(postId, creator, updateDto);
 
       expect(mockPostFileRepository.find).toHaveBeenCalledWith({ where: { postId } });
-
+      expect(mockPostFileRepository.findOne).toHaveBeenCalledTimes(2);
       expect(mockPostFileRepository.findOne).toHaveBeenCalledWith({ where: { fileId: 'image1', postId } });
       expect(mockPostFileRepository.findOne).toHaveBeenCalledWith({ where: { fileId: 'image2', postId } });
-
       expect(mockPostFileRepository.create).toHaveBeenCalledWith({ fileId: 'image1', postId, position: 1 });
       expect(mockPostFileRepository.create).toHaveBeenCalledWith({ fileId: 'image2', postId, position: 2 });
       expect(mockPostFileRepository.save).toHaveBeenCalledWith({ fileId: 'image1', postId, position: 1 });
       expect(mockPostFileRepository.save).toHaveBeenCalledWith({ fileId: 'image2', postId, position: 2 });
 
       expect(mockAuditLogsService.auditLogUpdate).toHaveBeenCalledTimes(1);
+    });
+
+    it('should update a post and remove category when categoryId is not provided', async () => {
+      const updateDto: UpdatePostDto = { nameLocalized: [{ lang: defaultLanguage, value: 'Updated Name' }] };
+      const postId = 'post-id';
+      const creator = { id: 'user-id' } as User;
+      const post = {
+        id: postId,
+        category: { id: 'old-category-id' },
+      } as Post;
+
+      mockPostRepository.findOneBy.mockResolvedValue(post);
+      mockPostRepository.save.mockResolvedValue({ ...post, ...updateDto, category: null });
+      jest.spyOn(service, 'sortImages').mockResolvedValue();
+
+      const result = await service.update(postId, creator, updateDto);
+
+      expect(result.category).toBeNull();
+      expect(mockPostRepository.save).toHaveBeenCalledWith(expect.objectContaining({ category: null }));
+    });
+
+    it('should update seoMeta when provided', async () => {
+      const updateDto: UpdatePostDto = {
+        seoMeta: { title: 'SEO Title', description: 'SEO Description' },
+      };
+      const postId = 'post-id';
+      const creator = { id: 'user-id' } as User;
+      const post = {
+        id: postId,
+        seoMeta: { title: 'Old Title', description: 'Old Description' },
+      } as Post;
+
+      mockPostRepository.findOneBy.mockResolvedValue(post);
+      mockPostRepository.save.mockResolvedValue({ ...post, ...updateDto });
+      jest.spyOn(service, 'sortImages').mockResolvedValue();
+
+      const result = await service.update(postId, creator, updateDto);
+
+      expect(result.seoMeta).toEqual(updateDto.seoMeta);
+      expect(mockPostRepository.save).toHaveBeenCalledWith(expect.objectContaining({ seoMeta: updateDto.seoMeta }));
     });
   });
 
@@ -747,7 +893,6 @@ describe('PostsService', () => {
 
       expect(mockPostFileRepository.find).toHaveBeenCalledWith({ where: { postId } });
       expect(mockPostFileRepository.remove).toHaveBeenCalledWith([existingFiles[2]]);
-
       expect(mockPostFileRepository.findOne).toHaveBeenCalledTimes(2);
       expect(mockPostFileRepository.findOne).toHaveBeenCalledWith({ where: { fileId: 'image1', postId } });
       expect(mockPostFileRepository.findOne).toHaveBeenCalledWith({ where: { fileId: 'image2', postId } });
@@ -778,25 +923,40 @@ describe('PostsService', () => {
     });
 
     it('should handle a mix of existing and new images', async () => {
-      const images = [{ id: 'image1' }, { id: 'image2' }] as File[];
       const postId = 'post-id';
-
       const existingFile1 = { fileId: 'image1', postId, position: 1 } as PostFile;
+      const images = [{ id: 'image1' }, { id: 'image2' }] as File[];
 
       mockPostFileRepository.find.mockResolvedValue([existingFile1]);
       mockPostFileRepository.findOne.mockResolvedValueOnce(existingFile1).mockResolvedValueOnce(null);
-      mockPostFileRepository.create.mockImplementation(entity => entity);
+      mockPostFileRepository.create.mockImplementation(file => file);
+      mockPostFileRepository.save.mockImplementation(file => file);
 
       await service.sortImages(images, postId);
 
       expect(mockPostFileRepository.find).toHaveBeenCalledWith({ where: { postId } });
-      expect(mockPostFileRepository.findOne).toHaveBeenCalledTimes(2);
-      expect(mockPostFileRepository.findOne).toHaveBeenCalledWith({ where: { fileId: 'image1', postId } });
-      expect(mockPostFileRepository.findOne).toHaveBeenCalledWith({ where: { fileId: 'image2', postId } });
-
-      expect(mockPostFileRepository.save).toHaveBeenCalledTimes(2);
       expect(mockPostFileRepository.save).toHaveBeenCalledWith({ ...existingFile1, position: 1 });
       expect(mockPostFileRepository.save).toHaveBeenCalledWith({ fileId: 'image2', postId, position: 2 });
+    });
+
+    it('should update positions of existing files and remove non-matching files', async () => {
+      const existingFiles = [
+        { fileId: 'image1', postId: 'post1', position: 1 },
+        { fileId: 'image2', postId: 'post1', position: 2 },
+      ] as PostFile[];
+      const newImages = [{ id: 'image1' }, { id: 'image3' }] as File[];
+
+      mockPostFileRepository.find.mockResolvedValue(existingFiles);
+      mockPostFileRepository.findOne.mockResolvedValueOnce({ ...existingFiles[0] }).mockResolvedValueOnce(null);
+      mockPostFileRepository.create.mockImplementation(data => data);
+      mockPostFileRepository.save.mockImplementation(data => data);
+      mockPostFileRepository.remove.mockResolvedValue(undefined);
+
+      await service.sortImages(newImages, 'post1');
+
+      expect(mockPostFileRepository.remove).toHaveBeenCalledWith([existingFiles[1]]);
+      expect(mockPostFileRepository.save).toHaveBeenNthCalledWith(1, expect.objectContaining({ fileId: 'image1', position: 1 }));
+      expect(mockPostFileRepository.save).toHaveBeenNthCalledWith(2, expect.objectContaining({ fileId: 'image3', position: 2 }));
     });
   });
 });

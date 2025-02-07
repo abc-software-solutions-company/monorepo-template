@@ -67,9 +67,8 @@ export class ProductsService {
 
     const queryBuilder = this.createQueryBuilderWithJoins('product');
 
-    if (type) {
-      queryBuilder.andWhere('post.type = :type', { type });
-    }
+    queryBuilder.andWhere('post.type = :type', { type });
+
     if (status) {
       queryBuilder.andWhere('product.status IN (:...status)', { status });
     }
