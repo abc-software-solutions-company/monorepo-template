@@ -1,7 +1,7 @@
 import { Path, UseFormReturn } from 'react-hook-form';
-import FormFieldInput from '@repo/react-web-ui-shadcn/components/form-fields-ahua/form-field-input';
-import FormFieldInputNumber from '@repo/react-web-ui-shadcn/components/form-fields-ahua/form-field-input-number';
-import FormFieldSelect from '@repo/react-web-ui-shadcn/components/form-fields-ahua/form-field-select';
+import FormFieldInput from '@repo/react-web-ui-shadcn/components/form-fields/form-field-input';
+import FormFieldInputNumber from '@repo/react-web-ui-shadcn/components/form-fields/form-field-input-number';
+import FormFieldSelect from '@repo/react-web-ui-shadcn/components/form-fields/form-field-select';
 
 import { TRANSACTION_TYPE_OPTIONS, VOLUME_METRIC_OPTIONS } from '../../constants/condition.constant';
 import { ConditionFormValues } from '../../interfaces/condition.interface';

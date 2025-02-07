@@ -1,7 +1,7 @@
 import { PlusIcon, Trash2Icon } from 'lucide-react';
 import { useFieldArray, UseFormReturn } from 'react-hook-form';
 import { toast } from 'sonner';
-import FormFieldSelect from '@repo/react-web-ui-shadcn/components/form-fields-ahua/form-field-select';
+import FormFieldSelect from '@repo/react-web-ui-shadcn/components/form-fields/form-field-select';
 import { Button } from '@repo/react-web-ui-shadcn/components/ui/button';
 import { Label } from '@repo/react-web-ui-shadcn/components/ui/label';
 

@@ -3,8 +3,8 @@
 import { useTranslations } from 'next-intl';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import FormFieldInput from '@repo/react-web-ui-shadcn/components/form-fields-ahua/form-field-input';
-import FormFieldInputPassword from '@repo/react-web-ui-shadcn/components/form-fields-ahua/form-field-input-password';
+import FormFieldInput from '@repo/react-web-ui-shadcn/components/form-fields/form-field-input';
+import FormFieldInputPassword from '@repo/react-web-ui-shadcn/components/form-fields/form-field-input-password';
 import { Button } from '@repo/react-web-ui-shadcn/components/ui/button';
 import { Form } from '@repo/react-web-ui-shadcn/components/ui/form';
 
