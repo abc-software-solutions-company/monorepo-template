@@ -12,15 +12,19 @@ type FormFieldCardSelectStatusProps<T extends FieldValues> = {
   formLabel?: string;
   fieldName?: Path<T>;
   statuses: OptionType[];
+  visibled?: boolean;
 };
 
 export default function FormFieldCardSelectStatus<T extends FieldValues>({
   form,
   formLabel,
   statuses,
+  visibled = true,
   fieldName = 'status' as Path<T>,
 }: FormFieldCardSelectStatusProps<T>) {
   const t = useTranslations();
+
+  if (!visibled) return null;
 
   return (
     <Card>

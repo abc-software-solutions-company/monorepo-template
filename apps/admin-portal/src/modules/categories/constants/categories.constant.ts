@@ -14,9 +14,10 @@ export enum CATEGORY_STATUS {
 }
 
 export enum CATEGORY_TYPE {
-  PRODUCT = 'product',
-  POST = 'post',
+  NEWS = 'news',
+  PAGE = 'page',
   SERVICE = 'service',
+  PRODUCT = 'product',
 }
 
 export enum CATEGORY_ACTION {
@@ -39,8 +40,16 @@ export const CATEGORY_TYPES = [
     value: CATEGORY_TYPE.PRODUCT,
   },
   {
-    label: 'Post',
-    value: CATEGORY_TYPE.POST,
+    label: 'News',
+    value: CATEGORY_TYPE.NEWS,
+  },
+  {
+    label: 'Page',
+    value: CATEGORY_TYPE.PAGE,
+  },
+  {
+    label: 'Service',
+    value: CATEGORY_TYPE.SERVICE,
   },
 ] as OptionType[];
 

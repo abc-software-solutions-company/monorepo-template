@@ -38,7 +38,7 @@ export const categoryFactory = [
   {
     id: '4e13a831-24ba-46bc-9705-0a5723e9427a',
     slug: toSlug('Recruit'),
-    type: CATEGORY_TYPE.POST,
+    type: CATEGORY_TYPE.NEWS,
     status: statuses[Math.floor(Math.random() * statuses.length)],
     coverLocalized: null,
     nameLocalized: [{ lang: defaultLanguage, value: 'Recruit' }],
@@ -50,7 +50,7 @@ export const categoryFactory = [
   {
     id: 'bb323cd2-384e-438e-a31a-775ffc031aa7',
     slug: toSlug('Service'),
-    type: CATEGORY_TYPE.POST,
+    type: CATEGORY_TYPE.NEWS,
     status: statuses[Math.floor(Math.random() * statuses.length)],
     coverLocalized: null,
     nameLocalized: [{ lang: defaultLanguage, value: 'Service' }],

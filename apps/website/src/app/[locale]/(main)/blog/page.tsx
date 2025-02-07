@@ -16,7 +16,7 @@ export default async function BlogPage(pageProps: PageBaseProps) {
   const filter: PostFilter = {
     page: parseInt(pageProps.searchParams.page as string) || 1,
     limit: parseInt(pageProps.searchParams.limit as string) || 10,
-    type: POST_TYPE.DEFAULT,
+    type: POST_TYPE.NEWS,
   };
 
   await queryClient.prefetchQuery({

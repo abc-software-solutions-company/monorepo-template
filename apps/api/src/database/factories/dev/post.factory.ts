@@ -18,7 +18,7 @@ export function createRandomPost() {
   return {
     id: faker.string.uuid(),
     slug: toSlug(name),
-    type: POST_TYPE.DEFAULT,
+    type: POST_TYPE.NEWS,
     status: statuses[Math.floor(Math.random() * statuses.length)],
     coverLocalized: null,
     nameLocalized: [{ lang: defaultLanguage, value: name }],

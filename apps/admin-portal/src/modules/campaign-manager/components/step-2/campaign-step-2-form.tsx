@@ -58,6 +58,8 @@ const CampaignStep2Form: React.FC<CampaignStep2FormProps> = ({ form, onSubmit })
               formLabel="Nation"
               placeholder="Select nation"
               options={languages}
+              labelDisplay="outside"
+              size="sm"
               translator={t}
             />
             <FormFieldSelect
@@ -68,6 +70,8 @@ const CampaignStep2Form: React.FC<CampaignStep2FormProps> = ({ form, onSubmit })
               formLabel="Country"
               placeholder="Select country"
               options={languages}
+              labelDisplay="outside"
+              size="sm"
               translator={t}
             />
             <FormFieldSelectTag
@@ -77,9 +81,20 @@ const CampaignStep2Form: React.FC<CampaignStep2FormProps> = ({ form, onSubmit })
               formLabel="Country"
               placeholder="Select country"
               options={languages}
+              labelDisplay="outside"
+              size="sm"
               translator={t}
             />
-            <FormFieldInput required form={form} fieldName="keyword" formLabel="Keyword" placeholder="Keyword" translator={t} />
+            <FormFieldInput
+              required
+              form={form}
+              fieldName="keyword"
+              formLabel="Keyword"
+              placeholder="Keyword"
+              translator={t}
+              labelDisplay="outside"
+              size="sm"
+            />
             <FormFieldSelectGroup
               showSelectedTags
               required
@@ -88,6 +103,8 @@ const CampaignStep2Form: React.FC<CampaignStep2FormProps> = ({ form, onSubmit })
               formLabel="District"
               placeholder="Select district"
               options={districtsItems}
+              labelDisplay="outside"
+              size="sm"
               translator={t}
             />
             <FormFieldInputDateRangePicker
@@ -96,6 +113,8 @@ const CampaignStep2Form: React.FC<CampaignStep2FormProps> = ({ form, onSubmit })
               fieldName="dateRange"
               formLabel="Date Range"
               placeholder="Select date range"
+              labelDisplay="outside"
+              size="sm"
               translator={t}
             />
           </div>

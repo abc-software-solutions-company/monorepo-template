@@ -76,7 +76,7 @@ const SidebarNavigation: FC<SidebarNavigationProps> = ({ className, isExpand, on
       dashboard: pathname.includes(`/${locale}/dashboard`),
       categories: pathname.includes(`/${locale}/categories`),
       contents: pathname.includes(`/${locale}/contents`),
-      posts: pathname.includes(`/${locale}/posts`) && searchParams.get('type') === POST_TYPE.DEFAULT,
+      posts: pathname.includes(`/${locale}/posts`) && searchParams.get('type') === POST_TYPE.NEWS,
       pages: pathname.includes(`/${locale}/posts`) && searchParams.get('type') === POST_TYPE.PAGE,
       services: pathname.includes(`/${locale}/posts`) && searchParams.get('type') === POST_TYPE.SERVICE,
       products: pathname.includes(`/${locale}/products`) && searchParams.get('type') === PRODUCT_TYPE.DEFAULT,
@@ -158,7 +158,7 @@ const SidebarNavigation: FC<SidebarNavigationProps> = ({ className, isExpand, on
           <Collapsible open={isOpenSubMenu.posts && isExpand} onOpenChange={value => setIsOpenSubMenu(prevState => ({ ...prevState, posts: value }))}>
             <SidebarMenuItem
               url={`/${locale}/posts`}
-              queryParams={{ type: POST_TYPE.DEFAULT }}
+              queryParams={{ type: POST_TYPE.NEWS }}
               isExpand={isExpand}
               options={{ icon: BookOpenTextIcon, onClick: handleItemClick }}
             >
@@ -182,7 +182,7 @@ const SidebarNavigation: FC<SidebarNavigationProps> = ({ className, isExpand, on
               <div>
                 <SidebarMenuItem
                   url={`/${locale}/posts`}
-                  queryParams={{ type: POST_TYPE.DEFAULT }}
+                  queryParams={{ type: POST_TYPE.NEWS }}
                   isExpand={isExpand}
                   options={{ icon: BookOpenTextIcon, onClick: handleItemClick }}
                 />

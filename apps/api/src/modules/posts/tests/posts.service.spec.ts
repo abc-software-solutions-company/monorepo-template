@@ -94,7 +94,7 @@ describe('PostsService', () => {
     } as Post;
     const baseCreateDto: CreatePostDto = {
       slug: 'test-post',
-      type: POST_TYPE.DEFAULT,
+      type: POST_TYPE.NEWS,
       nameLocalized: [{ lang: defaultLanguage, value: 'Test Post' }],
       descriptionLocalized: [{ lang: defaultLanguage, value: 'Test Description' }],
       bodyLocalized: [{ lang: defaultLanguage, value: 'Test Body' }],

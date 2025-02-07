@@ -73,7 +73,7 @@ describe('AdminPostsController', () => {
     it('should call postsService.create with correct parameters', async () => {
       const createPostDto: CreatePostDto = {
         slug: 'test-post',
-        type: POST_TYPE.DEFAULT,
+        type: POST_TYPE.NEWS,
         nameLocalized: [{ lang: defaultLanguage, value: 'Test Name' }],
         descriptionLocalized: [{ lang: defaultLanguage, value: 'Test Description' }],
         bodyLocalized: [{ lang: defaultLanguage, value: 'Test Body' }],

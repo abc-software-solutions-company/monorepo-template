@@ -1,9 +1,7 @@
 export const QUERY_POST_LIST = 'blog-posts';
 
 export enum POST_TYPE {
-  DEFAULT = 'default',
+  NEWS = 'news',
   PAGE = 'page',
-  RECRUIT = 'recruit',
-  PROMOTION = 'promotion',
   SERVICE = 'service',
 }

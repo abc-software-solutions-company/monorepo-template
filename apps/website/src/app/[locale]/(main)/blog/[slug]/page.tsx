@@ -34,7 +34,7 @@ export default async function PostDetailPage(pageProps: PageProps) {
 }
 
 export async function generateStaticParams() {
-  const postsResponse = await PostApi.getServerPosts({ page: 1, limit: 30, type: POST_TYPE.DEFAULT });
+  const postsResponse = await PostApi.getServerPosts({ page: 1, limit: 30, type: POST_TYPE.NEWS });
 
   return postsResponse.data.map(post => ({ slug: post.slug }));
 }

@@ -27,7 +27,8 @@ export enum CATEGORY_STATUS {
 }
 
 export enum CATEGORY_TYPE {
-  DEFAULT = 'default',
+  NEWS = 'news',
+  PAGE = 'page',
+  SERVICE = 'service',
   PRODUCT = 'product',
-  POST = 'post',
 }

@@ -49,7 +49,11 @@ const PostForm: FC<PostFormProps> = ({ isEdit }) => {
   const editorRef = useRef<Editor | null>(null);
   const [isFileManagerVisible, setIsFileManagerVisible] = useState(false);
   const { data: content, isFetching } = useGetPostQuery({ id: params.id as string, enabled: !!params.id });
-  const { data: categories, isFetching: isCategoriesFetching } = useGetCategoriesQuery({ filter: { type: CATEGORY_TYPE.POST } });
+  const { data: categories, isFetching: isCategoriesFetching } = useGetCategoriesQuery({
+    filter: {
+      type: searchParams.get('type') as CATEGORY_TYPE,
+    },
+  });
   const { mutate: createMutation } = useCreatePostMutation();
   const { mutate: updateMutation } = useUpdatePostMutation();
 

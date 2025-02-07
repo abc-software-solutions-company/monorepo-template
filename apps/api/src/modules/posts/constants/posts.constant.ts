@@ -28,7 +28,7 @@ export enum POST_STATUS {
 }
 
 export enum POST_TYPE {
-  DEFAULT = 'default',
+  NEWS = 'news',
   PAGE = 'page',
   SERVICE = 'service',
 }

@@ -17,7 +17,7 @@ export class Category extends TranslationEntity {
   @Column({ type: 'varchar', unique: true, length: 255 })
   slug: string;
 
-  @Column({ type: 'varchar', length: 50, default: CATEGORY_TYPE.POST })
+  @Column({ type: 'varchar', length: 50, default: CATEGORY_TYPE.NEWS })
   type: CATEGORY_TYPE;
 
   @Column({ type: 'varchar', length: 50, default: CATEGORY_STATUS.PUBLISHED })
