@@ -66,6 +66,7 @@ jobs:
           --health-interval=5s \
           --health-timeout=5s \
           --health-retries=2 \
+          -v ~/monorepo-uploads:/app/apps/api/dist/uploads \
           ${{ env.AWS_ECR_REPOSITORY_URI }}:${{ github.sha }}
 
           # Wait for health check
@@ -95,6 +96,8 @@ jobs:
               restart: always
               ports:
                 - "${{ env.DOCKER_HOST_PORT }}:${{ env.DOCKER_CONTAINER_PORT }}"
+              volumes:
+                - ~/monorepo-assets:/app/apps/api/dist/assets
           EOF
 
       - name: Copy docker-compose file to server
