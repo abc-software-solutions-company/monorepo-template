@@ -1,16 +1,8 @@
 import { FC, SVGAttributes } from 'react';
 
-const Logo: FC<SVGAttributes<Record<string, unknown>>> = ({ width = 38, height = 33, className, fill = '#1255E5' }) => {
+const Logo: FC<SVGAttributes<Record<string, unknown>>> = ({ width = 38, className, fill = '#1255E5' }) => {
   return (
-    <svg
-      fill="none"
-      viewBox="0 0 38 33"
-      width={width}
-      height={height}
-      preserveAspectRatio="xMidYMid meet"
-      xmlns="http://www.w3.org/2000/svg"
-      className={className}
-    >
+    <svg fill="none" viewBox="0 0 38 33" width={width} preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" className={className}>
       <path
         d="M24.4588 13.362C21.422 14.3743 16.3606 16.1964 10.4895 16.6013C9.27473 16.8037 8.26246 15.3865 9.07228 14.1718L16.5631 1.21473C17.5754 -0.404909 19.8024 -0.404909 20.8146 1.21473L22.2318 3.64418L25.876 9.71782C26.4834 11.135 25.876 12.7546 24.4588 13.362Z"
         fill={fill}
