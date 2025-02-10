@@ -33,7 +33,7 @@ const HeaderProfile: FC<ComponentBaseProps> = ({ className }) => {
         <Avatar>
           <AvatarImage src={`${import.meta.env.VITE_PUBLIC_API_URL}/${user?.avatar}`} alt={user?.name} />
           <AvatarFallback
-            className={classNames('font-bold text-white', 'animate-gradient bg-[linear-gradient(-45deg,_#22c370,_#fdbb2d)] bg-[length:200%_200%]')}
+            className={classNames('font-bold text-white', 'animate-gradient bg-[linear-gradient(-45deg,_#1255E5,_#1255E5)] bg-[length:400%_400%]')}
           >
             {shortName}
           </AvatarFallback>

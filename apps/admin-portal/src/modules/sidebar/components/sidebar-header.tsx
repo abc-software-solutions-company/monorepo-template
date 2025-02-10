@@ -15,8 +15,7 @@ const SidebarHeader: FC<SidebarHeaderProps> = ({ className, isExpand }) => {
       <div className="flex h-16 items-center gap-x-3">
         <Logo className={`cursor-pointer transition-transform duration-500 ${isExpand && 'rotate-[360deg]'}`} />
         <h1 className={`origin-left text-2xl font-semibold transition-transform duration-500 ${!isExpand && 'scale-0'}`}>
-          <span className="uppercase text-primary">Next</span>
-          <span className="uppercase text-primary">AP</span>
+          <p className="uppercase text-primary">ABC Website</p>
         </h1>
       </div>
     </div>
