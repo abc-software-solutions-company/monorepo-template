@@ -14,7 +14,7 @@ const ProfileCover: FC<ProfileCoverProps> = ({ className }) => {
     <div
       className={classNames(
         'relative h-32 grow rounded-t-lg bg-[url("@/assets/images/cover-bg.jpg")] bg-[length:100%] bg-center',
-        'animate-gradient bg-[linear-gradient(-45deg,_#22c370,_#fdbb2d)] bg-[length:400%_400%]',
+        'animate-gradient bg-[linear-gradient(-45deg,_#1255E5,_#1255E5)] bg-[length:400%_400%]',
         className
       )}
     ></div>

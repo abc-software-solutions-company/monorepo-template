@@ -48,7 +48,7 @@ const ProfileAvatar: FC<ProfileAvatarProps> = ({ className }) => {
         <AvatarFallback
           className={classNames(
             'rounded-full text-5xl font-bold text-white',
-            'animate-gradient bg-[linear-gradient(-45deg,_#22c370,_#fdbb2d)] bg-[length:200%_200%]'
+            'animate-gradient bg-[linear-gradient(-45deg,_#1255E5,_#1255E5)] bg-[length:400%_400%]'
           )}
         >
           {shortName}
