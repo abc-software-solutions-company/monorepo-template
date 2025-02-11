@@ -1,19 +1,21 @@
 'use client';
 
 import React, { FC } from 'react';
+import { useParams } from 'next/navigation';
 import classNames from 'classnames';
 import { Loading } from '@repo/react-web-ui-shadcn/components/ui/loading';
 import Pagination from '@repo/react-web-ui-shadcn/components/ui/pagination-custom';
 import { useQuery } from '@tanstack/react-query';
 
-import { useRouter } from '@/navigation';
+import { usePathname, useRouter } from '@/navigation';
 
 import { ComponentBaseProps } from '@/interfaces/component.interface';
 import { PostFilter } from '../interfaces/posts.interface';
 
 import { QUERY_POST_LIST } from '../constants/posts.constant';
 
-import CategoryListByParentId from '@/modules/categories/components/category-list-by-parent-id';
+import CategoryListByType from '@/modules/categories/components/category-list-by-type';
+import { CATEGORY_TYPE } from '@/modules/categories/constants/categories.constant';
 
 import BlogList from './blog-list';
 
@@ -25,10 +27,15 @@ type BlogRootProps = {
 
 const BlogRoot: FC<BlogRootProps> = ({ className, filter }) => {
   const router = useRouter();
+  const pathname = usePathname();
+  const params = useParams<{ slug: string }>();
+
+  const isCategoryPage = pathname.includes('/category');
 
   const { data } = useQuery({
     queryKey: [QUERY_POST_LIST, filter],
     queryFn: async () => await PostApi.getServerPosts(filter),
+    staleTime: 0,
   });
 
   if (!data)
@@ -43,7 +50,7 @@ const BlogRoot: FC<BlogRootProps> = ({ className, filter }) => {
   return (
     <div className={classNames(className)}>
       <div className="container">
-        <CategoryListByParentId id="47dbd699-b483-4cf5-aa5c-64120ce8cfdb" />
+        <CategoryListByType type={CATEGORY_TYPE.NEWS} />
         <BlogList items={data.data} />
         <div className="mt-12 flex justify-center">
           <Pagination
@@ -51,7 +58,20 @@ const BlogRoot: FC<BlogRootProps> = ({ className, filter }) => {
             totalItems={data.meta?.paging?.totalItems}
             currentPage={data.meta?.paging?.currentPage}
             itemPerPage={data.meta?.paging?.itemsPerPage}
-            onChange={page => router.push({ pathname: '/blog', query: { page } })}
+            onChange={page => {
+              if (isCategoryPage) {
+                router.push({
+                  pathname: '/blog/category/[slug]',
+                  params: { slug: params.slug },
+                  query: { page },
+                });
+              } else {
+                router.push({
+                  pathname: '/blog',
+                  query: { page },
+                });
+              }
+            }}
           />
         </div>
       </div>

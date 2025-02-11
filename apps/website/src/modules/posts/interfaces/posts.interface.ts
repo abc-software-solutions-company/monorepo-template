@@ -30,4 +30,5 @@ export type PostsResponse = ResponseFormat<PostEntity[]>;
 export type PostResponse = ResponseFormat<PostEntity>;
 export type PostFilter = BaseFilter & {
   type?: POST_TYPE;
+  categoryId?: string;
 };

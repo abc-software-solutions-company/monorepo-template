@@ -12,7 +12,13 @@ import { getQueryClient } from '@/utils/query-client.util';
 
 const queryClient = getQueryClient();
 
-export default async function ProductPage(pageProps: PageBaseProps) {
+type PageProps = {
+  params: {
+    locale: string;
+  };
+} & PageBaseProps;
+
+export default async function ProductPage(pageProps: PageProps) {
   const filter: ProductFilter = {
     page: parseInt(pageProps.searchParams.page as string) || 1,
     limit: parseInt(pageProps.searchParams.limit as string) || 10,

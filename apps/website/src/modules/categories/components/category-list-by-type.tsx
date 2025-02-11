@@ -9,22 +9,21 @@ import { useQuery } from '@tanstack/react-query';
 import { Link } from '@/navigation';
 
 import { ComponentBaseProps } from '@/interfaces/component.interface';
-import { CategoryFilter } from '../interfaces/categories.interface';
 
-import { QUERY_CATEGORY_LIST } from '../constants/categories.constant';
+import { CATEGORY_TYPE, QUERY_CATEGORY_BY_TYPE } from '../constants/categories.constant';
 
 import CategoryApi from '../api/categories.api';
 
 type CategoryListProps = {
-  filter: CategoryFilter;
+  type: CATEGORY_TYPE;
 } & ComponentBaseProps;
 
-const CategoryList: FC<CategoryListProps> = ({ className, filter, ...rest }) => {
+const CategoryListByType: FC<CategoryListProps> = ({ className, type, ...rest }) => {
   const locale = useLocale();
 
   const { data } = useQuery({
-    queryKey: [QUERY_CATEGORY_LIST, filter],
-    queryFn: async () => await CategoryApi.getServerCategories(filter),
+    queryKey: [QUERY_CATEGORY_BY_TYPE, type],
+    queryFn: async () => await CategoryApi.getServerCategoriesByType(type),
   });
 
   if (!data) {
@@ -45,7 +44,7 @@ const CategoryList: FC<CategoryListProps> = ({ className, filter, ...rest }) => 
 
           return (
             <li key={item.id} className={classNames('border')} data-testid="category-item">
-              <Link href={{ pathname: '/category/[slug]', params: { slug: item.slug } }}>{name}</Link>
+              <Link href={{ pathname: '/blog/category/[slug]', params: { slug: item.slug } }}>{name}</Link>
             </li>
           );
         })}
@@ -54,4 +53,4 @@ const CategoryList: FC<CategoryListProps> = ({ className, filter, ...rest }) => 
   );
 };
 
-export default CategoryList;
+export default CategoryListByType;

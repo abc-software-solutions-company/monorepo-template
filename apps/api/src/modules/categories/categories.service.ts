@@ -8,7 +8,7 @@ import { PaginationResponseDto } from '@/common/dtos/pagination-response.dto';
 
 import { SORT_ORDER } from '@/common/constants/order.constant';
 
-import { CATEGORY_FIELDS_TO_CREATE_OR_UPDATE, CATEGORY_GET_FIELDS, CATEGORY_STATUS } from './constants/categories.constant';
+import { CATEGORY_FIELDS_TO_CREATE_OR_UPDATE, CATEGORY_GET_FIELDS, CATEGORY_STATUS, CATEGORY_TYPE } from './constants/categories.constant';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { FilterCategoryDto } from './dto/filter-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
@@ -101,7 +101,7 @@ export class CategoriesService {
         if (category.parent) {
           return { ...category, children: [] };
         }
-        const children = await this.getChildCategories(category.id);
+        const children = await this.getChilds(category.id);
 
         return { ...category, children };
       })
@@ -209,13 +209,32 @@ export class CategoriesService {
     return newCategories;
   }
 
-  async findCategoriesByParentId(id: string) {
+  async findByParentId(id: string) {
     const categories = await this.createQueryBuilderWithJoins('category')
       .where('category.parent.id = :id', { id })
       .orderBy('category.createdAt', SORT_ORDER.DESC)
       .getMany();
 
     return categories;
+  }
+
+  async findByType(type: CATEGORY_TYPE) {
+    const categories = await this.createQueryBuilderWithJoins('category')
+      .where('category.type = :type', { type })
+      .orderBy('category.createdAt', SORT_ORDER.DESC)
+      .getMany();
+
+    return categories;
+  }
+
+  async findBySlug(slug: string) {
+    const category = await this.categoryRepository.findOneBy({ slug });
+
+    if (!category) {
+      throw new NotFoundException('Category not found');
+    }
+
+    return category;
   }
 
   async sortImages(images: File[] | undefined, categoryId: string) {
@@ -235,7 +254,7 @@ export class CategoriesService {
     }
   }
 
-  private async getChildCategories(parentId: string) {
+  private async getChilds(parentId: string) {
     const queryBuilder = this.createQueryBuilderWithJoins('category');
 
     queryBuilder.where('parent.id = :parentId', { parentId });
@@ -245,7 +264,7 @@ export class CategoriesService {
 
     const childrenWithSubChildren = await Promise.all(
       children.map(async child => {
-        const subChildren = await this.getChildCategories(child.id);
+        const subChildren = await this.getChilds(child.id);
 
         return { ...child, children: subChildren };
       })

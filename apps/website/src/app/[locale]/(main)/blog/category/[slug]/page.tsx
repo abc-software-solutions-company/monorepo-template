@@ -3,6 +3,7 @@ import { dehydrate, HydrationBoundary } from '@tanstack/react-query';
 
 import { PageBaseProps } from '@/interfaces/page.interface';
 
+import CategoryApi from '@/modules/categories/api/categories.api';
 import PostApi from '@/modules/posts/api/posts.api';
 import BlogRoot from '@/modules/posts/components/blog-root';
 import { POST_TYPE, QUERY_POST_LIST } from '@/modules/posts/constants/posts.constant';
@@ -19,10 +20,13 @@ type PageProps = {
   };
 } & PageBaseProps;
 
-export default async function BlogPage(pageProps: PageProps) {
+export default async function BlogCategoryPage(pageProps: PageProps) {
+  const category = await CategoryApi.getServerCategoryBySlug(pageProps.params.slug);
+
   const filter: PostFilter = {
     page: parseInt(pageProps.searchParams.page as string) || 1,
     limit: parseInt(pageProps.searchParams.limit as string) || 10,
+    categoryId: category.data.id,
     type: POST_TYPE.NEWS,
   };
 
