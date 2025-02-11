@@ -6,6 +6,7 @@ import { BaseFilter } from '@/interfaces/filter.interface';
 
 import { POST_TYPE } from '../constants/posts.constant';
 
+import { CategoryEntity } from '@/modules/categories/interfaces/categories.interface';
 import { UserEntity } from '@/modules/users/interfaces/users.interface';
 
 export type PostEntity = {
@@ -22,6 +23,7 @@ export type PostEntity = {
   createdAt: Date;
   updatedAt: Date;
   creator: UserEntity;
+  category: CategoryEntity;
 };
 
 export type CreatePostDto = Omit<PostEntity, 'id'>;

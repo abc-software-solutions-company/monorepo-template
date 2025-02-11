@@ -4,9 +4,8 @@ import { dehydrate, HydrationBoundary } from '@tanstack/react-query';
 import { PageBaseProps } from '@/interfaces/page.interface';
 
 import CategoryApi from '@/modules/categories/api/categories.api';
-import PostApi from '@/modules/posts/api/posts.api';
 import BlogRoot from '@/modules/posts/components/blog-root';
-import { POST_TYPE, QUERY_POST_LIST } from '@/modules/posts/constants/posts.constant';
+import { POST_TYPE } from '@/modules/posts/constants/posts.constant';
 import { PostFilter } from '@/modules/posts/interfaces/posts.interface';
 
 import { getQueryClient } from '@/utils/query-client.util';
@@ -29,12 +28,6 @@ export default async function BlogCategoryPage(pageProps: PageProps) {
     categoryId: category.data.id,
     type: POST_TYPE.NEWS,
   };
-
-  await queryClient.prefetchQuery({
-    queryKey: [QUERY_POST_LIST, filter],
-    queryFn: async () => await PostApi.getServerPosts(filter),
-    staleTime: 0,
-  });
 
   return (
     <div className="grow">

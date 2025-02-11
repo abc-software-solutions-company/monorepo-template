@@ -5,6 +5,8 @@ import { toSlug } from '@/common/utils/string.util';
 import { POST_STATUS, POST_TYPE } from '@/modules/posts/constants/posts.constant';
 import { Post } from '@/modules/posts/entities/post.entity';
 
+import { categoryFactory } from './category.factory';
+
 import { userFactory } from '../user.factory';
 
 const statuses = Object.values(POST_STATUS).filter(x => x !== POST_STATUS.DELETED);
@@ -24,7 +26,7 @@ export function createRandomPost() {
     nameLocalized: [{ lang: defaultLanguage, value: name }],
     descriptionLocalized: [{ lang: defaultLanguage, value: description }],
     bodyLocalized: [{ lang: defaultLanguage, value: body }],
-    category: null,
+    category: categoryFactory[[2, 3][Math.floor(Math.random() * 2)]],
     creator: userFactory[0],
     createdAt: faker.date.past(),
   } as Post;

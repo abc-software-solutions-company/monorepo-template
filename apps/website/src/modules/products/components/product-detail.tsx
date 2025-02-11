@@ -1,10 +1,11 @@
 import React, { FC } from 'react';
 import { useLocale } from 'next-intl';
 import classNames from 'classnames';
-import purify from 'isomorphic-dompurify';
 
 import { ComponentBaseProps } from '@/interfaces/component.interface';
 import { ProductEntity } from '../interfaces/products.interface';
+
+import SanitizedHTML from '@/components/sanitized-html';
 
 type ProductDetailProps = {
   item: ProductEntity;
@@ -21,7 +22,7 @@ const ProductDetail: FC<ProductDetailProps> = ({ className, item }) => {
   return (
     <div className={classNames(className)}>
       <h1 className="mb-6 text-center text-3xl font-bold md:text-4xl">{name}</h1>
-      <div className="wysiwyg prose" dangerouslySetInnerHTML={{ __html: purify.sanitize(body) }} />
+      <SanitizedHTML html={body} />
     </div>
   );
 };
