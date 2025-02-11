@@ -4,7 +4,7 @@ export const CATEGORY_GET_FIELDS = [
   [
     'category.id category.slug category.type category.status category.parent category.coverLocalized category.nameLocalized category.descriptionLocalized category.bodyLocalized category.seoMeta category.createdAt',
   ],
-  ['user.id user.name user.email'],
+  ['user.id user.name user.avatar'],
   ['parent.id parent.nameLocalized'],
   ['categoryFile.fileId categoryFile.position'],
   ['image.id image.uniqueName'],

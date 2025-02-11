@@ -228,7 +228,10 @@ export class CategoriesService {
   }
 
   async findBySlug(slug: string) {
-    const category = await this.categoryRepository.findOneBy({ slug });
+    const category = await this.createQueryBuilderWithJoins('category')
+      .where('category.slug = :slug', { slug })
+      .addSelect(['user.id', 'user.name', 'user.avatar'])
+      .getOne();
 
     if (!category) {
       throw new NotFoundException('Category not found');
