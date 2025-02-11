@@ -22,13 +22,17 @@ const LeftSidebar: FC<LeftSidebarProps> = ({ children }) => {
   const [isInMobileView, setIsInMobileView] = useState(isMobile);
 
   const toggleSidebar = () => {
+    const updatedParams = new URLSearchParams(searchParams);
+
     if (isSidebarExpand) {
       setIsSidebarExpand(false);
-      setSearchParams({ sidebar: 'closed' });
+      updatedParams.set('sidebar', 'closed');
     } else {
       setIsSidebarExpand(true);
-      setSearchParams();
+      updatedParams.set('sidebar', 'open');
     }
+
+    setSearchParams(updatedParams);
   };
 
   const toggleDrawer = () => {

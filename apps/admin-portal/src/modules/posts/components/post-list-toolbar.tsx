@@ -27,8 +27,8 @@ export default function PostListToolbar<TData>({ table, onBulkDelete }: PostList
   const { selected, filter, setFilter } = usePosts();
 
   return (
-    <div className="flex items-center justify-between">
-      <div className="flex items-center space-x-2">
+    <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+      <div className="flex items-center gap-2">
         <PostFilters />
         <SearchBox value={filter?.q} onSearch={text => setFilter({ ...filter, q: text })} />
         <Button variant="outline" onClick={() => setFilter(POST_DEFAULT_FILTER)}>
@@ -36,7 +36,7 @@ export default function PostListToolbar<TData>({ table, onBulkDelete }: PostList
         </Button>
         <DataTableViewOptions table={table} />
       </div>
-      <div className="flex items-center space-x-2">
+      <div className="flex items-center gap-2">
         <Button
           onClick={() =>
             navigate({

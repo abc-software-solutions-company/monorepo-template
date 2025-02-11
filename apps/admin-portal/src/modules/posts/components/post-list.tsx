@@ -278,17 +278,19 @@ const PostList: FC<ComponentBaseProps> = ({ className }) => {
         <PostListToolbar table={table} onBulkDelete={() => setAction({ name: POST_ACTION.BULK_DELETE })} />
         <DataTable containerClassName="mt-4" table={table} columns={columns} isFetching={isFetching} />
       </div>
-      <div className="mt-3 flex justify-between">
-        <div className="flex items-center space-x-2">
+      <div className="mt-3 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex flex-wrap items-center gap-2">
           <ItemsPerPage limit={filter?.limit} onFilter={value => setFilter({ ...filter, page: 1, limit: +value })} />
           <PaginationInfo amount={meta?.paging?.totalItems} text={t('post_records')} />
         </div>
-        <Pagination
-          totalItems={meta?.paging?.totalItems || 0}
-          currentPage={meta?.paging?.currentPage}
-          itemPerPage={meta?.paging?.itemsPerPage}
-          onChange={page => setFilter({ ...filter, page })}
-        />
+        <div className="flex justify-center sm:justify-end">
+          <Pagination
+            totalItems={meta?.paging?.totalItems || 0}
+            currentPage={meta?.paging?.currentPage}
+            itemPerPage={meta?.paging?.itemsPerPage}
+            onChange={page => setFilter({ ...filter, page })}
+          />
+        </div>
       </div>
       <ModalConfirm
         visible={action.name === POST_ACTION.DELETE}

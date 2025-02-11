@@ -10,9 +10,10 @@ type FormToolbarProps = {
   title?: string;
   submitDisabled?: boolean;
   onBackClick: () => void;
+  rightElement?: React.ReactNode;
 } & ComponentBaseProps;
 
-const FormToolbar: FC<FormToolbarProps> = ({ className, title, submitDisabled = true, onBackClick }) => {
+const FormToolbar: FC<FormToolbarProps> = ({ className, title, submitDisabled = true, onBackClick, rightElement }) => {
   const t = useTranslations();
 
   return (
@@ -23,9 +24,12 @@ const FormToolbar: FC<FormToolbarProps> = ({ className, title, submitDisabled = 
         </Button>
         {title && <h3 className="text-lg font-bold">{title}</h3>}
       </div>
-      <Button disabled={submitDisabled} type="submit">
-        {t('save')}
-      </Button>
+      <div className="flex items-center gap-2">
+        <Button disabled={submitDisabled} type="submit">
+          {t('save')}
+        </Button>
+        {rightElement}
+      </div>
     </div>
   );
 };

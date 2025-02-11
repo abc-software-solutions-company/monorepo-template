@@ -31,8 +31,7 @@ export function DataTable<TData, TValue, T>({
   return (
     <>
       <div className={classNames('relative flex h-full grow flex-col', containerClassName)}>
-        {/* scrollbar absolute left-0 top-0 max-h-full min-h-fit w-full overflow-auto rounded border */}
-        <div ref={containerRef} className="scrollbar overflow-auto rounded border">
+        <div ref={containerRef} className="scrollbar relative w-full overflow-auto rounded border">
           <Table className={classNames(tableClassName)}>
             <TableHeader className="bg-card after:absolute after:bottom-0 after:h-[1px] after:w-full after:bg-border after:content-['']">
               {table.getHeaderGroups().map(headerGroup => (
