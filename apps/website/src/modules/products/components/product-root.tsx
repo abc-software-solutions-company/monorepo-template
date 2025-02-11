@@ -9,26 +9,24 @@ import { useQuery } from '@tanstack/react-query';
 import { useRouter } from '@/navigation';
 
 import { ComponentBaseProps } from '@/interfaces/component.interface';
-import { PostFilter } from '../interfaces/posts.interface';
+import { ProductFilter } from '../interfaces/products.interface';
 
-import { QUERY_POST_LIST } from '../constants/posts.constant';
+import { QUERY_PRODUCT_LIST } from '../constants/products.constant';
 
-import CategoryListByParentId from '@/modules/categories/components/category-list-by-parent-id';
+import ProductList from './product-list';
 
-import BlogList from './blog-list';
+import ProductApi from '../api/products.api';
 
-import PostApi from '../api/posts.api';
-
-type BlogRootProps = {
-  filter: PostFilter;
+type ProductRootProps = {
+  filter: ProductFilter;
 } & ComponentBaseProps;
 
-const BlogRoot: FC<BlogRootProps> = ({ className, filter }) => {
+const ProductRoot: FC<ProductRootProps> = ({ className, filter }) => {
   const router = useRouter();
 
   const { data } = useQuery({
-    queryKey: [QUERY_POST_LIST, filter],
-    queryFn: async () => await PostApi.getServerPosts(filter),
+    queryKey: [QUERY_PRODUCT_LIST, filter],
+    queryFn: async () => await ProductApi.getServerProducts(filter),
   });
 
   if (!data)
@@ -43,8 +41,7 @@ const BlogRoot: FC<BlogRootProps> = ({ className, filter }) => {
   return (
     <div className={classNames(className)}>
       <div className="container">
-        <CategoryListByParentId id="47dbd699-b483-4cf5-aa5c-64120ce8cfdb" />
-        <BlogList items={data.data} />
+        <ProductList items={data.data} />
         <div className="mt-12 flex justify-center">
           <Pagination
             className="text-center"
@@ -59,4 +56,4 @@ const BlogRoot: FC<BlogRootProps> = ({ className, filter }) => {
   );
 };
 
-export default BlogRoot;
+export default ProductRoot;

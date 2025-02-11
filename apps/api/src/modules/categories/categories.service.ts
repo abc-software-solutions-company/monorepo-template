@@ -209,6 +209,15 @@ export class CategoriesService {
     return newCategories;
   }
 
+  async findCategoriesByParentId(id: string) {
+    const categories = await this.createQueryBuilderWithJoins('category')
+      .where('category.parent.id = :id', { id })
+      .orderBy('category.createdAt', SORT_ORDER.DESC)
+      .getMany();
+
+    return categories;
+  }
+
   async sortImages(images: File[] | undefined, categoryId: string) {
     if (!images) return;
 

@@ -7,7 +7,9 @@ export const API_ENDPOINTS = {
   SIGN_UP: '/api/v1/auth/signup',
   USER_PREFERENCES: '/api/v1/users/preferences',
   ME: '/api/v1/users/me',
+  CATEGORIES: '/api/v1/categories',
   POSTS: '/api/v1/posts',
+  PRODUCTS: '/api/v1/products',
   CONTACTS: '/api/v1/contacts',
   FAQS: '/api/v1/faqs',
 };

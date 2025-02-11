@@ -22,6 +22,15 @@ export class CategoriesController {
     return this.categoriesService.find(filterDto);
   }
 
+  @Get('.by.parent.id/:id')
+  @ApiOperation({ summary: 'Get categories by parent ID' })
+  @ApiDocumentResponse({ status: HttpStatus.OK, message: 'Get categories successfully', model: GetCategoriesSuccessDoc })
+  @Response({ status: HttpStatus.OK, message: 'Get categories successfully' })
+  @ApiParam({ name: 'id', description: 'UUID', example: 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx' })
+  findCategoriesByParentId(@Param('id') id: string) {
+    return this.categoriesService.findCategoriesByParentId(id);
+  }
+
   @Get(':id')
   @ApiOperation({ summary: 'Get category' })
   @ApiDocumentResponse({ status: HttpStatus.OK, message: 'Get category successfully', model: GetCategorySuccessDoc })

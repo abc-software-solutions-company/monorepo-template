@@ -28,6 +28,9 @@ const Menu: FC<MenuProps> = ({ className, ...rest }) => {
         <NavigationLink className="px-4 py-2 font-medium" activeClassName="text-primary font-bold" href={'/blog'}>
           Blog
         </NavigationLink>
+        <NavigationLink className="px-4 py-2 font-medium" activeClassName="text-primary font-bold" href={'/product'}>
+          Product
+        </NavigationLink>
       </nav>
     </div>
   );

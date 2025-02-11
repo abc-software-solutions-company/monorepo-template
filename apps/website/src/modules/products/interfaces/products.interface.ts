@@ -4,11 +4,11 @@ import { SeoMetadata } from '@repo/shared-universal/interfaces/metadata.interfac
 import { ResponseFormat } from '@/interfaces/api-response.interface';
 import { BaseFilter } from '@/interfaces/filter.interface';
 
-import { POST_TYPE } from '../constants/posts.constant';
+import { PRODUCT_TYPE } from '../constants/products.constant';
 
 import { UserEntity } from '@/modules/users/interfaces/users.interface';
 
-export type PostEntity = {
+export type ProductEntity = {
   id: string;
   name: string;
   slug: string;
@@ -24,10 +24,10 @@ export type PostEntity = {
   creator: UserEntity;
 };
 
-export type CreatePostDto = Omit<PostEntity, 'id'>;
-export type UpdatePostDto = Partial<CreatePostDto>;
-export type PostsResponse = ResponseFormat<PostEntity[]>;
-export type PostResponse = ResponseFormat<PostEntity>;
-export type PostFilter = BaseFilter & {
-  type?: POST_TYPE;
+export type CreateProductDto = Omit<ProductEntity, 'id'>;
+export type UpdateProductDto = Partial<CreateProductDto>;
+export type ProductsResponse = ResponseFormat<ProductEntity[]>;
+export type ProductResponse = ResponseFormat<ProductEntity>;
+export type ProductFilter = BaseFilter & {
+  type?: PRODUCT_TYPE;
 };

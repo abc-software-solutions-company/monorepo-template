@@ -56,6 +56,9 @@ const MenuMobile: FC<MenuMobileProps> = ({ className }) => {
             <NavigationLink href="/blog" onClick={handleNavigate}>
               BLOG
             </NavigationLink>
+            <NavigationLink href="/product" onClick={handleNavigate}>
+              PRODUCT
+            </NavigationLink>
             <NavigationLink href="/terms-and-conditions" onClick={handleNavigate}>
               TERMS AND CONDITIONS
             </NavigationLink>
