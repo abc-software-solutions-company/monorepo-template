@@ -33,4 +33,5 @@ export type PostResponse = ResponseFormat<PostEntity>;
 export type PostFilter = {
   type?: POST_TYPE;
   categoryId?: string;
+  year?: number;
 } & BaseFilter;

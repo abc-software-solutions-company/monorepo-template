@@ -34,7 +34,7 @@ const BlogItem: FC<BlogItemProps> = ({ className, item, ...rest }) => {
       data-testid="post-item"
       {...rest}
     >
-      <div className="space-y-4 p-4">
+      <div className="space-y-4">
         {category && (
           <div className="flex items-center space-x-2">
             <span className={classNames('rounded-md px-2 py-1 text-xs font-medium', 'bg-primary text-white')}>{category}</span>

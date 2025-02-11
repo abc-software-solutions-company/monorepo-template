@@ -15,4 +15,6 @@ export type PostEntity = {
 export type PostsResponse = ResponseFormat<PostEntity[]>;
 export type PostResponse = ResponseFormat<PostEntity>;
 
-export type PostFilter = BaseFilter;
+export type PostFilter = BaseFilter & {
+  year?: number;
+};

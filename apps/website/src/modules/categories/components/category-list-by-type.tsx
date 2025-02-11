@@ -1,30 +1,48 @@
 'use client';
 
 import React, { FC } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { useLocale } from 'next-intl';
-import classNames from 'classnames';
 import { Loading } from '@repo/react-web-ui-shadcn/components/ui/loading';
+import { cn } from '@repo/react-web-ui-shadcn/lib/utils';
 import { useQuery } from '@tanstack/react-query';
 
-import { Link } from '@/navigation';
+import { useRouter } from '@/navigation';
 
 import { ComponentBaseProps } from '@/interfaces/component.interface';
 
 import { CATEGORY_TYPE, QUERY_CATEGORY_BY_TYPE } from '../constants/categories.constant';
 
+import { PostFilter } from '@/modules/posts/interfaces/posts.interface';
+
 import CategoryApi from '../api/categories.api';
 
 type CategoryListProps = {
   type: CATEGORY_TYPE;
+  currentCategory: string;
 } & ComponentBaseProps;
 
-const CategoryListByType: FC<CategoryListProps> = ({ className, type, ...rest }) => {
+const CategoryListByType: FC<CategoryListProps> = ({ className, type, currentCategory }) => {
   const locale = useLocale();
+  const router = useRouter();
+  const searchParams = useSearchParams();
 
   const { data } = useQuery({
     queryKey: [QUERY_CATEGORY_BY_TYPE, type],
     queryFn: async () => await CategoryApi.getServerCategoriesByType(type),
   });
+
+  const handleClick = (slug: string | undefined) => {
+    const query = { page: 1 } as PostFilter;
+
+    if (searchParams.get('q')) query.q = searchParams.get('q') as string;
+    if (searchParams.get('year')) query.year = parseInt(searchParams.get('year') as string, 10);
+    if (slug) {
+      router.push({ pathname: '/blog/category/[slug]', params: { slug: slug as string }, query });
+    } else {
+      router.push({ pathname: '/blog', query });
+    }
+  };
 
   if (!data) {
     return (
@@ -37,18 +55,32 @@ const CategoryListByType: FC<CategoryListProps> = ({ className, type, ...rest })
   }
 
   return (
-    <div className={classNames('grid gap-3', className)} {...rest}>
-      <ul>
+    <div className={cn(className)}>
+      <h3 className="py-4 text-2xl font-semibold">Categories</h3>
+      <div className="grid gap-2">
+        <button className={cn('text-left', currentCategory === undefined && 'text-primary')} onClick={() => handleClick(undefined)}>
+          All categories
+        </button>
         {data.data?.map(item => {
+          const query = { page: 1 } as PostFilter;
+
+          if (searchParams.get('q')) query.q = searchParams.get('q') as string;
+          if (searchParams.get('year')) query.year = parseInt(searchParams.get('year') as string, 10);
+
           const name = item.nameLocalized?.find(x => x.lang === locale)?.value ?? '';
 
           return (
-            <li key={item.id} className={classNames('border')} data-testid="category-item">
-              <Link href={{ pathname: '/blog/category/[slug]', params: { slug: item.slug } }}>{name}</Link>
-            </li>
+            <button
+              key={item.id}
+              data-testid="category-item"
+              className={cn('text-left', item.slug === currentCategory && 'text-primary')}
+              onClick={() => handleClick(item.slug)}
+            >
+              {name}
+            </button>
           );
         })}
-      </ul>
+      </div>
     </div>
   );
 };

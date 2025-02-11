@@ -24,6 +24,7 @@ export default async function BlogPage(pageProps: PageProps) {
     page: parseInt(pageProps.searchParams.page as string) || 1,
     limit: parseInt(pageProps.searchParams.limit as string) || 5,
     q: (pageProps.searchParams.q as string) ?? '',
+    year: parseInt(pageProps.searchParams.year as string) || undefined,
     type: POST_TYPE.NEWS,
   };
 

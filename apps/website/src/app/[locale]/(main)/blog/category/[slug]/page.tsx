@@ -30,6 +30,7 @@ export default async function BlogCategoryPage(pageProps: PageProps) {
     page: parseInt(pageProps.searchParams.page as string) || 1,
     limit: parseInt(pageProps.searchParams.limit as string) || 5,
     q: (pageProps.searchParams.q as string) ?? '',
+    year: parseInt(pageProps.searchParams.year as string) || undefined,
     categoryId: category.data.id,
     type: POST_TYPE.NEWS,
   };

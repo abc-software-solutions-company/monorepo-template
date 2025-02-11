@@ -1,13 +1,13 @@
 'use client';
 
-import React, { FC, useCallback, useState } from 'react';
+import React, { FC, useState } from 'react';
 import { useParams } from 'next/navigation';
-import classNames from 'classnames';
 import { Search } from 'lucide-react';
 import { Button } from '@repo/react-web-ui-shadcn/components/ui/button';
 import { Input } from '@repo/react-web-ui-shadcn/components/ui/input';
 import { Loading } from '@repo/react-web-ui-shadcn/components/ui/loading';
 import Pagination from '@repo/react-web-ui-shadcn/components/ui/pagination-custom';
+import { cn } from '@repo/react-web-ui-shadcn/lib/utils';
 import { useQuery } from '@tanstack/react-query';
 
 import { usePathname, useRouter } from '@/navigation';
@@ -21,6 +21,7 @@ import CategoryListByType from '@/modules/categories/components/category-list-by
 import { CATEGORY_TYPE } from '@/modules/categories/constants/categories.constant';
 
 import BlogList from './blog-list';
+import FilterPostByYear from './filter-post-by-year';
 
 import PostApi from '../api/posts.api';
 
@@ -42,17 +43,18 @@ const BlogRoot: FC<BlogRootProps> = ({ className, filter }) => {
     staleTime: 0,
   });
 
-  const handleSubmit = useCallback(() => {
+  const handleSearch = () => {
     const query = { page: 1 } as PostFilter;
 
     if (searchTerm) query.q = searchTerm;
+    if (filter.year) query.year = filter.year;
 
     if (isCategoryPage) {
       router.push({ pathname: '/blog/category/[slug]', params: { slug: params.slug }, query });
     } else {
       router.push({ pathname: '/blog', query });
     }
-  }, [searchTerm, isCategoryPage, router, params]);
+  };
 
   if (isLoading || !data) {
     return (
@@ -65,23 +67,32 @@ const BlogRoot: FC<BlogRootProps> = ({ className, filter }) => {
   }
 
   return (
-    <div className={classNames('w-full', className)}>
+    <div className={cn(className)}>
       <div className="container">
-        <div className="mb-8">
+        <div className="relative mx-auto mb-12 flex max-w-xl gap-2">
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-            <Input placeholder="Search posts..." className="pl-10" value={searchTerm} onChange={e => setSearchTerm(e.target.value)} />
+            <Input
+              placeholder="Search posts..."
+              value={searchTerm}
+              onChange={e => setSearchTerm(e.target.value)}
+              onKeyDown={e => {
+                if (e.key === 'Enter') {
+                  handleSearch();
+                }
+              }}
+            />
           </div>
-          <Button type="button" onClick={handleSubmit}>
+          <Button type="button" onClick={handleSearch}>
             Search
           </Button>
         </div>
-        <div className="grid grid-cols-1 gap-8 lg:grid-cols-[1fr,300px]">
+        <div className="grid grid-cols-[1fr,300px] gap-8">
           <div>
             {data.data.length > 0 ? (
               <>
                 <BlogList items={data.data} />
-                <div className="mt-12 flex justify-center">
+                <div className="my-12 flex justify-center">
                   <Pagination
                     className="text-center"
                     totalItems={data.meta?.paging?.totalItems}
@@ -91,6 +102,7 @@ const BlogRoot: FC<BlogRootProps> = ({ className, filter }) => {
                       const query = { page } as PostFilter;
 
                       if (searchTerm) query.q = searchTerm;
+                      if (filter.year) query.year = filter.year;
 
                       if (isCategoryPage) {
                         router.push({ pathname: '/blog/category/[slug]', params: { slug: params.slug }, query });
@@ -104,12 +116,12 @@ const BlogRoot: FC<BlogRootProps> = ({ className, filter }) => {
             ) : (
               <div className="py-8 text-center">
                 <h3 className="text-lg font-medium">No posts found</h3>
-                <p className="mt-2 text-muted-foreground">Try adjusting your search terms</p>
               </div>
             )}
           </div>
-          <div>
-            <CategoryListByType type={CATEGORY_TYPE.NEWS} />
+          <div className="space-y-8">
+            <CategoryListByType currentCategory={params.slug} type={CATEGORY_TYPE.NEWS} />
+            <FilterPostByYear currentYear={filter.year} />
           </div>
         </div>
       </div>
