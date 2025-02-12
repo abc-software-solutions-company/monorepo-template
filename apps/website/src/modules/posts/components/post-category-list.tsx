@@ -11,18 +11,16 @@ import { useRouter } from '@/navigation';
 
 import { ComponentBaseProps } from '@/interfaces/component.interface';
 
-import { CATEGORY_TYPE, QUERY_CATEGORY_BY_TYPE } from '../constants/categories.constant';
-
+import CategoryApi from '@/modules/categories/api/categories.api';
+import { CATEGORY_TYPE, QUERY_CATEGORY_BY_TYPE } from '@/modules/categories/constants/categories.constant';
 import { PostFilter } from '@/modules/posts/interfaces/posts.interface';
 
-import CategoryApi from '../api/categories.api';
-
-type CategoryListProps = {
+type PostCategoryListProps = {
   type: CATEGORY_TYPE;
   currentCategory: string;
 } & ComponentBaseProps;
 
-const CategoryListByType: FC<CategoryListProps> = ({ className, type, currentCategory }) => {
+const PostCategoryList: FC<PostCategoryListProps> = ({ className, type, currentCategory }) => {
   const locale = useLocale();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -38,9 +36,9 @@ const CategoryListByType: FC<CategoryListProps> = ({ className, type, currentCat
     if (searchParams.get('q')) query.q = searchParams.get('q') as string;
     if (searchParams.get('year')) query.year = parseInt(searchParams.get('year') as string, 10);
     if (slug) {
-      router.push({ pathname: '/blog/category/[slug]', params: { slug: slug as string }, query });
+      router.push({ pathname: '/product/category/[slug]', params: { slug: slug as string }, query });
     } else {
-      router.push({ pathname: '/blog', query });
+      router.push({ pathname: '/product', query });
     }
   };
 
@@ -85,4 +83,4 @@ const CategoryListByType: FC<CategoryListProps> = ({ className, type, currentCat
   );
 };
 
-export default CategoryListByType;
+export default PostCategoryList;

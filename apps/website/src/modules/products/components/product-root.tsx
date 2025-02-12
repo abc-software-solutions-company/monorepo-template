@@ -13,23 +13,22 @@ import { useQuery } from '@tanstack/react-query';
 import { usePathname, useRouter } from '@/navigation';
 
 import { ComponentBaseProps } from '@/interfaces/component.interface';
-import { PostFilter } from '../interfaces/posts.interface';
+import { ProductFilter } from '../interfaces/products.interface';
 
-import { QUERY_POST_LIST } from '../constants/posts.constant';
+import { QUERY_PRODUCT_LIST } from '../constants/products.constant';
 
 import { CATEGORY_TYPE } from '@/modules/categories/constants/categories.constant';
 
-import BlogList from './blog-list';
-import FilterPostByYear from './filter-post-by-year';
-import PostCategoryList from './post-category-list';
+import ProductCategoryList from './product-category-list';
+import BlogList from './product-list';
 
-import PostApi from '../api/posts.api';
+import ProductApi from '../api/products.api';
 
-type BlogRootProps = {
-  filter: PostFilter;
+type ProductRootProps = {
+  filter: ProductFilter;
 } & ComponentBaseProps;
 
-const BlogRoot: FC<BlogRootProps> = ({ className, filter }) => {
+const ProductRoot: FC<ProductRootProps> = ({ className, filter }) => {
   const router = useRouter();
   const pathname = usePathname();
   const params = useParams<{ slug: string }>();
@@ -38,21 +37,21 @@ const BlogRoot: FC<BlogRootProps> = ({ className, filter }) => {
   const isCategoryPage = pathname.includes('/category');
 
   const { data, isLoading } = useQuery({
-    queryKey: [QUERY_POST_LIST, filter],
-    queryFn: async () => await PostApi.getServerPosts(filter),
+    queryKey: [QUERY_PRODUCT_LIST, filter],
+    queryFn: async () => await ProductApi.getServerProducts(filter),
     staleTime: 0,
   });
 
   const handleSearch = () => {
-    const query = { page: 1 } as PostFilter;
+    const query = { page: 1 } as ProductFilter;
 
     if (searchTerm) query.q = searchTerm;
     if (filter.year) query.year = filter.year;
 
     if (isCategoryPage) {
-      router.push({ pathname: '/blog/category/[slug]', params: { slug: params.slug }, query });
+      router.push({ pathname: '/product/category/[slug]', params: { slug: params.slug }, query });
     } else {
-      router.push({ pathname: '/blog', query });
+      router.push({ pathname: '/product', query });
     }
   };
 
@@ -70,7 +69,7 @@ const BlogRoot: FC<BlogRootProps> = ({ className, filter }) => {
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
-            placeholder="Search posts..."
+            placeholder="Search products..."
             value={searchTerm}
             onChange={e => setSearchTerm(e.target.value)}
             onKeyDown={e => {
@@ -96,15 +95,15 @@ const BlogRoot: FC<BlogRootProps> = ({ className, filter }) => {
                   currentPage={data.meta?.paging?.currentPage}
                   itemPerPage={data.meta?.paging?.itemsPerPage}
                   onChange={page => {
-                    const query = { page } as PostFilter;
+                    const query = { page } as ProductFilter;
 
                     if (searchTerm) query.q = searchTerm;
                     if (filter.year) query.year = filter.year;
 
                     if (isCategoryPage) {
-                      router.push({ pathname: '/blog/category/[slug]', params: { slug: params.slug }, query });
+                      router.push({ pathname: '/product/category/[slug]', params: { slug: params.slug }, query });
                     } else {
-                      router.push({ pathname: '/blog', query });
+                      router.push({ pathname: '/product', query });
                     }
                   }}
                 />
@@ -112,17 +111,16 @@ const BlogRoot: FC<BlogRootProps> = ({ className, filter }) => {
             </>
           ) : (
             <div className="py-8 text-center">
-              <h3 className="text-lg font-medium">No posts found</h3>
+              <h3 className="text-lg font-medium">No products found</h3>
             </div>
           )}
         </div>
         <div className="space-y-8">
-          <PostCategoryList currentCategory={params.slug} type={CATEGORY_TYPE.NEWS} />
-          <FilterPostByYear currentYear={filter.year} />
+          <ProductCategoryList currentCategory={params.slug} type={CATEGORY_TYPE.PRODUCT} />
         </div>
       </div>
     </div>
   );
 };
 
-export default BlogRoot;
+export default ProductRoot;
