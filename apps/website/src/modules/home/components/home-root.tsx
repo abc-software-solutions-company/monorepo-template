@@ -14,21 +14,11 @@ import Projects from './projects';
 const HomeRoot: FC<ComponentBaseProps> = () => {
   return (
     <div className="relative">
-      <div id="hero" className="min-h-screen">
-        <Hero />
-      </div>
-      <div id="projects" className="min-h-screen">
-        <Projects />
-      </div>
-      <div id="how-it-works" className="min-h-screen">
-        <HowItWorks />
-      </div>
-      <div id="faq" className="min-h-screen">
-        <FrequentlyAskedQuestions />
-      </div>
-      <div id="contact" className="min-h-screen">
-        <ContactRoot />
-      </div>
+      <Hero />
+      <Projects />
+      <HowItWorks />
+      <FrequentlyAskedQuestions />
+      <ContactRoot />
     </div>
   );
 };
