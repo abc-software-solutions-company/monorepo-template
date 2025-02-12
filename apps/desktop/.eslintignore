@@ -1,0 +1,10 @@
+.turbo
+public
+build
+dist
+patches
+node_modules
+coverage-unit
+coverage-e2e
+unit-results
+e2e-results
