@@ -1,25 +1,22 @@
+'use client';
+
 import React, { FC } from 'react';
-import classNames from 'classnames';
 
 import { ComponentBaseProps } from '@/interfaces/component.interface';
 
 import ContactRoot from '@/modules/contacts/components/contact-root';
-import { FrequentlyAskedQuestions } from '@/modules/home/components/frequently-asked-questions';
-import NewsLetterRoot from '@/modules/news-letter/components/new-letter-root';
 
-import CallToAction from './call-to-action';
+import { FrequentlyAskedQuestions } from './frequently-asked-questions';
 import Hero from './hero';
 import HowItWorks from './how-it-works';
 import Projects from './projects';
 
-const HomeRoot: FC<ComponentBaseProps> = ({ className }) => {
+const HomeRoot: FC<ComponentBaseProps> = () => {
   return (
-    <div className={classNames(className)}>
+    <div className="relative">
       <Hero />
       <Projects />
       <HowItWorks />
-      <CallToAction />
-      <NewsLetterRoot />
       <FrequentlyAskedQuestions />
       <ContactRoot />
     </div>

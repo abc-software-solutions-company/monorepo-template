@@ -1,6 +1,6 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { Transform } from 'class-transformer';
-import { IsArray, IsEnum, IsOptional, IsString } from 'class-validator';
+import { IsArray, IsEnum, IsInt, IsOptional, IsString } from 'class-validator';
 
 import { BaseFilterDto } from '@/common/dtos/base-filter.dto';
 
@@ -11,6 +11,11 @@ export class FilterPostDto extends BaseFilterDto {
   @IsEnum(POST_TYPE)
   @IsOptional()
   type?: POST_TYPE;
+
+  @ApiPropertyOptional()
+  @IsInt()
+  @IsOptional()
+  year?: number;
 
   @ApiPropertyOptional()
   @IsString()

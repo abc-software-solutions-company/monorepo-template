@@ -97,41 +97,13 @@ export async function generateMetadata(_layoutProps: LayoutProps): Promise<Metad
       },
     },
     icons: [
-      {
-        rel: 'shortcut icon',
-        type: 'image/x-icon',
-        url: '/favicon.ico',
-      },
-      {
-        rel: 'icon',
-        type: 'image/x-icon',
-        url: '/favicon.ico',
-      },
-      {
-        rel: 'icon',
-        sizes: '192x192',
-        url: '/icon-192.png',
-      },
-      {
-        rel: 'icon',
-        sizes: '512x512',
-        url: '/icon-512.png',
-      },
-      {
-        rel: 'apple-touch-icon',
-        sizes: '180x180',
-        url: '/apple-touch-icon.png',
-      },
-      {
-        rel: 'mask-icon',
-        sizes: '192x192',
-        url: '/icon-192-maskable.png',
-      },
-      {
-        rel: 'mask-icon',
-        sizes: '512x512',
-        url: '/icon-512-maskable.png',
-      },
+      { rel: 'shortcut icon', type: 'image/x-icon', url: '/favicon.ico' },
+      { rel: 'icon', type: 'image/x-icon', url: '/favicon.ico' },
+      { rel: 'icon', sizes: '192x192', url: '/icon-192.png' },
+      { rel: 'icon', sizes: '512x512', url: '/icon-512.png' },
+      { rel: 'apple-touch-icon', sizes: '180x180', url: '/apple-touch-icon.png' },
+      { rel: 'mask-icon', sizes: '192x192', url: '/icon-192-maskable.png' },
+      { rel: 'mask-icon', sizes: '512x512', url: '/icon-512-maskable.png' },
     ],
     robots: {
       index: isSeoEnabled,

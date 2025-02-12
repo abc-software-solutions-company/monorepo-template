@@ -37,7 +37,7 @@ export function generateContentMetadata<T extends BaseContentWithSEO>({ locale, 
   const seoDescription = data?.seoMeta?.descriptionLocalized?.find(x => x.lang === locale)?.value ?? stripHTML(description);
   const keywords = data?.seoMeta?.keywords ?? '';
 
-  const creator = data?.creator.name;
+  const creator = data?.creator?.name ?? 'Anonymous';
   const createdAt = data?.createdAt.toString();
 
   const ogImage = image ? `${process.env.NEXT_PUBLIC_API_URL}/${image}` : WEBSITE_OG_IMAGE;

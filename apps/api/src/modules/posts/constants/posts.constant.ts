@@ -4,7 +4,7 @@ export const POST_GET_FIELDS = [
   [
     'post.id post.slug post.type post.status post.coverLocalized post.nameLocalized post.descriptionLocalized post.bodyLocalized post.seoMeta post.createdAt',
   ],
-  ['user.id user.name user.email'],
+  ['user.id user.name user.avatar'],
   ['category.id category.nameLocalized'],
   ['postFile.fileId postFile.position'],
   ['image.id image.uniqueName'],

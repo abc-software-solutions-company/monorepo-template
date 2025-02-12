@@ -4,12 +4,11 @@ import { SeoMetadata } from '@repo/shared-universal/interfaces/metadata.interfac
 import { ResponseFormat } from '@/interfaces/api-response.interface';
 import { BaseFilter } from '@/interfaces/filter.interface';
 
-import { POST_TYPE } from '../constants/posts.constant';
+import { CATEGORY_TYPE } from '../constants/categories.constant';
 
-import { CategoryEntity } from '@/modules/categories/interfaces/categories.interface';
 import { UserEntity } from '@/modules/users/interfaces/users.interface';
 
-export type PostEntity = {
+export type CategoryEntity = {
   id: string;
   name: string;
   slug: string;
@@ -23,15 +22,14 @@ export type PostEntity = {
   createdAt: Date;
   updatedAt: Date;
   creator: UserEntity;
-  category: CategoryEntity;
 };
 
-export type CreatePostDto = Omit<PostEntity, 'id'>;
-export type UpdatePostDto = Partial<CreatePostDto>;
-export type PostsResponse = ResponseFormat<PostEntity[]>;
-export type PostResponse = ResponseFormat<PostEntity>;
-export type PostFilter = {
-  type?: POST_TYPE;
-  categoryId?: string;
-  year?: number;
-} & BaseFilter;
+export type CreateCategoryDto = Omit<CategoryEntity, 'id'>;
+export type UpdateCategoryDto = Partial<CreateCategoryDto>;
+export type CategoriesResponse = ResponseFormat<CategoryEntity[]>;
+export type CategoryResponse = ResponseFormat<CategoryEntity>;
+export type CategoryFilter = BaseFilter & {
+  type?: CATEGORY_TYPE;
+  parentId?: string;
+  excludeId?: string;
+};

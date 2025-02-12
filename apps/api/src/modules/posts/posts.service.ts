@@ -63,7 +63,7 @@ export class PostsService {
   }
 
   async find(filterDto: FilterPostDto) {
-    const { q, order, status, sort, skip, limit, type, categoryId } = filterDto;
+    const { q, order, status, sort, skip, limit, type, categoryId, year } = filterDto;
 
     const queryBuilder = this.createQueryBuilderWithJoins('post');
 
@@ -82,6 +82,12 @@ export class PostsService {
         "EXISTS (SELECT 1 FROM jsonb_array_elements(post.nameLocalized) AS translation WHERE LOWER(translation->>'value') LIKE LOWER(:searchTerm))",
         { searchTerm }
       );
+    }
+    if (year) {
+      const startDate = new Date(year, 0, 1);
+      const endDate = new Date(year, 11, 31, 23, 59, 59, 999);
+
+      queryBuilder.andWhere('post.createdAt BETWEEN :startDate AND :endDate', { startDate, endDate });
     }
     if (sort) {
       if (order) {

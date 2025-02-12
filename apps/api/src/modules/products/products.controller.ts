@@ -1,5 +1,5 @@
-import { Controller, Get, Param, Query, UseGuards } from '@nestjs/common';
-import { ApiBearerAuth, ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
+import { Controller, Get, Param, Query } from '@nestjs/common';
+import { ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
 
 import { ApiDocumentResponse } from '@/common/decorators/api-document-response.decorator';
 import { PaginatedResponse } from '@/common/decorators/paginated-response.decorator';
@@ -10,12 +10,8 @@ import { GetProductsSuccessDoc, GetProductSuccessDoc } from './docs/products.doc
 import { FilterProductDto } from './dto/filter-product.dto';
 import { ProductsService } from './products.service';
 
-import { AccessTokenGuard } from '../auth/guards/access-token.guard';
-
 @Controller('products')
 @ApiTags('Products')
-@UseGuards(AccessTokenGuard)
-@ApiBearerAuth('accessToken')
 export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}
 
