@@ -6,7 +6,6 @@
   "scripts": {
     "dev": "concurrently \"vite\" \"cross-env DEV= tsc-watch -p tsconfig-electron.json --onSuccess \\\"electron .\\\"\"",
     "preview": "vite build && tsc -p tsconfig-electron.json && cross-env PREVIEW= electron .",
-    "build": "vite build && tsc -p tsconfig-electron.json && electron-forge make",
     "check:format": "prettier --check .",
     "check:types": "tsc --pretty --noEmit",
     "format": "prettier --write .",
@@ -23,11 +22,6 @@
     "react-dom": "^18.2.0"
   },
   "devDependencies": {
-    "@electron-forge/cli": "^6.0.4",
-    "@electron-forge/maker-deb": "^6.0.4",
-    "@electron-forge/maker-rpm": "^6.0.4",
-    "@electron-forge/maker-squirrel": "^6.0.4",
-    "@electron-forge/maker-zip": "^6.0.4",
     "@eslint/js": "^9.19.0",
     "@repo/config-prettier": "*",
     "@repo/config-tailwindcss": "*",
