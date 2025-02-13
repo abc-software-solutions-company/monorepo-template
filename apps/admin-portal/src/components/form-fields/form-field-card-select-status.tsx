@@ -38,7 +38,7 @@ export default function FormFieldCardSelectStatus<T extends FieldValues>({
           render={({ field, fieldState: { error } }) => (
             <FormItem>
               <FormControl>
-                <Select value={field.value} onValueChange={field.onChange}>
+                <Select value={field.value} onValueChange={field.onChange} data-testid='status-select'>
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>

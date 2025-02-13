@@ -35,8 +35,8 @@ const PostFilters: FC<ComponentBaseProps> = ({ className }) => {
   return (
     <div className={classNames('posts-all-filters', className)}>
       <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button className="px-2.5">
+        <DropdownMenuTrigger  asChild>
+          <Button data-testid="filter-btn" className="px-2.5">
             <ListFilterIcon size={18} />
           </Button>
         </DropdownMenuTrigger>

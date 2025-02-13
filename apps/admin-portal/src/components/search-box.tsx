@@ -38,7 +38,7 @@ function SearchBox({ className, value = '', placeholder, onKeywordChange, onSear
           if (event.key === 'Enter') onSearch?.(val);
         }}
       />
-      <Button className="z-0 -ml-10 h-9 rounded-l-none rounded-r-sm p-2" variant="ghost" onClick={() => onSearch?.(val)}>
+      <Button data-testid='search-btn' className="z-0 -ml-10 h-9 rounded-l-none rounded-r-sm p-2" variant="ghost" onClick={() => onSearch?.(val)}>
         <SearchIcon size={18} />
       </Button>
     </div>
