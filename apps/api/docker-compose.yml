@@ -60,6 +60,18 @@ services:
       - monorepo-template-minio-data:/data
     command: server /data --console-address ":9001"
 
+  monorepo-template-api:
+    build:
+      context: ../../
+      dockerfile: apps/api/Dockerfile
+    container_name: monorepo-template-api
+    ports:
+      - '3500:3500'
+    env_file:
+      - .env
+    volumes:
+      - ~/monorepo-uploads:/app/apps/api/dist/uploads
+
 volumes:
   monorepo-template-posgres-db:
   monorepo-template-posgres-db-test:
