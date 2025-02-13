@@ -70,7 +70,7 @@ services:
     env_file:
       - .env
     volumes:
-      - ~/monorepo-uploads:/app/apps/api/dist/uploads
+      - ~/monorepo-uploads:/app/apps/api/dist/uploads:rw
 
 volumes:
   monorepo-template-posgres-db:
