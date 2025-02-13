@@ -97,7 +97,7 @@ jobs:
               ports:
                 - "${{ env.DOCKER_HOST_PORT }}:${{ env.DOCKER_CONTAINER_PORT }}"
               volumes:
-                - ~/monorepo-assets:/app/apps/api/dist/assets
+                - ~/monorepo-uploads:/app/apps/api/dist/uploads
           EOF
 
       - name: Copy docker-compose file to server
