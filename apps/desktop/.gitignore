@@ -16,12 +16,13 @@ dist-ssr
 /e2e-results
 
 # next.js
-/.next/
 /.turbo/
 /out/
 
 # production
 /build
+/release
+/unpacked
 
 # misc
 .DS_Store

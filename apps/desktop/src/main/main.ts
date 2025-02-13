@@ -4,25 +4,27 @@ import { join } from 'path';
 import './api';
 
 const isDev = process.env.DEV != undefined;
-const isPreview = process.env.PREVIEW != undefined;
 
 function createWindow() {
   const mainWindow = new BrowserWindow({
     width: 800,
     height: 600,
+    icon: join(app.getAppPath(), 'resources', process.platform === 'win32' ? 'icon.ico' : process.platform === 'darwin' ? 'icon.icns' : 'icon.png'),
     webPreferences: {
       preload: join(__dirname, 'preload.js'),
+      nodeIntegration: true,
+      contextIsolation: true,
     },
   });
 
   if (isDev) {
     mainWindow.loadURL('http://localhost:5173');
     // mainWindow.webContents.openDevTools();
-  } else if (isPreview) {
-    // mainWindow.webContents.openDevTools();
-    mainWindow.loadFile('dist/index.html');
   } else {
-    mainWindow.loadFile('dist/index.html');
+    // In production and preview, load from the dist directory
+    const indexPath = join(app.getAppPath(), 'dist', 'index.html');
+
+    mainWindow.loadFile(indexPath);
   }
 }
 

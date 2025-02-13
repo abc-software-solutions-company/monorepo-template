@@ -3,9 +3,12 @@ import react from '@vitejs/plugin-react-swc';
 import { resolve } from 'path';
 
 // https://vite.dev/config/
-export default defineConfig(() => {
+export default defineConfig(({ mode }) => {
   return {
     base: './',
+    build: {
+      minify: mode === 'production',
+    },
     plugins: [react()] as UserConfig['plugins'],
     resolve: {
       alias: [
