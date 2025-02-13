@@ -12,6 +12,8 @@ RUN apk add --no-cache libc6-compat
 RUN apk add --no-cache python3 make g++
 # Set working directory
 WORKDIR /app
+# Create uploads directory and set permissions
+RUN mkdir -p /app/apps/api/dist/uploads && chmod 777 /app/apps/api/dist/uploads
 RUN yarn global add turbo@2.3.3
 COPY . .
 RUN turbo prune api --docker
