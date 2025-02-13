@@ -1,0 +1,58 @@
+appId: com.abc.desktop
+productName: ABC Desktop
+asar: true
+asarUnpack:
+  - unpacked/**
+compression: normal
+directories:
+  output: release
+  buildResources: resources
+files:
+  - 'dist/**/*'
+  - 'package.json'
+  - '**/*'
+  - '!**/node_modules/*/{CHANGELOG.md,README.md,README,readme.md,readme}'
+  - '!**/node_modules/*/{test,__tests__,tests,powered-test,example,examples}'
+  - '!**/node_modules/*.d.ts'
+  - '!**/node_modules/.bin'
+  - '!**/node_modules/@ckeditor/**'
+  - '!**/*.{iml,o,hprof,orig,pyc,pyo,rbc,swp,csproj,sln,xproj}'
+  - '!.editorconfig'
+  - '!**/._*'
+  - '!**/{.DS_Store,.git,.hg,.svn,CVS,RCS,SCCS,.gitignore,.gitattributes}'
+  - '!**/{__pycache__,thumbs.db,.flowconfig,.idea,.vs,.nyc_output}'
+  - '!**/{appveyor.yml,.travis.yml,circle.yml}'
+  - '!**/{npm-debug.log,yarn.lock,.yarn-integrity,.yarn-metadata.json}'
+
+win:
+  executableName: ABC Desktop
+  icon: resources/icon.ico
+nsis:
+  artifactName: ${name}-${version}-setup.${ext}
+  shortcutName: ${productName}
+  uninstallDisplayName: ${productName}
+  createDesktopShortcut: always
+mac:
+  icon: resources/icon.icns
+  category: public.app-category.developer-tools
+  entitlementsInherit: resources/entitlements.mac.plist
+  extendInfo:
+    - NSCameraUsageDescription: Application requests access to the device's camera.
+    - NSMicrophoneUsageDescription: Application requests access to the device's microphone.
+    - NSDocumentsFolderUsageDescription: Application requests access to the user's Documents folder.
+    - NSDownloadsFolderUsageDescription: Application requests access to the user's Downloads folder.
+linux:
+  target:
+    - AppImage
+    - snap
+    - deb
+  category: Development
+  icon: resources/icon.png
+appImage:
+  artifactName: ${name}-${version}.${ext}
+removePackageScripts: true
+npmRebuild: false
+buildDependenciesFromSource: false
+publish:
+  provider: generic
+  url: https://example.com/auto-updates
