@@ -73,7 +73,7 @@ export default function FormFieldCardImages<T extends FieldValues>({
                         <div className="relative overflow-hidden rounded-md">
                           <img
                             className="aspect-square w-full object-cover"
-                            src={import.meta.env.VITE_PUBLIC_API_URL + '/' + fileEntity.uniqueName}
+                            src={BASE_S3_IMG_URL + fileEntity.uniqueName}
                             alt={fileEntity.name}
                             height="112"
                             width="112"

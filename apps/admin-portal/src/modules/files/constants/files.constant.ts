@@ -2,6 +2,12 @@ import { FileCheckIcon, XCircleIcon } from 'lucide-react';
 
 import { FileFilter } from '../interfaces/files.interface';
 
+const S3_END_POINT = import.meta.env.VITE_PUBLIC_AWS_S3_END_POINT;
+const S3_BUCKET = import.meta.env.VITE_PUBLIC_AWS_S3_BUCKET_NAME;
+
+export const BASE_S3_MG_THUMBNAIL_URL = `${S3_END_POINT}/${S3_BUCKET}/thumbnails/`;
+export const BASE_S3_IMG_URL = `${S3_END_POINT}/${S3_BUCKET}/`;
+
 export const MAX_FILES_TO_UPLOAD = 5;
 export const MAX_FILE_SIZE_IN_BYTES = 10 * 1024 * 1024;
 

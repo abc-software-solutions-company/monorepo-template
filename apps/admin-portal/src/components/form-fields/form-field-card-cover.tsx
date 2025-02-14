@@ -48,7 +48,7 @@ export default function FormFieldCardCover<T extends FieldValues>({
                   <div className="relative overflow-hidden rounded-md">
                     <img
                       className="aspect-video w-full object-cover"
-                      src={import.meta.env.VITE_PUBLIC_API_URL + '/thumbnails/' + field.value}
+                      src={BASE_S3_MG_THUMBNAIL_URL + field.value}
                       alt={field.value}
                       height="100"
                       width="100"
