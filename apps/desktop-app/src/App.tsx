@@ -1,15 +1,44 @@
 import { useState } from 'react';
 import reactLogo from './assets/react.svg';
 import { invoke } from '@tauri-apps/api/core';
+import { open } from '@tauri-apps/plugin-dialog';
 import './App.css';
 
 function App() {
   const [greetMsg, setGreetMsg] = useState('');
   const [name, setName] = useState('');
+  const [inputPath, setInputPath] = useState('');
+  const [outputDir, setOutputDir] = useState('');
 
   async function greet() {
-    // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
     setGreetMsg(await invoke('greet', { name }));
+  }
+
+  async function selectInputFile() {
+    const selected = await open({
+      multiple: false,
+      filters: [
+        {
+          name: 'Video',
+          extensions: ['mp4', 'avi', 'mkv', 'mov'],
+        },
+      ],
+    });
+
+    if (selected) {
+      setInputPath(selected as string);
+    }
+  }
+
+  async function selectOutputDir() {
+    const selected = await open({
+      directory: true,
+      multiple: false,
+    });
+
+    if (selected) {
+      setOutputDir(selected as string);
+    }
   }
 
   return (
@@ -29,6 +58,22 @@ function App() {
       </div>
       <p>Click on the Tauri, Vite, and React logos to learn more.</p>
 
+      <div className="row">
+        <div>
+          <button type="button" onClick={selectInputFile}>
+            Select File
+          </button>
+          {inputPath && <p>Selected file: {inputPath}</p>}
+        </div>
+
+        <div>
+          <button type="button" onClick={selectOutputDir}>
+            Select Folder
+          </button>
+          {outputDir && <p>Output directory: {outputDir}</p>}
+        </div>
+      </div>
+
       <form
         className="row"
         onSubmit={e => {
@@ -39,6 +84,7 @@ function App() {
         <input id="greet-input" onChange={e => setName(e.currentTarget.value)} placeholder="Enter a name..." />
         <button type="submit">Greet</button>
       </form>
+
       <p>{greetMsg}</p>
     </main>
   );
