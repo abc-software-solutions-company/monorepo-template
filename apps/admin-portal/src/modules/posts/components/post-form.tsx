@@ -1,6 +1,7 @@
 import { FC, useEffect, useRef, useState } from 'react';
 import axios from 'axios';
 import { Editor } from 'ckeditor5';
+import { GripHorizontal } from 'lucide-react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { toast } from 'sonner';
@@ -11,10 +12,12 @@ import FormFieldCKEditorMultiLanguage from '@repo/react-web-ui-shadcn/components
 import FormFieldInputMultiLanguage from '@repo/react-web-ui-shadcn/components/form-fields/form-field-input-multi-language';
 import FormFieldInputSlug from '@repo/react-web-ui-shadcn/components/form-fields/form-field-input-slug';
 import ModalLoading from '@repo/react-web-ui-shadcn/components/modals/modal-loading';
+import { Button } from '@repo/react-web-ui-shadcn/components/ui/button';
 import { Card, CardContent } from '@repo/react-web-ui-shadcn/components/ui/card';
 import { Form } from '@repo/react-web-ui-shadcn/components/ui/form';
 import { getLanguages } from '@repo/shared-universal/utils/language.util';
 import { objectToQueryString } from '@repo/shared-universal/utils/string.util';
+import { useMediaQuery } from '@repo/shared-web/hooks/use-media-query';
 
 import { PostFormData } from '../interfaces/posts.interface';
 
@@ -33,6 +36,7 @@ import FormToolbar from '@/components/form-toolbar';
 import { CATEGORY_TYPE } from '@/modules/categories/constants/categories.constant';
 import { useGetCategoriesQuery } from '@/modules/categories/hooks/use-category-queries';
 import { FileEntity } from '@/modules/files/interfaces/files.interface';
+import PostFormDrawer from '@/modules/posts/components/post-form-drawer';
 
 import { postFormLocalizeSchema } from '../validators/post-form.validator';
 
@@ -48,6 +52,8 @@ const PostForm: FC<PostFormProps> = ({ isEdit }) => {
   const locale = useLocale();
   const editorRef = useRef<Editor | null>(null);
   const [isFileManagerVisible, setIsFileManagerVisible] = useState(false);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const isMobile = useMediaQuery('(max-width: 1024px)');
   const { data: content, isFetching } = useGetPostQuery({ id: params.id as string, enabled: !!params.id });
   const { data: categories, isFetching: isCategoriesFetching } = useGetCategoriesQuery({
     filter: {
@@ -144,13 +150,29 @@ const PostForm: FC<PostFormProps> = ({ isEdit }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [form, content, categories]);
 
+  useEffect(() => {
+    if (!isMobile) {
+      setIsDrawerOpen(false);
+    }
+  }, [isMobile]);
+
   return (
     <div data-testid="frm-post">
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)}>
-          <FormToolbar className="mb-4" title={t('post_details')} submitDisabled={isFetching} onBackClick={onBackClick} />
+          <FormToolbar
+            className="mb-4"
+            title={t('post_details')}
+            submitDisabled={isFetching}
+            rightElement={
+              <Button size="icon" className="lg:hidden" onClick={() => setIsDrawerOpen(true)}>
+                <GripHorizontal className="h-5 w-5" />
+              </Button>
+            }
+            onBackClick={onBackClick}
+          />
           <div className="flex gap-4">
-            <Card className="grow">
+            <Card className="flex-1">
               <CardContent className="grid gap-4 pt-4">
                 <FormFieldInputMultiLanguage
                   form={form}
@@ -196,7 +218,7 @@ const PostForm: FC<PostFormProps> = ({ isEdit }) => {
                 <FormFieldCardSeoMeta form={form} />
               </CardContent>
             </Card>
-            <div className="w-72 shrink-0">
+            <div className="hidden w-72 shrink-0 lg:block">
               <div className="grid gap-4">
                 <FormFieldCardSelectStatus form={form} statuses={POST_STATUSES} />
                 <FormFieldCardSelectCategory form={form} fieldName="categoryId" formLabel={t('form_field_category')} items={categories?.data ?? []} />
@@ -204,6 +226,8 @@ const PostForm: FC<PostFormProps> = ({ isEdit }) => {
                 <FormFieldCardImages form={form} />
               </div>
             </div>
+
+            <PostFormDrawer form={form} isOpen={isDrawerOpen} setIsOpen={setIsDrawerOpen} categories={categories?.data ?? []} locales={languages} />
           </div>
           <Debugger text={JSON.stringify(form.formState.errors, null, 2)} />
           <Debugger text={JSON.stringify(form.watch(), null, 2)} />
