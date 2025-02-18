@@ -2,7 +2,7 @@ import { Product } from '../entities/product.entity';
 
 export const PRODUCT_GET_FIELDS = [
   [
-    'product.id product.slug product.type product.status product.coverLocalized product.nameLocalized product.descriptionLocalized product.bodyLocalized product.seoMeta product.createdAt',
+    'product.id product.slug product.type product.status product.coverLocalized product.nameLocalized product.descriptionLocalized product.bodyLocalized product.seoMeta product.publishDate product.createdAt product.updatedAt',
   ],
   ['user.id user.name user.avatar'],
   ['category.id category.nameLocalized'],
@@ -19,6 +19,7 @@ export const PRODUCT_FIELDS_TO_CREATE_OR_UPDATE = [
   'nameLocalized',
   'descriptionLocalized',
   'bodyLocalized',
+  'publishDate',
 ] as (keyof Product)[];
 
 export enum PRODUCT_STATUS {

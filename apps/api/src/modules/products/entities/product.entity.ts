@@ -22,6 +22,9 @@ export class Product extends TranslationEntity {
   @Column({ type: 'varchar', length: 50, default: PRODUCT_STATUS.DRAFT })
   status: PRODUCT_STATUS;
 
+  @Column({ type: 'timestamp without time zone', nullable: true })
+  publishDate: Date;
+
   @Expose()
   images: File[];
 

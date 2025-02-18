@@ -8,10 +8,11 @@ import { useLocale, useTranslations } from 'use-intl';
 import { zodResolver } from '@hookform/resolvers/zod';
 import Debugger from '@repo/react-web-ui-shadcn/components/debugger';
 import FormFieldCKEditorMultiLanguage from '@repo/react-web-ui-shadcn/components/form-fields/form-field-ckeditor-multi-language';
+import FormFieldInputDatePicker from '@repo/react-web-ui-shadcn/components/form-fields/form-field-input-date-picker';
 import FormFieldInputMultiLanguage from '@repo/react-web-ui-shadcn/components/form-fields/form-field-input-multi-language';
 import FormFieldInputSlug from '@repo/react-web-ui-shadcn/components/form-fields/form-field-input-slug';
 import ModalLoading from '@repo/react-web-ui-shadcn/components/modals/modal-loading';
-import { Card, CardContent } from '@repo/react-web-ui-shadcn/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@repo/react-web-ui-shadcn/components/ui/card';
 import { Form } from '@repo/react-web-ui-shadcn/components/ui/form';
 import { getLanguages } from '@repo/shared-universal/utils/language.util';
 import { objectToQueryString } from '@repo/shared-universal/utils/string.util';
@@ -69,6 +70,7 @@ const PostForm: FC<PostFormProps> = ({ isEdit }) => {
     bodyLocalized: content?.data.bodyLocalized ?? [],
     images: content?.data.images ?? ([] as FileEntity[]),
     categoryId: content?.data.category?.id,
+    publishDate: content?.data.publishDate ? new Date(content.data.publishDate) : undefined,
     seoMeta: {
       titleLocalized: content?.data.seoMeta?.titleLocalized ?? [],
       descriptionLocalized: content?.data.seoMeta?.descriptionLocalized ?? [],
@@ -202,6 +204,16 @@ const PostForm: FC<PostFormProps> = ({ isEdit }) => {
             <div className="w-72 shrink-0">
               <div className="grid gap-4">
                 <FormFieldCardSelectStatus form={form} statuses={POST_STATUSES} />
+                <Card>
+                  <CardHeader>
+                    <div className="flex items-center justify-between">
+                      <CardTitle>{t('form_field_publish_date')}</CardTitle>
+                    </div>
+                  </CardHeader>
+                  <CardContent className="pt-0">
+                    <FormFieldInputDatePicker form={form} fieldName="publishDate" size="sm" />
+                  </CardContent>
+                </Card>
                 <FormFieldCardSelectCategory form={form} fieldName="categoryId" formLabel={t('form_field_category')} items={categories?.data ?? []} />
                 <FormFieldCardCoverMultiLanguage form={form} fieldName="coverLocalized" formLabel="Cover Image" locales={languages} maxVisible={2} />
                 <FormFieldCardImages form={form} />
