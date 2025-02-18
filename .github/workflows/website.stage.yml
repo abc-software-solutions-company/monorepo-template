@@ -51,12 +51,12 @@ jobs:
 
       - name: Build Docker Image
         run: |
-          docker build -f ${{ env.DOCKERFILE_PATH }} -t ${{ env.AWS_ECR_REPOSITORY_URI }}:${{ github.sha }} .
+          DOCKER_BUILDKIT=1 docker build --compress -f ${{ env.DOCKERFILE_PATH }} -t ${{ env.AWS_ECR_REPOSITORY_URI }}:${{ github.sha }} .
 
       - name: Push Docker Image to ECR
         run: |
           echo "${{ env.ECR_LOGIN_TOKEN }}" | docker login --username AWS --password-stdin ${{ env.AWS_ECR_REPOSITORY_URI }}
-          docker push ${{ env.AWS_ECR_REPOSITORY_URI }}:${{ github.sha }}
+          DOCKER_BUILDKIT=1 docker push --compression-level=9 ${{ env.AWS_ECR_REPOSITORY_URI }}:${{ github.sha }}
 
       - name: Test Docker Image
         run: |
