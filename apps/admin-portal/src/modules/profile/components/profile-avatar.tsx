@@ -8,6 +8,8 @@ import { Avatar, AvatarFallback, AvatarImage } from '@repo/react-web-ui-shadcn/c
 import { getShortName } from '@repo/shared-universal/utils/string.util';
 import { useMutation } from '@tanstack/react-query';
 
+import { IMAGE_AVATAR_URL } from '@/constants/file.constant';
+
 import Uploader from '@/components/uploader';
 
 import { useAuthState } from '@/modules/auth/states/auth.state';
@@ -44,7 +46,7 @@ const ProfileAvatar: FC<ProfileAvatarProps> = ({ className }) => {
   return (
     <div className={classNames(className)}>
       <Avatar className="size-32 overflow-hidden rounded-full border-3 border-white">
-        <AvatarImage src={`${import.meta.env.VITE_PUBLIC_API_URL}/${user?.avatar}`} alt={shortName} />
+        <AvatarImage src={IMAGE_AVATAR_URL + user?.avatar} alt={shortName} />
         <AvatarFallback
           className={classNames(
             'rounded-full text-5xl font-bold text-white',

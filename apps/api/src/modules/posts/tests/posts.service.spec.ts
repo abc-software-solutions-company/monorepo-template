@@ -664,142 +664,97 @@ describe('PostsService', () => {
   });
 
   describe('update', () => {
-    it('should update an existing post and return it', async () => {
-      const updateDto: UpdatePostDto = { nameLocalized: [{ lang: defaultLanguage, value: 'Updated Name' }] };
-      const postId = 'post-id';
-      const creator = { id: 'user-id' } as User;
-      const existingPost = { id: postId, nameLocalized: [{ lang: defaultLanguage, value: 'Old Name' }] } as Post;
-      const savedPost = { ...existingPost, ...updateDto } as Post;
+    const creator = { id: 'user-id' } as User;
+    const postId = 'post-id';
+    const existingPost = {
+      id: postId,
+      nameLocalized: [{ lang: defaultLanguage, value: 'Original Name' }],
+      category: { id: 'category-1' } as Category,
+    } as Post;
 
-      mockPostRepository.findOneBy.mockResolvedValue(existingPost);
-      mockPostRepository.save.mockResolvedValue(savedPost);
-
-      const result = await service.update(postId, creator, updateDto);
-
-      expect(mockPostRepository.findOneBy).toHaveBeenCalledTimes(1);
-      expect(mockPostRepository.findOneBy).toHaveBeenCalledWith({ id: postId });
-      expect(mockPostRepository.save).toHaveBeenCalledTimes(1);
-      expect(mockPostRepository.save).toHaveBeenCalledWith(expect.objectContaining(updateDto));
-      expect(mockAuditLogsService.auditLogUpdate).toHaveBeenCalledTimes(1);
-      expect(result).toEqual(savedPost);
+    beforeEach(() => {
+      mockPostRepository.findOneBy.mockReset();
+      mockPostRepository.save.mockReset();
+      mockCategoriesService.findOne.mockReset();
+      mockAuditLogsService.auditLogUpdate.mockReset();
     });
 
-    it('should throw NotFoundException if post is not found', async () => {
-      const updateDto: UpdatePostDto = { nameLocalized: [{ lang: defaultLanguage, value: 'Old Name' }] };
-      const postId = 'post-id';
-      const creator = { id: 'user-id' } as User;
-
+    it('should throw NotFoundException if post does not exist', async () => {
       mockPostRepository.findOneBy.mockResolvedValue(null);
 
-      await expect(service.update(postId, creator, updateDto)).rejects.toThrow(NotFoundException);
-      expect(mockPostRepository.save).not.toHaveBeenCalled();
-      expect(mockAuditLogsService.auditLogUpdate).not.toHaveBeenCalled();
+      await expect(service.update(postId, creator, {})).rejects.toThrow(NotFoundException);
+      expect(mockPostRepository.findOneBy).toHaveBeenCalledWith({ id: postId });
     });
 
-    it('should update category when provided', async () => {
-      const updateDto: UpdatePostDto = { categoryId: 'new-category-id' };
-      const postId = 'post-id';
-      const creator = { id: 'user-id' } as User;
-      const existingPost = { id: postId, category: null } as Post;
-      const newCategory = { id: 'new-category-id' };
+    it('should update post without changing category when categoryId is not provided', async () => {
+      const updateDto: UpdatePostDto = {
+        nameLocalized: [{ lang: defaultLanguage, value: 'Updated Name' }],
+        status: POST_STATUS.PUBLISHED,
+      };
 
-      mockPostRepository.findOneBy.mockResolvedValue(existingPost);
-      mockCategoriesService.findOne.mockResolvedValue(newCategory);
-      mockPostRepository.save.mockResolvedValue({ ...existingPost, category: newCategory });
-
-      await service.update(postId, creator, updateDto);
-
-      expect(mockCategoriesService.findOne).toHaveBeenCalledWith('new-category-id');
-      expect(mockPostRepository.save).toHaveBeenCalledTimes(1);
-      expect(mockPostRepository.save).toHaveBeenCalledWith(expect.objectContaining({ category: newCategory }));
-    });
-
-    it('should update post status when provided', async () => {
-      const updateDto: UpdatePostDto = { status: POST_STATUS.PUBLISHED };
-      const postId = 'post-id';
-      const creator = { id: 'user-id' } as User;
-      const existingPost = { id: postId, status: POST_STATUS.DRAFT } as Post;
-
-      mockPostRepository.findOneBy.mockResolvedValue(existingPost);
-      mockPostRepository.save.mockResolvedValue({ ...existingPost, status: updateDto.status });
+      mockPostRepository.findOneBy.mockResolvedValue({ ...existingPost });
+      mockPostRepository.save.mockImplementation(post => Promise.resolve(post));
 
       const result = await service.update(postId, creator, updateDto);
 
-      expect(mockPostRepository.findOneBy).toHaveBeenCalledTimes(1);
-      expect(mockPostRepository.findOneBy).toHaveBeenCalledWith({ id: postId });
-      expect(mockPostRepository.save).toHaveBeenCalledTimes(1);
-      expect(mockPostRepository.save).toHaveBeenCalledWith(expect.objectContaining({ status: updateDto.status }));
-      expect(mockAuditLogsService.auditLogUpdate).toHaveBeenCalledTimes(1);
-      expect(result.status).toEqual(updateDto.status);
+      expect(result.nameLocalized).toEqual(updateDto.nameLocalized);
+      expect(result.status).toBe(POST_STATUS.PUBLISHED);
+      expect(result.category).toEqual(existingPost.category);
+      expect(mockCategoriesService.findOne).not.toHaveBeenCalled();
+      expect(mockAuditLogsService.auditLogUpdate).toHaveBeenCalledWith(creator, expect.any(Object), expect.any(Object), AUDIT_LOG_TABLE_NAME.POSTS);
     });
 
-    it('should handle images and audit log update', async () => {
+    it('should update post and change category when categoryId is provided', async () => {
+      const newCategory = { id: 'category-2' } as Category;
       const updateDto: UpdatePostDto = {
+        nameLocalized: [{ lang: defaultLanguage, value: 'Updated Name' }],
+        categoryId: newCategory.id,
+      };
+
+      mockPostRepository.findOneBy.mockResolvedValue({ ...existingPost });
+      mockCategoriesService.findOne.mockResolvedValue(newCategory);
+      mockPostRepository.save.mockImplementation(post => Promise.resolve(post));
+
+      const result = await service.update(postId, creator, updateDto);
+
+      expect(result.nameLocalized).toEqual(updateDto.nameLocalized);
+      expect(result.category).toEqual(newCategory);
+      expect(mockCategoriesService.findOne).toHaveBeenCalledWith(newCategory.id);
+      expect(mockAuditLogsService.auditLogUpdate).toHaveBeenCalledWith(creator, expect.any(Object), expect.any(Object), AUDIT_LOG_TABLE_NAME.POSTS);
+    });
+
+    it('should update post with images and handle image sorting', async () => {
+      const updateDto: UpdatePostDto = {
+        nameLocalized: [{ lang: defaultLanguage, value: 'Updated Name' }],
         images: [{ id: 'image1' }, { id: 'image2' }] as File[],
       };
-      const postId = 'post-id';
-      const creator = { id: 'user-id' } as User;
-      const existingPost = { id: postId, images: [] } as Post;
 
-      mockPostRepository.findOneBy.mockResolvedValue(existingPost);
-      mockPostRepository.save.mockResolvedValue({ ...existingPost, images: updateDto.images });
-
-      mockPostFileRepository.find.mockResolvedValue([]);
-      mockPostFileRepository.findOne.mockResolvedValueOnce(null).mockResolvedValueOnce(null);
-      mockPostFileRepository.create.mockImplementation(entity => entity);
-
-      await service.update(postId, creator, updateDto);
-
-      expect(mockPostFileRepository.find).toHaveBeenCalledWith({ where: { postId } });
-      expect(mockPostFileRepository.findOne).toHaveBeenCalledTimes(2);
-      expect(mockPostFileRepository.findOne).toHaveBeenCalledWith({ where: { fileId: 'image1', postId } });
-      expect(mockPostFileRepository.findOne).toHaveBeenCalledWith({ where: { fileId: 'image2', postId } });
-      expect(mockPostFileRepository.create).toHaveBeenCalledWith({ fileId: 'image1', postId, position: 1 });
-      expect(mockPostFileRepository.create).toHaveBeenCalledWith({ fileId: 'image2', postId, position: 2 });
-      expect(mockPostFileRepository.save).toHaveBeenCalledWith({ fileId: 'image1', postId, position: 1 });
-      expect(mockPostFileRepository.save).toHaveBeenCalledWith({ fileId: 'image2', postId, position: 2 });
-
-      expect(mockAuditLogsService.auditLogUpdate).toHaveBeenCalledTimes(1);
-    });
-
-    it('should update a post and remove category when categoryId is not provided', async () => {
-      const updateDto: UpdatePostDto = { nameLocalized: [{ lang: defaultLanguage, value: 'Updated Name' }] };
-      const postId = 'post-id';
-      const creator = { id: 'user-id' } as User;
-      const post = {
-        id: postId,
-        category: { id: 'old-category-id' },
-      } as Post;
-
-      mockPostRepository.findOneBy.mockResolvedValue(post);
-      mockPostRepository.save.mockResolvedValue({ ...post, ...updateDto, category: null });
+      mockPostRepository.findOneBy.mockResolvedValue({ ...existingPost });
+      mockPostRepository.save.mockImplementation(post => Promise.resolve(post));
       jest.spyOn(service, 'sortImages').mockResolvedValue();
 
       const result = await service.update(postId, creator, updateDto);
 
-      expect(result.category).toBeNull();
-      expect(mockPostRepository.save).toHaveBeenCalledWith(expect.objectContaining({ category: null }));
+      expect(result.nameLocalized).toEqual(updateDto.nameLocalized);
+      expect(service.sortImages).toHaveBeenCalledWith(updateDto.images, postId);
+      expect(mockAuditLogsService.auditLogUpdate).toHaveBeenCalledWith(creator, expect.any(Object), expect.any(Object), AUDIT_LOG_TABLE_NAME.POSTS);
     });
 
-    it('should update seoMeta when provided', async () => {
-      const updateDto: UpdatePostDto = {
-        seoMeta: { title: 'SEO Title', description: 'SEO Description' },
+    it('should update post SEO meta data when provided', async () => {
+      const seoMeta = {
+        title: 'SEO Title',
+        description: 'SEO Description',
+        keywords: 'keyword1, keyword2',
       };
-      const postId = 'post-id';
-      const creator = { id: 'user-id' } as User;
-      const post = {
-        id: postId,
-        seoMeta: { title: 'Old Title', description: 'Old Description' },
-      } as Post;
+      const updateDto: UpdatePostDto = { seoMeta };
 
-      mockPostRepository.findOneBy.mockResolvedValue(post);
-      mockPostRepository.save.mockResolvedValue({ ...post, ...updateDto });
-      jest.spyOn(service, 'sortImages').mockResolvedValue();
+      mockPostRepository.findOneBy.mockResolvedValue({ ...existingPost });
+      mockPostRepository.save.mockImplementation(post => Promise.resolve(post));
 
       const result = await service.update(postId, creator, updateDto);
 
-      expect(result.seoMeta).toEqual(updateDto.seoMeta);
-      expect(mockPostRepository.save).toHaveBeenCalledWith(expect.objectContaining({ seoMeta: updateDto.seoMeta }));
+      expect(result.seoMeta).toEqual(seoMeta);
+      expect(mockAuditLogsService.auditLogUpdate).toHaveBeenCalledWith(creator, expect.any(Object), expect.any(Object), AUDIT_LOG_TABLE_NAME.POSTS);
     });
   });
 

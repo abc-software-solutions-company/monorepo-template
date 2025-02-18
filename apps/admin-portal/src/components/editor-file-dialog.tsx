@@ -1,6 +1,8 @@
 import { FC } from 'react';
 import { type Editor } from 'ckeditor5';
 
+import { IMAGE_BASE_URL } from '@/constants/file.constant';
+
 import FileDialog from '@/modules/files/components/file-dialog';
 import {
   VALID_AUDIO_MIME_TYPES,
@@ -37,7 +39,7 @@ const EditorFileDialog: FC<EditorFileDialogProps> = ({ visible, setVisible, edit
 
             // Insert media
             mediaItems.forEach(media => {
-              const fileUrl = import.meta.env.VITE_PUBLIC_API_URL + '/' + media.uniqueName;
+              const fileUrl = IMAGE_BASE_URL + media.uniqueName;
               const embed = writer.createElement('media', { url: fileUrl });
               const endPosition = editor.model.createPositionAt(embed, 'end');
 
@@ -48,7 +50,7 @@ const EditorFileDialog: FC<EditorFileDialogProps> = ({ visible, setVisible, edit
 
             // Insert files
             fileItems.forEach(file => {
-              const fileUrl = import.meta.env.VITE_PUBLIC_API_URL + '/' + file.uniqueName;
+              const fileUrl = IMAGE_BASE_URL + file.uniqueName;
               const link = writer.createText(file.caption + file.ext);
 
               writer.setAttribute('linkHref', fileUrl, link);
@@ -57,7 +59,7 @@ const EditorFileDialog: FC<EditorFileDialogProps> = ({ visible, setVisible, edit
 
             // Insert images
             imageItems.forEach(image => {
-              const fileUrl = import.meta.env.VITE_PUBLIC_API_URL + '/' + image.uniqueName;
+              const fileUrl = IMAGE_BASE_URL + image.uniqueName;
 
               const imageElement = writer.createElement('imageBlock', {
                 src: fileUrl,

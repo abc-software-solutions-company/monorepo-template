@@ -25,6 +25,7 @@ import {
 import { ComponentBaseProps } from '@/interfaces/component.interface';
 import { ProductEntity, ProductResponse, ProductsResponse } from '../interfaces/products.interface';
 
+import { IMAGE_THUMBNAIL_URL } from '@/constants/file.constant';
 import { PRODUCT_ACTION, PRODUCT_STATUS, PRODUCT_STATUSES, PRODUCT_TYPE, QUERY_PRODUCT_LIST } from '../constants/products.constant';
 
 import { useBulkDestroyProductsMutation, useDestroyProductMutation } from '../hooks/use-product-queries';
@@ -97,7 +98,7 @@ const ProductList: FC<ComponentBaseProps> = ({ className }) => {
 
           if (!cover) return null;
 
-          return <img className="h-16 w-24 rounded-md object-cover" src={`${import.meta.env.VITE_PUBLIC_API_URL}/${cover}`} alt={name} />;
+          return <img className="h-16 w-24 rounded-md object-cover" src={IMAGE_THUMBNAIL_URL + cover} alt={name} />;
         },
       },
       {

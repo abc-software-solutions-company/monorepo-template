@@ -149,8 +149,6 @@ export class PostsService {
       const category = await this.categoriesService.findOne(updateDto.categoryId);
 
       post.category = category;
-    } else {
-      post.category = null;
     }
 
     if (updateDto.status) post.status = updateDto.status;
