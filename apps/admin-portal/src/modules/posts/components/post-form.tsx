@@ -16,7 +16,7 @@ import { Form } from '@repo/react-web-ui-shadcn/components/ui/form';
 import { getLanguages } from '@repo/shared-universal/utils/language.util';
 import { objectToQueryString } from '@repo/shared-universal/utils/string.util';
 
-import { PostFormData } from '../interfaces/posts.interface';
+import { CreatePostDto, UpdatePostDto } from '../interfaces/posts.interface';
 
 import { POST_STATUS, POST_STATUSES, POST_TYPE } from '../constants/posts.constant';
 
@@ -59,7 +59,7 @@ const PostForm: FC<PostFormProps> = ({ isEdit }) => {
 
   const languages = getLanguages(locale);
 
-  const defaultValues: PostFormData = {
+  const defaultValues: CreatePostDto = {
     status: content?.data.status ?? POST_STATUS.DRAFT,
     slug: content?.data.slug ?? '',
     type: content?.data.type ?? (searchParams.get('type') as POST_TYPE),
@@ -68,7 +68,7 @@ const PostForm: FC<PostFormProps> = ({ isEdit }) => {
     descriptionLocalized: content?.data.descriptionLocalized ?? [],
     bodyLocalized: content?.data.bodyLocalized ?? [],
     images: content?.data.images ?? ([] as FileEntity[]),
-    categoryId: content?.data.category?.id ?? '',
+    categoryId: content?.data.category?.id,
     seoMeta: {
       titleLocalized: content?.data.seoMeta?.titleLocalized ?? [],
       descriptionLocalized: content?.data.seoMeta?.descriptionLocalized ?? [],
@@ -76,7 +76,10 @@ const PostForm: FC<PostFormProps> = ({ isEdit }) => {
     },
   };
 
-  const form = useForm<PostFormData>({ resolver: zodResolver(postFormLocalizeSchema(languages)), defaultValues });
+  const form = useForm<CreatePostDto>({
+    resolver: zodResolver(postFormLocalizeSchema(languages)),
+    defaultValues,
+  });
 
   const onBackClick = () => {
     navigate({
@@ -122,10 +125,10 @@ const PostForm: FC<PostFormProps> = ({ isEdit }) => {
     toast(t('post_update_toast_title'), { description: errorMessage });
   };
 
-  const onSubmit: SubmitHandler<PostFormData> = async formData => {
+  const onSubmit: SubmitHandler<CreatePostDto> = async formData => {
     if (isEdit) {
       updateMutation(
-        { id: params.id as string, formData },
+        { id: params.id as string, formData: formData as UpdatePostDto },
         {
           onSuccess: onUpdateSuccess,
           onError: onUpdateFailure,

@@ -1,6 +1,6 @@
 import { useMutation, useQuery } from '@tanstack/react-query';
 
-import { PostFilter, PostFormData } from '../interfaces/posts.interface';
+import { CreatePostDto, PostFilter, UpdatePostDto } from '../interfaces/posts.interface';
 
 import { QUERY_POST_DETAIL, QUERY_POST_LIST } from '../constants/posts.constant';
 
@@ -33,7 +33,7 @@ export const useGetPostQuery = ({ id, enabled = true }: { id: string; enabled?: 
 
 export const useCreatePostMutation = () => {
   return useMutation({
-    mutationFn: async (newPost: PostFormData) => {
+    mutationFn: async (newPost: CreatePostDto) => {
       const response = await PostApi.create(newPost);
 
       return response.data;
@@ -43,7 +43,7 @@ export const useCreatePostMutation = () => {
 
 export const useUpdatePostMutation = () => {
   return useMutation({
-    mutationFn: async ({ id, formData }: { id: string; formData: PostFormData }) => {
+    mutationFn: async ({ id, formData }: { id: string; formData: UpdatePostDto }) => {
       const response = await PostApi.update(id, formData);
 
       return response.data;

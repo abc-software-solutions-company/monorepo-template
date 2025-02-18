@@ -2,7 +2,7 @@ import { Post } from '../entities/post.entity';
 
 export const POST_GET_FIELDS = [
   [
-    'post.id post.slug post.type post.status post.coverLocalized post.nameLocalized post.descriptionLocalized post.bodyLocalized post.seoMeta post.createdAt',
+    'post.id post.slug post.type post.status post.coverLocalized post.nameLocalized post.descriptionLocalized post.bodyLocalized post.seoMeta post.order post.createdAt',
   ],
   ['user.id user.name user.avatar'],
   ['category.id category.nameLocalized'],
@@ -19,6 +19,7 @@ export const POST_FIELDS_TO_CREATE_OR_UPDATE = [
   'descriptionLocalized',
   'bodyLocalized',
   'type',
+  'order',
 ] as (keyof Post)[];
 
 export enum POST_STATUS {

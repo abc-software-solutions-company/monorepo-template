@@ -22,6 +22,9 @@ export class Post extends TranslationEntity {
   @Column({ type: 'varchar', length: 50, default: POST_STATUS.DRAFT })
   status: POST_STATUS;
 
+  @Column({ type: 'int', default: 0 })
+  order: number;
+
   @Expose()
   images: File[];
 

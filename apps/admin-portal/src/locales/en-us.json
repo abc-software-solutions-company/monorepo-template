@@ -19,6 +19,8 @@
   "unknown": "Unknown",
   "select_country": "Select country",
 
+  "table_col_order": "Order",
+
   "statistic_total_revenue": "Total Revenue",
   "statistic_subscriptions": "Subscriptions",
   "statistic_sales": "Sales",

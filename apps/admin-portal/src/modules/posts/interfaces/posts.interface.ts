@@ -19,6 +19,7 @@ export type PostEntity = {
   slug: string;
   type: POST_TYPE;
   status: POST_STATUS;
+  order: number;
   coverLocalized: Translation[];
   nameLocalized: Translation[];
   descriptionLocalized: Translation[];
@@ -33,7 +34,8 @@ export type PostEntity = {
 
 const post = postFormLocalizeSchema(LANGUAGES);
 
-export type PostFormData = z.infer<typeof post>;
+export type CreatePostDto = z.infer<typeof post>;
+export type UpdatePostDto = Partial<CreatePostDto>;
 export type PostsResponse = ResponseFormat<PostEntity[]>;
 export type PostResponse = ResponseFormat<PostEntity>;
 export type BulkDeletePostResponse = PostResponse;

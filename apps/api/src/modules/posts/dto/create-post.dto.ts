@@ -1,6 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import { IsArray, IsEnum, IsNotEmpty, IsOptional, IsString, MaxLength, Validate, ValidateNested } from 'class-validator';
+import { IsArray, IsEnum, IsInt, IsNotEmpty, IsOptional, IsString, MaxLength, Min, Validate, ValidateNested } from 'class-validator';
 
 import { TranslationDto } from '@/common/dtos/translation.dto';
 
@@ -44,4 +44,10 @@ export class CreatePostDto extends TranslationDto {
   @IsOptional()
   @Validate(IsUUIDOrEmpty)
   categoryId?: string;
+
+  @ApiPropertyOptional({ description: 'Post order', example: 0, default: 0 })
+  @IsOptional()
+  @IsInt()
+  @Min(0)
+  order?: number;
 }
