@@ -79,7 +79,6 @@ export class InitSeeds1689265344543 implements MigrationInterface {
 
       // Add bucket policy
       const bucketPolicy = {
-        Version: '2012-10-17',
         Statement: [
           {
             Sid: 'PublicReadGetObject',
