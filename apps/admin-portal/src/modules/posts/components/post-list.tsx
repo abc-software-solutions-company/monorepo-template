@@ -27,7 +27,7 @@ import { PostEntity, PostResponse, PostsResponse } from '../interfaces/posts.int
 
 import { POST_ACTION, POST_STATUS, POST_STATUSES, POST_TYPE, QUERY_POST_LIST } from '../constants/posts.constant';
 
-import { useBulkDestroyPostsMutation, useDestroyPostMutation } from '../hooks/use-post-queries';
+import { useBulkDestroyPostsMutation, useDestroyPostMutation, useUpdatePostMutation } from '../hooks/use-post-queries';
 import { usePosts } from '../hooks/use-posts';
 
 import { DataTable } from '@/components/data-table/data-table';
@@ -35,6 +35,7 @@ import { DataTableColumnHeader } from '@/components/data-table/data-table-column
 import DataTableRowAction from '@/components/data-table/data-table-row-action';
 import ItemsPerPage from '@/components/item-per-page';
 import PaginationInfo from '@/components/pagination-info';
+import QuickEditOrder from '@/components/quick-edit/quick-edit-order';
 
 import { getQueryClient } from '@/utils/query-client.util';
 
@@ -57,7 +58,9 @@ const PostList: FC<ComponentBaseProps> = ({ className }) => {
   const { items, meta, selected, selectedIds, isFetching, filter, setFilter, toggleSelect, toggleSelectAll, clearSelection } = usePosts();
   const { mutateAsync: destroyMutation } = useDestroyPostMutation();
   const { mutateAsync: bulkDestroyMutation } = useBulkDestroyPostsMutation();
+  const { mutateAsync: updateMutation } = useUpdatePostMutation();
   const [rowSelection, setRowSelection] = useState<RowSelectionState>(selectedIds);
+
   const columns: ColumnDef<PostEntity>[] = useMemo(
     () => [
       {
@@ -153,6 +156,18 @@ const PostList: FC<ComponentBaseProps> = ({ className }) => {
         },
       },
       {
+        accessorKey: 'order',
+        size: 90,
+        header: ({ column }) => <DataTableColumnHeader column={column} title={t('table_col_order')} />,
+        cell: ({ row }) => {
+          return (
+            <div className="grid items-center">
+              <QuickEditOrder initialValue={row.original.order} onSave={value => handleUpdateOrder(row.original.id, value)} />
+            </div>
+          );
+        },
+      },
+      {
         accessorKey: 'creator',
         size: 0,
         header: ({ column }) => <DataTableColumnHeader column={column} title={t('post_author')} />,
@@ -197,6 +212,7 @@ const PostList: FC<ComponentBaseProps> = ({ className }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [items]
   );
+
   const table = useReactTable({
     data: items,
     columns,
@@ -216,6 +232,28 @@ const PostList: FC<ComponentBaseProps> = ({ className }) => {
     getFacetedRowModel: getFacetedRowModel(),
     getFacetedUniqueValues: getFacetedUniqueValues(),
   });
+
+  const handleUpdateOrder = (id: string, order: number) => {
+    updateMutation(
+      { id, formData: { order } },
+      {
+        onSuccess: () => {
+          toast(t('post_update_toast_title'), { description: t('post_update_success') });
+        },
+        onError: (error: Error) => {
+          let errorMessage = t('post_update_failure');
+
+          if (axios.isAxiosError(error) && error.response) {
+            errorMessage += `\n${error.response.data.message}`;
+          } else {
+            errorMessage += `\n${error.message}`;
+          }
+
+          toast(t('post_update_toast_title'), { description: errorMessage });
+        },
+      }
+    );
+  };
 
   const onDeleteSuccess = async (resp: PostResponse, id: string) => {
     queryClient.setQueryData<PostsResponse>([QUERY_POST_LIST, filter], cached => {

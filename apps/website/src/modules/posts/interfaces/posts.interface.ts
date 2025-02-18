@@ -11,10 +11,8 @@ import { UserEntity } from '@/modules/users/interfaces/users.interface';
 
 export type PostEntity = {
   id: string;
-  name: string;
   slug: string;
-  description: string;
-  body: boolean;
+  order: number;
   coverLocalized: Translation[];
   nameLocalized: Translation[];
   descriptionLocalized: Translation[];
