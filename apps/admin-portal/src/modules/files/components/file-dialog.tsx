@@ -1,10 +1,10 @@
 import { FC, useEffect, useState } from 'react';
+import { toast } from 'sonner';
 import { useTranslations } from 'use-intl';
 import { Button } from '@repo/react-web-ui-shadcn/components/ui/button';
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@repo/react-web-ui-shadcn/components/ui/dialog';
 import { Loading } from '@repo/react-web-ui-shadcn/components/ui/loading';
 import Pagination from '@repo/react-web-ui-shadcn/components/ui/pagination-custom';
-import { useToast } from '@repo/react-web-ui-shadcn/components/ui/use-toast';
 import useDeepCompareEffect from '@repo/shared-universal/hooks/use-deep-compare-effect';
 
 import { ComponentBaseProps } from '@/interfaces/component.interface';
@@ -35,7 +35,6 @@ type FileDialogProps = {
 } & ComponentBaseProps;
 
 const FileDialog: FC<FileDialogProps> = ({ type = 'single', mime, visible, onCancel, onSelectClick }) => {
-  const { toast } = useToast();
   const t = useTranslations();
   const filesState = useFilesState();
   const [filter, setFilter] = useState<FileFilter>({ ...DEFAULT_FILTER, mime });
@@ -51,7 +50,7 @@ const FileDialog: FC<FileDialogProps> = ({ type = 'single', mime, visible, onCan
     if (!validateResult.success) {
       const errors = validateResult.error.errors.map(err => err.message);
 
-      toast({ title: 'Upload', description: errors.join('<br>') });
+      toast(t('Upload'), { description: errors.join('<br>') });
     } else {
       setIsUploading(true);
 

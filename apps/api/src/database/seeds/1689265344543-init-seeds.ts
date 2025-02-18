@@ -1,13 +1,16 @@
+import * as fs from 'fs';
 import { glob } from 'glob';
 import path from 'path';
+import sharp from 'sharp';
 import { MigrationInterface, QueryRunner } from 'typeorm';
+import { PutObjectCommand, S3Client, S3ClientConfig } from '@aws-sdk/client-s3';
 
 import { Category } from '@/modules/categories/entities/category.entity';
 import { Contact } from '@/modules/contacts/entities/contact.entity';
 import { Faq } from '@/modules/faqs/entities/faq.entity';
-import { FILE_ROOT_PATH, THUMBNAIL_PATH } from '@/modules/files/constants/files.constant';
+import { FILE_ROOT_PATH, THUMBNAIL_PATH, THUMBNAIL_WIDTH } from '@/modules/files/constants/files.constant';
 import { File } from '@/modules/files/entities/file.entity';
-import { copyFile, createDirectory, createThumbnail, removeDirectory } from '@/modules/files/utils/file.util';
+import { createDirectory, removeDirectory } from '@/modules/files/utils/file.util';
 import { Post } from '@/modules/posts/entities/post.entity';
 import { Product } from '@/modules/products/entities/product.entity';
 import { User } from '@/modules/users/entities/user.entity';
@@ -21,6 +24,22 @@ import { productFactory } from '../factories/dev/product.factory';
 import { userFactory } from '../factories/user.factory';
 
 export class InitSeeds1689265344543 implements MigrationInterface {
+  private s3Client: S3Client;
+
+  constructor() {
+    const s3ClientConfig: S3ClientConfig = {
+      region: process.env.AP_AWS_REGION,
+      endpoint: process.env.AP_AWS_ENDPOINT,
+      forcePathStyle: true,
+      credentials: {
+        accessKeyId: process.env.AP_AWS_ACCESS_KEY_ID,
+        secretAccessKey: process.env.AP_AWS_SECRET_ACCESS_KEY,
+      },
+    };
+
+    this.s3Client = new S3Client(s3ClientConfig);
+  }
+
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.manager.getRepository(User).save(userFactory);
     await queryRunner.manager.getRepository(Category).save(categoryFactory);
@@ -30,7 +49,11 @@ export class InitSeeds1689265344543 implements MigrationInterface {
     await queryRunner.manager.getRepository(Faq).save(faqFactory);
     await queryRunner.manager.getRepository(Contact).save(contactFactory);
 
-    generateAssets();
+    removeDirectory(FILE_ROOT_PATH);
+    createDirectory(FILE_ROOT_PATH);
+    createDirectory(THUMBNAIL_PATH);
+
+    await this.copyAssets();
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
@@ -42,20 +65,34 @@ export class InitSeeds1689265344543 implements MigrationInterface {
     await Promise.all(categoryFactory.map(async (x: Category) => await queryRunner.manager.getRepository(Category).remove(x)));
     await Promise.all(userFactory.map(async (x: User) => await queryRunner.manager.getRepository(User).remove(x)));
   }
-}
 
-function generateAssets() {
-  const files = glob.sync(path.join(__dirname, '../factories/assets/*.*'));
+  private async copyAssets() {
+    const files = glob.sync(path.join(__dirname, '../factories/assets/*.*'));
 
-  removeDirectory(FILE_ROOT_PATH);
-  createDirectory(FILE_ROOT_PATH);
-  createDirectory(THUMBNAIL_PATH);
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+      const filename = path.basename(file);
 
-  for (let i = 0; i < files.length; i++) {
-    const file = files[i];
-    const filename = path.basename(file);
+      // Copy file to local storage
+      // copyFile(file, path.join(FILE_ROOT_PATH, filename));
+      // createThumbnail(file, filename);
 
-    copyFile(file, path.join(FILE_ROOT_PATH, filename));
-    createThumbnail(file, filename);
+      // Upload to Minio
+      const fileContent: Buffer = fs.readFileSync(file);
+
+      const command = new PutObjectCommand({ Bucket: process.env.AP_AWS_S3_BUCKET_NAME, Key: filename, Body: fileContent });
+
+      await this.s3Client.send(command);
+
+      const thumb = sharp(fileContent).resize(THUMBNAIL_WIDTH, null, { fit: 'contain' });
+
+      const commandThumbnail = new PutObjectCommand({
+        Bucket: process.env.AP_AWS_S3_BUCKET_NAME,
+        Key: `thumbnails/${filename}`,
+        Body: (await thumb.toBuffer()).buffer as Buffer,
+      });
+
+      await this.s3Client.send(commandThumbnail);
+    }
   }
 }

@@ -3,7 +3,7 @@ import { FileCheckIcon, XCircleIcon } from 'lucide-react';
 import { FileFilter } from '../interfaces/files.interface';
 
 export const MAX_FILES_TO_UPLOAD = 5;
-export const MAX_FILE_SIZE_IN_BYTES = 10 * 1024 * 1024;
+export const MAX_FILE_SIZE_IN_BYTES = 20 * 1024 * 1024;
 
 export const VALID_IMAGE_MIME_TYPES = ['image/webp', 'image/jpeg', 'image/png', 'image/gif', 'image/svg+xml'];
 export const VALID_AUDIO_MIME_TYPES = ['audio/webm', 'audio/mpeg', 'audio/wav'];

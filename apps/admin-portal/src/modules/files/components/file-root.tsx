@@ -1,10 +1,10 @@
 import { FC, useEffect, useState } from 'react';
 import classNames from 'classnames';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import { toast } from 'sonner';
 import { useLocale, useTranslations } from 'use-intl';
 import { Loading } from '@repo/react-web-ui-shadcn/components/ui/loading';
 import Pagination from '@repo/react-web-ui-shadcn/components/ui/pagination-custom';
-import { useToast } from '@repo/react-web-ui-shadcn/components/ui/use-toast';
 import { objectToQueryString } from '@repo/shared-universal/utils/string.util';
 
 import { ComponentBaseProps } from '@/interfaces/component.interface';
@@ -33,7 +33,6 @@ const FilesRoot: FC<FilesRootTypes> = ({ className }) => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const locale = useLocale();
-  const { toast } = useToast();
   const filesState = useFilesState();
   const [isUploading, setIsUploading] = useState(false);
 
@@ -58,7 +57,7 @@ const FilesRoot: FC<FilesRootTypes> = ({ className }) => {
     if (!validateResult.success) {
       const errors = validateResult.error.errors.map(err => err.message);
 
-      toast({ title: 'Upload', description: errors.join('<br>') });
+      toast(t('Upload'), { description: errors.join('<br>') });
     } else {
       setIsUploading(true);
 

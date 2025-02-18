@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException, UnprocessableEntityException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import path from 'path';
+import sharp from 'sharp';
 import { Repository } from 'typeorm';
 
 import { BulkDeleteDto } from '@/common/dtos/bulk-delete.dto';
@@ -9,7 +10,7 @@ import { PaginationResponseDto } from '@/common/dtos/pagination-response.dto';
 
 import { toSlug } from '@/common/utils/string.util';
 
-import { FILE_GET_FIELDS, FILE_ROOT_PATH, FILE_STATUS, VALID_IMAGE_MIME_TYPES } from './constants/files.constant';
+import { FILE_GET_FIELDS, FILE_ROOT_PATH, FILE_STATUS, THUMBNAIL_WIDTH, VALID_IMAGE_MIME_TYPES } from './constants/files.constant';
 import { FilterFileDto } from './dto/filter-file.dto';
 import { UploadDto } from './dto/upload.dto';
 import { File } from './entities/file.entity';
@@ -36,19 +37,8 @@ export class FilesService {
 
         await this.fileRepository.save(fileData);
 
-        if (VALID_IMAGE_MIME_TYPES.includes(fileInfo.mime)) {
-          const filePath = path.join(FILE_ROOT_PATH, fileInfo.uniqueName);
-
-          // Self-hosted
-          await saveFileToDisk(file, fileInfo.uniqueName);
-          await createThumbnail(filePath, fileInfo.uniqueName);
-
-          // Amazon S3
-          // await this.awsService.putObject({ key: fileInfo.uniqueName, body: file.buffer });
-          // const thumb = sharp(filePath).resize(THUMBNAIL_WIDTH, null, { fit: 'contain' });
-
-          // await this.awsService.putObject({ key: `thumbnails/${fileInfo.uniqueName}`, body: (await thumb.toBuffer()).buffer });
-        }
+        await this.handleUploadFileS3(fileInfo, file);
+        // await this.handleUploadFileSelfHosted(fileInfo, file);
 
         uploadedFileInfos.push(fileInfo);
       } catch (error) {
@@ -57,6 +47,29 @@ export class FilesService {
     }
 
     return uploadedFileInfos;
+  }
+
+  async handleUploadFileS3(fileInfo: File, file: Express.Multer.File) {
+    await this.awsService.putObject({ key: fileInfo.uniqueName, body: file.buffer });
+
+    if (VALID_IMAGE_MIME_TYPES.includes(fileInfo.mime)) {
+      const thumb = sharp(file.buffer).resize(THUMBNAIL_WIDTH, null, { fit: 'contain' });
+
+      await this.awsService.putObject({
+        key: `thumbnails/${fileInfo.uniqueName}`,
+        body: (await thumb.toBuffer()).buffer as Buffer,
+      });
+    }
+  }
+
+  async handleUploadFileSelfHosted(fileInfo: File, file: Express.Multer.File) {
+    const filePath = path.join(FILE_ROOT_PATH, fileInfo.uniqueName);
+
+    await saveFileToDisk(file, fileInfo.uniqueName);
+
+    if (VALID_IMAGE_MIME_TYPES.includes(fileInfo.mime)) {
+      await createThumbnail(filePath, fileInfo.uniqueName);
+    }
   }
 
   async find(filterDto: FilterFileDto) {

@@ -47,6 +47,14 @@ declare namespace NodeJS {
     // ALLOW ORIGIN
     AP_ALLOW_WEB_APP_ORIGIN: string;
     AP_ALLOW_ADMIN_PORTAL_ORIGIN: string;
+    // AWS
+    AP_AWS_ENDPOINT: string;
+    AP_AWS_REGION: string;
+    AP_AWS_ACCESS_KEY_ID: string;
+    AP_AWS_SECRET_ACCESS_KEY: string;
+    // S3
+    AP_AWS_S3_BUCKET_NAME: string;
+    AP_AWS_S3_BASE_URL: string;
     // FIREBASE
     AP_FIREBASE_CONFIG: string;
   }

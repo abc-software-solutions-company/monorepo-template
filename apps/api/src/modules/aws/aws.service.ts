@@ -4,6 +4,8 @@ import { DeleteObjectCommand, PutObjectCommand, S3Client, S3ClientConfig } from 
 
 import { IConfigs } from '@/common/interfaces/configs.interface';
 
+import { PutObjectRequest } from './interfaces/aws.interface';
+
 @Injectable()
 export class AwsService {
   private readonly s3Client: S3Client;
@@ -37,9 +39,7 @@ export class AwsService {
     this.s3Client = new S3Client(s3ClientConfig);
   }
 
-  // TODO: Fix type
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  async putObject({ key, body }: any): Promise<void> {
+  async putObject({ key, body }: PutObjectRequest): Promise<void> {
     const command = new PutObjectCommand({
       Bucket: this.bucketName,
       Key: key,

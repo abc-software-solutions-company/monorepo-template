@@ -11,7 +11,7 @@ export const FILE_ROOT_PATH = path.resolve(process.cwd(), 'uploads');
 export const THUMBNAIL_PATH = path.join(FILE_ROOT_PATH, 'thumbnails');
 
 export const MAX_FILES_TO_UPLOAD = 5;
-export const MAX_FILE_SIZE_IN_BYTES = 10 * 1024 * 1024;
+export const MAX_FILE_SIZE_IN_BYTES = 20 * 1024 * 1024;
 export const MAX_AVATAR_FILE_SIZE_IN_BYTES = 1 * 1024 * 1024;
 
 export const THUMBNAIL_WIDTH = 360;
