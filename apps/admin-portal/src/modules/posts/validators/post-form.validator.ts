@@ -57,6 +57,7 @@ export const postFormLocalizeSchema = (languages: Language[]) => {
       maxMessage: 'validator_maximum_n_characters_allowed',
     }),
     order: z.number().optional(),
+    publishDate: z.date().optional(),
     images: z.object({ id: z.string().uuid({ message: 'validator_id_should_be_an_uuid' }) }).array(),
     categoryId: z.string().optional(),
     seoMeta: z.object({

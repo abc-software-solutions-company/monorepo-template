@@ -23,6 +23,9 @@ export class Category extends TranslationEntity {
   @Column({ type: 'varchar', length: 50, default: CATEGORY_STATUS.PUBLISHED })
   status: CATEGORY_STATUS;
 
+  @Column({ type: 'timestamp without time zone', nullable: true })
+  publishDate: Date;
+
   @Expose()
   images: File[];
 

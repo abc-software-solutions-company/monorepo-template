@@ -1,6 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import { IsArray, IsEnum, IsNotEmpty, IsOptional, IsString, IsUUID, MaxLength, ValidateIf, ValidateNested } from 'class-validator';
+import { IsArray, IsDate, IsEnum, IsNotEmpty, IsOptional, IsString, IsUUID, MaxLength, ValidateIf, ValidateNested } from 'class-validator';
 
 import { TranslationDto } from '@/common/dtos/translation.dto';
 
@@ -42,4 +42,9 @@ export class CreateCategoryDto extends TranslationDto {
   @IsUUID()
   @IsOptional()
   parentId?: string;
+
+  @ApiPropertyOptional({ description: 'Publish date', example: new Date() })
+  @IsOptional()
+  @IsDate()
+  publishDate?: Date;
 }

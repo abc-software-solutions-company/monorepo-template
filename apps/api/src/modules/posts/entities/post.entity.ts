@@ -25,6 +25,9 @@ export class Post extends TranslationEntity {
   @Column({ type: 'int', default: 0 })
   order: number;
 
+  @Column({ type: 'timestamp without time zone', nullable: true })
+  publishDate: Date;
+
   @Expose()
   images: File[];
 

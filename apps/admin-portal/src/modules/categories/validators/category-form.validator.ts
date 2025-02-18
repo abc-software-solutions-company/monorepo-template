@@ -56,6 +56,7 @@ export const categoryFormLocalizeSchema = (languages: Language[]) => {
       minMessage: 'validator_minimum_n_characters_allowed',
       maxMessage: 'validator_maximum_n_characters_allowed',
     }),
+    publishDate: z.date().optional(),
     images: z.object({ id: z.string().uuid({ message: 'validator_id_should_be_an_uuid' }) }).array(),
     seoMeta: z.object({
       titleLocalized: localizedField({

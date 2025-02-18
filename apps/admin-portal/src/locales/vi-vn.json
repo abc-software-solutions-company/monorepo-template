@@ -54,6 +54,7 @@
   "form_field_password": "Mật khẩu",
   "form_field_confirm_password": "Xác nhận mật khẩu",
   "form_field_phone_number": "Số điện thoại",
+  "form_field_publish_date": "Ngày xuất bản",
 
   "bulk_delete": "Xoá Hàng Loạt",
   "bulk_actions": "Bulk actions",

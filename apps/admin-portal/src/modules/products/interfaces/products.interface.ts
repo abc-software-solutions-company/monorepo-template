@@ -19,6 +19,7 @@ export type ProductEntity = {
   slug: string;
   type: PRODUCT_TYPE;
   status: PRODUCT_STATUS;
+  publishDate: string;
   coverLocalized: Translation[];
   nameLocalized: Translation[];
   descriptionLocalized: Translation[];

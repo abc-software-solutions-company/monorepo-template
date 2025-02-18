@@ -1,6 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import { IsArray, IsEnum, IsInt, IsNotEmpty, IsOptional, IsString, MaxLength, Min, Validate, ValidateNested } from 'class-validator';
+import { IsArray, IsDate, IsEnum, IsInt, IsNotEmpty, IsOptional, IsString, MaxLength, Min, Validate, ValidateNested } from 'class-validator';
 
 import { TranslationDto } from '@/common/dtos/translation.dto';
 
@@ -50,4 +50,9 @@ export class CreatePostDto extends TranslationDto {
   @IsInt()
   @Min(0)
   order?: number;
+
+  @ApiPropertyOptional({ description: 'Publish date', example: new Date() })
+  @IsOptional()
+  @IsDate()
+  publishDate?: Date;
 }

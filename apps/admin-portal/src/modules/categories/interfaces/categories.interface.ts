@@ -18,6 +18,7 @@ export type CategoryEntity = {
   slug: string;
   type: CATEGORY_TYPE;
   status: CATEGORY_STATUS;
+  publishDate: string;
   coverLocalized: Translation[];
   nameLocalized: Translation[];
   descriptionLocalized: Translation[];

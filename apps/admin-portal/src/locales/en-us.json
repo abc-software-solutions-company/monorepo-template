@@ -54,6 +54,7 @@
   "form_field_password": "Password",
   "form_field_confirm_password": "Confirm Password",
   "form_field_phone_number": "Phone Number",
+  "form_field_publish_date": "Publish Date",
 
   "bulk_delete": "Bulk Delete",
   "bulk_actions": "Bulk actions",
