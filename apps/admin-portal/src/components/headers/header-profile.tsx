@@ -16,6 +16,8 @@ import { getShortName, objectToQueryString } from '@repo/shared-universal/utils/
 
 import { ComponentBaseProps } from '@/interfaces/component.interface';
 
+import { IMAGE_AVATAR_URL } from '@/constants/file.constant';
+
 import { useAuthState } from '@/modules/auth/states/auth.state';
 
 const HeaderProfile: FC<ComponentBaseProps> = ({ className }) => {
@@ -31,7 +33,7 @@ const HeaderProfile: FC<ComponentBaseProps> = ({ className }) => {
     <DropdownMenu>
       <DropdownMenuTrigger>
         <Avatar>
-          <AvatarImage src={`${import.meta.env.VITE_PUBLIC_API_URL}/${user?.avatar}`} alt={user?.name} />
+          <AvatarImage src={IMAGE_AVATAR_URL + user?.avatar} alt={user?.name} />
           <AvatarFallback
             className={classNames('font-bold text-white', 'animate-gradient bg-[linear-gradient(-45deg,_#1255E5,_#1255E5)] bg-[length:400%_400%]')}
           >

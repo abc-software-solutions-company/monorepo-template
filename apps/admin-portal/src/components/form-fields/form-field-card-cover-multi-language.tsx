@@ -18,6 +18,8 @@ import { Popover, PopoverContent, PopoverTrigger } from '@repo/react-web-ui-shad
 import { cn } from '@repo/react-web-ui-shadcn/lib/utils';
 import { Language, Translation } from '@repo/shared-universal/interfaces/language.interface';
 
+import { IMAGE_THUMBNAIL_URL } from '@/constants/file.constant';
+
 import ButtonRemoveFile from '@/components/button-remove-file';
 import ButtonSelectFile from '@/components/button-select-file';
 
@@ -178,11 +180,7 @@ export default function FormFieldCardCoverMultiLanguage<T extends FieldValues>({
                   <div className="relative overflow-hidden rounded-md">
                     <img
                       className="aspect-video w-full object-cover"
-                      src={
-                        import.meta.env.VITE_PUBLIC_API_URL +
-                        '/thumbnails/' +
-                        field.value?.find((item: Translation) => item.lang === activeLocale)?.value
-                      }
+                      src={IMAGE_THUMBNAIL_URL + field.value?.find((item: Translation) => item.lang === activeLocale)?.value}
                       alt={field.value?.find((item: Translation) => item.lang === activeLocale)?.value}
                       height="100"
                       width="100"

@@ -78,7 +78,7 @@ export default function FormFieldCardImages<T extends FieldValues>({
                           <div>
                             <img
                               className="aspect-square w-full object-cover"
-                              src={IMAGE_BASE_URL + '/' + fileEntity.uniqueName}
+                              src={IMAGE_BASE_URL + fileEntity.uniqueName}
                               alt={fileEntity.name}
                               height="112"
                               width="112"
@@ -92,7 +92,7 @@ export default function FormFieldCardImages<T extends FieldValues>({
                           <div className="relative">
                             <video
                               className="aspect-square w-full object-cover"
-                              src={IMAGE_BASE_URL + '/' + fileEntity.uniqueName}
+                              src={IMAGE_BASE_URL + fileEntity.uniqueName}
                               height="112"
                               width="112"
                             />

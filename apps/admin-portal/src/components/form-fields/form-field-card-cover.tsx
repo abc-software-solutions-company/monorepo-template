@@ -5,6 +5,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@repo/react-web-ui-sha
 import { FormControl, FormField, FormItem, FormMessage } from '@repo/react-web-ui-shadcn/components/ui/form';
 import { Input } from '@repo/react-web-ui-shadcn/components/ui/input';
 
+import { IMAGE_THUMBNAIL_URL } from '@/constants/file.constant';
+
 import ButtonRemoveFile from '@/components/button-remove-file';
 import ButtonSelectFile from '@/components/button-select-file';
 
@@ -48,7 +50,7 @@ export default function FormFieldCardCover<T extends FieldValues>({
                   <div className="relative overflow-hidden rounded-md">
                     <img
                       className="aspect-video w-full object-cover"
-                      src={import.meta.env.VITE_PUBLIC_API_URL + '/thumbnails/' + field.value}
+                      src={IMAGE_THUMBNAIL_URL + field.value}
                       alt={field.value}
                       height="100"
                       width="100"
