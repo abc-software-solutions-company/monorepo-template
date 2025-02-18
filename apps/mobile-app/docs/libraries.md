@@ -28,7 +28,7 @@ yarn add \
 axios \
 i18next \
 lottie-react-native \
-react@18.2.0 \
+react@18.3.1 \
 react-hook-form \
 react-i18next \
 react-native@0.72.8 \
