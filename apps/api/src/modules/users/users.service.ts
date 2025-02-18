@@ -1,7 +1,5 @@
-import { Injectable, NotFoundException, UnprocessableEntityException } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import fs from 'fs';
-import path from 'path';
 import { Repository } from 'typeorm';
 
 import { BulkDeleteDto } from '@/common/dtos/bulk-delete.dto';
@@ -22,15 +20,16 @@ import { User } from './entities/user.entity';
 import { AuditLogsService } from '../audit-logs/audit-logs.service';
 import { AUDIT_LOG_TABLE_NAME } from '../audit-logs/constants/audit-logs.constant';
 import { AUTH_PROVIDER } from '../auth/constants/auth.constant';
-import { FILE_ROOT_PATH } from '../files/constants/files.constant';
-import { createDirectory, getFileExtension } from '../files/utils/file.util';
+import { AwsService } from '../aws/aws.service';
+import { getFileExtension } from '../files/utils/file.util';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
-    private readonly auditLogsService: AuditLogsService
+    private readonly auditLogsService: AuditLogsService,
+    private readonly awsService: AwsService
   ) {}
 
   async create(creator: User, createDto: CreateUserDto) {
@@ -217,19 +216,23 @@ export class UsersService {
 
     const uniqueName = toSlug(user.email.split('@')[0].replace('.', '_')) + '-avatar' + ext;
 
-    const destinationPath = path.join(FILE_ROOT_PATH, 'avatars');
+    // const destinationPath = path.join(FILE_ROOT_PATH, 'avatars');
 
-    createDirectory(destinationPath);
+    // createDirectory(destinationPath);
 
-    const filePath = path.join(destinationPath, uniqueName);
+    // const filePath = path.join(destinationPath, uniqueName);
 
-    fs.writeFile(filePath, file.buffer, async writeErr => {
-      if (writeErr) throw new UnprocessableEntityException(`Can not write ${filePath}`);
+    // fs.writeFile(filePath, file.buffer, async writeErr => {
+    //   if (writeErr) throw new UnprocessableEntityException(`Can not write ${filePath}`);
 
-      user.avatar = `/avatars/${uniqueName}`;
-    });
+    //   user.avatar = `/avatars/${uniqueName}`;
+    // });
+
+    user.avatar = `/avatars/${uniqueName}`;
 
     const response = await this.userRepository.save(user);
+
+    await this.awsService.putObject({ key: `avatars/${uniqueName}`, body: file.buffer });
 
     return {
       avatar: response.avatar,
