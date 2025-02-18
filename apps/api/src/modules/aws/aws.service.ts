@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { DeleteObjectCommand, PutObjectCommand, S3Client, S3ClientConfig } from '@aws-sdk/client-s3';
+import { BucketCannedACL, CreateBucketCommand, DeleteObjectCommand, PutObjectCommand, S3Client, S3ClientConfig } from '@aws-sdk/client-s3';
 
 import { IConfigs } from '@/common/interfaces/configs.interface';
 
@@ -63,6 +63,20 @@ export class AwsService {
       await this.s3Client.send(command);
     } catch (err) {
       throw new Error(`Failed to remove object: ${err.message}`);
+    }
+  }
+
+  async createBucket(bucketName: string): Promise<void> {
+    try {
+      const params = {
+        Bucket: bucketName,
+        ACL: BucketCannedACL.public_read,
+      };
+      const command = new CreateBucketCommand(params);
+
+      await this.s3Client.send(command);
+    } catch (error) {
+      throw new Error(`Failed to create public bucket: ${error.message}`);
     }
   }
 }
