@@ -3,7 +3,7 @@ import { glob } from 'glob';
 import path from 'path';
 import sharp from 'sharp';
 import { MigrationInterface, QueryRunner } from 'typeorm';
-import { PutObjectCommand, S3Client, S3ClientConfig } from '@aws-sdk/client-s3';
+import { BucketCannedACL, CreateBucketCommand, PutBucketPolicyCommand, PutObjectCommand, S3Client, S3ClientConfig } from '@aws-sdk/client-s3';
 
 import { Category } from '@/modules/categories/entities/category.entity';
 import { Contact } from '@/modules/contacts/entities/contact.entity';
@@ -53,6 +53,7 @@ export class InitSeeds1689265344543 implements MigrationInterface {
     createDirectory(FILE_ROOT_PATH);
     createDirectory(THUMBNAIL_PATH);
 
+    await this.createS3Bucket();
     await this.copyAssets();
   }
 
@@ -64,6 +65,42 @@ export class InitSeeds1689265344543 implements MigrationInterface {
     await Promise.all(fileFactory.map(async (x: File) => await queryRunner.manager.getRepository(File).remove(x)));
     await Promise.all(categoryFactory.map(async (x: Category) => await queryRunner.manager.getRepository(Category).remove(x)));
     await Promise.all(userFactory.map(async (x: User) => await queryRunner.manager.getRepository(User).remove(x)));
+  }
+
+  private async createS3Bucket() {
+    // Create bucket
+    try {
+      const createBucketParams = {
+        Bucket: process.env.AP_AWS_S3_BUCKET_NAME,
+        ACL: BucketCannedACL.public_read,
+      };
+
+      await this.s3Client.send(new CreateBucketCommand(createBucketParams));
+
+      // Add bucket policy
+      const bucketPolicy = {
+        Version: '2012-10-17',
+        Statement: [
+          {
+            Sid: 'PublicReadGetObject',
+            Effect: 'Allow',
+            Principal: '*',
+            Action: 's3:GetObject',
+            Resource: `arn:aws:s3:::${process.env.AP_AWS_S3_BUCKET_NAME}/*`,
+          },
+        ],
+      };
+
+      const policyParams = {
+        Bucket: process.env.AP_AWS_S3_BUCKET_NAME,
+        Policy: JSON.stringify(bucketPolicy),
+      };
+
+      await this.s3Client.send(new PutBucketPolicyCommand(policyParams));
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.log('Failed to create public bucket:', error.message);
+    }
   }
 
   private async copyAssets() {
