@@ -1,10 +1,13 @@
 import { useCallback, useState } from 'react';
+import { PlayIcon } from 'lucide-react';
 import { FieldArray, FieldArrayPath, FieldValues, Path, useFieldArray, UseFormReturn } from 'react-hook-form';
 import { ReactSortable, SortableEvent } from 'react-sortablejs';
 import { useTranslations } from 'use-intl';
 import { Card, CardContent, CardHeader, CardTitle } from '@repo/react-web-ui-shadcn/components/ui/card';
 import { FormControl, FormField, FormItem, FormMessage } from '@repo/react-web-ui-shadcn/components/ui/form';
 import { Input } from '@repo/react-web-ui-shadcn/components/ui/input';
+
+import { IMAGE_BASE_URL } from '@/constants/file.constant';
 
 import ButtonRemoveFile from '@/components/button-remove-file';
 import ButtonSelectFile from '@/components/button-select-file';
@@ -60,29 +63,57 @@ export default function FormFieldCardImages<T extends FieldValues>({
             {fields.map((image, index) => {
               const fileEntity = image as unknown as FileEntity;
 
+              const ext = fileEntity.uniqueName.split('.').pop() as string;
+
               return (
                 <div key={fileEntity.id}>
                   <FormField
                     control={form.control}
                     name={`${fieldName}.${index}.id` as Path<T>}
-                    render={({ field, fieldState: { error } }) => (
-                      <FormItem>
-                        <FormControl>
-                          <Input readOnly {...field} className="hidden" />
-                        </FormControl>
-                        <div className="relative overflow-hidden rounded-md">
-                          <img
-                            className="aspect-square w-full object-cover"
-                            src={import.meta.env.VITE_PUBLIC_API_URL + '/' + fileEntity.uniqueName}
-                            alt={fileEntity.name}
-                            height="112"
-                            width="112"
-                          />
-                          <ButtonRemoveFile onClick={() => remove(index)} />
-                        </div>
-                        {error?.message && <FormMessage message={t(error.message)} />}
-                      </FormItem>
-                    )}
+                    render={({ field, fieldState: { error } }) => {
+                      let component = null;
+
+                      if (['jpg', 'jpeg', 'png', 'gif', 'svg', 'webp'].includes(ext)) {
+                        component = (
+                          <div>
+                            <img
+                              className="aspect-square w-full object-cover"
+                              src={IMAGE_BASE_URL + '/' + fileEntity.uniqueName}
+                              alt={fileEntity.name}
+                              height="112"
+                              width="112"
+                            />
+                          </div>
+                        );
+                      }
+
+                      if (['webm', 'mp4', 'avi'].includes(ext)) {
+                        component = (
+                          <div className="relative">
+                            <video
+                              className="aspect-square w-full object-cover"
+                              src={IMAGE_BASE_URL + '/' + fileEntity.uniqueName}
+                              height="112"
+                              width="112"
+                            />
+                            <PlayIcon size={16} className="absolute left-1 top-1 text-primary" />
+                          </div>
+                        );
+                      }
+
+                      return (
+                        <FormItem>
+                          <FormControl>
+                            <Input readOnly {...field} className="hidden" />
+                          </FormControl>
+                          <div className="relative overflow-hidden rounded-md">
+                            {component}
+                            <ButtonRemoveFile onClick={() => remove(index)} />
+                          </div>
+                          {error?.message && <FormMessage message={t(error.message)} />}
+                        </FormItem>
+                      );
+                    }}
                   />
                 </div>
               );
@@ -98,7 +129,6 @@ export default function FormFieldCardImages<T extends FieldValues>({
           visible={isFileManagerVisible}
           type={'multiple'}
           selectedItems={[]}
-          mime="image/"
           onCancel={() => setIsFileManagerVisible(false)}
           onSelectClick={onSelectClick}
         />
