@@ -11,9 +11,10 @@ import { UsersPreferencesService } from './users-preferences.service';
 
 import { AuditLogsService } from '../audit-logs/audit-logs.service';
 import { AuditLog } from '../audit-logs/entities/audit-log.entity';
+import { AwsModule } from '../aws/aws.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([User, UserPreference, AuditLog])],
+  imports: [TypeOrmModule.forFeature([User, UserPreference, AuditLog]), AwsModule],
   controllers: [UsersController, AdminUsersController],
   providers: [UsersService, UsersPreferencesService, JwtService, AuditLogsService],
   exports: [UsersService],
