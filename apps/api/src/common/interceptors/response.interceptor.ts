@@ -6,6 +6,11 @@ import { map } from 'rxjs/operators';
 
 import { IResponseFormat } from '../interfaces/response-format.interface';
 
+type DataWithMeta = {
+  meta?: Record<string, unknown>;
+  [key: string]: unknown;
+};
+
 @Injectable()
 export class ResponseInterceptor<T> implements NestInterceptor<T, IResponseFormat<T>> {
   constructor(private readonly reflector: Reflector) {}
@@ -18,11 +23,14 @@ export class ResponseInterceptor<T> implements NestInterceptor<T, IResponseForma
       const message = this.reflector.get<string>('RESPONSE_MESSAGE_META_KEY', context.getHandler());
 
       return next.handle().pipe(
-        map((data: T) => {
+        map((data: DataWithMeta) => {
+          const { meta, ...rest } = data;
+
           return {
             statusCode,
             message,
-            data,
+            data: rest as T,
+            ...(meta && { meta }),
           };
         })
       );

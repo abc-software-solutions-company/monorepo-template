@@ -575,91 +575,121 @@ describe('PostsService', () => {
   });
 
   describe('findBySlug', () => {
+    const post = {
+      id: '1',
+      slug: 'post-1',
+      type: POST_TYPE.NEWS,
+      status: POST_STATUS.PUBLISHED,
+      createdAt: new Date(),
+      nameLocalized: [{ lang: defaultLanguage, value: 'Test Name' }],
+    } as Post;
+
+    const navigationPost = {
+      id: '1',
+      slug: 'post-1',
+      nameLocalized: [{ lang: defaultLanguage, value: 'Test Name' }],
+    } as Post;
+
     it('should throw NotFoundException if post is not found by slug', async () => {
       const mockQueryBuilder = {
         select: jest.fn().mockReturnThis(),
         leftJoin: jest.fn().mockReturnThis(),
         where: jest.fn().mockReturnThis(),
         andWhere: jest.fn().mockReturnThis(),
-        orWhere: jest.fn().mockReturnThis(),
         orderBy: jest.fn().mockReturnThis(),
-        skip: jest.fn().mockReturnThis(),
         take: jest.fn().mockReturnThis(),
-        getCount: jest.fn(),
-        getRawAndEntities: jest.fn(),
         getOne: jest.fn().mockResolvedValue(null),
       };
 
       mockPostRepository.createQueryBuilder.mockReturnValue(mockQueryBuilder);
 
-      await expect(service.findBySlug('unknown-slug', POST_STATUS.PUBLISHED)).rejects.toThrow(NotFoundException);
+      await expect(service.findBySlug('non-existent-slug')).rejects.toThrow(NotFoundException);
     });
 
     it('should use default status if none is provided', async () => {
-      const post = { id: '1', slug: 'post-1', nameLocalized: [{ lang: defaultLanguage, value: 'Test Name' }] } as Post;
-
       const mockQueryBuilder = {
         select: jest.fn().mockReturnThis(),
         leftJoin: jest.fn().mockReturnThis(),
         where: jest.fn().mockReturnThis(),
         andWhere: jest.fn().mockReturnThis(),
-        orWhere: jest.fn().mockReturnThis(),
         orderBy: jest.fn().mockReturnThis(),
-        skip: jest.fn().mockReturnThis(),
         take: jest.fn().mockReturnThis(),
-        getCount: jest.fn(),
-        getRawAndEntities: jest.fn(),
         getOne: jest.fn().mockResolvedValue(post),
       };
 
-      mockPostRepository.createQueryBuilder.mockReturnValue(mockQueryBuilder);
+      const mockNavigationQueryBuilder = {
+        select: jest.fn().mockReturnThis(),
+        where: jest.fn().mockReturnThis(),
+        andWhere: jest.fn().mockReturnThis(),
+        orderBy: jest.fn().mockReturnThis(),
+        take: jest.fn().mockReturnThis(),
+        getOne: jest.fn().mockResolvedValue(navigationPost),
+      };
 
-      const result = await service.findBySlug(post.slug);
+      mockPostRepository.createQueryBuilder
+        .mockReturnValueOnce(mockQueryBuilder)
+        .mockReturnValueOnce(mockNavigationQueryBuilder)
+        .mockReturnValueOnce(mockNavigationQueryBuilder);
 
-      expect(mockPostRepository.createQueryBuilder).toHaveBeenCalledWith('post');
-      expect(mockQueryBuilder.select).toHaveBeenCalledWith(POST_GET_FIELDS);
-      expect(mockQueryBuilder.leftJoin).toHaveBeenCalledWith('post.creator', 'user');
-      expect(mockQueryBuilder.leftJoin).toHaveBeenCalledWith('post.category', 'category');
-      expect(mockQueryBuilder.leftJoin).toHaveBeenCalledWith('post.postFiles', 'postFile');
-      expect(mockQueryBuilder.leftJoin).toHaveBeenCalledWith('postFile.image', 'image');
-      expect(mockQueryBuilder.where).toHaveBeenCalledWith('post.slug = :slug', { slug: post.slug });
+      const result = await service.findBySlug('test-slug');
+
       expect(mockQueryBuilder.andWhere).toHaveBeenCalledWith('post.status = :status', { status: POST_STATUS.PUBLISHED });
-      expect(mockQueryBuilder.orderBy).toHaveBeenCalledWith('postFile.position', SORT_ORDER.ASC);
-      expect(result).toEqual(post);
+      expect(result).toEqual({
+        ...post,
+        meta: {
+          previous: navigationPost,
+          next: navigationPost,
+        },
+      });
     });
 
-    it('should retrieve a post by slug', async () => {
-      const post = { id: '1', slug: 'post-1', nameLocalized: [{ lang: defaultLanguage, value: 'Test Name' }] } as Post;
-      const status = POST_STATUS.PUBLISHED;
+    it('should retrieve a post by slug without navigation', async () => {
+      const mockQueryBuilder = {
+        select: jest.fn().mockReturnThis(),
+        leftJoin: jest.fn().mockReturnThis(),
+        where: jest.fn().mockReturnThis(),
+        andWhere: jest.fn().mockReturnThis(),
+        orderBy: jest.fn().mockReturnThis(),
+        take: jest.fn().mockReturnThis(),
+        getOne: jest.fn().mockResolvedValue(post),
+      };
+
+      mockPostRepository.createQueryBuilder.mockReturnValue(mockQueryBuilder);
+
+      const result = await service.findBySlug('test-slug', POST_STATUS.PUBLISHED, false);
+
+      expect(result).toEqual({ ...post, meta: null });
+    });
+
+    it('should retrieve a post by slug with missing meta field', async () => {
+      const postWithoutMeta = {
+        id: '1',
+        slug: 'post-1',
+        type: POST_TYPE.NEWS,
+        status: POST_STATUS.PUBLISHED,
+        createdAt: new Date(),
+        nameLocalized: [{ lang: defaultLanguage, value: 'Test Name' }],
+      } as Post;
 
       const mockQueryBuilder = {
         select: jest.fn().mockReturnThis(),
         leftJoin: jest.fn().mockReturnThis(),
         where: jest.fn().mockReturnThis(),
         andWhere: jest.fn().mockReturnThis(),
-        orWhere: jest.fn().mockReturnThis(),
         orderBy: jest.fn().mockReturnThis(),
-        skip: jest.fn().mockReturnThis(),
         take: jest.fn().mockReturnThis(),
-        getCount: jest.fn(),
-        getRawAndEntities: jest.fn(),
-        getOne: jest.fn().mockResolvedValue(post),
+        getOne: jest.fn().mockResolvedValue(postWithoutMeta),
       };
 
       mockPostRepository.createQueryBuilder.mockReturnValue(mockQueryBuilder);
 
-      const result = await service.findBySlug(post.slug, status);
+      const result = await service.findBySlug('test-slug', POST_STATUS.PUBLISHED, false);
 
-      expect(mockPostRepository.createQueryBuilder).toHaveBeenCalledWith('post');
+      expect(result).toEqual({ ...postWithoutMeta, meta: null });
+      expect(result.meta).toBeNull();
       expect(mockQueryBuilder.select).toHaveBeenCalledWith(POST_GET_FIELDS);
-      expect(mockQueryBuilder.leftJoin).toHaveBeenCalledWith('post.creator', 'user');
-      expect(mockQueryBuilder.leftJoin).toHaveBeenCalledWith('post.category', 'category');
-      expect(mockQueryBuilder.leftJoin).toHaveBeenCalledWith('post.postFiles', 'postFile');
-      expect(mockQueryBuilder.leftJoin).toHaveBeenCalledWith('postFile.image', 'image');
-      expect(mockQueryBuilder.where).toHaveBeenCalledWith('post.slug = :slug', { slug: post.slug });
-      expect(mockQueryBuilder.andWhere).toHaveBeenCalledWith('post.status = :status', { status });
-      expect(mockQueryBuilder.orderBy).toHaveBeenCalledWith('postFile.position', SORT_ORDER.ASC);
-      expect(result).toEqual(post);
+      expect(mockQueryBuilder.where).toHaveBeenCalledWith('post.slug = :slug', { slug: 'test-slug' });
+      expect(mockQueryBuilder.andWhere).toHaveBeenCalledWith('post.status = :status', { status: POST_STATUS.PUBLISHED });
     });
   });
 
