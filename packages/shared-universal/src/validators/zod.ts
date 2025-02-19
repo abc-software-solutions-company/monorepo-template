@@ -3,6 +3,8 @@ import { parsePhoneNumberFromString } from 'libphonenumber-js';
 import { Language } from '@repo/shared-universal/interfaces/language.interface';
 import { stripHTML } from '../utils/string.util';
 
+export const URL_PATTERN = /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([/\w .-]*)*\/?$/;
+
 export const baseValidator = {
   userName: stringSchema({
     min: 1,

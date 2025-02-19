@@ -25,6 +25,12 @@ export class CreatePostDto extends TranslationDto {
   @IsOptional()
   type?: POST_TYPE;
 
+  @ApiProperty({ example: toSlug('https://example.com') })
+  @IsString()
+  @IsOptional()
+  @MaxLength(2048)
+  externalUrl?: string;
+
   @ApiPropertyOptional({ enum: POST_STATUS, example: POST_STATUS.DRAFT })
   @IsEnum(POST_STATUS)
   @IsOptional()

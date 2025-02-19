@@ -8,6 +8,7 @@ import { useLocale, useTranslations } from 'use-intl';
 import { zodResolver } from '@hookform/resolvers/zod';
 import Debugger from '@repo/react-web-ui-shadcn/components/debugger';
 import FormFieldCKEditorMultiLanguage from '@repo/react-web-ui-shadcn/components/form-fields/form-field-ckeditor-multi-language';
+import FormFieldInput from '@repo/react-web-ui-shadcn/components/form-fields/form-field-input';
 import FormFieldInputDatePicker from '@repo/react-web-ui-shadcn/components/form-fields/form-field-input-date-picker';
 import FormFieldInputMultiLanguage from '@repo/react-web-ui-shadcn/components/form-fields/form-field-input-multi-language';
 import FormFieldInputSlug from '@repo/react-web-ui-shadcn/components/form-fields/form-field-input-slug';
@@ -71,6 +72,7 @@ const PostForm: FC<PostFormProps> = ({ isEdit }) => {
     images: content?.data.images ?? ([] as FileEntity[]),
     categoryId: content?.data.category?.id,
     publishDate: content?.data.publishDate ? new Date(content.data.publishDate) : undefined,
+    externalUrl: content?.data.externalUrl ?? '',
     seoMeta: {
       titleLocalized: content?.data.seoMeta?.titleLocalized ?? [],
       descriptionLocalized: content?.data.seoMeta?.descriptionLocalized ?? [],
@@ -212,6 +214,16 @@ const PostForm: FC<PostFormProps> = ({ isEdit }) => {
                   </CardHeader>
                   <CardContent className="pt-0">
                     <FormFieldInputDatePicker form={form} fieldName="publishDate" size="sm" />
+                  </CardContent>
+                </Card>
+                <Card>
+                  <CardHeader>
+                    <div className="flex items-center justify-between">
+                      <CardTitle>{t('form_field_external_url')}</CardTitle>
+                    </div>
+                  </CardHeader>
+                  <CardContent className="pt-0">
+                    <FormFieldInput form={form} fieldName="externalUrl" size="sm" translator={t} />
                   </CardContent>
                 </Card>
                 <FormFieldCardSelectCategory form={form} fieldName="categoryId" formLabel={t('form_field_category')} items={categories?.data ?? []} />

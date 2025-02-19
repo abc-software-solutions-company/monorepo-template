@@ -21,8 +21,15 @@ export class CreateProductDto extends TranslationDto {
   slug: string;
 
   @ApiPropertyOptional({ example: PRODUCT_TYPE.DEFAULT })
+  @IsEnum(PRODUCT_TYPE)
+  @IsOptional()
+  type?: PRODUCT_TYPE;
+
+  @ApiProperty({ example: toSlug('https://example.com') })
   @IsString()
-  type: PRODUCT_TYPE;
+  @IsOptional()
+  @MaxLength(2048)
+  externalUrl?: string;
 
   @ApiPropertyOptional({ example: PRODUCT_STATUS.DRAFT })
   @IsEnum(PRODUCT_STATUS)

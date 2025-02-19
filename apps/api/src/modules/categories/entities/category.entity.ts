@@ -20,6 +20,9 @@ export class Category extends TranslationEntity {
   @Column({ type: 'varchar', length: 50, default: CATEGORY_TYPE.NEWS })
   type: CATEGORY_TYPE;
 
+  @Column({ type: 'varchar', length: 2048, nullable: true })
+  externalUrl: string;
+
   @Column({ type: 'varchar', length: 50, default: CATEGORY_STATUS.PUBLISHED })
   status: CATEGORY_STATUS;
 

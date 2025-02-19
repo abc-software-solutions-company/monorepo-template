@@ -57,6 +57,7 @@ export const productFormLocalizeSchema = (languages: Language[]) => {
       maxMessage: 'validator_maximum_n_characters_allowed',
     }),
     publishDate: z.date().optional(),
+    externalUrl: z.union([z.string().url('validator_url_invalid'), z.string().length(0)]).optional(),
     images: z.object({ id: z.string().uuid({ message: 'validator_id_should_be_an_uuid' }) }).array(),
     categoryId: z.string().optional(),
     seoMeta: z.object({
