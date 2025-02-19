@@ -13,10 +13,10 @@ export enum CATEGORY_STATUS {
   DELETED = 'deleted',
 }
 
+// Combine POST_TYPE and PRODUCT_TYPE
 export enum CATEGORY_TYPE {
   NEWS = 'news',
   PAGE = 'page',
-  SERVICE = 'service',
   PRODUCT = 'product',
 }
 
@@ -32,6 +32,7 @@ export const CATEGORY_DEFAULT_FILTER: CategoryFilter = {
   limit: 50,
   order: 'DESC',
   status: [],
+  type: CATEGORY_TYPE.NEWS,
 };
 
 export const CATEGORY_TYPES = [
@@ -46,10 +47,6 @@ export const CATEGORY_TYPES = [
   {
     label: 'Page',
     value: CATEGORY_TYPE.PAGE,
-  },
-  {
-    label: 'Service',
-    value: CATEGORY_TYPE.SERVICE,
   },
 ] as OptionType[];
 

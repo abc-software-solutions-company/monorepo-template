@@ -1,4 +1,4 @@
-import { FC, useMemo, useState } from 'react';
+import { FC, useEffect, useMemo, useState } from 'react';
 import axios from 'axios';
 import classNames from 'classnames';
 import { ChevronDown, ChevronRight } from 'lucide-react';
@@ -6,7 +6,6 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { toast } from 'sonner';
 import { useLocale, useTranslations } from 'use-intl';
 import ModalConfirm from '@repo/react-web-ui-shadcn/components/modals/modal-confirm';
-import { Badge } from '@repo/react-web-ui-shadcn/components/ui/badge';
 import { Checkbox } from '@repo/react-web-ui-shadcn/components/ui/checkbox';
 import Pagination from '@repo/react-web-ui-shadcn/components/ui/pagination-custom';
 import { toDateTime } from '@repo/shared-universal/utils/date.util';
@@ -29,7 +28,7 @@ import {
 import { ComponentBaseProps } from '@/interfaces/component.interface';
 import { CategoriesResponse, CategoryEntity, CategoryResponse } from '../interfaces/categories.interface';
 
-import { CATEGORY_ACTION, CATEGORY_STATUS, CATEGORY_STATUSES, QUERY_CATEGORY_LIST } from '../constants/categories.constant';
+import { CATEGORY_ACTION, CATEGORY_STATUS, CATEGORY_STATUSES, CATEGORY_TYPE, QUERY_CATEGORY_LIST } from '../constants/categories.constant';
 
 import { useCategories } from '../hooks/use-categories';
 import { useBulkDestroyCategoriesMutation, useDestroyCategoryMutation } from '../hooks/use-category-queries';
@@ -107,7 +106,10 @@ const CategoryList: FC<ComponentBaseProps> = ({ className }) => {
                 onClick={() =>
                   navigate({
                     pathname: `/${locale}/categories/${row.original.id}/edit`,
-                    search: `?${objectToQueryString({ sidebar: searchParams.get('sidebar') })}`,
+                    search: `?${objectToQueryString({
+                      sidebar: searchParams.get('sidebar'),
+                      type: searchParams.get('type'),
+                    })}`,
                   })
                 }
               >
@@ -129,20 +131,8 @@ const CategoryList: FC<ComponentBaseProps> = ({ className }) => {
         },
       },
       {
-        accessorKey: 'type',
-        size: 0,
-        header: ({ column }) => <DataTableColumnHeader column={column} title={t('category_type')} />,
-        cell: ({ row }) => {
-          return (
-            <Badge className="text-xs" variant="secondary">
-              {row.original.type.toUpperCase()}
-            </Badge>
-          );
-        },
-      },
-      {
         accessorKey: 'createdAt',
-        size: 0,
+        size: 200,
         header: ({ column }) => <DataTableColumnHeader column={column} title={t('category_created_at')} />,
         cell: ({ row }) => {
           const date = new Date(row.getValue('createdAt'));
@@ -152,7 +142,7 @@ const CategoryList: FC<ComponentBaseProps> = ({ className }) => {
       },
       {
         accessorKey: 'status',
-        size: 0,
+        size: 120,
         header: ({ column }) => <DataTableColumnHeader className="text-center" column={column} title={t('category_status')} />,
         cell: ({ row }) => {
           const status = CATEGORY_STATUSES.find(x => x.value === row.getValue('status'));
@@ -171,7 +161,7 @@ const CategoryList: FC<ComponentBaseProps> = ({ className }) => {
       },
       {
         accessorKey: 'creator',
-        size: 0,
+        size: 250,
         header: ({ column }) => <DataTableColumnHeader column={column} title={t('category_author')} />,
         cell: ({ row }) => {
           const creator = row.original.creator;
@@ -289,6 +279,11 @@ const CategoryList: FC<ComponentBaseProps> = ({ className }) => {
 
     toast(t('category_delete_toast_title'), { description: errorMessage });
   };
+
+  useEffect(() => {
+    setFilter({ ...filter, type: searchParams.get('type') as CATEGORY_TYPE });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams]);
 
   return (
     <div className={classNames('categories-list flex grow flex-col rounded-lg border bg-card p-4 text-card-foreground shadow-sm', className)}>

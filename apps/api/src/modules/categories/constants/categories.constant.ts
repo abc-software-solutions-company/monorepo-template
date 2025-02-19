@@ -31,6 +31,5 @@ export enum CATEGORY_STATUS {
 export enum CATEGORY_TYPE {
   NEWS = 'news',
   PAGE = 'page',
-  SERVICE = 'service',
   PRODUCT = 'product',
 }

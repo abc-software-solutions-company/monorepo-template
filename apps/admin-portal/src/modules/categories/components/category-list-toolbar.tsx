@@ -41,7 +41,10 @@ export default function CategoryListToolbar<TData>({ table, onBulkDelete }: Cate
           onClick={() =>
             navigate({
               pathname: `/${locale}/categories/new`,
-              search: `?${objectToQueryString({ sidebar: searchParams.get('sidebar') })}`,
+              search: `?${objectToQueryString({
+                sidebar: searchParams.get('sidebar'),
+                type: searchParams.get('type'),
+              })}`,
             })
           }
         >

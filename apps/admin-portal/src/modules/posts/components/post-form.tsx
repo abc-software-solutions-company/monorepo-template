@@ -60,6 +60,8 @@ const PostForm: FC<PostFormProps> = ({ isEdit }) => {
   const { mutate: updateMutation } = useUpdatePostMutation();
 
   const languages = getLanguages(locale);
+  const type = searchParams.get('type') as POST_TYPE;
+  const isPageType = type === POST_TYPE.PAGE;
 
   const defaultValues: CreatePostDto = {
     status: content?.data.status ?? POST_STATUS.DRAFT,
@@ -226,7 +228,13 @@ const PostForm: FC<PostFormProps> = ({ isEdit }) => {
                     <FormFieldInput form={form} fieldName="externalUrl" size="sm" translator={t} />
                   </CardContent>
                 </Card>
-                <FormFieldCardSelectCategory form={form} fieldName="categoryId" formLabel={t('form_field_category')} items={categories?.data ?? []} />
+                <FormFieldCardSelectCategory
+                  form={form}
+                  fieldName="categoryId"
+                  formLabel={t('form_field_category')}
+                  items={categories?.data ?? []}
+                  visibled={!isPageType}
+                />
                 <FormFieldCardCoverMultiLanguage form={form} fieldName="coverLocalized" formLabel="Cover Image" locales={languages} maxVisible={2} />
                 <FormFieldCardImages form={form} />
               </div>

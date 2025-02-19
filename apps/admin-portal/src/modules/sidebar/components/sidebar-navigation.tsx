@@ -24,21 +24,22 @@ import { ComponentBaseProps } from '@/interfaces/component.interface';
 
 import { SUB_MENU_ALIGN_OFFSET, SUB_MENU_SIDE_OFFSET } from '../constants/sidebar.constant';
 
+import { CATEGORY_TYPE } from '@/modules/categories/constants/categories.constant';
 import { POST_TYPE } from '@/modules/posts/constants/posts.constant';
 import { PRODUCT_TYPE } from '@/modules/products/constants/products.constant';
 
 import SidebarMenuIndicator from './sidebar-menu-indicator';
 import SidebarMenuItem from './sidebar-menu-item';
-import CategoriesSubMenu from './sub-menu-categories';
-import DocumentationSubMenu from './sub-menu-documentation';
-import NotificationsSubMenu from './sub-menu-notifications';
+import SubMenuDocumentation from './sub-menu-documentation';
+import SubMenuNotifications from './sub-menu-notifications';
 import SubMenuPages from './sub-menu-pages';
-import PostsSubMenu from './sub-menu-posts';
-import ProductsSubMenu from './sub-menu-products';
+import SubMenuPostCategories from './sub-menu-post-categories';
+import SubMenuPosts from './sub-menu-posts';
+import SubMenuProductCategories from './sub-menu-product-categories';
+import SubMenuProducts from './sub-menu-products';
 import SubMenuProfile from './sub-menu-profile';
-import SubMenuServices from './sub-menu-services';
-import SettingsSubMenu from './sub-menu-settings';
-import UsersSubMenu from './sub-menu-users';
+import SubMenuSettings from './sub-menu-settings';
+import SubMenuUsers from './sub-menu-users';
 
 type SidebarNavigationProps = ComponentBaseProps & {
   isExpand: boolean;
@@ -53,12 +54,12 @@ const SidebarNavigation: FC<SidebarNavigationProps> = ({ className, isExpand, on
 
   const [isOpenSubMenu, setIsOpenSubMenu] = useState({
     dashboard: false,
-    categories: false,
     contents: false,
     posts: false,
+    post_categories: false,
     pages: false,
-    services: false,
     products: false,
+    product_categories: false,
     users: false,
     notifications: false,
     files: false,
@@ -74,11 +75,11 @@ const SidebarNavigation: FC<SidebarNavigationProps> = ({ className, isExpand, on
     setIsOpenSubMenu(prevState => ({
       ...prevState,
       dashboard: pathname.includes(`/${locale}/dashboard`),
-      categories: pathname.includes(`/${locale}/categories`),
       contents: pathname.includes(`/${locale}/contents`),
+      post_categories: pathname.includes(`/${locale}/categories`) && searchParams.get('type') === CATEGORY_TYPE.NEWS,
       posts: pathname.includes(`/${locale}/posts`) && searchParams.get('type') === POST_TYPE.NEWS,
       pages: pathname.includes(`/${locale}/posts`) && searchParams.get('type') === POST_TYPE.PAGE,
-      services: pathname.includes(`/${locale}/posts`) && searchParams.get('type') === POST_TYPE.SERVICE,
+      product_categories: pathname.includes(`/${locale}/categories`) && searchParams.get('type') === CATEGORY_TYPE.PRODUCT,
       products: pathname.includes(`/${locale}/products`) && searchParams.get('type') === PRODUCT_TYPE.DEFAULT,
       users: pathname.includes(`/${locale}/users`),
       notifications: pathname.includes(`/${locale}/notifications`),
@@ -117,19 +118,28 @@ const SidebarNavigation: FC<SidebarNavigationProps> = ({ className, isExpand, on
           </HoverCard>
         </div>
         {/*************************************************************
-          CATEGORIES
+          POST CATEGORIES
           **************************************************************/}
         <div className="relative my-0.5 px-3">
           <Collapsible
-            open={isOpenSubMenu.categories && isExpand}
-            onOpenChange={value => setIsOpenSubMenu(prevState => ({ ...prevState, categories: value }))}
+            open={isOpenSubMenu.post_categories && isExpand}
+            onOpenChange={value => setIsOpenSubMenu(prevState => ({ ...prevState, post_categories: value }))}
           >
-            <SidebarMenuItem url={`/${locale}/categories`} isExpand={isExpand} options={{ icon: ListTreeIcon, onClick: handleItemClick }}>
-              {t('sidebar_menu_categories')}
+            <SidebarMenuItem
+              url={`/${locale}/categories`}
+              queryParams={{ type: CATEGORY_TYPE.NEWS }}
+              isExpand={isExpand}
+              options={{ icon: ListTreeIcon, onClick: handleItemClick }}
+            >
+              {t('sidebar_menu_post_categories')}
             </SidebarMenuItem>
             <CollapsibleTrigger asChild>
               <div>
-                <SidebarMenuIndicator isExpand={isExpand} isActive={pathname.includes(`/${locale}/categories`)} isOpen={isOpenSubMenu.categories} />
+                <SidebarMenuIndicator
+                  isExpand={isExpand}
+                  isActive={pathname.includes(`/${locale}/categories`)}
+                  isOpen={isOpenSubMenu.post_categories}
+                />
               </div>
             </CollapsibleTrigger>
             <CollapsibleContent
@@ -137,17 +147,22 @@ const SidebarNavigation: FC<SidebarNavigationProps> = ({ className, isExpand, on
                 'mt-1 overflow-hidden rounded [&[data-state=closed]]:animate-collapsible-up [&[data-state=open]]:animate-collapsible-down'
               )}
             >
-              <CategoriesSubMenu type="list" onNavigate={handleItemClick} />
+              <SubMenuPostCategories type="list" onNavigate={handleItemClick} />
             </CollapsibleContent>
           </Collapsible>
           <HoverCard openDelay={250} closeDelay={250}>
             <HoverCardTrigger asChild className={classNames('absolute top-0 opacity-0', isExpand && 'invisible')}>
               <div>
-                <SidebarMenuItem url={`/${locale}/categories`} isExpand={isExpand} options={{ icon: ListTreeIcon, onClick: handleItemClick }} />
+                <SidebarMenuItem
+                  url={`/${locale}/categories`}
+                  queryParams={{ type: CATEGORY_TYPE.NEWS }}
+                  isExpand={isExpand}
+                  options={{ icon: ListTreeIcon, onClick: handleItemClick }}
+                />
               </div>
             </HoverCardTrigger>
             <HoverCardContent className="w-52 p-1" sideOffset={SUB_MENU_SIDE_OFFSET} alignOffset={SUB_MENU_ALIGN_OFFSET} side="right" align="start">
-              <CategoriesSubMenu type="dropdown" onNavigate={handleItemClick} />
+              <SubMenuPostCategories type="dropdown" onNavigate={handleItemClick} />
             </HoverCardContent>
           </HoverCard>
         </div>
@@ -174,7 +189,7 @@ const SidebarNavigation: FC<SidebarNavigationProps> = ({ className, isExpand, on
                 'mt-1 overflow-hidden rounded [&[data-state=closed]]:animate-collapsible-up [&[data-state=open]]:animate-collapsible-down'
               )}
             >
-              <PostsSubMenu type="list" onNavigate={handleItemClick} />
+              <SubMenuPosts type="list" onNavigate={handleItemClick} />
             </CollapsibleContent>
           </Collapsible>
           <HoverCard openDelay={250} closeDelay={250}>
@@ -189,7 +204,7 @@ const SidebarNavigation: FC<SidebarNavigationProps> = ({ className, isExpand, on
               </div>
             </HoverCardTrigger>
             <HoverCardContent className="w-52 p-1" sideOffset={SUB_MENU_SIDE_OFFSET} alignOffset={SUB_MENU_ALIGN_OFFSET} side="right" align="start">
-              <PostsSubMenu type="dropdown" onNavigate={handleItemClick} />
+              <SubMenuPosts type="dropdown" onNavigate={handleItemClick} />
             </HoverCardContent>
           </HoverCard>
         </div>
@@ -236,24 +251,28 @@ const SidebarNavigation: FC<SidebarNavigationProps> = ({ className, isExpand, on
           </HoverCard>
         </div>
         {/*************************************************************
-          POSTS (SERVICES)
+          PRODUCT CATEGORIES
           **************************************************************/}
         <div className="relative my-0.5 px-3">
           <Collapsible
-            open={isOpenSubMenu.services && isExpand}
-            onOpenChange={value => setIsOpenSubMenu(prevState => ({ ...prevState, services: value }))}
+            open={isOpenSubMenu.product_categories && isExpand}
+            onOpenChange={value => setIsOpenSubMenu(prevState => ({ ...prevState, product_categories: value }))}
           >
             <SidebarMenuItem
-              url={`/${locale}/posts`}
-              queryParams={{ type: POST_TYPE.SERVICE }}
+              url={`/${locale}/categories`}
+              queryParams={{ type: CATEGORY_TYPE.PRODUCT }}
               isExpand={isExpand}
-              options={{ icon: BookOpenTextIcon, onClick: handleItemClick }}
+              options={{ icon: ListTreeIcon, onClick: handleItemClick }}
             >
-              {t('sidebar_menu_services')}
+              {t('sidebar_menu_product_categories')}
             </SidebarMenuItem>
             <CollapsibleTrigger asChild>
               <div>
-                <SidebarMenuIndicator isExpand={isExpand} isActive={isOpenSubMenu.services} isOpen={isOpenSubMenu.services} />
+                <SidebarMenuIndicator
+                  isExpand={isExpand}
+                  isActive={pathname.includes(`/${locale}/categories`)}
+                  isOpen={isOpenSubMenu.product_categories}
+                />
               </div>
             </CollapsibleTrigger>
             <CollapsibleContent
@@ -261,22 +280,22 @@ const SidebarNavigation: FC<SidebarNavigationProps> = ({ className, isExpand, on
                 'mt-1 overflow-hidden rounded [&[data-state=closed]]:animate-collapsible-up [&[data-state=open]]:animate-collapsible-down'
               )}
             >
-              <SubMenuServices type="list" onNavigate={handleItemClick} />
+              <SubMenuProductCategories type="list" onNavigate={handleItemClick} />
             </CollapsibleContent>
           </Collapsible>
           <HoverCard openDelay={250} closeDelay={250}>
             <HoverCardTrigger asChild className={classNames('absolute top-0 opacity-0', isExpand && 'invisible')}>
               <div>
                 <SidebarMenuItem
-                  url={`/${locale}/posts`}
-                  queryParams={{ type: POST_TYPE.SERVICE }}
+                  url={`/${locale}/categories`}
+                  queryParams={{ type: CATEGORY_TYPE.PRODUCT }}
                   isExpand={isExpand}
-                  options={{ icon: BookOpenTextIcon, onClick: handleItemClick }}
+                  options={{ icon: ListTreeIcon, onClick: handleItemClick }}
                 />
               </div>
             </HoverCardTrigger>
             <HoverCardContent className="w-52 p-1" sideOffset={SUB_MENU_SIDE_OFFSET} alignOffset={SUB_MENU_ALIGN_OFFSET} side="right" align="start">
-              <SubMenuServices type="dropdown" onNavigate={handleItemClick} />
+              <SubMenuProductCategories type="dropdown" onNavigate={handleItemClick} />
             </HoverCardContent>
           </HoverCard>
         </div>
@@ -306,7 +325,7 @@ const SidebarNavigation: FC<SidebarNavigationProps> = ({ className, isExpand, on
                 'mt-1 overflow-hidden rounded [&[data-state=closed]]:animate-collapsible-up [&[data-state=open]]:animate-collapsible-down'
               )}
             >
-              <ProductsSubMenu type="list" onNavigate={handleItemClick} />
+              <SubMenuProducts type="list" onNavigate={handleItemClick} />
             </CollapsibleContent>
           </Collapsible>
           <HoverCard openDelay={250} closeDelay={250}>
@@ -321,7 +340,7 @@ const SidebarNavigation: FC<SidebarNavigationProps> = ({ className, isExpand, on
               </div>
             </HoverCardTrigger>
             <HoverCardContent className="w-52 p-1" sideOffset={SUB_MENU_SIDE_OFFSET} alignOffset={SUB_MENU_ALIGN_OFFSET} side="right" align="start">
-              <ProductsSubMenu type="dropdown" onNavigate={handleItemClick} />
+              <SubMenuProducts type="dropdown" onNavigate={handleItemClick} />
             </HoverCardContent>
           </HoverCard>
         </div>
@@ -343,7 +362,7 @@ const SidebarNavigation: FC<SidebarNavigationProps> = ({ className, isExpand, on
                 'mt-1 overflow-hidden rounded [&[data-state=closed]]:animate-collapsible-up [&[data-state=open]]:animate-collapsible-down'
               )}
             >
-              <UsersSubMenu type="list" onNavigate={handleItemClick} />
+              <SubMenuUsers type="list" onNavigate={handleItemClick} />
             </CollapsibleContent>
           </Collapsible>
           <HoverCard openDelay={250} closeDelay={250}>
@@ -353,7 +372,7 @@ const SidebarNavigation: FC<SidebarNavigationProps> = ({ className, isExpand, on
               </div>
             </HoverCardTrigger>
             <HoverCardContent className="w-52 p-1" sideOffset={SUB_MENU_SIDE_OFFSET} alignOffset={SUB_MENU_ALIGN_OFFSET} side="right" align="start">
-              <UsersSubMenu type="dropdown" onNavigate={handleItemClick} />
+              <SubMenuUsers type="dropdown" onNavigate={handleItemClick} />
             </HoverCardContent>
           </HoverCard>
         </div>
@@ -382,7 +401,7 @@ const SidebarNavigation: FC<SidebarNavigationProps> = ({ className, isExpand, on
                 'mt-1 overflow-hidden rounded [&[data-state=closed]]:animate-collapsible-up [&[data-state=open]]:animate-collapsible-down'
               )}
             >
-              <NotificationsSubMenu type="list" onNavigate={handleItemClick} />
+              <SubMenuNotifications type="list" onNavigate={handleItemClick} />
             </CollapsibleContent>
           </Collapsible>
           <HoverCard openDelay={250} closeDelay={250}>
@@ -392,7 +411,7 @@ const SidebarNavigation: FC<SidebarNavigationProps> = ({ className, isExpand, on
               </div>
             </HoverCardTrigger>
             <HoverCardContent className="w-52 p-1" sideOffset={SUB_MENU_SIDE_OFFSET} alignOffset={SUB_MENU_ALIGN_OFFSET} side="right" align="start">
-              <NotificationsSubMenu type="dropdown" onNavigate={handleItemClick} />
+              <SubMenuNotifications type="dropdown" onNavigate={handleItemClick} />
             </HoverCardContent>
           </HoverCard>
         </div>
@@ -492,7 +511,7 @@ const SidebarNavigation: FC<SidebarNavigationProps> = ({ className, isExpand, on
                 'mt-1 overflow-hidden rounded [&[data-state=closed]]:animate-collapsible-up [&[data-state=open]]:animate-collapsible-down'
               )}
             >
-              <SettingsSubMenu type="list" onNavigate={handleItemClick} />
+              <SubMenuSettings type="list" onNavigate={handleItemClick} />
             </CollapsibleContent>
           </Collapsible>
           <HoverCard openDelay={250} closeDelay={250}>
@@ -502,7 +521,7 @@ const SidebarNavigation: FC<SidebarNavigationProps> = ({ className, isExpand, on
               </div>
             </HoverCardTrigger>
             <HoverCardContent className="w-52 p-1" sideOffset={SUB_MENU_SIDE_OFFSET} alignOffset={SUB_MENU_ALIGN_OFFSET} side="right" align="start">
-              <SettingsSubMenu type="dropdown" onNavigate={handleItemClick} />
+              <SubMenuSettings type="dropdown" onNavigate={handleItemClick} />
             </HoverCardContent>
           </HoverCard>
         </div>
@@ -570,7 +589,7 @@ const SidebarNavigation: FC<SidebarNavigationProps> = ({ className, isExpand, on
                 'mt-1 overflow-hidden rounded [&[data-state=closed]]:animate-collapsible-up [&[data-state=open]]:animate-collapsible-down'
               )}
             >
-              <DocumentationSubMenu type="list" onNavigate={handleItemClick} />
+              <SubMenuDocumentation type="list" onNavigate={handleItemClick} />
             </CollapsibleContent>
           </Collapsible>
           <HoverCard openDelay={250} closeDelay={250}>
@@ -584,7 +603,7 @@ const SidebarNavigation: FC<SidebarNavigationProps> = ({ className, isExpand, on
               </div>
             </HoverCardTrigger>
             <HoverCardContent className="w-52 p-1" sideOffset={SUB_MENU_SIDE_OFFSET} alignOffset={SUB_MENU_ALIGN_OFFSET} side="right" align="start">
-              <DocumentationSubMenu type="dropdown" onNavigate={handleItemClick} />
+              <SubMenuDocumentation type="dropdown" onNavigate={handleItemClick} />
             </HoverCardContent>
           </HoverCard>
         </div>

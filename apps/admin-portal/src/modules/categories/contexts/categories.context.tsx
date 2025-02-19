@@ -7,7 +7,7 @@ import { objectToQueryString } from '@repo/shared-universal/utils/string.util';
 import { ResponseMeta } from '@/interfaces/api-response.interface';
 import { CategoryEntity, CategoryFilter } from '../interfaces/categories.interface';
 
-import { CATEGORY_DEFAULT_FILTER } from '../constants/categories.constant';
+import { CATEGORY_DEFAULT_FILTER, CATEGORY_TYPE } from '../constants/categories.constant';
 
 import { useGetCategoriesQuery } from '../hooks/use-category-queries';
 
@@ -42,6 +42,7 @@ export const CategoryProvider: React.FC<CategoryProviderProps> = ({ children }) 
     limit: parseInt(searchParams.get('limit') as string) || CATEGORY_DEFAULT_FILTER.limit,
     order: searchParams.get('order') || CATEGORY_DEFAULT_FILTER.order,
     status: searchParams.getAll('status') || CATEGORY_DEFAULT_FILTER.status,
+    type: (searchParams.get('type') as CATEGORY_TYPE) || CATEGORY_DEFAULT_FILTER.type,
   });
 
   const [selected, setSelected] = useState<string[]>([]);
