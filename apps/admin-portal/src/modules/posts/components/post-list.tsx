@@ -105,7 +105,10 @@ const PostList: FC<ComponentBaseProps> = ({ className }) => {
                 onClick={() =>
                   navigate({
                     pathname: `/${locale}/posts/${row.original.id}/edit`,
-                    search: `?${objectToQueryString({ sidebar: searchParams.get('sidebar'), type: searchParams.get('type') })}`,
+                    search: `?${objectToQueryString({
+                      sidebar: searchParams.get('sidebar'),
+                      type: searchParams.get('type'),
+                    })}`,
                   })
                 }
               >

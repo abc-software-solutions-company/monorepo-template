@@ -33,5 +33,4 @@ export enum POST_STATUS {
 export enum POST_TYPE {
   NEWS = 'news',
   PAGE = 'page',
-  SERVICE = 'service',
 }

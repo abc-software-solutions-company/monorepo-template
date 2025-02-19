@@ -9,7 +9,6 @@ export const QUERY_POST_DETAIL = 'post';
 export enum POST_TYPE {
   NEWS = 'news',
   PAGE = 'page',
-  SERVICE = 'service',
 }
 
 export enum POST_STATUS {

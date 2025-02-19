@@ -29,6 +29,7 @@ type FormFieldCardSelectCategoryProps<T extends FieldValues> = {
   formLabel?: string;
   fieldName?: Path<T>;
   items: CategoryEntity[];
+  visibled?: boolean;
   onChange?: (value?: string) => void;
 };
 
@@ -37,11 +38,14 @@ export default function FormFieldCardSelectCategory<T extends FieldValues>({
   formLabel,
   items,
   fieldName = 'categoryId' as Path<T>,
+  visibled = true,
   onChange,
 }: FormFieldCardSelectCategoryProps<T>) {
   const t = useTranslations();
   const locale = useLocale();
   const memoizedCategories = useMemo(() => renderCategories(items, 0, locale), [items, locale]);
+
+  if (!visibled) return null;
 
   return (
     <Card>

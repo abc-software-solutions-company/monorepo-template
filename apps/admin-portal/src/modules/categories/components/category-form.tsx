@@ -8,7 +8,6 @@ import { useLocale, useTranslations } from 'use-intl';
 import { zodResolver } from '@hookform/resolvers/zod';
 import Debugger from '@repo/react-web-ui-shadcn/components/debugger';
 import FormFieldCKEditorMultiLanguage from '@repo/react-web-ui-shadcn/components/form-fields/form-field-ckeditor-multi-language';
-import FormFieldInput from '@repo/react-web-ui-shadcn/components/form-fields/form-field-input';
 import FormFieldInputDatePicker from '@repo/react-web-ui-shadcn/components/form-fields/form-field-input-date-picker';
 import FormFieldInputMultiLanguage from '@repo/react-web-ui-shadcn/components/form-fields/form-field-input-multi-language';
 import FormFieldInputSlug from '@repo/react-web-ui-shadcn/components/form-fields/form-field-input-slug';
@@ -20,7 +19,7 @@ import { objectToQueryString } from '@repo/shared-universal/utils/string.util';
 
 import { CategoryFormData } from '../interfaces/categories.interface';
 
-import { CATEGORY_STATUS, CATEGORY_STATUSES, CATEGORY_TYPE, CATEGORY_TYPES } from '../constants/categories.constant';
+import { CATEGORY_STATUS, CATEGORY_STATUSES, CATEGORY_TYPE } from '../constants/categories.constant';
 
 import {
   useCreateCategoryMutation,
@@ -30,10 +29,9 @@ import {
 } from '../hooks/use-category-queries';
 
 import EditorFileDialog from '@/components/editor-file-dialog';
-import FormFieldCardCover from '@/components/form-fields/form-field-card-cover';
+import FormFieldCardCoverMultiLanguage from '@/components/form-fields/form-field-card-cover-multi-language';
 import FormFieldCardImages from '@/components/form-fields/form-field-card-images';
 import FormFieldCardSelectCategory from '@/components/form-fields/form-field-card-select-category';
-import FormFieldCardSelectCategoryType from '@/components/form-fields/form-field-card-select-category-type';
 import FormFieldCardSelectStatus from '@/components/form-fields/form-field-card-select-status';
 import FormFieldCardSeoMeta from '@/components/form-fields/form-field-card-seo-meta';
 import FormToolbar from '@/components/form-toolbar';
@@ -54,13 +52,12 @@ const CategoryForm: FC<CategoryFormProps> = ({ isEdit }) => {
   const locale = useLocale();
   const editorRef = useRef<Editor | null>(null);
   const [isFileManagerVisible, setIsFileManagerVisible] = useState(false);
-  const [selectedType, setSelectedType] = useState<CATEGORY_TYPE | undefined>(undefined);
   const { data: content, isFetching } = useGetCategoryQuery({ id: params.id as string, enabled: !!params.id });
   const { data: categoriesByType, isFetching: isCategoriesByTypeFetching } = useGetCategoriesByTypeQuery({
-    filter: { type: selectedType },
-    excludeId: content?.data.id,
-    enabled: true,
+    filter: { type: searchParams.get('type') as CATEGORY_TYPE },
+    excludeId: params.id,
   });
+
   const { mutate: createMutation } = useCreateCategoryMutation();
   const { mutate: updateMutation } = useUpdateCategoryMutation();
 
@@ -69,7 +66,7 @@ const CategoryForm: FC<CategoryFormProps> = ({ isEdit }) => {
   const defaultValues: CategoryFormData = {
     status: content?.data.status ?? CATEGORY_STATUS.PUBLISHED,
     slug: content?.data.slug ?? '',
-    type: content?.data.type ?? ('' as CATEGORY_TYPE),
+    type: content?.data.type ?? (searchParams.get('type') as CATEGORY_TYPE),
     coverLocalized: content?.data.coverLocalized ?? [],
     nameLocalized: content?.data.nameLocalized ?? [],
     descriptionLocalized: content?.data.descriptionLocalized ?? [],
@@ -90,15 +87,12 @@ const CategoryForm: FC<CategoryFormProps> = ({ isEdit }) => {
     defaultValues,
   });
 
-  const handleTypeChange = (newType: CATEGORY_TYPE) => {
-    setSelectedType(newType);
-  };
-
   const onBackClick = () => {
     navigate({
       pathname: `/${locale}/categories`,
       search: `?${objectToQueryString({
         sidebar: searchParams.get('sidebar'),
+        type: searchParams.get('type'),
       })}`,
     });
   };
@@ -155,10 +149,7 @@ const CategoryForm: FC<CategoryFormProps> = ({ isEdit }) => {
   };
 
   useEffect(() => {
-    setSelectedType(content?.data.type);
-    setTimeout(() => {
-      form.reset(defaultValues);
-    }, 500);
+    form.reset(defaultValues);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [form, content]);
 
@@ -227,30 +218,13 @@ const CategoryForm: FC<CategoryFormProps> = ({ isEdit }) => {
                     <FormFieldInputDatePicker form={form} fieldName="publishDate" size="sm" />
                   </CardContent>
                 </Card>
-                <Card>
-                  <CardHeader>
-                    <div className="flex items-center justify-between">
-                      <CardTitle>{t('form_field_external_url')}</CardTitle>
-                    </div>
-                  </CardHeader>
-                  <CardContent className="pt-0">
-                    <FormFieldInput form={form} fieldName="externalUrl" size="sm" translator={t} />
-                  </CardContent>
-                </Card>
-                <FormFieldCardSelectCategoryType
-                  form={form}
-                  fieldName="type"
-                  formLabel={t('form_field_category')}
-                  items={CATEGORY_TYPES}
-                  onChange={value => handleTypeChange(value as CATEGORY_TYPE)}
-                />
                 <FormFieldCardSelectCategory
                   form={form}
                   fieldName="parentId"
                   formLabel={t('form_field_category_parent')}
                   items={categoriesByType?.data ?? []}
                 />
-                <FormFieldCardCover form={form} />
+                <FormFieldCardCoverMultiLanguage form={form} fieldName="coverLocalized" formLabel="Cover Image" locales={languages} maxVisible={2} />
                 <FormFieldCardImages form={form} />
               </div>
             </div>

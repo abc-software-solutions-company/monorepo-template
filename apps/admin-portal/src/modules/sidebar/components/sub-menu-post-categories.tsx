@@ -4,12 +4,12 @@ import { NavLink, useLocation, useSearchParams } from 'react-router-dom';
 import { useLocale, useTranslations } from 'use-intl';
 import { objectToQueryString } from '@repo/shared-universal/utils/string.util';
 
-type SubMenuCategoriesProps = {
+type SubMenuPostCategoriesProps = {
   type: 'dropdown' | 'list';
   onNavigate?: () => void;
 };
 
-const SubMenuCategories: FC<SubMenuCategoriesProps> = ({ type, onNavigate }) => {
+const SubMenuPostCategories: FC<SubMenuPostCategoriesProps> = ({ type, onNavigate }) => {
   const t = useTranslations();
   const [searchParams] = useSearchParams();
   const { pathname } = useLocation();
@@ -26,7 +26,10 @@ const SubMenuCategories: FC<SubMenuCategoriesProps> = ({ type, onNavigate }) => 
       <NavLink
         to={{
           pathname: `/${locale}/categories/new`,
-          search: `?${objectToQueryString({ sidebar: searchParams.get('sidebar') })}`,
+          search: `?${objectToQueryString({
+            sidebar: searchParams.get('sidebar'),
+            type: searchParams.get('type'),
+          })}`,
         }}
         className={classNames(
           'flex items-center rounded p-2 transition-colors',
@@ -36,10 +39,10 @@ const SubMenuCategories: FC<SubMenuCategoriesProps> = ({ type, onNavigate }) => 
         )}
         onClick={handleClick}
       >
-        <p className={classNames('whitespace-nowrap', className)}>{t('sidebar_menu_categories_create_new')}</p>
+        <p className={classNames('whitespace-nowrap', className)}>{t('sidebar_menu_post_categories_create_new')}</p>
       </NavLink>
     </div>
   );
 };
 
-export default SubMenuCategories;
+export default SubMenuPostCategories;
