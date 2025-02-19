@@ -21,6 +21,7 @@ export type PostEntity = {
   status: POST_STATUS;
   order: number;
   publishDate: string;
+  externalUrl: string;
   coverLocalized: Translation[];
   nameLocalized: Translation[];
   descriptionLocalized: Translation[];

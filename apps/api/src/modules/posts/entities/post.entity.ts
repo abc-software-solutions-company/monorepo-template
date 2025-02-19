@@ -19,6 +19,9 @@ export class Post extends TranslationEntity {
   @Column({ type: 'varchar', length: 50, nullable: true })
   type: string;
 
+  @Column({ type: 'varchar', length: 2048, nullable: true })
+  externalUrl: string;
+
   @Column({ type: 'varchar', length: 50, default: POST_STATUS.DRAFT })
   status: POST_STATUS;
 

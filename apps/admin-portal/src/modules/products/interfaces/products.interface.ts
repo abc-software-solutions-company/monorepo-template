@@ -20,6 +20,7 @@ export type ProductEntity = {
   type: PRODUCT_TYPE;
   status: PRODUCT_STATUS;
   publishDate: string;
+  externalUrl: string;
   coverLocalized: Translation[];
   nameLocalized: Translation[];
   descriptionLocalized: Translation[];

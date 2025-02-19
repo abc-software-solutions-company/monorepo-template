@@ -19,6 +19,7 @@ export type CategoryEntity = {
   type: CATEGORY_TYPE;
   status: CATEGORY_STATUS;
   publishDate: string;
+  externalUrl: string;
   coverLocalized: Translation[];
   nameLocalized: Translation[];
   descriptionLocalized: Translation[];

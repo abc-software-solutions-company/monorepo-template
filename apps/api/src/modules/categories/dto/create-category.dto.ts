@@ -23,6 +23,12 @@ export class CreateCategoryDto extends TranslationDto {
   @IsOptional()
   type?: CATEGORY_TYPE;
 
+  @ApiProperty({ example: toSlug('https://example.com') })
+  @IsString()
+  @IsOptional()
+  @MaxLength(2048)
+  externalUrl?: string;
+
   @ApiPropertyOptional({ enum: CATEGORY_STATUS, example: CATEGORY_STATUS.PUBLISHED })
   @IsEnum(CATEGORY_STATUS)
   @IsOptional()

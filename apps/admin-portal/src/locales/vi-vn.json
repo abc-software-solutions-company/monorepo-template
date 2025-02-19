@@ -55,6 +55,7 @@
   "form_field_confirm_password": "Xác nhận mật khẩu",
   "form_field_phone_number": "Số điện thoại",
   "form_field_publish_date": "Ngày xuất bản",
+  "form_field_external_url": "Liên kết ngoài",
 
   "bulk_delete": "Xoá Hàng Loạt",
   "bulk_actions": "Bulk actions",
@@ -371,6 +372,7 @@
   "validator_required": "Trường này là bắt buộc",
   "validator_email": "Bạn chưa nhập email",
   "validator_email_invalid": "Email không hợp lệ",
+  "validator_url_invalid": "Url không hợp lệ",
   "validator_date_required": "Bạn chưa chọn ngày",
   "validator_date_invalid": "Ngày không hợp lệ",
   "validator_minimum_n_characters_allowed": "Bạn hãy nhập ít nhất {min} ký tự",

@@ -55,6 +55,7 @@
   "form_field_confirm_password": "Confirm Password",
   "form_field_phone_number": "Phone Number",
   "form_field_publish_date": "Publish Date",
+  "form_field_external_url": "External Url",
 
   "bulk_delete": "Bulk Delete",
   "bulk_actions": "Bulk actions",
@@ -371,6 +372,7 @@
   "validator_required": "This field is mandatory",
   "validator_email": "Please enter your email",
   "validator_email_invalid": "Email is invalid",
+  "validator_url_invalid": "Url is invalid",
   "validator_date_required": "Please select a date",
   "validator_date_invalid": "Date is invalid",
   "validator_minimum_n_characters_allowed": "Please enter at least {min, plural, =1 {# character} other {# characters}}",
