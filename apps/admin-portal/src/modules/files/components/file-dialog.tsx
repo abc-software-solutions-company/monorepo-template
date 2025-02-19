@@ -10,7 +10,7 @@ import useDeepCompareEffect from '@repo/shared-universal/hooks/use-deep-compare-
 import { ComponentBaseProps } from '@/interfaces/component.interface';
 import { FileEntity, FileFilter } from '../interfaces/files.interface';
 
-import { DEFAULT_FILTER, MAX_FILE_SIZE_IN_BYTES, MAX_FILES_TO_UPLOAD, VALID_ALL_MIME_TYPES } from '../constants/files.constant';
+import { DEFAULT_FILTER, FILE_STATUS, MAX_FILE_SIZE_IN_BYTES, MAX_FILES_TO_UPLOAD, VALID_ALL_MIME_TYPES } from '../constants/files.constant';
 
 import { useFileDialogState } from '../hooks/use-file-dialog-state';
 
@@ -37,7 +37,7 @@ type FileDialogProps = {
 const FileDialog: FC<FileDialogProps> = ({ type = 'single', mime, visible, onCancel, onSelectClick }) => {
   const t = useTranslations();
   const filesState = useFilesState();
-  const [filter, setFilter] = useState<FileFilter>({ ...DEFAULT_FILTER, mime });
+  const [filter, setFilter] = useState<FileFilter>({ ...DEFAULT_FILTER, mime, status: [FILE_STATUS.PUBLISHED] });
   const [isUploading, setIsUploading] = useState(false);
   const fileDialogState = useFileDialogState();
 
@@ -112,7 +112,6 @@ const FileDialog: FC<FileDialogProps> = ({ type = 'single', mime, visible, onCan
             <>
               {!filesState.error && filesState.items.length > 0 ? (
                 <FileList
-                  type={fileDialogState.type}
                   className="mt-4 grid grid-cols-3 gap-4 md:grid-cols-5 xl:grid-cols-7"
                   data={items}
                   selectedItems={fileDialogState.selectedItems}

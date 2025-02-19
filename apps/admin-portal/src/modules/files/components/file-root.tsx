@@ -1,8 +1,11 @@
 import { FC, useEffect, useState } from 'react';
 import classNames from 'classnames';
+import { Trash2 } from 'lucide-react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { toast } from 'sonner';
 import { useLocale, useTranslations } from 'use-intl';
+import ModalConfirm from '@repo/react-web-ui-shadcn/components/modals/modal-confirm';
+import { Button } from '@repo/react-web-ui-shadcn/components/ui/button';
 import { Loading } from '@repo/react-web-ui-shadcn/components/ui/loading';
 import Pagination from '@repo/react-web-ui-shadcn/components/ui/pagination-custom';
 import { objectToQueryString } from '@repo/shared-universal/utils/string.util';
@@ -11,6 +14,8 @@ import { ComponentBaseProps } from '@/interfaces/component.interface';
 import { FileEntity, FileFilter } from '../interfaces/files.interface';
 
 import { DEFAULT_FILTER, MAX_FILE_SIZE_IN_BYTES, MAX_FILES_TO_UPLOAD, VALID_ALL_MIME_TYPES } from '../constants/files.constant';
+
+import { useFileDialogState } from '../hooks/use-file-dialog-state';
 
 import ItemsPerPage from '@/components/item-per-page';
 import NoData from '@/components/no-data';
@@ -35,6 +40,8 @@ const FilesRoot: FC<FilesRootTypes> = ({ className }) => {
   const locale = useLocale();
   const filesState = useFilesState();
   const [isUploading, setIsUploading] = useState(false);
+  const fileDialogState = useFileDialogState();
+  const [isShowDeleteConfirm, setIsShowDeleteConfirm] = useState(false);
 
   const { items, meta, filter, filteredAt } = filesState;
   const categoryId: string | null = searchParams.get('categoryId');
@@ -69,6 +76,24 @@ const FilesRoot: FC<FilesRootTypes> = ({ className }) => {
     }
   };
 
+  const handleBulkDelete = async () => {
+    if (!fileDialogState.selectedItems?.length) return;
+    setIsShowDeleteConfirm(true);
+  };
+
+  const onConfirmDelete = async () => {
+    try {
+      await FileApi.bulkDestroy({ ids: fileDialogState.selectedItems.map(item => item.id) });
+      toast.success(t('file_delete_success'));
+      fileDialogState.setSelectedItems([]);
+      filesState.listRequest({ filter });
+    } catch (error) {
+      toast.error(t('file_delete_failure'));
+    } finally {
+      setIsShowDeleteConfirm(false);
+    }
+  };
+
   useEffect(() => {
     const currentFilter = getFilter();
 
@@ -99,15 +124,21 @@ const FilesRoot: FC<FilesRootTypes> = ({ className }) => {
             })
           }
         />
-        <Uploader
-          triggerContent={t('add_new_assets')}
-          multiple={true}
-          loading={isUploading}
-          maxFileSize={MAX_FILE_SIZE_IN_BYTES}
-          maxFiles={MAX_FILES_TO_UPLOAD}
-          accept={VALID_ALL_MIME_TYPES.join(',')}
-          onChange={onUpload}
-        />
+        <div className="flex items-center gap-2">
+          <Button variant="destructive" size="sm" disabled={!fileDialogState.selectedItems?.length} onClick={handleBulkDelete}>
+            <Trash2 className="mr-2 h-4 w-4" />
+            {t('file_delete')} {fileDialogState.selectedItems?.length ? `(${fileDialogState.selectedItems.length})` : ''}
+          </Button>
+          <Uploader
+            triggerContent={t('add_new_assets')}
+            multiple={true}
+            loading={isUploading}
+            maxFileSize={MAX_FILE_SIZE_IN_BYTES}
+            maxFiles={MAX_FILES_TO_UPLOAD}
+            accept={VALID_ALL_MIME_TYPES.join(',')}
+            onChange={onUpload}
+          />
+        </div>
       </div>
       <div className="mt-4 flex grow flex-col">
         <div className="flex h-full flex-col rounded-lg border bg-card p-4">
@@ -121,8 +152,8 @@ const FilesRoot: FC<FilesRootTypes> = ({ className }) => {
                 <FileList
                   className="grid grid-cols-3 gap-4 md:grid-cols-5 xl:grid-cols-8 2xl:grid-cols-10"
                   data={items}
-                  type={'list'}
-                  selectedItems={[]}
+                  selectedItems={fileDialogState.selectedItems}
+                  onItemClick={file => fileDialogState.setSelectedItem('multiple', file)}
                 />
               ) : (
                 <NoData />
@@ -143,6 +174,13 @@ const FilesRoot: FC<FilesRootTypes> = ({ className }) => {
           onChange={page => filesState.setFilter({ page })}
         />
       </div>
+      <ModalConfirm
+        visible={isShowDeleteConfirm}
+        title={t('file_confirm_title')}
+        message={t('file_confirm_delete')}
+        onNo={() => setIsShowDeleteConfirm(false)}
+        onYes={onConfirmDelete}
+      />
     </div>
   );
 };

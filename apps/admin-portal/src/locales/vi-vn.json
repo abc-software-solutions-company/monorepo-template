@@ -287,6 +287,11 @@
 
   "file_records": "tệp",
   "file_choose_selected": "Chọn",
+  "file_delete": "Xoá tệp",
+  "file_confirm_title": "Xoá tệp",
+  "file_confirm_delete": "Bạn chắc chắn muốn xoá tệp này? Hành động này không thể hoàn tác.",
+  "file_delete_success": "Tệp đã được xoá thành công.",
+  "file_delete_failure": "Không thể xoá tệp.",
 
   "audit_log_table_name": "Tên Bảng",
   "audit_log_record_id": "Id Đối Tượng",

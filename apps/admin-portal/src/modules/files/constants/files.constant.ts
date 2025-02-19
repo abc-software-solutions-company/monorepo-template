@@ -30,10 +30,10 @@ export const VALID_ALL_MIME_TYPES = [
   ...VALID_DOCUMENT_MIME_TYPES,
 ];
 
-export type FileDialogType = 'list' | 'single' | 'multiple';
+export type FileDialogType = 'single' | 'multiple';
 
 export enum FILE_STATUS {
-  VISIBLED = 'visibled',
+  PUBLISHED = 'published',
   DELETED = 'deleted',
 }
 
@@ -54,8 +54,8 @@ export const DEFAULT_FILTER: FileFilter = {
 
 export const STATUSES = [
   {
-    label: 'Visibled',
-    value: FILE_STATUS.VISIBLED,
+    label: 'Published',
+    value: FILE_STATUS.PUBLISHED,
     textClassName: 'text-slate-500',
     bgClassName: 'bg-slate-500/10',
     borderClassName: 'border-slate-400',
