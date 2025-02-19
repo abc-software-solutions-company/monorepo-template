@@ -6,19 +6,18 @@ import { convertBytes } from '@repo/shared-universal/utils/string.util';
 import { ComponentBaseProps } from '@/interfaces/component.interface';
 import { FileEntity } from '../interfaces/files.interface';
 
-import { FileDialogType } from '../constants/files.constant';
+import { FILE_STATUS } from '../constants/files.constant';
 
 import FileIcon from './file-icon';
 import FileThumbnail from './file-thumbnail';
 
 type FileItemProps = {
-  type: FileDialogType;
   file: FileEntity;
   checked: boolean;
   onClick?: (file: FileEntity) => void;
 } & ComponentBaseProps;
 
-const FileItem: FC<FileItemProps> = ({ className, type, file, checked, onClick }) => {
+const FileItem: FC<FileItemProps> = ({ className, file, checked, onClick }) => {
   const getFileContent = (item: FileEntity) => {
     switch (item.ext) {
       case '.jpg':
@@ -32,16 +31,12 @@ const FileItem: FC<FileItemProps> = ({ className, type, file, checked, onClick }
   };
 
   return (
-    <div className={classNames(type !== 'list' && 'cursor-pointer', className)} onClick={() => onClick?.(file)}>
-      <div
-        key={file.id}
-        className={classNames(
-          'relative overflow-hidden rounded-lg bg-background',
-          checked && 'border-primary',
-          type === 'list' ? 'border' : 'border-2'
-        )}
-      >
-        {type !== 'list' && <Checkbox className="absolute right-1 top-1 z-10" checked={checked} id={file.id} />}
+    <div
+      className={classNames('cursor-pointer', file.status === FILE_STATUS.DELETED && 'pointer-events-none opacity-10', className)}
+      onClick={() => onClick?.(file)}
+    >
+      <div key={file.id} className={classNames('relative overflow-hidden rounded-lg border-2 bg-background', checked && 'border-primary')}>
+        <Checkbox className="absolute right-1 top-1 z-10" checked={checked} id={file.id} />
         <div className="pointer-events-none relative flex items-center justify-center bg-card" onClick={() => onClick?.(file)}>
           {getFileContent(file)}
         </div>

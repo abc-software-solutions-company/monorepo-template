@@ -287,6 +287,11 @@
 
   "file_records": "file records",
   "file_choose_selected": "Choose selected",
+  "file_delete": "Delete",
+  "file_confirm_title": "Delete files",
+  "file_confirm_delete": "Are you sure you want to delete these files? This action cannot be undone.",
+  "file_delete_success": "File deleted successfully.",
+  "file_delete_failure": "Can't delete file.",
 
   "audit_log_table_name": "Table Name",
   "audit_log_record_id": "Record ID",
