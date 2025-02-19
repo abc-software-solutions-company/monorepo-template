@@ -30,7 +30,7 @@ export class PostsController {
   @ApiDocumentResponse({ message: 'Get post successfully', model: GetPostSuccessDoc })
   @Response({ message: 'Get post successfully' })
   @ApiParam({ name: 'slug', example: 'this-is-title-of-post' })
-  findBySlug(@Param('slug') slug: string) {
-    return this.postsService.findBySlug(slug);
+  findBySlug(@Param('slug') slug: string, @Query('has-nav') hasNavigation: boolean) {
+    return this.postsService.findBySlug(slug, POST_STATUS.PUBLISHED, hasNavigation);
   }
 }

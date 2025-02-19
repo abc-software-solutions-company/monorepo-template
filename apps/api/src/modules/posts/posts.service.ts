@@ -116,7 +116,7 @@ export class PostsService {
     return post;
   }
 
-  async findBySlug(slug: string, status: POST_STATUS = POST_STATUS.PUBLISHED) {
+  async findBySlug(slug: string, status: POST_STATUS = POST_STATUS.PUBLISHED, hasNavigation = true) {
     const post = await this.createQueryBuilderWithJoins('post')
       .where('post.slug = :slug', { slug })
       .andWhere('post.status = :status', { status })
@@ -127,7 +127,39 @@ export class PostsService {
       throw new NotFoundException('Post not found');
     }
 
-    return post;
+    let meta = null;
+
+    if (hasNavigation) {
+      const [previousPost, nextPost] = await Promise.all([
+        // Get previous post
+        this.postRepository
+          .createQueryBuilder('post')
+          .select(['post.id', 'post.slug', 'post.nameLocalized'])
+          .where('post.type = :type', { type: post.type })
+          .andWhere('post.status = :status', { status })
+          .andWhere('post.createdAt < :createdAt', { createdAt: post.createdAt })
+          .orderBy('post.createdAt', 'DESC')
+          .take(1)
+          .getOne(),
+        // Get next post
+        this.postRepository
+          .createQueryBuilder('post')
+          .select(['post.id', 'post.slug', 'post.nameLocalized'])
+          .where('post.type = :type', { type: post.type })
+          .andWhere('post.status = :status', { status })
+          .andWhere('post.createdAt > :createdAt', { createdAt: post.createdAt })
+          .orderBy('post.createdAt', 'ASC')
+          .take(1)
+          .getOne(),
+      ]);
+
+      meta = {
+        previous: previousPost ?? null,
+        next: nextPost ?? null,
+      };
+    }
+
+    return { ...post, meta };
   }
 
   async update(id: string, creator: User, updateDto: UpdatePostDto) {

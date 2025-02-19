@@ -65,12 +65,29 @@ describe('PostsController', () => {
   });
 
   describe('findBySlug', () => {
-    it('should call postsService.findBySlug with correct slug', async () => {
-      const slug = 'test-slug';
+    const slug = 'test-post';
+    const post = {
+      id: '1',
+      nameLocalized: [{ lang: 'defaultLanguage', value: 'Test Name' }],
+      slug: 'post-1',
+    };
 
-      await controller.findBySlug(slug);
+    it('should get post by slug', async () => {
+      mockPostsService.findBySlug.mockResolvedValue(post);
 
-      expect(service.findBySlug).toHaveBeenCalledWith(slug);
+      const result = await controller.findBySlug(slug, true);
+
+      expect(mockPostsService.findBySlug).toHaveBeenCalledWith(slug, POST_STATUS.PUBLISHED, true);
+      expect(result).toBe(post);
+    });
+
+    it('should get post by slug without navigation', async () => {
+      mockPostsService.findBySlug.mockResolvedValue(post);
+
+      const result = await controller.findBySlug(slug, false);
+
+      expect(mockPostsService.findBySlug).toHaveBeenCalledWith(slug, POST_STATUS.PUBLISHED, false);
+      expect(result).toBe(post);
     });
   });
 });
