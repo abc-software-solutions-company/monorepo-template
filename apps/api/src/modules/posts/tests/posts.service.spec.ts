@@ -658,7 +658,7 @@ describe('PostsService', () => {
 
       const result = await service.findBySlug('test-slug', POST_STATUS.PUBLISHED, false);
 
-      expect(result).toEqual({ ...post, meta: null });
+      expect(result).toEqual({ ...post, meta: undefined });
     });
 
     it('should retrieve a post by slug with missing meta field', async () => {
@@ -685,8 +685,8 @@ describe('PostsService', () => {
 
       const result = await service.findBySlug('test-slug', POST_STATUS.PUBLISHED, false);
 
-      expect(result).toEqual({ ...postWithoutMeta, meta: null });
-      expect(result.meta).toBeNull();
+      expect(result).toEqual({ ...postWithoutMeta, meta: undefined });
+      expect(result.meta).toBeUndefined();
       expect(mockQueryBuilder.select).toHaveBeenCalledWith(POST_GET_FIELDS);
       expect(mockQueryBuilder.where).toHaveBeenCalledWith('post.slug = :slug', { slug: 'test-slug' });
       expect(mockQueryBuilder.andWhere).toHaveBeenCalledWith('post.status = :status', { status: POST_STATUS.PUBLISHED });

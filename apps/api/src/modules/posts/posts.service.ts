@@ -127,7 +127,7 @@ export class PostsService {
       throw new NotFoundException('Post not found');
     }
 
-    let meta = null;
+    let meta = undefined;
 
     if (hasNavigation) {
       const [previousPost, nextPost] = await Promise.all([
@@ -176,7 +176,6 @@ export class PostsService {
         post[field] = updateDto[field];
       }
     }
-
     if (updateDto.categoryId) {
       const category = await this.categoriesService.findOne(updateDto.categoryId);
 

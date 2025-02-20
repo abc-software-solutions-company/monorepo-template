@@ -36,9 +36,9 @@ const PostCategoryList: FC<PostCategoryListProps> = ({ className, type, currentC
     if (searchParams.get('q')) query.q = searchParams.get('q') as string;
     if (searchParams.get('year')) query.year = parseInt(searchParams.get('year') as string, 10);
     if (slug) {
-      router.push({ pathname: '/product/category/[slug]', params: { slug: slug as string }, query });
+      router.push({ pathname: '/blog/category/[slug]', params: { slug: slug as string }, query });
     } else {
-      router.push({ pathname: '/product', query });
+      router.push({ pathname: '/blog', query });
     }
   };
 

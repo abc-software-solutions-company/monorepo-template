@@ -24,13 +24,13 @@ export class ResponseInterceptor<T> implements NestInterceptor<T, IResponseForma
 
       return next.handle().pipe(
         map((data: DataWithMeta) => {
-          const { meta, ...rest } = data;
+          const { meta } = data;
 
           return {
             statusCode,
             message,
-            data: rest as T,
-            ...(meta && { meta }),
+            data: data as T,
+            meta,
           };
         })
       );

@@ -5,6 +5,5 @@ export const QUERY_CATEGORY_BY_TYPE = 'category-by-type';
 export enum CATEGORY_TYPE {
   NEWS = 'news',
   PAGE = 'page',
-  SERVICE = 'service',
   PRODUCT = 'product',
 }
