@@ -144,3 +144,33 @@
 .quill-simple .ql-editor.ql-blank:before {
   @apply left-3 right-3 not-italic;
 }
+.wysiwyg {
+  .image-style-align-left,
+  .image-style-align-right {
+    @apply clear-none;
+  }
+  .image-style-align-left {
+    @apply float-left mr-3.5;
+  }
+  .image-style-align-center {
+    img {
+      @apply ml-auto mr-auto;
+    }
+  }
+  .image-style-align-right {
+    @apply float-right ml-3.5;
+  }
+  .image-style-block-align-right {
+    img {
+      @apply ml-auto;
+    }
+  }
+  .image-style-block-align-left {
+    img {
+      @apply mr-auto;
+    }
+  }
+  .image-inline {
+    @apply inline-flex max-w-full items-start;
+  }
+}

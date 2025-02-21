@@ -178,28 +178,6 @@
   .ck .ck-editor__nested-editable.ck-column {
     @apply flex-1 border border-dotted border-blue-500;
   }
-  .image-style-align-left,
-  .image-style-align-right {
-    @apply clear-none;
-  }
-  .image-style-align-left {
-    @apply float-left mr-3.5;
-  }
-  .image-style-align-center {
-    @apply ml-auto mr-auto;
-  }
-  .image-style-align-right {
-    @apply float-right ml-3.5;
-  }
-  .image-inline {
-    @apply inline-flex max-w-full items-start;
-  }
-  .image-style-block-align-right {
-    @apply ml-auto mr-0;
-  }
-  .image-style-block-align-left {
-    @apply ml-0 mr-auto;
-  }
 }
 
 @media (forced-colors: none) {
