@@ -42,7 +42,7 @@ RUN addgroup --system --gid 1001 nestjs
 RUN adduser --system --uid 1001 nestjs
 
 USER nestjs
-COPY --from=installer --chown=nestjs:nodejs /app/apps/api .
+COPY --from=installer --chown=nestjs:nodejs /app/apps/api /app/apps/api
 COPY --from=installer --chown=nestjs:nodejs /app/node_modules /app/apps/api/node_modules
 
 # Correct the path to the entry point
