@@ -45,6 +45,7 @@ COPY --from=installer --chown=vite:nodejs /app/apps/admin-portal/.env ./apps/adm
 COPY --from=installer --chown=vite:nodejs /app/apps/admin-portal/package.json ./apps/admin-portal/package.json
 COPY --from=installer --chown=vite:nodejs /app/apps/admin-portal/public ./apps/admin-portal/public
 RUN yarn global add vite@6.0.7
+RUN yarn cache clean
 
 # Start web application
 CMD ["/bin/sh", "-c", "cd apps/admin-portal && yarn preview"]
