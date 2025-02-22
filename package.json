@@ -37,5 +37,8 @@
     "apps/*",
     "packages/*"
   ],
+  "nohoist": [
+    "apps/api/**"
+  ],
   "packageManager": "yarn@1.22.22"
 }
