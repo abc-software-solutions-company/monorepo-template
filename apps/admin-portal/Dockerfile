@@ -14,6 +14,7 @@ FROM base AS installer
 WORKDIR /app
 
 # Copy pruned lockfile and package.json's
+COPY .gitignore .gitignore
 COPY --from=builder /app/out/json/ .
 COPY --from=builder /app/out/yarn.lock ./yarn.lock
 COPY turbo.json turbo.json

@@ -1,27 +1,17 @@
 FROM node:21-alpine AS base
-RUN apk update && apk add --no-cache curl
+RUN apk update && apk add --no-cache curl libc6-compat python3 make g++ && rm -rf /var/cache/apk/*
 
 # The web Dockerfile is copy-pasted into our main docs at /docs/handbook/deploying-with-docker.
 # Make sure you update this Dockerfile, the Dockerfile in the web workspace and copy that over to Dockerfile in the docs.
 
 FROM base AS builder
-# Check https://github.com/nodejs/docker-node/tree/b4117f9333da4138b03a546ec926ef50a31506c3#nodealpine to understand why libc6-compat might be needed.
-RUN apk update
-RUN apk add --no-cache libc6-compat
-# Install dependencies required for bcrypt
-RUN apk add --no-cache python3 make g++
-# Set working directory
 WORKDIR /app
-# Create uploads directory and set permissions
-RUN mkdir -p /app/apps/api/dist/uploads && chmod 777 /app/apps/api/dist/uploads
 RUN yarn global add turbo@2.3.3
 COPY . .
 RUN turbo prune api --docker
 
 # Add lockfile and package.json's of isolated sub workspace
 FROM base AS installer
-RUN apk update
-RUN apk add --no-cache libc6-compat
 WORKDIR /app
 
 # First install dependencies (as they change less often)
@@ -29,7 +19,7 @@ COPY .gitignore .gitignore
 COPY --from=builder /app/out/json/ .
 COPY --from=builder /app/out/yarn.lock ./yarn.lock
 RUN yarn set version berry
-RUN yarn install
+RUN yarn install && yarn cache clean
 
 # Build the project and its dependencies
 COPY --from=builder /app/out/full/ .
@@ -42,7 +32,7 @@ COPY turbo.json turbo.json
 # ARG TURBO_TOKEN
 # ENV TURBO_TOKEN=$TURBO_TOKEN
 
-RUN yarn turbo build --filter=api
+RUN yarn turbo build --filter=api && rm -rf node_modules/.cache/turbo/*
 
 FROM base AS runner
 WORKDIR /app
@@ -53,7 +43,6 @@ RUN adduser --system --uid 1001 nestjs
 
 USER nestjs
 COPY --from=installer --chown=nestjs:nodejs /app .
-COPY --from=installer --chown=nestjs:nodejs /app/node_modules /app/apps/api/node_modules
 
 # Correct the path to the entry point
 CMD ["/bin/sh", "-c", "cd apps/api && yarn migration:run && node dist/main.js"]
