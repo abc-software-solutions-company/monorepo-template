@@ -3,6 +3,7 @@ export interface IConfigs {
     host: string;
     port: number;
     isDocumentationEnabled: boolean;
+    appEnv: 'development' | 'staging' | 'production';
   };
   http: {
     timeout: number;

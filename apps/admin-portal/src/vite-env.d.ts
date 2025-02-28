@@ -9,6 +9,7 @@ interface ImportMetaEnv {
   readonly VITE_PUBLIC_SEGMENT_TRACKING: string;
   readonly VITE_PUBLIC_AWS_S3_END_POINT: string;
   readonly VITE_PUBLIC_AWS_S3_BUCKET_NAME: string;
+  readonly VITE_PUBLIC_APP_ENV: 'development' | 'staging' | 'production';
 }
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
