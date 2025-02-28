@@ -23,6 +23,7 @@ export class Application {
     const {
       cors: { allowHeaders, allowMethods, allowOrigin },
     } = configService.get<IConfigs['middlewares']>('middlewares');
+    const { appEnv } = configService.get<IConfigs['app']>('app');
 
     if (process.env.NODE_ENV !== 'test') {
       this.app.useLogger(this.app.get(PinoLogger));
@@ -31,7 +32,7 @@ export class Application {
     this.app.enable('trust proxy');
     this.app.enableCors({
       credentials: true,
-      origin: allowOrigin,
+      origin: appEnv === 'production' ? allowOrigin : '*',
       methods: allowMethods,
       allowedHeaders: allowHeaders,
     });
