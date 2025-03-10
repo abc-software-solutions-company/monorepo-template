@@ -70,7 +70,7 @@ jobs:
           ${{ env.AWS_ECR_REPOSITORY_URI }}:${{ github.sha }}
 
           # Wait for health check
-          sleep 30
+          sleep 10
 
           HEALTH_STATUS=$(docker inspect --format='{{json .State.Health.Status}}' ${{ env.APP_NAME }})
 
