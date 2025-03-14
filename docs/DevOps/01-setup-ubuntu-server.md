@@ -1,31 +1,9 @@
 ### **Tutorial: Set Up an Ubuntu Server with Docker, Docker Compose, Nginx Proxy Manager, and PostgreSQL via Docker**
+⚠️ If we already have existing server and install Docker, Docker Compose, NGINX Proxy Manager, we can skip this step
+
 
 This guide will walk you through setting up an Ubuntu server, installing Docker, Docker Compose, and setting up Nginx Proxy Manager and PostgreSQL as
 Docker containers.
-
----
-
-## **0. Prerequisites**
-
-Before proceeding with the setup, ensure you have the following installed on your Ubuntu server:
-
-- **Docker**
-- **Docker Compose**
-- **Nginx Proxy Manager**
-
-Run this command to check if Docker and Nginx Proxy Manager already installed
-
-```bash
-   sudo docker ps
-```
-
-Run this command to check if Docker-Compose
-
-```bash
-sudo docker-compose
-```
-
-If you already have these installed, you can skip this step.
 
 ---
 
@@ -86,7 +64,7 @@ sudo apt update && sudo apt upgrade -y
 
 ---
 
-## **4. Install Docker Compose**
+## **4. Install Docker Compose** (Skip this step if we are using old server)
 
 1. **Download Docker Compose binary:**
 

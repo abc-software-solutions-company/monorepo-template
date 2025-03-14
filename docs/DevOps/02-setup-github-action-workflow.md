@@ -20,93 +20,17 @@ workflow code in this repository files
 
 #### Admin Portal Workflow
 
-```yaml:.github/workflows/admin-portal.stage.yml
-name: Deploy Admin Portal (Stage)
+File YAML: .github/workflows/admin-portal.stage.yml
 
-on:
-  push:
-    branches:
-      - 'main'
-    paths:
-      - 'apps/admin-portal/**'
-
-env:
-  APP_ENV: ${{ secrets.PORTAL_STAGE }}
-  APP_NAME: admin-portal-stage
-  DOCKER_COMPOSE_SERVICE: admin-portal-stage-deploy
-  DOCKERFILE_PATH: apps/admin-portal/Dockerfile
-  DOCKER_COMPOSE_PATH: apps/admin-portal/docker-compose.yml
-  ENV_FILE_PATH: apps/admin-portal/.env
-  DOCKER_MAP_PORT: 3001:3001
-
-jobs:
-  build-and-deploy:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Pull code
-        uses: actions/checkout@v3
-      # ... other steps ...
-```
 
 #### Admin API Workflow
 
-```yaml:.github/workflows/api-admin.stage.yml
-name: Deploy Admin API (Stage)
+File YAML: .github/workflows/api-admin.stage.yml
 
-on:
-  push:
-    branches:
-      - 'main'
-    paths:
-      - 'apps/api/**'
-
-env:
-  APP_ENV: ${{ secrets.API_STAGE }}
-  APP_NAME: api-stage
-  DOCKER_COMPOSE_SERVICE: monorepo-api
-  DOCKERFILE_PATH: apps/api/Dockerfile
-  DOCKER_COMPOSE_PATH: apps/api/docker-compose.yml
-  ENV_FILE_PATH: apps/api/.env
-  DOCKER_MAP_PORT: 3500:3500
-
-jobs:
-  build-and-deploy:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Pull code
-        uses: actions/checkout@v3
-      # ... other steps ...
-```
 
 #### Website Workflow
 
-```yaml:.github/workflows/website.stage.yml
-name: Deploy Website (Stage)
-
-on:
-  push:
-    branches:
-      - 'main'
-    paths:
-      - 'apps/website/**'
-
-env:
-  APP_ENV: ${{ secrets.WEBSITE_STAGE }}
-  APP_NAME: website-stage-deploy
-  DOCKER_COMPOSE_SERVICE: website-stage-deploy
-  DOCKERFILE_PATH: apps/website/Dockerfile
-  DOCKER_COMPOSE_PATH: apps/website/docker-compose.yml
-  ENV_FILE_PATH: apps/website/.env
-  DOCKER_MAP_PORT: 3000:3001
-
-jobs:
-  build-and-deploy:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Pull code
-        uses: actions/checkout@v3
-      # ... other steps ...
-```
+File YAML: .github/workflows/website.stage.yml
 
 ### Step 2: Configure Secrets
 
