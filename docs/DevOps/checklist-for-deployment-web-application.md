@@ -408,6 +408,9 @@ essential for SEO and search engine visibility.
 
 ---
 
+## 15. **Remove domain prod testing"
+- After setup production domain for customer website. We must remove internal  or testing domain to prevent google index.
+
 ### Notes:
 
 - Ensure each step is completed before moving to the next.
