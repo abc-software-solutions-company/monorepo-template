@@ -413,6 +413,8 @@ essential for SEO and search engine visibility.
 
 ## 16. **If website is under construction, only show under construction UI and not point domain to testing UI"
 
+## 17. **When point domain to new IP server, we must setup HTTPS for website work properly
+
 ### Notes:
 
 - Ensure each step is completed before moving to the next.
