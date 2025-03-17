@@ -411,6 +411,8 @@ essential for SEO and search engine visibility.
 ## 15. **Remove domain prod testing"
 - After setup production domain for customer website. We must remove internal  or testing domain to prevent google index.
 
+## 16. **If website is under construction, only show under construction UI and not point domain to testing UI"
+
 ### Notes:
 
 - Ensure each step is completed before moving to the next.
