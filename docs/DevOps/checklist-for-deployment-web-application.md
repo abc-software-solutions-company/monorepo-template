@@ -408,12 +408,15 @@ essential for SEO and search engine visibility.
 
 ---
 
-## 15. **Remove domain prod testing"
-- After setup production domain for customer website. We must remove internal  or testing domain to prevent google index.
+## 15. \*\*Remove domain prod testing"
 
-## 16. **If website is under construction, only show under construction UI and not point domain to testing UI"
+- After setup production domain for customer website. We must remove internal or testing domain to prevent google index.
 
-## 17. **When point domain to new IP server, we must setup HTTPS for website work properly
+## 16. \*\*If website is under construction, only show under construction page, and not show other pages"
+
+## 17. \*\*When point domain to new IP server, we must setup HTTPS for website work properly
+
+## 18. \*\*Check robots.txt file and meta tag robots, google when deploy to stage must have disallow, noindex
 
 ### Notes:
 
