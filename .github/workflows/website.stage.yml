@@ -81,6 +81,29 @@ jobs:
               exit 1
           fi
 
+      - name: Check server resources
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.STAGE_SERVER_HOST }}
+          username: ${{ secrets.STAGE_SERVER_USER_NAME }}
+          port: 22
+          password: ${{ secrets.STAGE_SERVER_PASSWORD }}
+          script: |
+            # Get available RAM in MB
+            AVAILABLE_RAM=$(free -m | awk '/Mem:/ {print $7}')
+            # Get available disk space in GB
+            AVAILABLE_DISK=$(df -BG / | awk 'NR==2 {print $4}' | sed 's/G//')
+
+            echo "Available RAM: ${AVAILABLE_RAM}MB"
+            echo "Available Disk: ${AVAILABLE_DISK}GB"
+
+            if [ ${AVAILABLE_RAM} -lt 600 ] || [ ${AVAILABLE_DISK%.*} -lt 2 ]; then
+              echo "::error::Server resources are insufficient!"
+              echo "::error::Required: RAM >= 600MB, Disk >= 2GB"
+              echo "::error::Available: RAM = ${AVAILABLE_RAM}MB, Disk = ${AVAILABLE_DISK}GB"
+              exit 1
+            fi
+
       - name: Create docker-compose file
         run: |
           rm -f ${{ env.DOCKER_COMPOSE_PATH }}
