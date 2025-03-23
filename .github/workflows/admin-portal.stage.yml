@@ -15,8 +15,8 @@ env:
   DOCKERFILE_PATH: apps/admin-portal/Dockerfile
   DOCKER_COMPOSE_PATH: apps/admin-portal/docker-compose.yml
   ENV_FILE_PATH: apps/admin-portal/.env
-  DOCKER_HOST_PORT: 3005 # Change this value if your server is already run docker container with this port, using command docker ps to check it
-  DOCKER_CONTAINER_PORT: 3001 # This is the app port, which command yarn start run and provided
+  SERVER_PORT: 3005 # Change this value if your server is already run docker container with this port, using command docker ps to check it
+  APP_PORT: 3001 # This is the app port, which command yarn start run and provided
   AWS_ECR_REPOSITORY_URI: ${{ secrets.AWS_ECR_REPOSITORY_URI_ADMIN_PORTAL_STAGE }}
 
 jobs:
@@ -61,7 +61,7 @@ jobs:
       - name: Test Docker Image
         run: |
           docker run -d --name ${{ env.APP_NAME }} \
-          --health-cmd="curl -f http://127.0.0.1:${{ env.DOCKER_CONTAINER_PORT}} || exit 1" \
+          --health-cmd="curl -f http://127.0.0.1:${{ env.APP_PORT}} || exit 1" \
           --health-interval=5s \
           --health-timeout=5s \
           --health-retries=2 \
@@ -93,7 +93,7 @@ jobs:
               container_name: ${{ env.APP_NAME }}
               restart: always
               ports:
-                - "${{ env.DOCKER_HOST_PORT }}:${{ env.DOCKER_CONTAINER_PORT }}"
+                - "${{ env.SERVER_PORT }}:${{ env.APP_PORT }}"
           EOF
 
       - name: Check server resources
