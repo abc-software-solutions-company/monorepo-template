@@ -46,7 +46,7 @@ Before modifying the GitHub Actions workflows in `.github/workflows`, follow the
 1. **Check Available Ports**
 
    - Run **`docker ps`** on your server to see which ports are already in use
-   - Choose an available port for the **`DOCKER_HOST_PORT`** setting
+   - Choose an available port for the **`SERVER_PORT`** setting
 
 2. **Update Service Names**
 
@@ -55,7 +55,7 @@ Before modifying the GitHub Actions workflows in `.github/workflows`, follow the
 
 3. **Required Changes** The following variables **must** be updated in each workflow file:
 
-   - **`DOCKER_HOST_PORT`**: The port your container will use on the host machine
+   - **`SERVER_PORT`**: The port your container will use on the host machine
    - **`APP_NAME`**: The name of your Docker container/application
    - **`DOCKER_COMPOSE_SERVICE`**: The service name in your docker-compose file
 
