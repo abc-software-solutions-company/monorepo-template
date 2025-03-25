@@ -88,6 +88,7 @@ jobs:
           username: ${{ secrets.STAGE_SERVER_USER_NAME }}
           port: 22
           password: ${{ secrets.STAGE_SERVER_PASSWORD }}
+          # key: ${{ secrets.STAGE_SERVER_KEY }} # Use this line if you use SSH key instead of password
           script: |
             # Get available RAM in MB
             AVAILABLE_RAM=$(free -m | awk '/Mem:/ {print $7}')
@@ -126,6 +127,7 @@ jobs:
           username: ${{ secrets.STAGE_SERVER_USER_NAME }}
           port: 22
           password: ${{ secrets.STAGE_SERVER_PASSWORD }}
+          # key: ${{ secrets.STAGE_SERVER_KEY }} # Use this line if you use SSH key instead of password
           source: '${{ env.DOCKER_COMPOSE_PATH }},${{ env.ENV_FILE_PATH }}'
           target: '~/${{ env.APP_NAME }}'
 
@@ -136,6 +138,7 @@ jobs:
           username: ${{ secrets.STAGE_SERVER_USER_NAME }}
           port: 22
           password: ${{ secrets.STAGE_SERVER_PASSWORD }}
+          # key: ${{ secrets.STAGE_SERVER_KEY }} # Use this line if you use SSH key instead of password
           script_stop: true
           script: |
             cd ~/${{ env.APP_NAME }}
