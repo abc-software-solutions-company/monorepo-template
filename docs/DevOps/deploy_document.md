@@ -109,13 +109,8 @@ Sharepoint tại folder **AWS Console Account (S3, Email Service and ECR)**.
 
 1. Truy cập vào AWS Console
 2. Tìm kiếm "ECR" và chọn "Elastic Container Registry"
-
-![image](https://github.com/user-attachments/assets/13216e83-fe77-4d5c-81ee-e29573324089)
-
 3. Chọn "Private Registry" và nhấn "Create repository"
-
 4. Select "Private registry" and click "Create repository"
-
 5. Tại mục Repository name, nhập theo format:
    ```
    <tên project>-<tên của service "api"|"website"|"portal">-<môi trường "stage"|"preprod"|"prod">
