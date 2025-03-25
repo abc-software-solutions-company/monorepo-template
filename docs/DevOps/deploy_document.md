@@ -230,24 +230,24 @@ của API.
 
 ### Đăng ký Email Sender trên AWS SES
 
-1.  Tại AWS Console, tìm "SES" và chọn "Amazon Simple Email Service"
+- Tại AWS Console, tìm "SES" và chọn "Amazon Simple Email Service"
 
 <img src="https://github.com/user-attachments/assets/6c6c7fce-aeef-4af6-b020-5b99da2468d8" width="100%">
 
-2.  Chọn "Identities" trong mục "Configuration"
-3.  Nhấn "Create identity"
+- Chọn "Identities" trong mục "Configuration"
+- Nhấn "Create identity"
 
 <img src="https://github.com/user-attachments/assets/a2c1f72d-41ce-43c3-a042-2f73c12c55e7" width="100%">
 
-4.  Chọn "Email address" và nhập email
+- Chọn "Email address" và nhập email
 
 <img src="https://github.com/user-attachments/assets/8aaf1921-fbf4-461f-80ed-ae5c59739aa3" width="100%">
 
-5.  Xác thực email từ link AWS gửi về email mà bạn đăng ký Xác thực thành công, email sẽ có trạng thái Verified
+- Xác thực email từ link AWS gửi về email mà bạn đăng ký Xác thực thành công, email sẽ có trạng thái Verified
 
 <img src="https://github.com/user-attachments/assets/473196cf-893c-429b-b325-bc4950b95df7" width="100%">
 
-6.  Sau khi xác thực, thêm email vào biến môi trường `AP_EMAIL_SENDER`
+- Sau khi xác thực, thêm email vào biến môi trường `AP_EMAIL_SENDER`
 
 ## Bước 7: Chuẩn bị deploy API
 
