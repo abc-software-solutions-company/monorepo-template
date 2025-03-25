@@ -110,7 +110,7 @@ Sharepoint tại folder **AWS Console Account (S3, Email Service and ECR)**.
 1. Truy cập vào AWS Console
 2. Tìm kiếm "ECR" và chọn "Elastic Container Registry"
 
-<img src="https://github.com/user-attachments/assets/09a8765e-67e2-44d5-ae61-241c0f1209dd" width="100%">
+![image](https://github.com/user-attachments/assets/13216e83-fe77-4d5c-81ee-e29573324089)
 
 3. Chọn "Private Registry" và nhấn "Create repository"
 
@@ -118,7 +118,7 @@ Sharepoint tại folder **AWS Console Account (S3, Email Service and ECR)**.
 
 5. Tại mục Repository name, nhập theo format:
    ```
-   <tên project> - <môi trường stage | preprod | prod > - <tên của service api | website | portal>
+   <tên project>-<tên của service "api"|"website"|"portal">-<môi trường "stage"|"preprod"|"prod">
    ```
 
 <img src="https://github.com/user-attachments/assets/773a0490-dc39-4181-b740-ec6082faa1ab" width="100%">
@@ -266,7 +266,7 @@ của API.
 
 ### Deploy
 
-Push code vào nhánh main để tiến hành deploy.
+Tạo pull request cho nhánh main, review pull request và merge vào nhánh main để tiến hành deploy.
 
 ## Bước 8: Cấu hình tên miền cho API
 
