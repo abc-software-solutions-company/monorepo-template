@@ -136,7 +136,8 @@ Thêm hai secret:
 - `AWS_ACCESS_KEY_ID`
 - `AWS_SECRET_ACCESS_KEY`
 
-Lấy thông tin từ thư mục **AWS ECR Credentials**.
+Lấy thông tin từ thư mục
+[AWS ECR Credentials](https://abcdigitalio.sharepoint.com/:t:/s/ABCdigital/EZ2bKRaLvQZHp2fPskh8lYoBfcGF431ARO3Z8iZ0DJLgeg?e=PSvGIu).
 
 ## Bước 5: Cấu hình tên project
 
