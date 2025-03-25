@@ -72,7 +72,7 @@ Action để tự động deploy.
 
 1. Vào trang settings của Github Repository
 2. Tại section "Secrets and variables" ở bên trái, chọn "Actions"
-3. Chọn "New repository secret" để thêm c secret variable mới
+3. Chọn "New repository secret" để thêm secret variable mới
 
 ### Các secret key cần thiết cho kết nối đến server để deploy và lưu các file .env:
 
@@ -116,7 +116,7 @@ Sharepoint tại folder **AWS Console Account (S3, Email Service and ECR)**.
    <tên project>-<tên của service "api"|"website"|"portal">-<môi trường "stage"|"preprod"|"prod">
    ```
 
-<img src="https://github.com/user-attachments/assets/773a0490-dc39-4181-b740-ec6082faa1ab" width="100%">
+<img src="https://abc-australia-stage.s3.ap-southeast-1.amazonaws.com/Screenshot+2025-03-25+at+9.22.49%E2%80%AFAM.png" width="100%">
 
 6. Nhấn "Create" để tạo ECR
 
