@@ -245,7 +245,7 @@ của API.
 
 5.  Xác thực email từ link AWS gửi về email mà bạn đăng ký Xác thực thành công, email sẽ có trạng thái Verified
 
-        <img src="https://github.com/user-attachments/assets/473196cf-893c-429b-b325-bc4950b95df7" width="100%">
+<img src="https://github.com/user-attachments/assets/473196cf-893c-429b-b325-bc4950b95df7" width="100%">
 
 6.  Sau khi xác thực, thêm email vào biến môi trường `AP_EMAIL_SENDER`
 
