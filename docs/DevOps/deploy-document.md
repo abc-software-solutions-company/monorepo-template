@@ -39,9 +39,7 @@ chmod 400 ~/.ssh/<tên-key>.pem
 ssh -i ~/.ssh/<tên-key>.pem <tên đăng nhập server>@<địa chỉ ip server>
 ```
 
-## Bước 2: Cài đặt Docker và Nginx Proxy Manager
-
-> **Lưu ý:** Nếu server cũ đã được cài đặt sẵn, bạn có thể bỏ qua bước này.
+## Bước 2: Cài đặt Docker và Nginx Proxy Manager (Thường áp dụng lần đầu cho server mới mua hoặc server khách hàng mua cho production)
 
 ### Kiểm tra xem Docker đã được cài đặt chưa:
 
@@ -49,7 +47,7 @@ ssh -i ~/.ssh/<tên-key>.pem <tên đăng nhập server>@<địa chỉ ip server
 docker ps -a
 ```
 
-Nếu lệnh chạy được và hiển thị danh sách các Docker Container có container Nginx Proxy Manager là bạn đã cài đặt sẵn Docker và Nginx Proxy Manager
+Nếu lệnh chạy được và hiển thị danh sách các Docker Container có container Nginx Proxy Manager là server đã được setup sẵn
 
 ### Nếu chưa cài Docker và Nginx Proxy Manager, chạy các lệnh sau:
 
