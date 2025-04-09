@@ -3,8 +3,109 @@ description:
 globs: 
 alwaysApply: true
 ---
+# Node.js and Express.js Best Practices
 
-# Your rule content
+#### Project Structure
+A well-organized project structure is crucial for scalability and maintainability. The recommended approach is to use a modular directory structure, as follows:
 
-- You can @ files here
-- You can use markdown but dont have to
+- `config/`: For configuration files, such as database connections and credentials, managed with tools like `dotenv` for environment variables.
+- `models/`: For database models, such as Mongoose schemas for MongoDB or Sequelize models for SQL databases.
+- `routes/`: For route definitions, organized by domain or resource (e.g., `users.js`, `products.js`), ensuring routes are grouped logically.
+- `controllers/`: For controller logic, if separating from routes, to handle business logic.
+- `middlewares/`: For custom middleware, such as authentication, logging, or rate limiting.
+- `services/`: For business logic, such as API calls or external integrations.
+- `utils/`: For utility functions, such as helpers or formatters.
+- `tests/`: For test files, including unit and integration tests.
+- `public/`: For static files, if needed, such as images or CSS.
+
+#### Express Setup
+Express setup involves configuring middleware and routing to ensure a secure and efficient application. Key practices include:
+
+- **Middleware Setup**: Use essential middleware such as `body-parser` (or `express.json()`/`express.urlencoded()` for modern Express), `cookie-parser` for cookie handling, `helmet` for security headers, and `express-rate-limit` for rate limiting. Compression can be enabled with `compression` for gzip, reducing response sizes, especially in production.
+- **Routing**: Implement RESTful endpoints, using nouns (e.g., `/users`) and appropriate HTTP methods (GET, POST, PUT, DELETE, PATCH). Ensure routes are defined in separate files for modularity.
+- **Error Handling**: Use error-handling middleware to catch and handle errors uniformly, returning standardized responses. Avoid synchronous functions in production, as they can block the event loop, and use async/await instead.
+- **Security Middleware**: Configure `helmet` to set headers like Content-Security-Policy and Strict-Transport-Security, reducing fingerprinting by disabling `X-Powered-By` with `app.disable('x-powered-by')`.
+- **Validation**: Implement input validation using `express-validator` or Joi to prevent injection attacks.
+- **Static File Serving**: Use `express.static` for serving static files only when necessary, ensuring performance optimization.
+
+Middleware best practices, as detailed in [Node.js: 8 Best Practices for Express Middlewares | Tech Tonic]([invalid url, do not cite]), include keeping functions small and focused, using `next()` for chaining, handling errors with try-catch and `next(err)`, using `return` to short-circuit, ordering middlewares wisely (e.g., authentication before routing), naming functions for debugging, and avoiding `app.use()` inside route handlers.
+
+#### API Design
+API design should follow REST principles for clarity and interoperability:
+
+- Use HTTP methods appropriately: GET for retrieval, POST for creation, PUT for updates, DELETE for removal, and PATCH for partial updates.
+- Implement versioning, such as `/api/v1/users`, to manage changes over time.
+- Validate requests using middleware like `express-validator`, ensuring data integrity.
+- Handle errors with appropriate HTTP status codes (e.g., 400 for bad requests, 500 for server errors) and provide meaningful messages without exposing sensitive details.
+- Standardize response formats, typically JSON, with a consistent structure (e.g., `{ data: ..., status: ..., message: ... }`).
+- Document APIs using tools like Swagger ([10 Best Practices for Writing Node.js REST APIs - RisingStack Engineering]([invalid url, do not cite])) or Apiary, enhancing developer experience.
+
+#### Database Integration
+Database integration requires careful management for performance and reliability:
+
+- Use ORMs/ODMs like Sequelize for SQL databases or Mongoose for MongoDB, providing abstraction and query optimization.
+- Implement migrations using Knex.js for SQL or Mongoose's schema-based approach for MongoDB, ensuring database schema evolution.
+- Use connection pooling, enabled in drivers like `pg-pool` for PostgreSQL, to manage connections efficiently.
+- Implement transactions for operations requiring atomicity, such as financial transactions, using Sequelize's transaction API.
+- Optimize queries to avoid N+1 problems, using eager loading or batching where possible.
+- Handle database errors by logging them with tools like Pino and providing user-friendly messages, avoiding exposure of sensitive details.
+
+#### Authentication
+Authentication is critical for securing user access:
+
+- Use JWT for stateless authentication, implemented with `jsonwebtoken`, setting expiration times and using refresh tokens for long-term sessions.
+- Hash passwords using `bcrypt` or `argon2` for security, avoiding plain text storage.
+- For session management, use `express-session` with secure options (e.g., `secure: true`, `httpOnly: true`), ensuring cookies are protected.
+- Integrate OAuth for third-party authentication using `passport.js` with strategies like OAuth2.
+- Implement role-based access control (RBAC) by defining roles and permissions in your application logic.
+- Handle authentication errors with appropriate status codes (e.g., 401 for unauthorized, 403 for forbidden), ensuring secure error responses.
+
+#### Security
+Security practices are essential to protect against vulnerabilities:
+
+- Use TLS/SSL for encrypting data in transit, recommended with Nginx and free certificates from Let’s Encrypt
+- Configure CORS to allow only trusted origins using the `cors` middleware, preventing unauthorized access.
+- Implement rate limiting with `express-rate-limit`, setting limits like 100 requests per 15 minutes to prevent brute-force attacks.
+- Use `helmet` for security headers, including Content-Security-Policy and Strict-Transport-Security, reducing risks like XSS and clickjacking.
+- Validate and sanitize all user inputs to prevent XSS, SQL injection, and command injection, using tools like `express-validator`.
+- Encrypt sensitive data at rest using Node.js's `crypto` module or dedicated libraries.
+- Regularly update dependencies, using `npm audit` or Snyk for vulnerability scanning, and monitor advisories from the Node Security Project.
+
+#### Performance
+Performance optimization ensures scalability and responsiveness:
+
+- Use caching with Redis or in-memory caching (e.g., NodeCache) for frequently accessed data, reducing database load.
+- Implement async operations using async/await to avoid blocking the event loop, ensuring non-blocking I/O.
+- Use connection pooling for databases, as mentioned, to manage connections efficiently.
+- Implement logging with fast libraries like Pino or Winston, ensuring structured logs for monitoring.
+- Use monitoring tools like Prometheus or New Relic for performance tracking and alerting.
+- Handle high traffic by running in a cluster (using Node's cluster module or PM2) and using load balancers like Nginx, distributing traffic across instances
+
+#### Testing
+Testing ensures reliability and maintainability:
+
+- Write unit tests for individual functions and modules using Jest or Mocha, focusing on isolated behavior.
+- Implement integration tests for API endpoints using Supertest, testing end-to-end flows.
+- Use test runners like Jest or Mocha with assertion libraries like Chai for comprehensive testing.
+- Implement mocking with Sinon or Jest's built-in mocking for dependencies, ensuring test isolation.
+- Test error scenarios and edge cases, covering all possible failure modes.
+- Aim for high test coverage, especially for critical paths, using tools like Istanbul for reporting.
+
+#### Deployment
+Deployment practices ensure smooth production releases:
+
+- Use Docker for containerization, creating consistent environments across development and production, with multi-stage builds for leaner, secure images
+- Implement CI/CD pipelines using GitHub Actions, Jenkins, or GitLab CI for automated testing and deployment.
+- Manage environment variables with `dotenv` or platform-specific secrets management, ensuring secure configuration.
+- Configure logging for production with Winston or Pino, enabling structured logging for analysis.
+- Implement monitoring with Sentry or Datadog for error tracking and performance monitoring.
+- Handle deployment errors with rollback strategies, ensuring minimal downtime during failures.
+
+#### Best Practices
+General best practices round out the configuration:
+
+- Follow Node.js best practices, such as using async/await for asynchronous code, avoiding synchronous functions in production, and handling process signals (e.g., SIGTERM) for graceful shutdowns.
+- Implement proper error handling with try-catch and centralized error handlers, ensuring uniform error responses.
+- Use logging libraries like Pino (recommended for speed) or Winston for structured logging, enhancing debugging.
+- Document code properly using JSDoc or similar tools, generating documentation for maintainability.
+
