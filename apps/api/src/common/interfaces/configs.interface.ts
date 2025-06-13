@@ -78,4 +78,9 @@ export interface IConfigs {
       baseUrl: string;
     };
   };
+  kafka: {
+    brokers: string[];
+    clientId: string;
+    groupId: string;
+  }
 }
