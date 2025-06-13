@@ -15,7 +15,6 @@ export default registerAs('middlewares', (): IConfigs['middlewares'] => {
         'http://localhost:5173',
         'http://localhost:5174',
         process.env.AP_ALLOW_WEB_APP_ORIGIN,
-        process.env.AP_ALLOW_ADMIN_PORTAL_ORIGIN,
       ],
       allowMethods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'HEAD', 'OPTIONS'],
       allowHeaders: [
