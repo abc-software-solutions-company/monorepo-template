@@ -81,6 +81,6 @@ export interface IConfigs {
   kafka: {
     brokers: string[];
     clientId: string;
-    groupId: string;
+    groupId: string
   }
 }

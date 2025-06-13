@@ -59,7 +59,7 @@ declare namespace NodeJS {
     AP_FIREBASE_CONFIG: string;
     // KAFKA
     KAFKA_CLIENT_ID: string;
-    KAFKA_BROKERS: string[];
+    KAFKA_BROKERS: string;
     KAFKA_GROUP_ID: string;
   }
 }
