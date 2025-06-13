@@ -13,8 +13,6 @@ import { LoggerModule, Params } from 'nestjs-pino';
 import path from 'path';
 import { RedisClientOptions } from 'redis';
 
-import { KafkaModule } from '@/common/kafka/kafka.module';
-
 import configs from '@/configs';
 
 import { IConfigs } from '@/common/interfaces/configs.interface';
@@ -143,7 +141,6 @@ import { FirebaseModule } from '../firebase/firebase.module';
       }),
     }),
     FirebaseModule,
-    KafkaModule
   ],
 })
 export class BaseModule {}

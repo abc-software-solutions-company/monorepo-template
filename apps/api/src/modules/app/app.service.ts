@@ -1,20 +1,12 @@
-import { Inject, Injectable } from '@nestjs/common';
-import { ClientKafka } from '@nestjs/microservices';
+import {  Injectable } from '@nestjs/common';
 
 import { KafkaService } from '@/common/kafka/kafka.service';
 
 @Injectable()
 export class AppService {
   constructor(
-    @Inject('HERO_SERVICE') private readonly client: ClientKafka,
     private readonly kafkaService: KafkaService
 ) {}
-
-  async onModuleInit() {
-    this.client.subscribeToResponseOf('hero.kill.dragon');
-
-    await this.client.connect();
-  }
 
 
   getHello(): string {
