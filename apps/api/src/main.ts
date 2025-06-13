@@ -14,6 +14,7 @@ async function bootstrap() {
   const { port } = configService.get<IConfigs['app']>('app');
   const {brokers, clientId, groupId} = configService.get<IConfigs['kafka']>('kafka');
 
+  // Initialize Kafka microservice
   app.connectMicroservice<MicroserviceOptions>({
     transport: Transport.KAFKA,
     options: {
@@ -32,6 +33,9 @@ async function bootstrap() {
   await appSetup.setupGlobals();
 
   await appSetup.setupDocument();
+
+  // Start Kafka microservice
+  await app.startAllMicroservices();
 
   await app.listen(port, '0.0.0.0');
 
