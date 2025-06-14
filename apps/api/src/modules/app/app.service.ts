@@ -15,7 +15,7 @@ export class AppService {
   }
 
   async healthCheckKafka(): Promise<string> {
-    await this.kafkaService.produceMessage(KAFKA_TOPICS.SYSTEM.HEALTH_CHECK, { message: 'Hello Kafka!' });
+    await this.kafkaService.sendMessage(KAFKA_TOPICS.SYSTEM.HEALTH_CHECK, { message: 'Hello Kafka!' });
 
     return 'Kafka health good'
   }
