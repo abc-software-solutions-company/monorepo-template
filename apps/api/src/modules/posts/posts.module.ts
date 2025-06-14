@@ -2,6 +2,8 @@ import { Module } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { KafkaModule } from '@/common/kafka/kafka.module';
+
 import { Post } from './entities/post.entity';
 import { PostFile } from './entities/post-file.entity';
 import { AdminPostsController } from './admin-posts.controller';
@@ -13,7 +15,7 @@ import { AuditLog } from '../audit-logs/entities/audit-log.entity';
 import { CategoriesModule } from '../categories/categories.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Post, PostFile, AuditLog]), CategoriesModule],
+  imports: [TypeOrmModule.forFeature([Post, PostFile, AuditLog]), CategoriesModule, KafkaModule],
   controllers: [PostsController, AdminPostsController],
   providers: [PostsService, JwtService, AuditLogsService],
 })

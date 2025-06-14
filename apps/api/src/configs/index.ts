@@ -6,6 +6,7 @@ import databaseConfig from './database.config';
 import emailConfig from './email.config';
 import firebaseConfig from './firebase.config';
 import httpConfig from './http.config';
+import kafkaConfig from './kafka.config';
 import middlewaresConfig from './middlewares.config';
 import redisConfig from './redis.config';
 
@@ -20,4 +21,5 @@ export default [
   middlewaresConfig,
   redisConfig,
   awsConfig,
+  kafkaConfig
 ];

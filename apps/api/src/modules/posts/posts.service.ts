@@ -5,6 +5,8 @@ import { Repository } from 'typeorm';
 import { BulkDeleteDto } from '@/common/dtos/bulk-delete.dto';
 import { PaginationDto } from '@/common/dtos/pagination.dto';
 import { PaginationResponseDto } from '@/common/dtos/pagination-response.dto';
+import { KAFKA_TOPICS } from '@/common/kafka/constants/kafka.constant';
+import { KafkaService } from '@/common/kafka/kafka.service';
 
 import { SORT_ORDER } from '@/common/constants/order.constant';
 
@@ -29,7 +31,8 @@ export class PostsService {
     @InjectRepository(PostFile)
     private readonly postFileRepository: Repository<PostFile>,
     private readonly categoriesService: CategoriesService,
-    private readonly auditLogsService: AuditLogsService
+    private readonly auditLogsService: AuditLogsService,
+    private readonly kafkaService: KafkaService
   ) {}
 
   async create(creator: User, createDto: CreatePostDto) {
@@ -58,6 +61,8 @@ export class PostsService {
       this.sortImages(createDto.images, createdPost.id),
       this.auditLogsService.auditLogCreate(creator, createdPost, AUDIT_LOG_TABLE_NAME.POSTS),
     ]);
+
+    this.kafkaService.sendMessage(KAFKA_TOPICS.POSTS.ADMIN.CREATE, createdPost)
 
     return createdPost;
   }
@@ -192,6 +197,9 @@ export class PostsService {
       this.auditLogsService.auditLogUpdate(creator, originalPost, updatedPost, AUDIT_LOG_TABLE_NAME.POSTS),
     ]);
 
+    this.kafkaService.sendMessage(KAFKA_TOPICS.POSTS.ADMIN.UPDATE, updatedPost)
+
+
     return updatedPost;
   }
 
@@ -209,6 +217,8 @@ export class PostsService {
     const deletedPost = await this.postRepository.save(post);
 
     await this.auditLogsService.auditLogDelete(creator, [originalPost], [deletedPost], AUDIT_LOG_TABLE_NAME.POSTS);
+
+    this.kafkaService.sendMessage(KAFKA_TOPICS.POSTS.ADMIN.DELETE, deletedPost)
 
     return deletedPost;
   }

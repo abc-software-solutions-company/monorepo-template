@@ -2,6 +2,8 @@ import { Module } from '@nestjs/common';
 import { APP_GUARD } from '@nestjs/core';
 import { ThrottlerGuard } from '@nestjs/throttler';
 
+import { KafkaModule } from '@/common/kafka/kafka.module';
+
 import { AuthModule } from '@/modules/auth/auth.module';
 import { BaseModule } from '@/modules/base/base.module';
 import { CategoriesModule } from '@/modules/categories/categories.module';
@@ -21,6 +23,7 @@ import { FilesModule } from '../files/files.module';
 import { NotificationsModule } from '../notifications/notifications.module';
 import { ProductsModule } from '../products/products.module';
 
+
 @Module({
   imports: [
     BaseModule,
@@ -37,6 +40,7 @@ import { ProductsModule } from '../products/products.module';
     ContactsModule,
     FaqsModule,
     AwsModule,
+    KafkaModule
   ],
   controllers: [AppController],
   providers: [
