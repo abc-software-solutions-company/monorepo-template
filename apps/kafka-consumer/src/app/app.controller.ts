@@ -15,4 +15,22 @@ export class AppController {
     );
     return { status: 'processed' };
   }
+
+  @MessagePattern(KAFKA_TOPICS.POSTS.ADMIN.UPDATE)
+  async consumePostsAdminUpdate(@Payload() message: any) {
+    console.log(
+      `Received message from ${KAFKA_TOPICS.POSTS.ADMIN.UPDATE}`,
+      message,
+    );
+    return { status: 'processed' };
+  }
+
+  @MessagePattern(KAFKA_TOPICS.POSTS.ADMIN.DELETE)
+  async consumePostsAdminDelete(@Payload() message: any) {
+    console.log(
+      `Received message from ${KAFKA_TOPICS.POSTS.ADMIN.DELETE}`,
+      message,
+    );
+    return { status: 'processed' };
+  }
 }

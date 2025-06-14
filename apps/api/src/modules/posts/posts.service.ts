@@ -197,6 +197,9 @@ export class PostsService {
       this.auditLogsService.auditLogUpdate(creator, originalPost, updatedPost, AUDIT_LOG_TABLE_NAME.POSTS),
     ]);
 
+    this.kafkaService.sendMessage(KAFKA_TOPICS.POSTS.ADMIN.UPDATE, updatedPost)
+
+
     return updatedPost;
   }
 
@@ -214,6 +217,8 @@ export class PostsService {
     const deletedPost = await this.postRepository.save(post);
 
     await this.auditLogsService.auditLogDelete(creator, [originalPost], [deletedPost], AUDIT_LOG_TABLE_NAME.POSTS);
+
+    this.kafkaService.sendMessage(KAFKA_TOPICS.POSTS.ADMIN.DELETE, deletedPost)
 
     return deletedPost;
   }
