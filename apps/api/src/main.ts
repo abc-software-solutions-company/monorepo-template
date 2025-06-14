@@ -9,7 +9,7 @@ import { Application } from './setup-server';
 
 
 async function bootstrap() {
-  const app = await NestFactory.create<NestExpressApplication>(AppModule, new ExpressAdapter(), { bufferLogs: true },);
+  const app = await NestFactory.create<NestExpressApplication>(AppModule, new ExpressAdapter(), { bufferLogs: true });
   const configService = app.get(ConfigService);
   const { port } = configService.get<IConfigs['app']>('app');
   const {brokers, clientId, groupId} = configService.get<IConfigs['kafka']>('kafka');
