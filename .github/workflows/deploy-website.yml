@@ -1,0 +1,115 @@
+name: Deploy Website
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to deploy to'
+        required: true
+        default: 'stage'
+        type: choice
+        options:
+          - stage
+          - production
+
+env:
+  DEPLOY_PATH: /home/${{ secrets.VPS_USER }}/monorepo-template
+  SSH_OPTS: -o StrictHostKeyChecking=no -o ConnectTimeout=10
+  SERVICE_NAME: website
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: ${{ github.event.inputs.environment }}
+    concurrency:
+      group: deploy-website-${{ github.event.inputs.environment }}
+      cancel-in-progress: false
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      # Setup Docker and GHCR
+      - name: Setup Docker and GHCR
+        uses: ./.github/actions/setup-docker-and-ghcr
+        with:
+          username: ${{ github.actor }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      # Build and push Docker image
+      - name: Build and push Docker image
+        id: build-image
+        uses: ./.github/actions/build-docker-image
+        with:
+          service-name: ${{ env.SERVICE_NAME }}
+          dockerfile-path: docker/Dockerfile.${{ env.SERVICE_NAME }}
+          environment: ${{ github.event.inputs.environment }}
+          build-args: |
+            BUILD_ENV=${{ github.event.inputs.environment }}
+          github-token: ${{ secrets.GHCR_PAT }}
+
+      # Setup SSH for deployment
+      - name: Setup SSH Deployment
+        uses: ./.github/actions/setup-ssh-deploy
+        with:
+          ssh-private-key: ${{ secrets.VPS_DEPLOY_KEY }}
+
+      # Prepare and upload docker-compose file
+      - name: Prepare and upload docker-compose
+        uses: ./.github/actions/prepare-docker-compose
+        with:
+          service-name: ${{ env.SERVICE_NAME }}
+          image-name: ${{ steps.build-image.outputs.image-name }}
+          environment: ${{ github.event.inputs.environment }}
+          compose-template: docker-compose.${{ env.SERVICE_NAME }}.yml
+          target-filename: docker-compose.${{ env.SERVICE_NAME }}.yml
+          vps-user: ${{ secrets.VPS_USER }}
+          vps-host: ${{ secrets.VPS_HOST }}
+          deploy-path: ${{ env.DEPLOY_PATH }}
+          ssh-opts: ${{ env.SSH_OPTS }}
+
+      # Upload environment files
+      - name: Upload environment files
+        uses: ./.github/actions/upload-env-files
+        with:
+          service-name: ${{ env.SERVICE_NAME }}
+          environment: ${{ github.event.inputs.environment }}
+          vps-user: ${{ secrets.VPS_USER }}
+          vps-host: ${{ secrets.VPS_HOST }}
+          deploy-path: ${{ env.DEPLOY_PATH }}
+          ssh-opts: ${{ env.SSH_OPTS }}
+
+      # Setup GHCR authentication on VPS
+      - name: Setup GHCR Auth on VPS
+        uses: ./.github/actions/setup-ghcr-auth-vps
+        with:
+          vps-user: ${{ secrets.VPS_USER }}
+          vps-host: ${{ secrets.VPS_HOST }}
+          github-actor: ${{ github.actor }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      # Deploy container
+      - name: Deploy container
+        uses: ./.github/actions/deploy-container
+        with:
+          service-name: ${{ env.SERVICE_NAME }}
+          container-name: ${{ env.SERVICE_NAME }}.monorepo-template
+          compose-file: docker-compose.${{ env.SERVICE_NAME }}.yml
+          environment: ${{ github.event.inputs.environment }}
+          extra-env-vars: "NEXTAUTH_SECRET='${{ secrets.NEXTAUTH_SECRET }}'"
+          vps-user: ${{ secrets.VPS_USER }}
+          vps-host: ${{ secrets.VPS_HOST }}
+          deploy-path: ${{ env.DEPLOY_PATH }}
+          ssh-opts: ${{ env.SSH_OPTS }}
+
+      # Cleanup untagged GHCR images
+      - name: Cleanup untagged GHCR images
+        uses: ./.github/actions/cleanup-ghcr-images
+        with:
+          github-token: ${{ secrets.GHCR_PAT }}
+          package-name: 'monorepo-monorepo-template/${{ env.SERVICE_NAME }}'

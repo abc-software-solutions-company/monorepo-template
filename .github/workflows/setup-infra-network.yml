@@ -1,0 +1,129 @@
+name: Setup Infrastructure Network
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to set up network in'
+        required: true
+        default: 'production'
+        type: choice
+        options:
+          - production
+
+env:
+  NETWORK_NAME: hatt_law_infra
+  SSH_OPTS: -o StrictHostKeyChecking=no -o ConnectTimeout=10
+
+jobs:
+  setup-network:
+    runs-on: ubuntu-latest
+    environment: ${{ github.event.inputs.environment }}
+    concurrency:
+      group: setup-infra-network-${{ github.event.inputs.environment }}
+      cancel-in-progress: false
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Setup SSH Deployment
+        uses: ./.github/actions/setup-ssh-deploy
+        with:
+          ssh-private-key: ${{ secrets.VPS_DEPLOY_KEY }}
+
+      - name: Check if script exists on VPS
+        id: check_script
+        shell: bash
+        env:
+          VPS_HOST: ${{ secrets.VPS_HOST }}
+          VPS_USER: ${{ secrets.VPS_USER }}
+          SSH_OPTS: ${{ env.SSH_OPTS }}
+        run: |
+          echo "Checking if network script exists on VPS..."
+          if ssh $SSH_OPTS $VPS_USER@$VPS_HOST "[ -f /home/$VPS_USER/create_docker_network.sh ]"; then
+            # Get hash of local script
+            LOCAL_HASH=$(sha256sum scripts/create_docker_network.sh | awk '{print $1}')
+            # Get hash of remote script
+            REMOTE_HASH=$(ssh $SSH_OPTS $VPS_USER@$VPS_HOST "sha256sum /home/$VPS_USER/create_docker_network.sh" | awk '{print $1}')
+            
+            if [ "$LOCAL_HASH" = "$REMOTE_HASH" ]; then
+              echo "✅ Script already exists and is up to date"
+              echo "script_needs_update=false" >> $GITHUB_OUTPUT
+            else
+              echo "⚠️ Script exists but needs update"
+              echo "script_needs_update=true" >> $GITHUB_OUTPUT
+            fi
+          else
+            echo "ℹ️ Script does not exist on VPS"
+            echo "script_needs_update=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Copy network creation script to VPS
+        if: steps.check_script.outputs.script_needs_update == 'true'
+        shell: bash
+        env:
+          VPS_HOST: ${{ secrets.VPS_HOST }}
+          VPS_USER: ${{ secrets.VPS_USER }}
+          SSH_OPTS: ${{ env.SSH_OPTS }}
+        run: |
+          echo "Copying network creation script to VPS..."
+          if scp $SSH_OPTS scripts/create_docker_network.sh $VPS_USER@$VPS_HOST:/home/$VPS_USER/; then
+            ssh $SSH_OPTS $VPS_USER@$VPS_HOST "chmod +x /home/$VPS_USER/create_docker_network.sh"
+            echo "✅ Network creation script copied to VPS"
+          else
+            echo "❌ Failed to copy script to VPS"
+            exit 1
+          fi
+
+      - name: Create Docker network on VPS
+        id: create_network
+        shell: bash
+        env:
+          VPS_HOST: ${{ secrets.VPS_HOST }}
+          VPS_USER: ${{ secrets.VPS_USER }}
+          SSH_OPTS: ${{ env.SSH_OPTS }}
+          NETWORK_NAME: ${{ env.NETWORK_NAME }}
+        run: |
+          echo "Creating Docker network on VPS: $NETWORK_NAME"
+          # Run with set -e to fail on any error
+          set -e
+
+          # Create the network
+          ssh $SSH_OPTS $VPS_USER@$VPS_HOST "/home/$VPS_USER/create_docker_network.sh --name $NETWORK_NAME"
+
+          echo "✅ Docker infrastructure network setup completed"
+
+      - name: Verify network configuration
+        if: success()
+        shell: bash
+        env:
+          VPS_HOST: ${{ secrets.VPS_HOST }}
+          VPS_USER: ${{ secrets.VPS_USER }}
+          SSH_OPTS: ${{ env.SSH_OPTS }}
+          NETWORK_NAME: ${{ env.NETWORK_NAME }}
+        run: |
+          # Use set +e to prevent the command from failing if network doesn't exist
+          set +e
+
+          echo "Verifying network: $NETWORK_NAME"
+
+          # Run the inspect command and capture both stdout and exit code
+          OUTPUT=$(ssh $SSH_OPTS $VPS_USER@$VPS_HOST "docker network inspect $NETWORK_NAME 2>&1")
+          EXIT_CODE=$?
+
+          if [ $EXIT_CODE -ne 0 ]; then
+            if echo "$OUTPUT" | grep -q "No such network"; then
+              echo "❌ Network '$NETWORK_NAME' was not found after creation attempt"
+              exit 1
+            else
+              echo "❌ Error inspecting network: $OUTPUT"
+              exit 1
+            fi
+          else
+            echo "Network '$NETWORK_NAME' configuration:"
+            echo "$OUTPUT" | grep -E "Name|Driver|Attachable|Subnet|Gateway" -A1 || true
+            echo "✅ Network verification successful"
+          fi

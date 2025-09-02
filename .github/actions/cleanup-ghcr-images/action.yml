@@ -1,0 +1,54 @@
+name: Cleanup Untagged GHCR Images
+description: Deletes untagged images from GitHub Container Registry for a specific package
+
+inputs:
+  github-token:
+    description: 'GitHub token with package write permissions'
+    required: true
+  package-name:
+    description: 'Full package name including namespace (e.g., monorepo-loyalty-system/api)'
+    required: true
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Cleanup untagged GHCR images
+      uses: actions/github-script@v7
+      with:
+        github-token: ${{ inputs.github-token }}
+        script: |
+          const org = context.repo.owner;
+          const packageName = "${{ inputs.package-name }}";
+
+          console.log(`Cleaning up untagged images for ${packageName} in org ${org}`);
+
+          try {
+            const versions = await github.paginate(
+              github.rest.packages.getAllPackageVersionsForPackageOwnedByOrg,
+              {
+                package_type: "container",
+                package_name: packageName,
+                org,
+              }
+            );
+
+            const untagged = versions.filter(v => v.metadata.container.tags.length === 0);
+            console.log(`Found ${untagged.length} untagged images.`);
+
+            for (const version of untagged) {
+              console.log(`🗑️ Deleting untagged image version ${version.id}`);
+              await github.rest.packages.deletePackageVersionForOrg({
+                package_type: "container",
+                package_name: packageName,
+                org,
+                package_version_id: version.id,
+              });
+            }
+            
+            console.log(`Cleanup complete for ${packageName}`);
+          } catch (error) {
+            console.log(`Error cleaning up untagged images: ${error.message}`);
+            if (error.status === 404) {
+              console.log(`Package ${packageName} not found. Check that the package name is correct.`);
+            }
+          }

@@ -1,0 +1,30 @@
+services:
+  api.monorepo-template:
+    image: __API_IMAGE_NAME__
+    container_name: monorepo-template-api
+    env_file:
+      - ./apps/api/envs/.env.base
+      - ./apps/api/envs/.env.__ENV__
+    environment:
+      - DB_URL=${DB_URL}
+      - API_JWT_SECRET_KEY=${API_JWT_SECRET_KEY}
+      - API_JWT_REFRESH_SECRET_KEY=${API_JWT_REFRESH_SECRET_KEY}
+      - API_EMAIL_USERNAME=${API_EMAIL_USERNAME}
+      - API_EMAIL_PASSWORD=${API_EMAIL_PASSWORD}
+      - API_AWS_SECRET_ACCESS_KEY=${API_AWS_SECRET_ACCESS_KEY}
+      - API_AWS_ACCESS_KEY_ID=${API_AWS_ACCESS_KEY_ID}
+    expose:
+      - '3000'
+    restart: unless-stopped
+    networks:
+      - hatt_law_infra
+    deploy:
+      resources:
+        limits:
+          memory: 300M
+        reservations:
+          memory: 100M
+
+networks:
+  hatt_law_infra:
+    external: true

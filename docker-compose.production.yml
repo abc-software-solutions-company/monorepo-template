@@ -1,0 +1,72 @@
+services:
+  postgres:
+    image: postgres:16.4
+    container_name: postgres
+    restart: unless-stopped
+    ports:
+      - '5432:5432'
+    volumes:
+      - /home/${VPS_USER}/postgres/data:/var/lib/postgresql/data
+      - /home/${VPS_USER}/postgres/conf:/etc/postgresql/conf.d
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      # Performance tuning parameters
+      POSTGRES_INITDB_ARGS: '--data-checksums'
+      POSTGRES_HOST_AUTH_METHOD: 'md5'
+    command: >
+      postgres -c shared_buffers=512MB -c effective_cache_size=1024MB -c maintenance_work_mem=128MB -c work_mem=8MB -c max_connections=30
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+        reservations:
+          memory: 512M
+    networks:
+      - hatt_law_infra
+
+  nginx-proxy-manager:
+    image: jc21/nginx-proxy-manager:latest
+    container_name: nginx-proxy-manager
+    restart: unless-stopped
+    ports:
+      - '80:80'
+      - '81:81' # UI
+      - '443:443'
+    volumes:
+      - /home/${VPS_USER}/nginx-proxy-manager/data:/data
+      - /home/${VPS_USER}/nginx-proxy-manager/letsencrypt:/etc/letsencrypt
+    environment:
+      INITIAL_ADMIN_EMAIL: hatt_law_devops@abcdigital.io
+      INITIAL_ADMIN_PASSWORD: ${NGINX_PROXY_MANAGER_PASSWORD}
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+        reservations:
+          memory: 128M
+    networks:
+      - hatt_law_infra
+
+  portainer:
+    image: portainer/portainer-ce:latest
+    container_name: portainer
+    restart: always
+    expose:
+      - '9000'
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /home/${VPS_USER}/infra/portainer/data:/data
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+        reservations:
+          memory: 128M
+    networks:
+      - hatt_law_infra
+
+networks:
+  hatt_law_infra:
+    name: hatt_law_infra
+    external: true

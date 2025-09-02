@@ -1,0 +1,139 @@
+name: Deploy Infra with Docker Compose
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to deploy to'
+        required: true
+        default: 'production'
+        type: choice
+        options:
+          - production
+
+env:
+  DEPLOY_PATH: /home/${{ secrets.VPS_USER }}/infra
+  SSH_OPTS: -o StrictHostKeyChecking=no -o ConnectTimeout=10
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: ${{ github.event.inputs.environment }}
+    concurrency:
+      group: deploy-infra-${{ github.event.inputs.environment }}
+      cancel-in-progress: false
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Setup SSH Deployment
+        uses: ./.github/actions/setup-ssh-deploy
+        with:
+          ssh-private-key: ${{ secrets.VPS_DEPLOY_KEY }}
+
+      - name: Create infrastructure directories
+        shell: bash
+        env:
+          VPS_HOST: ${{ secrets.VPS_HOST }}
+          VPS_USER: ${{ secrets.VPS_USER }}
+          DEPLOY_PATH: ${{ env.DEPLOY_PATH }}
+          SSH_OPTS: ${{ env.SSH_OPTS }}
+        run: |
+          echo "Creating required directories..."
+          ssh $SSH_OPTS $VPS_USER@$VPS_HOST "mkdir -p \
+            $DEPLOY_PATH/postgres/data \
+            $DEPLOY_PATH/postgres/conf \
+            $DEPLOY_PATH/nginx-proxy-manager/data \
+            $DEPLOY_PATH/nginx-proxy-manager/letsencrypt"
+
+          # Verify directories
+          if ssh $SSH_OPTS $VPS_USER@$VPS_HOST "ls -la $DEPLOY_PATH"; then
+            echo "✅ Directories created successfully"
+          else
+            echo "❌ Directory verification failed"
+            exit 1
+          fi
+
+      - name: Stop existing containers
+        shell: bash
+        env:
+          VPS_HOST: ${{ secrets.VPS_HOST }}
+          VPS_USER: ${{ secrets.VPS_USER }}
+          SSH_OPTS: ${{ env.SSH_OPTS }}
+        run: |
+          echo "Stopping existing containers..."
+          ssh $SSH_OPTS $VPS_USER@$VPS_HOST "docker stop postgres nginx-proxy-manager 2>/dev/null || true"
+          echo "✅ Container shutdown complete"
+
+      - name: Upload docker-compose file
+        shell: bash
+        env:
+          VPS_HOST: ${{ secrets.VPS_HOST }}
+          VPS_USER: ${{ secrets.VPS_USER }}
+          DEPLOY_PATH: ${{ env.DEPLOY_PATH }}
+          SSH_OPTS: ${{ env.SSH_OPTS }}
+          ENV: ${{ github.event.inputs.environment }}
+        run: |
+          echo "Uploading docker-compose.$ENV.yml..."
+          # Upload the file
+          if scp $SSH_OPTS docker-compose.$ENV.yml $VPS_USER@$VPS_HOST:$DEPLOY_PATH/docker-compose.yml; then
+            echo "✅ Docker Compose file uploaded successfully"
+          else
+            echo "❌ Failed to upload Docker Compose file"
+            exit 1
+          fi
+
+      - name: Deploy infrastructure
+        shell: bash
+        env:
+          VPS_HOST: ${{ secrets.VPS_HOST }}
+          VPS_USER: ${{ secrets.VPS_USER }}
+          DEPLOY_PATH: ${{ env.DEPLOY_PATH }}
+          SSH_OPTS: ${{ env.SSH_OPTS }}
+          POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+          NGINX_PROXY_MANAGER_PASSWORD: ${{ secrets.NGINX_PROXY_MANAGER_PASSWORD }}
+        run: |
+          echo "Preparing deployment environment..."
+          # Create .env file with required variables
+          cat > .env << EOF
+          POSTGRES_USER=$POSTGRES_USER
+          POSTGRES_PASSWORD=$POSTGRES_PASSWORD
+          VPS_USER=$VPS_USER
+          NGINX_PROXY_MANAGER_PASSWORD=$NGINX_PROXY_MANAGER_PASSWORD
+          EOF
+
+          # Upload .env file
+          scp $SSH_OPTS .env $VPS_USER@$VPS_HOST:$DEPLOY_PATH/.env
+
+          echo "Starting infrastructure containers..."
+          # Run docker compose
+          if ssh $SSH_OPTS $VPS_USER@$VPS_HOST "cd $DEPLOY_PATH && docker compose -f docker-compose.yml up -d"; then
+            echo "✅ Infrastructure deployment successful"
+          else
+            echo "❌ Deployment failed"
+            exit 1
+          fi
+
+          # Clean up the .env files
+          rm .env
+          ssh $SSH_OPTS $VPS_USER@$VPS_HOST "rm $DEPLOY_PATH/.env"
+
+      - name: Verify deployment
+        shell: bash
+        env:
+          VPS_HOST: ${{ secrets.VPS_HOST }}
+          VPS_USER: ${{ secrets.VPS_USER }}
+          SSH_OPTS: ${{ env.SSH_OPTS }}
+        run: |
+          echo "Verifying deployed containers..."
+          if ssh $SSH_OPTS $VPS_USER@$VPS_HOST "docker ps | grep postgres && docker ps | grep nginx-proxy-manager"; then
+            echo "✅ All containers are running properly"
+          else
+            echo "⚠️ Some containers may not be running correctly"
+            ssh $SSH_OPTS $VPS_USER@$VPS_HOST "docker ps"
+            exit 1
+          fi

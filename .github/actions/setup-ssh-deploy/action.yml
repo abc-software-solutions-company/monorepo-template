@@ -1,0 +1,15 @@
+name: Setup SSH Deployment
+description: Sets up SSH agent for deployment with the provided key
+
+inputs:
+  ssh-private-key:
+    description: 'SSH private key for deployment'
+    required: true
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Set up SSH agent
+      uses: webfactory/ssh-agent@v0.8.0
+      with:
+        ssh-private-key: ${{ inputs.ssh-private-key }}

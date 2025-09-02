@@ -1,0 +1,24 @@
+services:
+  website.monorepo-template:
+    image: __WEBSITE_IMAGE_NAME__
+    container_name: monorepo-template-website
+    env_file:
+      - ./apps/website/envs/.env.base
+      - ./apps/website/envs/.env.__ENV__
+    environment:
+      - NEXTAUTH_SECRET=${NEXTAUTH_SECRET}
+    expose:
+      - '3000'
+    restart: unless-stopped
+    networks:
+      - hatt_law_infra
+    deploy:
+      resources:
+        limits:
+          memory: 200M
+        reservations:
+          memory: 100M
+
+networks:
+  hatt_law_infra:
+    external: true

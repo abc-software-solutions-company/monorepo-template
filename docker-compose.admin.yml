@@ -1,0 +1,22 @@
+services:
+  admin.monorepo-template:
+    image: __ADMIN_IMAGE_NAME__
+    container_name: monorepo-template-admin
+    env_file:
+      - ./apps/admin-portal/envs/.env.base
+      - ./apps/admin-portal/envs/.env.__ENV__
+    expose:
+      - '80'
+    restart: unless-stopped
+    networks:
+      - hatt_law_infra
+    deploy:
+      resources:
+        limits:
+          memory: 50M
+        reservations:
+          memory: 10M
+
+networks:
+  hatt_law_infra:
+    external: true

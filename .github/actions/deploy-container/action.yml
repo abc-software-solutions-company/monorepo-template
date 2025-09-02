@@ -1,0 +1,112 @@
+name: 'Deploy Container'
+description: 'Deploys a container using docker-compose on a remote VPS'
+
+inputs:
+  service-name:
+    description: 'Name of the service (api, admin, etc.)'
+    required: true
+  container-name:
+    description: 'Name of the container in docker-compose'
+    required: true
+  compose-file:
+    description: 'Docker compose file name on the VPS'
+    required: true
+  environment:
+    description: 'Deployment environment (stage, prod, etc.)'
+    required: true
+  extra-env-vars:
+    description: 'Extra environment variables to pass to docker-compose'
+    required: false
+    default: ''
+  vps-user:
+    description: 'VPS username'
+    required: true
+  vps-host:
+    description: 'VPS hostname or IP'
+    required: true
+  deploy-path:
+    description: 'Path on the VPS to deploy to'
+    required: true
+  ssh-opts:
+    description: 'SSH options'
+    required: false
+    default: '-o StrictHostKeyChecking=no -o ConnectTimeout=10'
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Deploy via SSH
+      id: deploy
+      shell: bash
+      run: |
+        # Verify docker-compose.yml exists before attempting to use it
+        ssh ${{ inputs.ssh-opts }} ${{ inputs.vps-user }}@${{ inputs.vps-host }} "cat ${{ inputs.deploy-path }}/${{ inputs.compose-file }}"
+
+        # Deploy using SSH + Docker Compose with environment variables
+        if [ -n "${{ inputs.extra-env-vars }}" ]; then
+          # Create environment file locally with proper format
+          DOCKER_ENV_FILE="/tmp/docker_env_file"
+          > $DOCKER_ENV_FILE  # Create empty file
+          
+          # Parse and format environment variables
+          echo "Processing environment variables..." >&2
+          
+          # Save raw env vars to a temp file for processing
+          ENV_RAW_FILE="/tmp/env_raw"
+          echo "${{ inputs.extra-env-vars }}" > "$ENV_RAW_FILE"
+          
+          # Process each line individually
+          while IFS= read -r line || [ -n "$line" ]; do
+            # Remove trailing backslash if present
+            line=$(echo "$line" | sed 's/ \\$//')
+            
+            # Skip empty lines
+            if [ -z "$(echo "$line" | tr -d '[:space:]')" ]; then
+              continue
+            fi
+            
+            # Extract variable assignment (remove quotes)
+            var_assignment=$(echo "$line" | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//' | sed "s/'//g")
+            
+            # Add to env file if it's a valid assignment
+            if [[ "$var_assignment" =~ = ]]; then
+              echo "$var_assignment" >> $DOCKER_ENV_FILE
+              echo "Added env var: $(echo "$var_assignment" | cut -d= -f1)" >&2
+            fi
+          done < "$ENV_RAW_FILE"
+          
+          rm -f "$ENV_RAW_FILE"
+          
+          # Display number of environment variables processed
+          VAR_COUNT=$(wc -l < $DOCKER_ENV_FILE)
+          echo "Processed $VAR_COUNT environment variables" >&2
+          
+          # Upload the env file to the server
+          ENV_FILE="${{ inputs.deploy-path }}/.env.deploy.tmp"
+          scp ${{ inputs.ssh-opts }} $DOCKER_ENV_FILE ${{ inputs.vps-user }}@${{ inputs.vps-host }}:${ENV_FILE}
+          rm -f $DOCKER_ENV_FILE
+          
+          # Deploy with env file
+          ssh ${{ inputs.ssh-opts }} ${{ inputs.vps-user }}@${{ inputs.vps-host }} "cd ${{ inputs.deploy-path }} && \
+            docker compose -f ${{ inputs.compose-file }} pull ${{ inputs.container-name }} && \
+            docker compose --env-file ${ENV_FILE} -f ${{ inputs.compose-file }} up -d ${{ inputs.container-name }} && \
+            rm -f ${ENV_FILE} && \
+            echo '${{ inputs.service-name }} container started'"
+        else 
+          # Deploy without extra env vars
+          ssh ${{ inputs.ssh-opts }} ${{ inputs.vps-user }}@${{ inputs.vps-host }} "cd ${{ inputs.deploy-path }} && \
+            docker compose -f ${{ inputs.compose-file }} pull ${{ inputs.container-name }} && \
+            docker compose -f ${{ inputs.compose-file }} up -d ${{ inputs.container-name }} && \
+            echo '${{ inputs.service-name }} container started'"
+        fi
+
+    - name: Cleanup old Docker images
+      shell: bash
+      run: |
+        # Remove dangling images first (untagged images)
+        ssh ${{ inputs.ssh-opts }} ${{ inputs.vps-user }}@${{ inputs.vps-host }} "docker image prune -f"
+
+        # Remove old images but keep the most recent 2 to allow for quick rollbacks if needed
+        # Use -f flag to force deletion even if images are referenced in multiple repositories
+        ssh ${{ inputs.ssh-opts }} ${{ inputs.vps-user }}@${{ inputs.vps-host }} \
+          "docker images 'ghcr.io/${{ github.repository }}/${{ inputs.service-name }}:${{ inputs.environment }}-*' --format '{{.ID}} {{.CreatedAt}}' | sort -k2 -r | awk 'NR>2 {print \$1}' | xargs -r docker rmi -f"

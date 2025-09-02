@@ -1,0 +1,43 @@
+name: Setup Node.js and Yarn
+description: Sets up Node.js and Yarn with specified versions
+
+inputs:
+  node-version:
+    description: 'Node.js version to setup'
+    required: false
+    default: '22.14.0'
+  run-install:
+    description: 'Whether to run yarn install'
+    required: false
+    default: 'false'
+  cache-dependency-path:
+    description: 'Dependency file path for cache (e.g., yarn.lock)'
+    required: false
+    default: 'yarn.lock'
+  enable-cache:
+    description: 'Whether to enable node_modules caching'
+    required: false
+    default: 'true'
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ inputs.node-version }}
+        cache: ${{ fromJSON(inputs.enable-cache) && 'yarn' || '' }}
+        cache-dependency-path: ${{ fromJSON(inputs.enable-cache) && inputs.cache-dependency-path || '' }}
+
+    - name: Verify Yarn is available
+      shell: bash
+      run: |
+        echo "Node version: $(node -v)"
+        echo "Yarn version: $(yarn -v)"
+        which yarn
+        yarn config set cache-folder "$(yarn cache dir)"
+
+    - name: Optional - Run yarn install
+      if: ${{ fromJSON(inputs.run-install) }}
+      shell: bash
+      run: yarn install --frozen-lockfile

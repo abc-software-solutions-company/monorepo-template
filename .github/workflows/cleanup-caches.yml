@@ -1,0 +1,119 @@
+name: Cleanup GitHub Actions Caches
+
+on:
+  workflow_dispatch: # Allow manual triggers
+    inputs:
+      keep_count:
+        description: 'Number of most recent caches to keep'
+        required: false
+        default: '50'
+        type: string
+  schedule:
+    - cron: '0 0 * * 0' # Run weekly on Sunday at midnight UTC
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    permissions:
+      actions: write
+      contents: read
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Cleanup Docker-related caches
+        run: |
+          echo "Fetching list of caches..."
+
+          # Set keep count from input or use default
+          KEEP_COUNT="${{ github.event.inputs.keep_count || '50' }}"
+          echo "Will keep $KEEP_COUNT most recent caches"
+
+          # Initialize counter for deleted caches
+          DELETED_COUNT=0
+          TOTAL_CACHES=0
+
+          # Set repository for gh commands
+          echo "Using repository: $GITHUB_REPOSITORY"
+
+          # Get size info before deletion
+          TOTAL_SIZE_BEFORE=$(gh api -H "Accept: application/vnd.github+json" /repos/$GITHUB_REPOSITORY/actions/cache/usage | jq '.active_caches_size_in_bytes')
+          TOTAL_SIZE_MB_BEFORE=$((TOTAL_SIZE_BEFORE / 1024 / 1024))
+          echo "Current cache size: $TOTAL_SIZE_MB_BEFORE MB"
+
+          # Create directory for cache data
+          mkdir -p /tmp/caches
+          > /tmp/caches/all_caches.json
+
+          echo "The gh CLI doesn't support pagination for cache listing. Using alternative approach..."
+
+          # Get all caches in one go with maximum allowed limit (100)
+          echo "Fetching caches with maximum limit..."
+          ALL_CACHES=$(gh cache list -R $GITHUB_REPOSITORY --limit 100 --sort created_at --order desc --json key,sizeInBytes,createdAt)
+
+          # Save to file
+          echo "$ALL_CACHES" > /tmp/caches/all_caches.json
+
+          # Show cache statistics
+          TOTAL_CACHES=$(echo "$ALL_CACHES" | jq '. | length')
+          echo "Found $TOTAL_CACHES total caches (maximum 100 returned by API)"
+
+          if [ "$TOTAL_CACHES" -le "$KEEP_COUNT" ]; then
+            echo "Number of caches ($TOTAL_CACHES) is less than or equal to keep count ($KEEP_COUNT), no pruning needed"
+            exit 0
+          fi
+
+          # Sort by creation date and determine which to delete
+          echo "Identifying caches to delete..."
+          cat /tmp/caches/all_caches.json | jq -r '.' > /tmp/caches/sorted_caches.json
+
+          # Keep most recent KEEP_COUNT caches, delete the rest
+          TO_KEEP=$(cat /tmp/caches/sorted_caches.json | jq -r ".[0:$KEEP_COUNT] | .[].key")
+          TO_DELETE=$(cat /tmp/caches/sorted_caches.json | jq -r ".[${KEEP_COUNT}:] | .[].key")
+
+          # Create arrays for logging
+          echo "$TO_KEEP" | sort > /tmp/caches/to_keep.txt
+          echo "$TO_DELETE" | sort > /tmp/caches/to_delete.txt
+
+          KEEP_COUNT_ACTUAL=$(cat /tmp/caches/to_keep.txt | wc -l)
+          DELETE_COUNT_TARGET=$(cat /tmp/caches/to_delete.txt | wc -l)
+
+          echo "Will keep $KEEP_COUNT_ACTUAL most recent caches"
+          echo "Will attempt to delete $DELETE_COUNT_TARGET older caches"
+
+          # Delete caches
+          if [ -n "$TO_DELETE" ]; then
+            echo "Deleting old caches..."
+            
+            # Use set +e to prevent script from failing if some deletions fail
+            set +e
+            while read -r CACHE_KEY; do
+              echo "Deleting cache: $CACHE_KEY"
+              if gh cache delete -R $GITHUB_REPOSITORY "$CACHE_KEY"; then
+                DELETED_COUNT=$((DELETED_COUNT + 1))
+              else
+                echo "Failed to delete cache: $CACHE_KEY"
+              fi
+            done <<< "$TO_DELETE"
+            set -e
+            
+            echo "Successfully deleted $DELETED_COUNT out of $DELETE_COUNT_TARGET caches"
+            
+            # Show size info after deletion
+            TOTAL_SIZE_AFTER=$(gh api -H "Accept: application/vnd.github+json" /repos/$GITHUB_REPOSITORY/actions/cache/usage | jq '.active_caches_size_in_bytes')
+            TOTAL_SIZE_MB_AFTER=$((TOTAL_SIZE_AFTER / 1024 / 1024))
+            SAVED_SIZE=$((TOTAL_SIZE_MB_BEFORE - TOTAL_SIZE_MB_AFTER))
+            
+            echo "New cache size: $TOTAL_SIZE_MB_AFTER MB"
+            echo "Freed up approximately $SAVED_SIZE MB of cache storage"
+          else
+            echo "No caches to delete"
+          fi
+
+          echo "Note: Only processed up to 100 caches due to API limitations."
+          echo "To clean up more caches, run this workflow again after the current batch is processed."
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_REPOSITORY: ${{ github.repository }}

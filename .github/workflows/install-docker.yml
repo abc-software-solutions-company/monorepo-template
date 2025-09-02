@@ -1,0 +1,171 @@
+name: Install Docker on Server
+
+on:
+  workflow_dispatch:
+    inputs:
+      force_reinstall:
+        description: 'Force reinstall Docker even if already installed'
+        required: false
+        default: false
+        type: boolean
+      target_user:
+        description: 'Target user for Docker installation (optional, defaults to VPS_USER)'
+        required: false
+        type: string
+
+env:
+  SSH_OPTS: -o StrictHostKeyChecking=no -o ConnectTimeout=30
+
+jobs:
+  install-docker:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Validate required secrets
+        run: |
+          if [ -z "${{ secrets.VPS_HOST }}" ]; then
+            echo "❌ VPS_HOST secret is not set"
+            exit 1
+          fi
+          if [ -z "${{ secrets.VPS_USER }}" ]; then
+            echo "❌ VPS_USER secret is not set"
+            exit 1
+          fi
+          if [ -z "${{ secrets.VPS_DEPLOY_KEY }}" ]; then
+            echo "❌ VPS_DEPLOY_KEY secret is not set"
+            exit 1
+          fi
+          echo "✅ All required secrets are configured"
+
+      - name: Setup SSH key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.VPS_DEPLOY_KEY }}" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          ssh-keyscan -H ${{ secrets.VPS_HOST }} >> ~/.ssh/known_hosts
+
+      - name: Check current Docker status
+        id: docker-check
+        run: |
+          echo "🔍 Checking if Docker is already installed on the server..."
+          
+          DOCKER_INSTALLED=false
+          DOCKER_VERSION=""
+          
+          if ssh -i ~/.ssh/deploy_key ${{ env.SSH_OPTS }} ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} "command -v docker >/dev/null 2>&1"; then
+            DOCKER_INSTALLED=true
+            DOCKER_VERSION=$(ssh -i ~/.ssh/deploy_key ${{ env.SSH_OPTS }} ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} "docker --version" 2>/dev/null || echo "Unknown")
+            echo "✅ Docker is already installed: $DOCKER_VERSION"
+          else
+            echo "❌ Docker is not installed"
+          fi
+          
+          echo "docker_installed=$DOCKER_INSTALLED" >> $GITHUB_OUTPUT
+          echo "docker_version=$DOCKER_VERSION" >> $GITHUB_OUTPUT
+
+      - name: Upload Docker installation script
+        run: |
+          echo "📤 Uploading Docker installation script to server..."
+          scp -i ~/.ssh/deploy_key ${{ env.SSH_OPTS }} \
+            ./scripts/install_docker.sh \
+            ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}:/tmp/install_docker.sh
+          
+          echo "🔧 Making script executable..."
+          ssh -i ~/.ssh/deploy_key ${{ env.SSH_OPTS }} \
+            ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} \
+            "chmod +x /tmp/install_docker.sh"
+
+      - name: Install Docker
+        if: steps.docker-check.outputs.docker_installed == 'false' || github.event.inputs.force_reinstall == 'true'
+        run: |
+          if [ "${{ github.event.inputs.force_reinstall }}" == "true" ]; then
+            echo "🔄 Force reinstall requested - proceeding with Docker installation..."
+          else
+            echo "🐋 Installing Docker on the server..."
+          fi
+          
+          # Run the installation script
+          ssh -i ~/.ssh/deploy_key ${{ env.SSH_OPTS }} \
+            ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} \
+            "sudo /tmp/install_docker.sh"
+
+      - name: Verify Docker installation
+        run: |
+          echo "✅ Verifying Docker installation..."
+          
+          # Check Docker version
+          DOCKER_VERSION=$(ssh -i ~/.ssh/deploy_key ${{ env.SSH_OPTS }} \
+            ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} \
+            "docker --version")
+          echo "Docker version: $DOCKER_VERSION"
+          
+          # Check Docker Compose version
+          COMPOSE_VERSION=$(ssh -i ~/.ssh/deploy_key ${{ env.SSH_OPTS }} \
+            ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} \
+            "docker-compose --version")
+          echo "Docker Compose version: $COMPOSE_VERSION"
+          
+          # Check if Docker service is running
+          SERVICE_STATUS=$(ssh -i ~/.ssh/deploy_key ${{ env.SSH_OPTS }} \
+            ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} \
+            "sudo systemctl is-active docker")
+          echo "Docker service status: $SERVICE_STATUS"
+          
+          if [ "$SERVICE_STATUS" != "active" ]; then
+            echo "❌ Docker service is not running"
+            exit 1
+          fi
+
+      - name: Test Docker functionality
+        run: |
+          echo "🧪 Testing Docker functionality..."
+          
+          # Test Docker with hello-world image
+          ssh -i ~/.ssh/deploy_key ${{ env.SSH_OPTS }} \
+            ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} \
+            "sudo docker run --rm hello-world"
+          
+          echo "✅ Docker is working correctly!"
+
+      - name: Configure Docker for current user
+        run: |
+          TARGET_USER="${{ github.event.inputs.target_user || secrets.VPS_USER }}"
+          echo "👥 Configuring Docker access for user: $TARGET_USER"
+          
+          # Add user to docker group if not already added
+          ssh -i ~/.ssh/deploy_key ${{ env.SSH_OPTS }} \
+            ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} \
+            "sudo usermod -aG docker $TARGET_USER"
+          
+          echo "✅ User $TARGET_USER has been added to the docker group"
+          echo "⚠️  Note: User may need to log out and log back in for group changes to take effect"
+
+      - name: Cleanup temporary files
+        if: always()
+        run: |
+          echo "🧹 Cleaning up temporary files..."
+          ssh -i ~/.ssh/deploy_key ${{ env.SSH_OPTS }} \
+            ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} \
+            "rm -f /tmp/install_docker.sh" || true
+          
+          rm -f ~/.ssh/deploy_key
+
+      - name: Installation Summary
+        if: always()
+        run: |
+          echo "📋 Docker Installation Summary"
+          echo "================================"
+          if [ "${{ steps.docker-check.outputs.docker_installed }}" == "true" ] && [ "${{ github.event.inputs.force_reinstall }}" != "true" ]; then
+            echo "ℹ️  Docker was already installed: ${{ steps.docker-check.outputs.docker_version }}"
+          else
+            echo "✅ Docker installation completed successfully"
+          fi
+          echo "🖥️  Server: ${{ secrets.VPS_HOST }}"
+          echo "👤 User: ${{ secrets.VPS_USER }}"
+          echo "🐋 Docker is ready for use!"

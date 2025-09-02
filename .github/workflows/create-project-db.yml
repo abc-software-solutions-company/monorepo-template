@@ -1,0 +1,76 @@
+name: Create Project Database
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to deploy to'
+        required: true
+        default: 'production'
+        type: choice
+        options:
+          - production
+      db_name:
+        description: 'Database name'
+        required: true
+      db_user:
+        description: 'Database user'
+        required: true
+      db_pass:
+        description: 'Database password'
+        required: true
+
+env:
+  SSH_OPTS: -o StrictHostKeyChecking=no -o ConnectTimeout=10
+
+jobs:
+  create-db:
+    runs-on: ubuntu-latest
+    environment: ${{ github.event.inputs.environment }}
+    concurrency:
+      group: db-create-${{ github.event.inputs.environment }}-${{ github.event.inputs.db_name }}
+      cancel-in-progress: false
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Setup SSH Deployment
+        uses: ./.github/actions/setup-ssh-deploy
+        with:
+          ssh-private-key: ${{ secrets.VPS_DEPLOY_KEY }}
+
+      - name: Copy DB creation script to VPS
+        shell: bash
+        env:
+          VPS_HOST: ${{ secrets.VPS_HOST }}
+          VPS_USER: ${{ secrets.VPS_USER }}
+          SSH_OPTS: ${{ env.SSH_OPTS }}
+        run: |
+          echo "Copying DB creation script to VPS..."
+          if scp $SSH_OPTS scripts/create_db.sh $VPS_USER@$VPS_HOST:/home/$VPS_USER/; then
+            ssh $SSH_OPTS $VPS_USER@$VPS_HOST "chmod +x /home/$VPS_USER/create_db.sh"
+            echo "✅ DB creation script copied to VPS"
+          else
+            echo "❌ Failed to copy script to VPS"
+            exit 1
+          fi
+
+      - name: Create database
+        env:
+          VPS_HOST: ${{ secrets.VPS_HOST }}
+          VPS_USER: ${{ secrets.VPS_USER }}
+          POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+        run: |
+          set -e
+          echo "Creating database ${{ github.event.inputs.db_name }} with owner ${{ github.event.inputs.db_user }}..."
+          ssh $VPS_USER@$VPS_HOST "bash /home/$VPS_USER/create_db.sh \
+            '${{ github.event.inputs.db_name }}' \
+            '${{ github.event.inputs.db_user }}' \
+            '${{ github.event.inputs.db_pass }}' \
+            '$POSTGRES_USER' \
+            '$POSTGRES_PASSWORD'"
+          echo "Database created successfully!"

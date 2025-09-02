@@ -1,0 +1,49 @@
+name: Database Migrations
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to run migrations on'
+        required: true
+        default: 'stage'
+        type: choice
+        options:
+          - stage
+          - production
+
+jobs:
+  migrate:
+    runs-on: ubuntu-latest
+    environment: ${{ github.event.inputs.environment }}
+    concurrency:
+      group: db-migrate-${{ github.event.inputs.environment }}
+      cancel-in-progress: false
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Setup Node.js and pnpm
+        uses: ./.github/actions/setup-node
+        with:
+          node-version: '22.14.0'
+          run-install: true
+          enable-cache: true
+          cache-dependency-path: 'yarn.lock'
+
+      - name: Create .env file with DB_URL
+        run: |
+          # For GitHub Actions, we need to use the IP address, not the Docker service name
+          echo "DB_URL=${{ secrets.DB_URL_REMOTE }}" > apps/api/.env
+          echo "DB_DEBUG=true" >> apps/api/.env
+          echo "Created .env file with DB_URL_REMOTE for ${{ github.event.inputs.environment }} environment"
+
+      - name: Run database migrations
+        run: |
+          cd apps/api
+          echo "Running migrations with Node $(node -v) and yarn $(yarn -v)"
+          yarn migration:run
+          echo "Database migrations completed successfully"
