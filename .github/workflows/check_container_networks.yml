@@ -1,0 +1,49 @@
+name: Check Container Networks
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to check'
+        required: true
+        default: 'stage'
+        type: choice
+        options:
+          - stage
+          - production
+
+jobs:
+  check-networks:
+    runs-on: ubuntu-latest
+    environment: ${{ github.event.inputs.environment }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Setup SSH key
+        uses: webfactory/ssh-agent@v0.9.1
+        with:
+          ssh-private-key: ${{ secrets.VPS_DEPLOY_KEY }}
+
+      - name: Add VPS to known_hosts
+        run: ssh-keyscan -H ${{ secrets.VPS_HOST }} >> ~/.ssh/known_hosts
+
+      - name: Check container networks
+        env:
+          VPS_HOST: ${{ secrets.VPS_HOST }}
+          VPS_USER: ${{ secrets.VPS_USER }}
+        run: |
+          echo "=== Checking networks for all containers ==="
+          ssh $VPS_USER@$VPS_HOST "docker ps --format '{{.Names}}' | xargs -I{} sh -c 'echo \"Container: {}\"; docker inspect -f \"{{range \$k, \$v := .NetworkSettings.Networks}}{{printf \"\\\n  Network: %s\" \$k}}{{end}}\" {}; echo'"
+          
+          echo "=== Checking network details ==="
+          ssh $VPS_USER@$VPS_HOST "docker network ls"
+          
+          echo "=== Details for abc_infra network ==="
+          ssh $VPS_USER@$VPS_HOST "docker network inspect abc_infra || echo 'Network abc_infra not found'"
+          
+          echo "=== Details for infra-central_infra network ==="
+          ssh $VPS_USER@$VPS_HOST "docker network inspect infra-central_infra || echo 'Network infra-central_infra not found'" 

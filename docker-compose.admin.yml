@@ -1,0 +1,23 @@
+# Must replace all text "monorepo-template" to your project name
+services:
+  admin.monorepo-template:
+    image: __ADMIN_IMAGE_NAME__
+    container_name: monorepo-template-admin # Change this to your project name
+    env_file:
+      - ./apps/admin-portal/envs/.env.base
+      - ./apps/admin-portal/envs/.env.__ENV__
+    expose:
+      - '80'
+    restart: unless-stopped
+    networks:
+      - abc_infra
+    deploy:
+      resources:
+        limits:
+          memory: 50M
+        reservations:
+          memory: 10M
+
+networks:
+  abc_infra:
+    external: true

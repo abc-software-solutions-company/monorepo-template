@@ -1,0 +1,162 @@
+name: Deploy Nginx Proxy Manager
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to deploy to'
+        required: true
+        default: 'stage'
+        type: choice
+        options:
+          - stage
+          - production
+
+env:
+  DEPLOY_PATH: /home/${{ secrets.VPS_USER }}${{ github.event.inputs.environment == 'production' && '/infra' || '' }}
+  SSH_OPTS: -o StrictHostKeyChecking=no -o ConnectTimeout=10
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: ${{ github.event.inputs.environment }}
+    concurrency:
+      group: deploy-npm-${{ github.event.inputs.environment }}
+      cancel-in-progress: false
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Setup Docker CLI
+        uses: docker/setup-buildx-action@v3
+        with:
+          install: true
+
+      - name: Setup SSH key
+        uses: webfactory/ssh-agent@v0.9.1
+        with:
+          ssh-private-key: ${{ secrets.VPS_DEPLOY_KEY }}
+
+      - name: Add VPS to known_hosts
+        run: ssh-keyscan -H ${{ secrets.VPS_HOST }} >> ~/.ssh/known_hosts
+
+      - name: Create infrastructure directories
+        shell: bash
+        env:
+          VPS_HOST: ${{ secrets.VPS_HOST }}
+          VPS_USER: ${{ secrets.VPS_USER }}
+          DEPLOY_PATH: ${{ env.DEPLOY_PATH }}
+          SSH_OPTS: ${{ env.SSH_OPTS }}
+        run: |
+          echo "Creating required directories..."
+          ssh $SSH_OPTS $VPS_USER@$VPS_HOST "mkdir -p \
+            $DEPLOY_PATH/nginx-proxy-manager/data \
+            $DEPLOY_PATH/nginx-proxy-manager/letsencrypt"
+
+          # Verify directories
+          if ssh $SSH_OPTS $VPS_USER@$VPS_HOST "ls -la $DEPLOY_PATH"; then
+            echo "✅ Directories created successfully"
+          else
+            echo "❌ Directory verification failed"
+            exit 1
+          fi
+
+      - name: Stop existing containers
+        shell: bash
+        env:
+          VPS_HOST: ${{ secrets.VPS_HOST }}
+          VPS_USER: ${{ secrets.VPS_USER }}
+          SSH_OPTS: ${{ env.SSH_OPTS }}
+        run: |
+          echo "Stopping existing containers..."
+          ssh $SSH_OPTS $VPS_USER@$VPS_HOST "docker stop nginx-proxy-manager 2>/dev/null || true"
+          echo "✅ Container shutdown complete"
+
+      - name: Upload docker-compose file
+        shell: bash
+        env:
+          VPS_HOST: ${{ secrets.VPS_HOST }}
+          VPS_USER: ${{ secrets.VPS_USER }}
+          DEPLOY_PATH: ${{ env.DEPLOY_PATH }}
+          SSH_OPTS: ${{ env.SSH_OPTS }}
+        run: |
+          echo "Uploading docker-compose.${{ github.event.inputs.environment }}.yml..."
+          # Upload the file
+          if scp $SSH_OPTS docker-compose.${{ github.event.inputs.environment }}.yml $VPS_USER@$VPS_HOST:$DEPLOY_PATH/docker-compose.yml; then
+            echo "✅ Docker Compose file uploaded successfully"
+          else
+            echo "❌ Failed to upload Docker Compose file"
+            exit 1
+          fi
+
+      - name: Create .env file
+        shell: bash
+        env:
+          VPS_HOST: ${{ secrets.VPS_HOST }}
+          VPS_USER: ${{ secrets.VPS_USER }}
+          DEPLOY_PATH: ${{ env.DEPLOY_PATH }}
+          SSH_OPTS: ${{ env.SSH_OPTS }}
+        run: |
+          echo "Creating .env file..."
+          cat > .env << EOF
+          VPS_USER=$VPS_USER
+          EOF
+          
+          # Upload the .env file
+          if scp $SSH_OPTS .env $VPS_USER@$VPS_HOST:$DEPLOY_PATH/.env; then
+            echo "✅ .env file uploaded successfully"
+          else
+            echo "❌ Failed to upload .env file"
+            exit 1
+          fi
+          
+          # Remove local .env file
+          rm .env
+
+      - name: Deploy Nginx Proxy Manager
+        shell: bash
+        env:
+          VPS_HOST: ${{ secrets.VPS_HOST }}
+          VPS_USER: ${{ secrets.VPS_USER }}
+          DEPLOY_PATH: ${{ env.DEPLOY_PATH }}
+          SSH_OPTS: ${{ env.SSH_OPTS }}
+        run: |
+          echo "Starting Nginx Proxy Manager container..."
+          # Run docker compose
+          if ssh $SSH_OPTS $VPS_USER@$VPS_HOST "cd $DEPLOY_PATH && docker compose -f docker-compose.yml up -d nginx-proxy-manager"; then
+            echo "✅ Nginx Proxy Manager deployment successful"
+          else
+            echo "❌ Deployment failed"
+            exit 1
+          fi
+
+      - name: Verify deployment
+        shell: bash
+        env:
+          VPS_HOST: ${{ secrets.VPS_HOST }}
+          VPS_USER: ${{ secrets.VPS_USER }}
+          SSH_OPTS: ${{ env.SSH_OPTS }}
+        run: |
+          echo "Verifying deployed containers..."
+          if ssh $SSH_OPTS $VPS_USER@$VPS_HOST "docker ps | grep nginx-proxy-manager"; then
+            echo "✅ Nginx Proxy Manager container is running properly"
+          else
+            echo "⚠️ Nginx Proxy Manager container may not be running correctly"
+            ssh $SSH_OPTS $VPS_USER@$VPS_HOST "docker ps"
+            exit 1
+          fi
+          
+      - name: Cleanup
+        if: always()
+        shell: bash
+        env:
+          VPS_HOST: ${{ secrets.VPS_HOST }}
+          VPS_USER: ${{ secrets.VPS_USER }}
+          DEPLOY_PATH: ${{ env.DEPLOY_PATH }}
+          SSH_OPTS: ${{ env.SSH_OPTS }}
+        run: |
+          # Remove .env file from remote server if it exists
+          ssh $SSH_OPTS $VPS_USER@$VPS_HOST "rm -f $DEPLOY_PATH/.env" || true

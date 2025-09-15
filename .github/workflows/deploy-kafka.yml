@@ -1,0 +1,252 @@
+name: Deploy Kafka
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to deploy to'
+        required: true
+        default: 'stage'
+        type: choice
+        options:
+          - stage
+          - production
+
+env:
+  DEPLOY_PATH: /home/${{ secrets.VPS_USER }}${{ github.event.inputs.environment == 'production' && '/infra' || '' }}
+  SSH_OPTS: -o StrictHostKeyChecking=no -o ConnectTimeout=10
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: ${{ github.event.inputs.environment }}
+    concurrency:
+      group: deploy-kafka-${{ github.event.inputs.environment }}
+      cancel-in-progress: false
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Setup Docker CLI
+        uses: docker/setup-buildx-action@v3
+        with:
+          install: true
+
+      - name: Setup SSH key
+        uses: webfactory/ssh-agent@v0.9.1
+        with:
+          ssh-private-key: ${{ secrets.VPS_DEPLOY_KEY }}
+
+      - name: Add VPS to known_hosts
+        run: ssh-keyscan -H ${{ secrets.VPS_HOST }} >> ~/.ssh/known_hosts
+
+      - name: Get VPS user info and create directories
+        shell: bash
+        env:
+          VPS_HOST: ${{ secrets.VPS_HOST }}
+          VPS_USER: ${{ secrets.VPS_USER }}
+          DEPLOY_PATH: ${{ env.DEPLOY_PATH }}
+          SSH_OPTS: ${{ env.SSH_OPTS }}
+        run: |
+          echo "Getting VPS user information..."
+          VPS_USER_INFO=$(ssh $SSH_OPTS $VPS_USER@$VPS_HOST "id")
+          echo "VPS User Info: $VPS_USER_INFO"
+          
+          # Extract UID and GID from the VPS user
+          VPS_UID=$(ssh $SSH_OPTS $VPS_USER@$VPS_HOST "id -u")
+          VPS_GID=$(ssh $SSH_OPTS $VPS_USER@$VPS_HOST "id -g")
+          echo "VPS UID: $VPS_UID, GID: $VPS_GID"
+
+          echo "Creating required directories..."
+          ssh $SSH_OPTS $VPS_USER@$VPS_HOST "mkdir -p \
+            $DEPLOY_PATH/zookeeper-data \
+            $DEPLOY_PATH/zookeeper-logs \
+            $DEPLOY_PATH/kafka-1-data \
+            $DEPLOY_PATH/kafka-2-data \
+            $DEPLOY_PATH/kafka-3-data"
+
+          echo "Setting correct ownership for directories..."
+          # First set ownership to VPS user to ensure we can access them
+          ssh $SSH_OPTS $VPS_USER@$VPS_HOST "chown -R $VPS_UID:$VPS_GID \
+            $DEPLOY_PATH/zookeeper-data \
+            $DEPLOY_PATH/zookeeper-logs \
+            $DEPLOY_PATH/kafka-1-data \
+            $DEPLOY_PATH/kafka-2-data \
+            $DEPLOY_PATH/kafka-3-data"
+          
+          # Set permissions to be world-writable so Docker containers can write
+          ssh $SSH_OPTS $VPS_USER@$VPS_HOST "chmod -R 777 \
+            $DEPLOY_PATH/zookeeper-data \
+            $DEPLOY_PATH/zookeeper-logs \
+            $DEPLOY_PATH/kafka-1-data \
+            $DEPLOY_PATH/kafka-2-data \
+            $DEPLOY_PATH/kafka-3-data"
+
+          # Verify directories and permissions
+          echo "📋 Checking directory permissions..."
+          ssh $SSH_OPTS $VPS_USER@$VPS_HOST "ls -la $DEPLOY_PATH | grep -E '(zookeeper|kafka)'"
+          
+          echo "✅ Directories created and permissions set successfully"
+          
+          # Store UID/GID for later use
+          echo "VPS_UID=$VPS_UID" >> $GITHUB_ENV
+          echo "VPS_GID=$VPS_GID" >> $GITHUB_ENV
+
+      - name: Stop existing containers
+        shell: bash
+        env:
+          VPS_HOST: ${{ secrets.VPS_HOST }}
+          VPS_USER: ${{ secrets.VPS_USER }}
+          DEPLOY_PATH: ${{ env.DEPLOY_PATH }}
+          SSH_OPTS: ${{ env.SSH_OPTS }}
+        run: |
+          echo "🛑 Stopping ONLY Kafka-related containers..."
+          
+          # List of Kafka-related services to stop
+          KAFKA_SERVICES="kafka-ui-usp zookeeper kafka-1 kafka-2 kafka-3 zookeeper-permissions kafka-1-permissions kafka-2-permissions kafka-3-permissions"
+          
+          # Stop each service individually (this won't affect other services)
+          for service in $KAFKA_SERVICES; do
+            echo "Stopping $service..."
+            ssh $SSH_OPTS $VPS_USER@$VPS_HOST "cd $DEPLOY_PATH && docker compose -f docker-compose.yml stop $service 2>/dev/null || echo 'Service $service not running or not found'"
+          done
+          
+          # Remove only Kafka containers (not volumes, not other services)
+          echo "Removing stopped Kafka containers..."
+          for service in $KAFKA_SERVICES; do
+            ssh $SSH_OPTS $VPS_USER@$VPS_HOST "cd $DEPLOY_PATH && docker compose -f docker-compose.yml rm -f $service 2>/dev/null || echo 'Container $service not found'"
+          done
+          
+          # Remove any orphaned permission containers specifically
+          echo "Cleaning up orphaned permission containers..."
+          ssh $SSH_OPTS $VPS_USER@$VPS_HOST "docker container ls -a --filter 'name=kafka.*permissions' --filter 'name=zookeeper.*permissions' -q | xargs -r docker rm -f"
+          
+          echo "✅ Kafka container cleanup completed (other services untouched)"
+          
+          # Verify what's still running
+          echo "📋 Remaining running containers:"
+          ssh $SSH_OPTS $VPS_USER@$VPS_HOST "docker ps --format 'table {{.Names}}\t{{.Status}}\t{{.Ports}}'"
+
+      - name: Create environment file with Kafka credentials
+        shell: bash
+        env:
+          VPS_HOST: ${{ secrets.VPS_HOST }}
+          VPS_USER: ${{ secrets.VPS_USER }}
+          DEPLOY_PATH: ${{ env.DEPLOY_PATH }}
+          SSH_OPTS: ${{ env.SSH_OPTS }}
+        run: |
+          echo "🔐 Creating Kafka environment file with credentials..."
+          
+          # Create .env file with Kafka SASL credentials
+          cat > kafka.env << EOF
+          # Kafka SASL Credentials
+          KAFKA_USERNAME=${{ secrets.KAFKA_USERNAME }}
+          KAFKA_PASSWORD=${{ secrets.KAFKA_PASSWORD }}
+          
+          # Docker UID/GID
+          DOCKER_UID=${{ env.VPS_UID }}
+          DOCKER_GID=${{ env.VPS_GID }}
+          
+          # VPS User
+          VPS_USER=${{ secrets.VPS_USER }}
+          EOF
+          
+          # Upload environment file
+          scp $SSH_OPTS kafka.env $VPS_USER@$VPS_HOST:$DEPLOY_PATH/.env
+          
+          # Clean up local file
+          rm kafka.env
+          
+          echo "✅ Kafka credentials uploaded securely"
+
+      - name: Upload docker-compose file
+        shell: bash
+        env:
+          VPS_HOST: ${{ secrets.VPS_HOST }}
+          VPS_USER: ${{ secrets.VPS_USER }}
+          DEPLOY_PATH: ${{ env.DEPLOY_PATH }}
+          SSH_OPTS: ${{ env.SSH_OPTS }}
+        run: |
+          echo "Uploading docker-compose.${{ github.event.inputs.environment }}.yml..."
+          
+          # Create a temporary file with UID/GID substitution
+          cp docker-compose.${{ github.event.inputs.environment }}.yml docker-compose.tmp.yml
+          
+          # Upload the file
+          if scp $SSH_OPTS docker-compose.tmp.yml $VPS_USER@$VPS_HOST:$DEPLOY_PATH/docker-compose.yml; then
+            echo "✅ Docker Compose file uploaded successfully"
+          else
+            echo "❌ Failed to upload Docker Compose file"
+            exit 1
+          fi
+          
+          # Clean up temp file
+          rm docker-compose.tmp.yml
+
+      - name: Deploy Kafka cluster
+        shell: bash
+        env:
+          VPS_HOST: ${{ secrets.VPS_HOST }}
+          VPS_USER: ${{ secrets.VPS_USER }}
+          DEPLOY_PATH: ${{ env.DEPLOY_PATH }}
+          SSH_OPTS: ${{ env.SSH_OPTS }}
+        run: |
+          echo "🚀 Deploying Kafka cluster..."
+          
+          # Just start kafka-ui-usp - Docker Compose will handle all dependencies
+          ssh $SSH_OPTS $VPS_USER@$VPS_HOST "
+            cd $DEPLOY_PATH &&
+            DOCKER_UID=${{ env.VPS_UID }} DOCKER_GID=${{ env.VPS_GID }} \
+            docker compose --env-file .env -f docker-compose.yml up -d kafka-ui-usp
+          "
+          
+          echo "✅ Kafka cluster deployment initiated"
+
+      - name: Wait and verify deployment
+        shell: bash
+        env:
+          VPS_HOST: ${{ secrets.VPS_HOST }}
+          VPS_USER: ${{ secrets.VPS_USER }}
+          DEPLOY_PATH: ${{ env.DEPLOY_PATH }}
+          SSH_OPTS: ${{ env.SSH_OPTS }}
+        run: |
+          echo "⏳ Waiting for services to start..."
+          sleep 45  # Give services time to start
+          
+          echo "📋 Checking deployment status..."
+          ssh $SSH_OPTS $VPS_USER@$VPS_HOST "
+            cd $DEPLOY_PATH &&
+            echo '=== Container Status ===' &&
+            docker compose -f docker-compose.yml ps zookeeper kafka-1 kafka-2 kafka-3 kafka-ui-usp &&
+            echo '' &&
+            echo '=== Running Kafka Containers ===' &&
+            docker ps --filter 'name=kafka' --filter 'name=zookeeper' --format 'table {{.Names}}\t{{.Status}}\t{{.Ports}}'
+          "
+          
+          echo "✅ Deployment verification completed"
+
+      - name: Final status and instructions
+        shell: bash
+        env:
+          VPS_HOST: ${{ secrets.VPS_HOST }}
+          VPS_USER: ${{ secrets.VPS_USER }}
+          DEPLOY_PATH: ${{ env.DEPLOY_PATH }}
+          SSH_OPTS: ${{ env.SSH_OPTS }}
+        run: |
+          echo "🎉 Kafka deployment completed!"
+          echo ""
+          echo "📋 Summary:"
+          echo "  - Kafka UI: Available internally at kafka_ui_usp:8080"
+          echo "  - Kafka Brokers: kafka-1:9092, kafka-2:9092, kafka-3:9092"
+          echo "  - Zookeeper: zookeeper:2181"
+          echo "  - All services are on internal network only (secure)"
+          echo ""
+          echo "🔧 Next steps:"
+          echo "  1. Configure nginx-proxy-manager to proxy your domain to kafka_ui_usp:8080"
+          echo "  2. Applications can connect using internal hostnames"
+          echo "  3. Check logs if needed: docker logs [container-name]"
+          echo ""
+          echo "✅ Deployment successful!"
