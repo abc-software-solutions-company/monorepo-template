@@ -1,0 +1,25 @@
+# Must replace all text "monorepo-template" to your project name
+services:
+  website.monorepo-template:
+    image: __WEBSITE_IMAGE_NAME__
+    container_name: monorepo-template-website # Change this to your project name
+    env_file:
+      - ./apps/website/envs/.env.base
+      - ./apps/website/envs/.env.__ENV__
+    environment:
+      - NEXTAUTH_SECRET=${NEXTAUTH_SECRET}
+    expose:
+      - '3000'
+    restart: unless-stopped
+    networks:
+      - abc_infra
+    deploy:
+      resources:
+        limits:
+          memory: 200M
+        reservations:
+          memory: 100M
+
+networks:
+  abc_infra:
+    external: true

@@ -1,0 +1,70 @@
+# Must replace all text "monorepo-template" to your project name
+services:
+  db.monorepo-template:
+    container_name: monorepo-template-db # Change this to your project name
+    image: postgres:16.4
+    restart: unless-stopped
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_DB=leaning_shift_db
+      - POSTGRES_USER=leaning_shift_user
+      - POSTGRES_PASSWORD=leaning_shift_pass
+      - TZ=UTC
+    volumes:
+      - monorepo-template-postgres-data:/var/lib/postgresql/data
+    networks:
+      - monorepo-template
+
+  api.monorepo-template:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.api
+    container_name: monorepo-template-api
+    env_file:
+      - ./apps/api/.env
+      - ./apps/api/envs/.env.base
+      - ./apps/api/envs/.env.development
+    ports:
+      - '3000:3000'
+    restart: unless-stopped
+    networks:
+      - monorepo-template
+    depends_on:
+      - db.monorepo-template
+
+  admin.monorepo-template:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.admin
+    container_name: monorepo-template-admin
+    env_file:
+      - ./apps/admin-portal/envs/.env.base
+      - ./apps/admin-portal/envs/.env.development
+    ports:
+      - '3001:80'
+    restart: unless-stopped
+    networks:
+      - monorepo-template
+
+  web.monorepo-template:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.website
+    container_name: monorepo-template-web
+    env_file:
+      - ./apps/website/envs/.env.base
+      - ./apps/website/envs/.env.development
+      - ./apps/website/.env
+    ports:
+      - '3000:3000'
+    restart: always
+    networks:
+      - monorepo-template
+
+networks:
+  monorepo-template:
+    driver: bridge
+
+volumes:
+  monorepo-template-postgres-data:

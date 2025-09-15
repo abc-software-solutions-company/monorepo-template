@@ -1,0 +1,49 @@
+services:
+  portainer:
+    image: portainer/portainer-ce:latest
+    container_name: portainer
+    restart: always
+    expose:
+      - "9000"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /home/${VPS_USER}/infra/portainer/data:/data
+    networks:
+      - abc_prod_infra
+
+  postgres:
+    image: postgres:16.4
+    container_name: postgres
+    restart: unless-stopped
+    ports:
+      - "5433:5432"
+    volumes:
+      - /home/${VPS_USER}/postgres/data:/var/lib/postgresql/data
+      - /home/${VPS_USER}/postgres/conf:/etc/postgresql/conf.d
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      # Performance tuning parameters
+      POSTGRES_INITDB_ARGS: "--data-checksums"
+      POSTGRES_HOST_AUTH_METHOD: "md5"
+      TZ: "UTC"
+    command: >
+      postgres
+      -c shared_buffers=256MB
+      -c effective_cache_size=768MB
+      -c maintenance_work_mem=64MB
+      -c work_mem=4MB
+      -c max_connections=100
+      -c timezone=UTC
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+        reservations:
+          memory: 500M
+    networks:
+      - abc_prod_infra
+
+networks:
+  abc_prod_infra:
+    external: true
