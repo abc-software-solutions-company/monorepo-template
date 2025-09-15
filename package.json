@@ -15,6 +15,7 @@
     "api": "turbo dev --filter=api",
     "admin-portal": "turbo dev --filter=admin-portal",
     "website": "turbo dev --filter=website",
+    "docs": "turbo dev --filter=docs",
     "mobile-app:ios": "yarn workspace mobile-app ios",
     "mobile-app:android": "yarn workspace mobile-app android",
     "setup": "turbo setup",
