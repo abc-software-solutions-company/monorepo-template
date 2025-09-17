@@ -7,9 +7,9 @@ services:
     ports:
       - 5432:5432
     environment:
-      - POSTGRES_DB=leaning_shift_db
-      - POSTGRES_USER=leaning_shift_user
-      - POSTGRES_PASSWORD=leaning_shift_pass
+      - POSTGRES_DB=monorepo_db
+      - POSTGRES_USER=monorepo_user
+      - POSTGRES_PASSWORD=monorepo_pass
       - TZ=UTC
     volumes:
       - monorepo-template-postgres-data:/var/lib/postgresql/data
