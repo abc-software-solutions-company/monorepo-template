@@ -1,0 +1,25 @@
+name: Daily Maintenance - Production (Cron Job)
+
+on:
+  # Please uncomment when production have been deploy
+  # schedule:
+  #   # Runs at midnight UTC+7 (Vietnam time) every day
+  #   # Midnight UTC+7 = 17:00 UTC (previous day)
+  #   - cron: '0 17 * * *'
+  workflow_dispatch: # Allow manual triggering for testing
+
+jobs:
+  clean-logs:
+    name: Clean Docker Logs
+    uses: ./.github/workflows/clean_docker_log.yml
+    with:
+      environment: production
+    secrets: inherit
+
+  restart-containers:
+    name: Restart All Containers
+    needs: clean-logs
+    uses: ./.github/workflows/restart_all_container.yml
+    with:
+      environment: production
+    secrets: inherit
