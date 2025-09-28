@@ -10,6 +10,11 @@ services:
       - /home/${VPS_USER}/infra/portainer/data:/data
     networks:
       - abc_prod_infra
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "5"
 
   postgres:
     image: postgres:16.4
@@ -43,6 +48,11 @@ services:
           memory: 500M
     networks:
       - abc_prod_infra
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "5"
 
 networks:
   abc_prod_infra:

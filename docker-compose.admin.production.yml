@@ -17,6 +17,11 @@ services:
           memory: 50M
         reservations:
           memory: 10M
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "5"
 
 networks:
   abc_prod_infra:
