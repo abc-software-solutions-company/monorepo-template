@@ -15,6 +15,11 @@ services:
       - monorepo-template-postgres-data:/var/lib/postgresql/data
     networks:
       - monorepo-template
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "5"
 
   api.monorepo-template:
     build:
@@ -32,6 +37,11 @@ services:
       - monorepo-template
     depends_on:
       - db.monorepo-template
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "5"
 
   admin.monorepo-template:
     build:
@@ -46,6 +56,11 @@ services:
     restart: unless-stopped
     networks:
       - monorepo-template
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "5"
 
   web.monorepo-template:
     build:
@@ -61,6 +76,11 @@ services:
     restart: always
     networks:
       - monorepo-template
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "5"
 
 networks:
   monorepo-template:

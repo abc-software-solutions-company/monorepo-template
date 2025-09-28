@@ -32,6 +32,11 @@ services:
           memory: 500M
     networks:
       - infra
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "5"
 
   nginx-proxy-manager:
     image: jc21/nginx-proxy-manager:latest
@@ -52,6 +57,11 @@ services:
           memory: 128M
     networks:
       - infra
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "5"
 
   portainer:
     image: portainer/portainer-ce:latest
@@ -70,6 +80,11 @@ services:
           memory: 128M
     networks:
       - infra
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "5"
 
   # Kafka
   zookeeper:
@@ -89,6 +104,11 @@ services:
       - infra
     depends_on:
       - zookeeper-permissions
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "5"
 
   # Init container to fix permissions
   zookeeper-permissions:
@@ -103,6 +123,11 @@ services:
     volumes:
       - /home/${VPS_USER}/zookeeper-data:/var/lib/zookeeper/data
       - /home/${VPS_USER}/zookeeper-logs:/var/lib/zookeeper/log
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "5"
 
   kafka-1:
     image: confluentinc/cp-kafka:7.4.4
@@ -122,7 +147,7 @@ services:
       KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:29092,PLAINTEXT_HOST://0.0.0.0:9092
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka-1:29092,PLAINTEXT_HOST://14.225.198.196:9092
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
-      
+
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 3
       KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'true'
       KAFKA_NUM_PARTITIONS: 3
@@ -133,6 +158,11 @@ services:
       - /home/${VPS_USER}/kafka-1-data:/var/lib/kafka/data
     networks:
       - infra
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "5"
 
   kafka-1-permissions:
     image: busybox
@@ -145,6 +175,11 @@ services:
       "
     volumes:
       - /home/${VPS_USER}/kafka-1-data:/var/lib/kafka/data
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "5"
 
   kafka-2:
     image: confluentinc/cp-kafka:7.4.4
@@ -164,7 +199,7 @@ services:
       KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:29093,PLAINTEXT_HOST://0.0.0.0:9093
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka-2:29093,PLAINTEXT_HOST://14.225.198.196:9093
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
-      
+
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 3
       KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'true'
       KAFKA_NUM_PARTITIONS: 3
@@ -175,6 +210,11 @@ services:
       - /home/${VPS_USER}/kafka-2-data:/var/lib/kafka/data
     networks:
       - infra
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "5"
 
   kafka-2-permissions:
     image: busybox
@@ -187,6 +227,11 @@ services:
       "
     volumes:
       - /home/${VPS_USER}/kafka-2-data:/var/lib/kafka/data
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "5"
 
   kafka-3:
     image: confluentinc/cp-kafka:7.4.4
@@ -206,7 +251,7 @@ services:
       KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:29094,PLAINTEXT_HOST://0.0.0.0:9094
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka-3:29094,PLAINTEXT_HOST://14.225.198.196:9094
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
-      
+
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 3
       KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'true'
       KAFKA_NUM_PARTITIONS: 3
@@ -217,6 +262,11 @@ services:
       - /home/${VPS_USER}/kafka-3-data:/var/lib/kafka/data
     networks:
       - infra
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "5"
 
   kafka-3-permissions:
     image: busybox
@@ -229,6 +279,11 @@ services:
       "
     volumes:
       - /home/${VPS_USER}/kafka-3-data:/var/lib/kafka/data
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "5"
 
   kafka-ui-monorepo-template:
     container_name: kafka_ui_monorepo-template
@@ -244,6 +299,11 @@ services:
       - kafka-3
     networks:
       - infra
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "5"
 
 networks:
   infra:
