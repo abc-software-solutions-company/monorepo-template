@@ -1,0 +1,154 @@
+name: Deploy API
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to deploy to'
+        required: true
+        default: 'stage'
+        type: choice
+        options:
+          - stage
+          - production
+
+env:
+  DEPLOY_PATH: /home/${{ secrets.VPS_USER }}/monorepo-template # Please update base on repository name
+  SSH_OPTS: -o StrictHostKeyChecking=no -o ConnectTimeout=10
+  SERVICE_NAME: api
+  CONTAINER_NAME: api.monorepo-template # Please replace monorepo-template when using other project
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: ${{ github.event.inputs.environment }}
+    concurrency:
+      group: deploy-api-${{ github.event.inputs.environment }}
+      cancel-in-progress: false
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Detect deploy tag
+        id: tag
+        uses: ./.github/actions/detect-deploy-tag
+        with:
+          environment: ${{ github.event.inputs.environment }}
+
+      # Setup Docker and GHCR
+      - name: Setup Docker and GHCR
+        uses: ./.github/actions/setup-docker-and-ghcr
+        with:
+          username: ${{ github.actor }}
+          github-token: ${{ secrets.GHCR_PAT }}
+
+      # Build and push Docker image
+      - name: Build and push Docker image
+        id: build-image
+        uses: ./.github/actions/build-docker-image
+        with:
+          service-name: ${{ env.SERVICE_NAME }}
+          dockerfile-path: docker/Dockerfile.${{ env.SERVICE_NAME }}
+          environment: ${{ github.event.inputs.environment }}
+          github-token: ${{ secrets.GHCR_PAT }}
+          tag: ${{ steps.tag.outputs.tag }}
+
+      # Setup SSH for deployment
+      - name: Setup SSH Deployment
+        uses: ./.github/actions/setup-ssh-deploy
+        with:
+          ssh-private-key: ${{ secrets.VPS_DEPLOY_KEY }}
+          vps-host: ${{ secrets.VPS_HOST }}
+
+      # Prepare and upload docker-compose file
+      - name: Prepare and upload docker-compose
+        uses: ./.github/actions/prepare-docker-compose
+        with:
+          service-name: ${{ env.SERVICE_NAME }}
+          image-name: ${{ steps.build-image.outputs.image-name }}
+          environment: ${{ github.event.inputs.environment }}
+          compose-template: docker-compose.${{ env.SERVICE_NAME }}${{ github.event.inputs.environment == 'production' && '.production' || '' }}.yml
+          target-filename: docker-compose.${{ env.SERVICE_NAME }}.yml
+          vps-user: ${{ secrets.VPS_USER }}
+          vps-host: ${{ secrets.VPS_HOST }}
+          deploy-path: ${{ env.DEPLOY_PATH }}
+          ssh-opts: ${{ env.SSH_OPTS }}
+
+      # Upload environment files
+      - name: Upload environment files
+        uses: ./.github/actions/upload-env-files
+        with:
+          service-name: ${{ env.SERVICE_NAME }}
+          environment: ${{ github.event.inputs.environment }}
+          vps-user: ${{ secrets.VPS_USER }}
+          vps-host: ${{ secrets.VPS_HOST }}
+          deploy-path: ${{ env.DEPLOY_PATH }}
+          ssh-opts: ${{ env.SSH_OPTS }}
+
+      # Create Firebase config file
+      - name: Create Firebase config file
+        run: |
+          ssh ${{ env.SSH_OPTS }} ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} << 'EOF'
+            mkdir -p ${{ env.DEPLOY_PATH }}/configs
+            echo '${{ secrets.FIREBASE_CONFIG }}' > ${{ env.DEPLOY_PATH }}/configs/firebase-config.json
+            chmod 600 ${{ env.DEPLOY_PATH }}/configs/firebase-config.json
+            echo "Firebase config file created"
+          EOF
+
+      # Setup GHCR authentication on VPS
+      - name: Setup GHCR Auth on VPS
+        uses: ./.github/actions/setup-ghcr-auth-vps
+        with:
+          vps-user: ${{ secrets.VPS_USER }}
+          vps-host: ${{ secrets.VPS_HOST }}
+          github-actor: ${{ github.actor }}
+          github-token: ${{ secrets.GHCR_PAT }}
+
+      # Deploy container
+      - name: Deploy container
+        uses: ./.github/actions/deploy-container
+        with:
+          service-name: ${{ env.SERVICE_NAME }}
+          container-name: ${{ env.CONTAINER_NAME }}
+          compose-file: docker-compose.${{ env.SERVICE_NAME }}.yml
+          environment: ${{ github.event.inputs.environment }}
+          extra-env-vars: |
+            DB_URL='${{ secrets.DB_URL }}'
+            JWT_SECRET_KEY='${{ secrets.JWT_SECRET_KEY }}'
+            JWT_REFRESH_SECRET_KEY='${{ secrets.JWT_REFRESH_SECRET_KEY }}'
+            AWS_ACCESS_KEY_ID='${{ secrets.AWS_ACCESS_KEY_ID }}'
+            AWS_SECRET_ACCESS_KEY='${{ secrets.AWS_SECRET_ACCESS_KEY }}'
+            GOOGLE_APPLICATION_CREDENTIALS='/app/config/firebase-config.json'
+            MICROSOFT_GRAPH_TENANT_ID='${{ secrets.MICROSOFT_GRAPH_TENANT_ID }}'
+            MICROSOFT_GRAPH_CLIENT_ID='${{ secrets.MICROSOFT_GRAPH_CLIENT_ID }}'
+            MICROSOFT_GRAPH_CLIENT_SECRET='${{ secrets.MICROSOFT_GRAPH_CLIENT_SECRET }}'
+            MICROSOFT_GRAPH_SERVICE_ACCOUNT_EMAIL='${{ secrets.MICROSOFT_GRAPH_SERVICE_ACCOUNT_EMAIL }}'
+            MICROSOFT_GRAPH_ENABLED='${{ secrets.MICROSOFT_GRAPH_ENABLED }}'
+            STRIPE_SECRET_KEY='${{ secrets.STRIPE_SECRET_KEY }}'
+            STRIPE_PUBLISHABLE_KEY='${{ secrets.STRIPE_PUBLISHABLE_KEY }}'
+            STRIPE_WEBHOOK_SECRET='${{ secrets.STRIPE_WEBHOOK_SECRET }}'
+            WHATSAPP_ACCESS_TOKEN='${{ secrets.WHATSAPP_ACCESS_TOKEN }}'
+            WHATSAPP_PHONE_NUMBER_ID='${{ secrets.WHATSAPP_PHONE_NUMBER_ID }}'
+            WHATSAPP_RECIPIENT_PHONE='${{ secrets.WHATSAPP_RECIPIENT_PHONE }}'
+            PASSWORD_RESET_TOKEN_EXPIRES_IN='${{ secrets.PASSWORD_RESET_TOKEN_EXPIRES_IN }}'
+            PASSWORD_RESET_RATE_LIMIT_IN='${{ secrets.PASSWORD_RESET_RATE_LIMIT_IN }}'
+            SMTP_HOST='${{ secrets.SMTP_HOST }}'
+            SMTP_USER='${{ secrets.SMTP_USER }}'
+            SMTP_PASS='${{ secrets.SMTP_PASS }}'
+          vps-user: ${{ secrets.VPS_USER }}
+          vps-host: ${{ secrets.VPS_HOST }}
+          deploy-path: ${{ env.DEPLOY_PATH }}
+          ssh-opts: ${{ env.SSH_OPTS }}
+
+      # Cleanup untagged GHCR images
+      - name: Cleanup untagged GHCR images
+        uses: ./.github/actions/cleanup-ghcr-images
+        with:
+          github-token: ${{ secrets.GHCR_PAT }}
+          package-name: 'monorepo-template/${{ env.SERVICE_NAME }}' # Please replace monorepo-template when using other project

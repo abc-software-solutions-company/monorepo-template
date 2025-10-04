@@ -1,0 +1,71 @@
+name: 'Build Docker Image'
+description: 'Builds and pushes a Docker image to GitHub Container Registry'
+
+inputs:
+  service-name:
+    description: 'Name of the service (api, admin, etc.)'
+    required: true
+  dockerfile-path:
+    description: 'Path to the Dockerfile'
+    required: true
+  environment:
+    description: 'Deployment environment (stage, prod, etc.)'
+    required: true
+  build-args:
+    description: 'Additional build arguments in YAML multiline format'
+    required: false
+    default: ''
+  github-token:
+    description: 'GitHub token with permissions to push to GHCR'
+    required: false
+    default: ${{ github.token }}
+  tag:
+    description: 'Git tag to use for the image version (for production releases)'
+    required: false
+    default: ''
+
+outputs:
+  image-name:
+    description: 'The full image name that was built and pushed'
+    value: ${{ steps.meta.outputs.image_name }}
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Set image metadata
+      id: meta
+      shell: bash
+      run: |
+        SHORT_SHA=$(echo $GITHUB_SHA | cut -c1-7)
+
+        # If tag is provided (for production), use it instead of SHORT_SHA
+        if [[ -n "${{ inputs.tag }}" ]]; then
+          # Tag with release version and latest for the environment
+          IMAGE_NAME=ghcr.io/${{ github.repository }}/${{ inputs.service-name }}:${{ inputs.environment }}-${{ inputs.tag }}
+          LATEST_TAG=ghcr.io/${{ github.repository }}/${{ inputs.service-name }}:${{ inputs.environment }}-latest
+        else
+          # Tag with environment-SHA and latest for the environment
+          IMAGE_NAME=ghcr.io/${{ github.repository }}/${{ inputs.service-name }}:${{ inputs.environment }}-$SHORT_SHA
+          LATEST_TAG=ghcr.io/${{ github.repository }}/${{ inputs.service-name }}:${{ inputs.environment }}-latest
+        fi
+
+        echo "IMAGE_NAME=$IMAGE_NAME" >> $GITHUB_ENV
+        echo "LATEST_TAG=$LATEST_TAG" >> $GITHUB_ENV
+        echo "image_name=$IMAGE_NAME" >> $GITHUB_OUTPUT
+
+    - name: Build and push Docker image
+      uses: docker/build-push-action@v6
+      with:
+        context: .
+        file: ${{ inputs.dockerfile-path }}
+        platforms: linux/amd64
+        push: true
+        tags: |
+          ${{ env.IMAGE_NAME }}
+          ${{ env.LATEST_TAG }}
+        cache-from: type=gha,scope=${{ inputs.service-name }}-${{ inputs.environment }}
+        cache-to: type=gha,mode=max,scope=${{ inputs.service-name }}-${{ inputs.environment }}
+        provenance: false
+        sbom: false
+        build-args: ${{ inputs.build-args }}
+        github-token: ${{ inputs.github-token }}

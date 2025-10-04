@@ -1,0 +1,61 @@
+name: Setup Node.js and pnpm
+description: Sets up Node.js and pnpm with specified versions
+
+inputs:
+  node-version:
+    description: 'Node.js version to setup'
+    required: false
+    default: '22.14.0'
+  pnpm-version:
+    description: 'pnpm version to setup'
+    required: false
+    default: '9.15.9'
+  run-install:
+    description: 'Whether to run pnpm install'
+    required: false
+    default: 'false'
+  cache-dependency-path:
+    description: 'Dependency file path for cache (e.g., pnpm-lock.yaml)'
+    required: false
+    default: 'pnpm-lock.yaml'
+  enable-cache:
+    description: 'Whether to enable node_modules caching'
+    required: false
+    default: 'true'
+  enable-corepack:
+    description: 'Whether to enable corepack'
+    required: false
+    default: 'true'
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Install pnpm
+      uses: pnpm/action-setup@v4
+      with:
+        version: ${{ inputs.pnpm-version }}
+        run_install: false
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ inputs.node-version }}
+        cache: ${{ fromJSON(inputs.enable-cache) && 'pnpm' || '' }}
+        cache-dependency-path: ${{ fromJSON(inputs.enable-cache) && inputs.cache-dependency-path || '' }}
+
+    - name: Configure and Enable Corepack
+      if: ${{ fromJSON(inputs.enable-corepack) }}
+      shell: bash
+      run: corepack enable
+
+    - name: Verify pnpm is available
+      shell: bash
+      run: |
+        echo "Node version: $(node -v)"
+        echo "PNPM version: $(pnpm -v)"
+        which pnpm
+
+    - name: Optional - Run pnpm install
+      if: ${{ fromJSON(inputs.run-install) }}
+      shell: bash
+      run: pnpm install --frozen-lockfile
