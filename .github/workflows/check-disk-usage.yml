@@ -1,4 +1,4 @@
-name: Clean Docker Logs
+name: Check disk usage
 
 on:
   workflow_dispatch:
