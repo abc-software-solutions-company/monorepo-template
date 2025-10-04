@@ -1,0 +1,130 @@
+name: Backup Postgres Containers
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to backup'
+        required: true
+        default: 'stage'
+        type: choice
+        options:
+          - stage
+          - production
+      backup_type:
+        description: 'Backup type'
+        required: true
+        default: 'volume'
+        type: choice
+        options:
+          - volume
+          - container
+          - both
+  workflow_call:
+    inputs:
+      environment:
+        description: 'Environment to backup'
+        required: true
+        type: string
+      backup_type:
+        description: 'Backup type (volume, container, or both)'
+        required: false
+        type: string
+        default: 'volume'
+
+jobs:
+  backup-postgres:
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Setup SSH key
+        uses: webfactory/ssh-agent@v0.9.1
+        with:
+          ssh-private-key: ${{ secrets.VPS_DEPLOY_KEY }}
+
+      - name: Add VPS to known_hosts
+        run: ssh-keyscan -H ${{ secrets.VPS_HOST }} >> ~/.ssh/known_hosts
+
+      - name: Backup Postgres data
+        env:
+          VPS_HOST: ${{ secrets.VPS_HOST }}
+          VPS_USER: ${{ secrets.VPS_USER }}
+          BACKUP_TYPE: ${{ inputs.backup_type }}
+          ENVIRONMENT: ${{ inputs.environment }}
+        run: |
+          TIMESTAMP=$(date +%Y%m%d_%H%M%S)
+          BACKUP_DIR="/tmp/postgres_backup_${TIMESTAMP}"
+
+          ssh $VPS_USER@$VPS_HOST "BACKUP_TYPE='$BACKUP_TYPE' TIMESTAMP='$TIMESTAMP' bash -s" << 'EOF'
+            BACKUP_DIR="/tmp/postgres_backup_${TIMESTAMP}"
+            mkdir -p $BACKUP_DIR
+
+            echo "=== Starting Postgres backup ==="
+
+            # Backup volumes if requested
+            if [ "$BACKUP_TYPE" = "volume" ] || [ "$BACKUP_TYPE" = "both" ]; then
+              echo "=== Backing up Postgres volumes ==="
+              docker volume ls --format '{{.Name}}' | grep -i postgres | while read volume; do
+                echo "Backing up volume: $volume"
+                docker run --rm -v $volume:/data -v $BACKUP_DIR:/backup alpine tar czf /backup/${volume}_${TIMESTAMP}.tar.gz -C /data . && \
+                  echo "✓ Successfully backed up volume: $volume" || \
+                  echo "✗ Failed to backup volume: $volume"
+              done
+            fi
+
+            # Backup containers if requested
+            if [ "$BACKUP_TYPE" = "container" ] || [ "$BACKUP_TYPE" = "both" ]; then
+              echo "=== Backing up Postgres containers ==="
+              docker ps -a --format '{{.Names}}' | grep -i postgres | while read container; do
+                echo "Backing up container: $container"
+                docker commit $container ${container}_backup_${TIMESTAMP} && \
+                  docker save ${container}_backup_${TIMESTAMP} | gzip > $BACKUP_DIR/${container}_${TIMESTAMP}.tar.gz && \
+                  docker rmi ${container}_backup_${TIMESTAMP} && \
+                  echo "✓ Successfully backed up container: $container" || \
+                  echo "✗ Failed to backup container: $container"
+              done
+            fi
+
+            echo "=== Backup completed ==="
+            echo "Backup location: $BACKUP_DIR"
+            ls -lh $BACKUP_DIR
+          EOF
+
+          # Download backups from VPS to GitHub runner
+          echo "=== Downloading backups from VPS ==="
+          mkdir -p ./backups
+          scp -r $VPS_USER@$VPS_HOST:$BACKUP_DIR/* ./backups/
+
+          # Cleanup remote backup
+          ssh $VPS_USER@$VPS_HOST "rm -rf $BACKUP_DIR"
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Upload backups to S3
+        env:
+          S3_BUCKET: ${{ secrets.S3_BACKUP_BUCKET }}
+          ENVIRONMENT: ${{ inputs.environment }}
+        run: |
+          TIMESTAMP=$(date +%Y%m%d_%H%M%S)
+          S3_PATH="s3://${S3_BUCKET}/postgres/${ENVIRONMENT}/${TIMESTAMP}/"
+
+          echo "=== Uploading backups to S3 ==="
+          aws s3 cp ./backups/ $S3_PATH --recursive
+
+          echo "✓ Backups uploaded to: $S3_PATH"
+          aws s3 ls $S3_PATH
+
+      - name: Cleanup local backups
+        if: always()
+        run: rm -rf ./backups
