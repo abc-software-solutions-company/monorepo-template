@@ -5,10 +5,20 @@ name: Test SharePoint Upload
 
 on:
   workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to test'
+        required: true
+        default: 'stage'
+        type: choice
+        options:
+          - stage
+          - production
 
 jobs:
   test-upload:
     runs-on: ubuntu-latest
+    environment: ${{ github.event.inputs.environment }}
 
     steps:
       - name: Create test file
@@ -61,8 +71,13 @@ jobs:
         env:
           SHAREPOINT_PATH: ${{ secrets.MICROSOFT_GRAPH_SHAREPOINT_PATH }}
         run: |
+          ENVIRONMENT=${{ github.event.inputs.environment }}
+
           # Use configured SharePoint path or default to "Shared Documents"
-          UPLOAD_PATH="${SHAREPOINT_PATH:-Shared Documents}"
+          BASE_PATH="${SHAREPOINT_PATH:-Shared Documents}"
+
+          # Add environment to the end of the path
+          UPLOAD_PATH="${BASE_PATH}/${ENVIRONMENT}"
 
           TIMESTAMP=$(date +%Y%m%d_%H%M%S)
           FILENAME="hello-world-${TIMESTAMP}.txt"
