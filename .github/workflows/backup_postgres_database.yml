@@ -45,57 +45,43 @@ jobs:
         run: |
           TIMESTAMP=$(date +%Y%m%d_%H%M%S)
           BACKUP_DIR="/tmp/postgres_backup_${TIMESTAMP}"
+          POSTGRES_DATA_PATH="/home/${VPS_USER}/postgres"
 
-          ssh $VPS_USER@$VPS_HOST "TIMESTAMP='$TIMESTAMP' bash -s" << 'EOF'
+          ssh $VPS_USER@$VPS_HOST "TIMESTAMP='$TIMESTAMP' POSTGRES_DATA_PATH='$POSTGRES_DATA_PATH' bash -s" << 'EOF'
             BACKUP_DIR="/tmp/postgres_backup_${TIMESTAMP}"
-            mkdir -p $BACKUP_DIR/configs
+            mkdir -p $BACKUP_DIR
 
-            echo "=== Starting Postgres backup ==="
+            echo "🚀 Starting Postgres backup"
+            echo "📁 Postgres data path: $POSTGRES_DATA_PATH"
 
-            # Backup all postgres container configurations
-            echo "=== Backing up Docker container configurations ==="
-            docker ps -a --format '{{.Names}}' | grep -i postgres | while read container; do
-              echo "Exporting configuration for container: $container"
+            # Check if postgres data directory exists
+            if [ ! -d "$POSTGRES_DATA_PATH" ]; then
+              echo "❌ Postgres data directory does not exist: $POSTGRES_DATA_PATH"
+              exit 1
+            fi
 
-              # Save full docker inspect to JSON
-              docker inspect $container > $BACKUP_DIR/configs/${container}_inspect.json
-              echo "✓ Saved inspect data: ${container}_inspect.json"
+            # Backup postgres data directory
+            echo "💾 Backing up Postgres data from: $POSTGRES_DATA_PATH"
+            tar czf $BACKUP_DIR/postgres_data_${TIMESTAMP}.tar.gz -C $POSTGRES_DATA_PATH . && \
+              echo "✅ Successfully backed up Postgres data" || \
+              (echo "❌ Failed to backup Postgres data" && exit 1)
 
-              # Extract docker-compose file if it exists
-              COMPOSE_FILE=$(docker inspect $container | grep -o 'com.docker.compose.project.config_files.*' | cut -d'"' -f3 | head -1)
-              if [ -n "$COMPOSE_FILE" ] && [ -f "$COMPOSE_FILE" ]; then
-                cp "$COMPOSE_FILE" $BACKUP_DIR/configs/${container}_docker-compose.yml
-                echo "✓ Copied docker-compose file: $COMPOSE_FILE"
-              fi
-            done
-
-            # Backup all postgres volumes
-            echo "=== Backing up Postgres volumes ==="
-            docker volume ls --format '{{.Name}}' | grep -i postgres | while read volume; do
-              echo "Backing up volume: $volume"
-              docker run --rm -v $volume:/data -v $BACKUP_DIR:/backup alpine tar czf /backup/${volume}_${TIMESTAMP}.tar.gz -C /data . && \
-                echo "✓ Successfully backed up volume: $volume" || \
-                echo "✗ Failed to backup volume: $volume"
-            done
-
-            echo "=== Backup completed ==="
-            echo "Backup location: $BACKUP_DIR"
-            echo "Configuration files:"
-            ls -lh $BACKUP_DIR/configs/
-            echo "Volume backups:"
-            ls -lh $BACKUP_DIR/*.tar.gz 2>/dev/null || echo "No volume backups created"
+            echo "🎉 Backup completed"
+            echo "📁 Backup location: $BACKUP_DIR"
+            echo "📦 Backup files:"
+            ls -lh $BACKUP_DIR/
           EOF
 
           # Download backups from VPS to GitHub runner
-          echo "=== Downloading backup from VPS ==="
+          echo "⬇️  Downloading backup from VPS"
           mkdir -p ./backups
           scp -r $VPS_USER@$VPS_HOST:$BACKUP_DIR/* ./backups/
-          echo "=== Download backup from VPS success ==="
+          echo "✅ Download backup from VPS success"
 
           # Cleanup remote backup
-          echo "=== Cleaning remote backup from VPS"
+          echo "🧹 Cleaning remote backup from VPS"
           ssh $VPS_USER@$VPS_HOST "rm -rf $BACKUP_DIR"
-          echo "=== Clean remote backup from VPS success ==="
+          echo "✅ Clean remote backup from VPS success"
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v2
@@ -111,12 +97,12 @@ jobs:
           BACKUP_FOLDER: ${{ secrets.S3_BACKUP_FOLDER }}
         run: |
           TIMESTAMP=$(date +%Y%m%d_%H%M%S)
-          S3_PATH="s3://${S3_BUCKET}/postgres/${ENVIRONMENT}/${TIMESTAMP}/"
+          S3_PATH="s3://${S3_BUCKET}/${BACKUP_FOLDER}/${ENVIRONMENT}/${TIMESTAMP}/"
 
-          echo "=== Uploading backups to S3 ==="
+          echo "☁️  Uploading backups to S3"
           aws s3 cp ./backups/ $S3_PATH --recursive
 
-          echo "✓ Backups uploaded to: $S3_PATH"
+          echo "✅ Backups uploaded to: $S3_PATH"
           aws s3 ls $S3_PATH
 
       - name: Cleanup local backups
