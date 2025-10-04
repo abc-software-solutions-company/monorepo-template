@@ -1,5 +1,20 @@
 name: Database Backup
 
+# This workflow backs up PostgreSQL databases and uploads them to SharePoint/OneDrive
+#
+# Required GitHub Secrets:
+# - DB_URL_REMOTE: PostgreSQL connection string (postgresql://user:password@host:port/dbname)
+# - MICROSOFT_GRAPH_TENANT_ID: Azure AD tenant ID
+# - MICROSOFT_GRAPH_CLIENT_ID: Azure AD application (client) ID
+# - MICROSOFT_GRAPH_CLIENT_SECRET: Azure AD client secret
+# - MICROSOFT_GRAPH_SHAREPOINT_HOSTNAME: SharePoint hostname (e.g., abcdigitalio.sharepoint.com)
+# - MICROSOFT_GRAPH_SHAREPOINT_SITE_NAME: SharePoint site name (e.g., ABCdigital)
+# - MICROSOFT_GRAPH_SHAREPOINT_PATH: Folder path in SharePoint
+#   Examples:
+#     - "Shared Documents/Backups"
+#     - "Shared Documents/Database/Production"
+#   Note: Must start with "Shared Documents" for document libraries
+
 on:
   # Run daily at midnight GMT+7 (17:00 UTC)
   schedule:
@@ -80,18 +95,45 @@ jobs:
           echo "::add-mask::$ACCESS_TOKEN"
           echo "access_token=$ACCESS_TOKEN" >> $GITHUB_OUTPUT
 
+      - name: Get SharePoint site ID
+        id: sharepoint_site
+        run: |
+          SITE_INFO=$(curl -s -X GET \
+            "https://graph.microsoft.com/v1.0/sites/${{ secrets.MICROSOFT_GRAPH_SHAREPOINT_HOSTNAME }}:/sites/${{ secrets.MICROSOFT_GRAPH_SHAREPOINT_SITE_NAME }}" \
+            -H "Authorization: Bearer ${{ steps.graph_token.outputs.access_token }}")
+
+          SITE_ID=$(echo $SITE_INFO | jq -r '.id')
+
+          if [ "$SITE_ID" == "null" ] || [ -z "$SITE_ID" ]; then
+            echo "Error: Could not get SharePoint site ID"
+            echo "Response: $SITE_INFO"
+            exit 1
+          fi
+
+          echo "SharePoint Site ID: $SITE_ID"
+          echo "site_id=$SITE_ID" >> $GITHUB_OUTPUT
+
       - name: Upload backup to SharePoint via Microsoft Graph
+        env:
+          SHAREPOINT_PATH: ${{ secrets.MICROSOFT_GRAPH_SHAREPOINT_PATH }}
         run: |
           FILENAME=$(basename "${{ env.BACKUP_FILE }}")
 
+          # Use configured SharePoint path or default to "Shared Documents/Backups"
+          UPLOAD_PATH="${SHAREPOINT_PATH:-Shared Documents/Backups}"
+
+          echo "Uploading to SharePoint site: ${{ secrets.MICROSOFT_GRAPH_SHAREPOINT_SITE_NAME }}"
+          echo "Path: ${UPLOAD_PATH}/${FILENAME}"
+
           curl -X PUT \
-            "https://graph.microsoft.com/v1.0/users/${{ secrets.MICROSOFT_GRAPH_SERVICE_ACCOUNT_EMAIL }}/drive/root:/DatabaseBackups/${FILENAME}:/content" \
+            "https://graph.microsoft.com/v1.0/sites/${{ steps.sharepoint_site.outputs.site_id }}/drive/root:/${UPLOAD_PATH}/${FILENAME}:/content" \
             -H "Authorization: Bearer ${{ steps.graph_token.outputs.access_token }}" \
             -H "Content-Type: application/gzip" \
             --data-binary "@${{ env.BACKUP_FILE }}" \
             --fail-with-body
 
-          echo "Backup uploaded to SharePoint successfully: ${FILENAME}"
+          echo "Backup uploaded to SharePoint successfully!"
+          echo "Location: https://${{ secrets.MICROSOFT_GRAPH_SHAREPOINT_HOSTNAME }}/sites/${{ secrets.MICROSOFT_GRAPH_SHAREPOINT_SITE_NAME }}/${UPLOAD_PATH}/${FILENAME}"
 
       - name: Clean up local backup
         if: always()
