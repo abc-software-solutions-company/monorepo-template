@@ -109,7 +109,7 @@ jobs:
           POSTGRES_PASSWORD=$POSTGRES_PASSWORD
           VPS_USER=$VPS_USER
           EOF
-          
+
           # Upload the .env file
           if scp $SSH_OPTS .env $VPS_USER@$VPS_HOST:$DEPLOY_PATH/.env; then
             echo "✅ .env file uploaded successfully"
@@ -117,7 +117,7 @@ jobs:
             echo "❌ Failed to upload .env file"
             exit 1
           fi
-          
+
           # Remove local .env file
           rm .env
 
@@ -135,6 +135,7 @@ jobs:
             echo "✅ PostgreSQL deployment successful"
           else
             echo "❌ Deployment failed"
+            echo "If have error network 'abc_infra declared as external, but could not be found', please run workflow Setup Infrastructure Network first"
             exit 1
           fi
 
@@ -153,7 +154,7 @@ jobs:
             ssh $SSH_OPTS $VPS_USER@$VPS_HOST "docker ps"
             exit 1
           fi
-          
+
       - name: Cleanup
         if: always()
         shell: bash

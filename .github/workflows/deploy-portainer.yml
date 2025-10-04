@@ -105,6 +105,7 @@ jobs:
             echo "✅ Portainer deployment successful"
           else
             echo "❌ Deployment failed"
+            echo "If have error network 'abc_infra declared as external, but could not be found', please run workflow Setup Infrastructure Network first"
             exit 1
           fi
 
