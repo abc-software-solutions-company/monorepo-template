@@ -43,17 +43,27 @@ jobs:
         env:
           DB_URL: ${{ secrets.DB_URL_REMOTE }}
         run: |
-          TIMESTAMP=$(TZ='Asia/Bangkok' date +%Y%m%d_%H%M%S)
-          ENVIRONMENT=${{ github.event.inputs.environment || 'production' }}
-          BACKUP_FILE="backups/backup_${ENVIRONMENT}_${TIMESTAMP}.sql"
+          # Extract database name from DB_URL
+          # Format: postgresql://[user[:password]@][host][:port][/dbname]
+          DBNAME=$(echo "$DB_URL" | sed -n 's|.*//[^/]*/\([^?]*\).*|\1|p')
 
-          echo "Creating backup: $BACKUP_FILE"
+          if [ -z "$DBNAME" ]; then
+            echo "Error: Could not extract database name from DB_URL"
+            exit 1
+          fi
+
+          TIMESTAMP=$(TZ='Asia/Bangkok' date +%Y-%m-%d_%H-%M-%S)
+          ENVIRONMENT=${{ github.event.inputs.environment || 'production' }}
+          BACKUP_FILE="backups/${DBNAME}_${ENVIRONMENT}_${TIMESTAMP}.sql"
+
+          echo "Creating backup for database: $DBNAME"
+          echo "Backup file: $BACKUP_FILE"
           pg_dump "$DB_URL" -F p -f "$BACKUP_FILE"
 
           # Compress the backup
           gzip "$BACKUP_FILE"
           echo "BACKUP_FILE=${BACKUP_FILE}.gz" >> $GITHUB_ENV
-          echo "Backup created and compressed successfully"
+          echo "Backup created and compressed successfully: ${BACKUP_FILE}.gz"
 
       - name: Get Microsoft Graph access token
         id: graph_token
