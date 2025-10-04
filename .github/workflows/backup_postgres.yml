@@ -11,26 +11,12 @@ on:
         options:
           - stage
           - production
-      backup_type:
-        description: 'Backup type'
-        required: true
-        default: 'volume'
-        type: choice
-        options:
-          - volume
-          - container
-          - both
   workflow_call:
     inputs:
       environment:
         description: 'Environment to backup'
         required: true
         type: string
-      backup_type:
-        description: 'Backup type (volume, container, or both)'
-        required: false
-        type: string
-        default: 'volume'
 
 jobs:
   backup-postgres:
@@ -55,45 +41,49 @@ jobs:
         env:
           VPS_HOST: ${{ secrets.VPS_HOST }}
           VPS_USER: ${{ secrets.VPS_USER }}
-          BACKUP_TYPE: ${{ inputs.backup_type }}
           ENVIRONMENT: ${{ inputs.environment }}
         run: |
           TIMESTAMP=$(date +%Y%m%d_%H%M%S)
           BACKUP_DIR="/tmp/postgres_backup_${TIMESTAMP}"
 
-          ssh $VPS_USER@$VPS_HOST "BACKUP_TYPE='$BACKUP_TYPE' TIMESTAMP='$TIMESTAMP' bash -s" << 'EOF'
+          ssh $VPS_USER@$VPS_HOST "TIMESTAMP='$TIMESTAMP' bash -s" << 'EOF'
             BACKUP_DIR="/tmp/postgres_backup_${TIMESTAMP}"
-            mkdir -p $BACKUP_DIR
+            mkdir -p $BACKUP_DIR/configs
 
             echo "=== Starting Postgres backup ==="
 
-            # Backup volumes if requested
-            if [ "$BACKUP_TYPE" = "volume" ] || [ "$BACKUP_TYPE" = "both" ]; then
-              echo "=== Backing up Postgres volumes ==="
-              docker volume ls --format '{{.Name}}' | grep -i postgres | while read volume; do
-                echo "Backing up volume: $volume"
-                docker run --rm -v $volume:/data -v $BACKUP_DIR:/backup alpine tar czf /backup/${volume}_${TIMESTAMP}.tar.gz -C /data . && \
-                  echo "✓ Successfully backed up volume: $volume" || \
-                  echo "✗ Failed to backup volume: $volume"
-              done
-            fi
+            # Backup all postgres container configurations
+            echo "=== Backing up Docker container configurations ==="
+            docker ps -a --format '{{.Names}}' | grep -i postgres | while read container; do
+              echo "Exporting configuration for container: $container"
 
-            # Backup containers if requested
-            if [ "$BACKUP_TYPE" = "container" ] || [ "$BACKUP_TYPE" = "both" ]; then
-              echo "=== Backing up Postgres containers ==="
-              docker ps -a --format '{{.Names}}' | grep -i postgres | while read container; do
-                echo "Backing up container: $container"
-                docker commit $container ${container}_backup_${TIMESTAMP} && \
-                  docker save ${container}_backup_${TIMESTAMP} | gzip > $BACKUP_DIR/${container}_${TIMESTAMP}.tar.gz && \
-                  docker rmi ${container}_backup_${TIMESTAMP} && \
-                  echo "✓ Successfully backed up container: $container" || \
-                  echo "✗ Failed to backup container: $container"
-              done
-            fi
+              # Save full docker inspect to JSON
+              docker inspect $container > $BACKUP_DIR/configs/${container}_inspect.json
+              echo "✓ Saved inspect data: ${container}_inspect.json"
+
+              # Extract docker-compose file if it exists
+              COMPOSE_FILE=$(docker inspect $container | grep -o 'com.docker.compose.project.config_files.*' | cut -d'"' -f3 | head -1)
+              if [ -n "$COMPOSE_FILE" ] && [ -f "$COMPOSE_FILE" ]; then
+                cp "$COMPOSE_FILE" $BACKUP_DIR/configs/${container}_docker-compose.yml
+                echo "✓ Copied docker-compose file: $COMPOSE_FILE"
+              fi
+            done
+
+            # Backup all postgres volumes
+            echo "=== Backing up Postgres volumes ==="
+            docker volume ls --format '{{.Name}}' | grep -i postgres | while read volume; do
+              echo "Backing up volume: $volume"
+              docker run --rm -v $volume:/data -v $BACKUP_DIR:/backup alpine tar czf /backup/${volume}_${TIMESTAMP}.tar.gz -C /data . && \
+                echo "✓ Successfully backed up volume: $volume" || \
+                echo "✗ Failed to backup volume: $volume"
+            done
 
             echo "=== Backup completed ==="
             echo "Backup location: $BACKUP_DIR"
-            ls -lh $BACKUP_DIR
+            echo "Configuration files:"
+            ls -lh $BACKUP_DIR/configs/
+            echo "Volume backups:"
+            ls -lh $BACKUP_DIR/*.tar.gz 2>/dev/null || echo "No volume backups created"
           EOF
 
           # Download backups from VPS to GitHub runner

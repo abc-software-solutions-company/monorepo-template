@@ -1,0 +1,16 @@
+name: Scheduled Postgres Backup (Stage)
+
+on:
+  schedule:
+    # Runs at midnight UTC+7 (Vietnam time) every day
+    # Midnight UTC+7 = 17:00 UTC (previous day)
+    - cron: '0 17 * * *'
+  workflow_dispatch: # Allow manual triggering for testing
+
+jobs:
+  backup-postgres:
+    name: Backup Postgres Volumes
+    uses: ./.github/workflows/backup_postgres.yml
+    with:
+      environment: stage
+    secrets: inherit
