@@ -1,0 +1,124 @@
+name: Database Backup
+
+on:
+  # Run daily at midnight GMT+7 (17:00 UTC)
+  schedule:
+    - cron: '0 17 * * *'
+
+  # Allow manual trigger
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to backup'
+        required: true
+        default: 'production'
+        type: choice
+        options:
+          - stage
+          - production
+
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+    environment: ${{ github.event.inputs.environment || 'production' }}
+    concurrency:
+      group: db-backup-${{ github.event.inputs.environment || 'production' }}
+      cancel-in-progress: false
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Install PostgreSQL client
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y postgresql-client
+
+      - name: Create backup directory
+        run: mkdir -p backups
+
+      - name: Backup PostgreSQL database
+        env:
+          DB_URL: ${{ secrets.DB_URL_REMOTE }}
+        run: |
+          TIMESTAMP=$(TZ='Asia/Bangkok' date +%Y%m%d_%H%M%S)
+          ENVIRONMENT=${{ github.event.inputs.environment || 'production' }}
+          BACKUP_FILE="backups/backup_${ENVIRONMENT}_${TIMESTAMP}.sql"
+
+          echo "Creating backup: $BACKUP_FILE"
+          pg_dump "$DB_URL" -F p -f "$BACKUP_FILE"
+
+          # Compress the backup
+          gzip "$BACKUP_FILE"
+          echo "BACKUP_FILE=${BACKUP_FILE}.gz" >> $GITHUB_ENV
+          echo "Backup created and compressed successfully"
+
+      - name: Setup Node.js for Microsoft Graph
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Upload backup to SharePoint via Microsoft Graph
+        env:
+          MICROSOFT_GRAPH_TENANT_ID: ${{ secrets.MICROSOFT_GRAPH_TENANT_ID }}
+          MICROSOFT_GRAPH_CLIENT_ID: ${{ secrets.MICROSOFT_GRAPH_CLIENT_ID }}
+          MICROSOFT_GRAPH_CLIENT_SECRET: ${{ secrets.MICROSOFT_GRAPH_CLIENT_SECRET }}
+          MICROSOFT_GRAPH_SERVICE_ACCOUNT_EMAIL: ${{ secrets.MICROSOFT_GRAPH_SERVICE_ACCOUNT_EMAIL }}
+        run: |
+          npm install -g @microsoft/microsoft-graph-client isomorphic-fetch
+
+          node << 'EOF'
+          const { Client } = require('@microsoft/microsoft-graph-client');
+          require('isomorphic-fetch');
+          const fs = require('fs');
+          const path = require('path');
+
+          async function uploadToSharePoint() {
+            // Get access token
+            const tokenResponse = await fetch(
+              `https://login.microsoftonline.com/${process.env.MICROSOFT_GRAPH_TENANT_ID}/oauth2/v2.0/token`,
+              {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: new URLSearchParams({
+                  client_id: process.env.MICROSOFT_GRAPH_CLIENT_ID,
+                  client_secret: process.env.MICROSOFT_GRAPH_CLIENT_SECRET,
+                  scope: 'https://graph.microsoft.com/.default',
+                  grant_type: 'client_credentials'
+                })
+              }
+            );
+
+            const { access_token } = await tokenResponse.json();
+
+            // Initialize Graph client
+            const client = Client.init({
+              authProvider: (done) => done(null, access_token)
+            });
+
+            // Read backup file
+            const backupFile = process.env.BACKUP_FILE;
+            const fileName = path.basename(backupFile);
+            const fileContent = fs.readFileSync(backupFile);
+
+            console.log(`Uploading ${fileName} to SharePoint...`);
+
+            // Upload to user's OneDrive/SharePoint
+            await client
+              .api(`/users/${process.env.MICROSOFT_GRAPH_SERVICE_ACCOUNT_EMAIL}/drive/root:/DatabaseBackups/${fileName}:/content`)
+              .put(fileContent);
+
+            console.log('Upload to SharePoint completed successfully');
+          }
+
+          uploadToSharePoint().catch(error => {
+            console.error('Error uploading to SharePoint:', error);
+            process.exit(1);
+          });
+          EOF
+
+      - name: Clean up local backup
+        if: always()
+        run: rm -rf backups
