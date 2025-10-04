@@ -1,0 +1,104 @@
+name: Check and Configure Swap Memory
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to check'
+        required: true
+        default: 'stage'
+        type: choice
+        options:
+          - stage
+          - production
+
+jobs:
+  configure-swap:
+    runs-on: ubuntu-latest
+    environment: ${{ github.event.inputs.environment }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Setup SSH key
+        uses: webfactory/ssh-agent@v0.9.1
+        with:
+          ssh-private-key: ${{ secrets.VPS_DEPLOY_KEY }}
+
+      - name: Add VPS to known_hosts
+        run: ssh-keyscan -H ${{ secrets.VPS_HOST }} >> ~/.ssh/known_hosts
+
+      - name: Check and configure swap memory
+        env:
+          VPS_HOST: ${{ secrets.VPS_HOST }}
+          VPS_USER: ${{ secrets.VPS_USER }}
+        run: |
+          ssh $VPS_USER@$VPS_HOST << 'ENDSSH'
+            set -e
+
+            echo "=== Checking current swap status ==="
+            free -h
+            swapon --show
+
+            # Check if swap is already configured
+            SWAP_EXISTS=$(swapon --show | wc -l)
+
+            if [ "$SWAP_EXISTS" -gt 0 ]; then
+              echo "✓ Swap memory is already configured"
+              exit 0
+            fi
+
+            echo "✗ No swap memory detected. Configuring swap..."
+
+            # Get total RAM in GB (rounded)
+            TOTAL_RAM_KB=$(grep MemTotal /proc/meminfo | awk '{print $2}')
+            TOTAL_RAM_GB=$(echo "scale=0; $TOTAL_RAM_KB / 1024 / 1024" | bc)
+
+            # Calculate swap size (half of RAM, minimum 1GB)
+            SWAP_SIZE_GB=$(echo "scale=0; $TOTAL_RAM_GB / 2" | bc)
+            if [ "$SWAP_SIZE_GB" -lt 1 ]; then
+              SWAP_SIZE_GB=1
+            fi
+
+            echo "Total RAM: ${TOTAL_RAM_GB}GB"
+            echo "Creating swap file: ${SWAP_SIZE_GB}GB"
+
+            # Create swap file
+            sudo fallocate -l ${SWAP_SIZE_GB}G /swapfile || sudo dd if=/dev/zero of=/swapfile bs=1G count=$SWAP_SIZE_GB
+
+            # Set proper permissions
+            sudo chmod 600 /swapfile
+
+            # Setup swap area
+            sudo mkswap /swapfile
+
+            # Enable swap
+            sudo swapon /swapfile
+
+            # Verify swap is enabled
+            echo "=== Verifying swap is enabled ==="
+            swapon --show
+            free -h
+
+            # Make swap permanent by adding to /etc/fstab
+            if ! grep -q '/swapfile' /etc/fstab; then
+              echo "Making swap permanent..."
+              echo '/swapfile none swap sw 0 0' | sudo tee -a /etc/fstab
+              echo "✓ Swap added to /etc/fstab"
+            else
+              echo "✓ Swap already exists in /etc/fstab"
+            fi
+
+            # Optional: Configure swappiness (how aggressively to use swap)
+            echo "=== Current swappiness ==="
+            cat /proc/sys/vm/swappiness
+
+            # Uncomment to set swappiness to 10 (less aggressive)
+            # sudo sysctl vm.swappiness=10
+            # echo 'vm.swappiness=10' | sudo tee -a /etc/sysctl.conf
+
+            echo "=== Swap configuration completed successfully ==="
+          ENDSSH
