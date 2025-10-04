@@ -1,0 +1,22 @@
+name: Setup SSH Deployment
+description: Sets up SSH agent for deployment with the provided key
+
+inputs:
+  ssh-private-key:
+    description: 'SSH private key for deployment'
+    required: true
+  vps-host:
+    description: 'VPS hostname or IP'
+    required: true
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Set up SSH agent
+      uses: webfactory/ssh-agent@v0.8.0
+      with:
+        ssh-private-key: ${{ inputs.ssh-private-key }}
+
+    - name: Add VPS to known_hosts
+      shell: bash
+      run: ssh-keyscan -H ${{ inputs.vps-host }} >> ~/.ssh/known_hosts

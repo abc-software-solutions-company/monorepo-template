@@ -1,0 +1,64 @@
+name: 'Prepare Docker Compose'
+description: 'Prepares and uploads a docker-compose file to the VPS'
+
+inputs:
+  service-name:
+    description: 'Name of the service (api, admin, etc.)'
+    required: true
+  image-name:
+    description: 'Full image name to use in the docker-compose file'
+    required: true
+  environment:
+    description: 'Deployment environment (stage, prod, etc.)'
+    required: true
+  compose-template:
+    description: 'Template docker-compose file to use'
+    required: true
+  target-filename:
+    description: 'Target filename on the VPS'
+    required: true
+  vps-user:
+    description: 'VPS username'
+    required: true
+  vps-host:
+    description: 'VPS hostname or IP'
+    required: true
+  deploy-path:
+    description: 'Path on the VPS to deploy to'
+    required: true
+  ssh-opts:
+    description: 'SSH options'
+    required: false
+    default: '-o StrictHostKeyChecking=no -o ConnectTimeout=10'
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Create project folder and verify
+      shell: bash
+      run: |
+        ssh ${{ inputs.ssh-opts }} ${{ inputs.vps-user }}@${{ inputs.vps-host }} "mkdir -p ${{ inputs.deploy-path }}"
+        # Verify the directory exists
+        ssh ${{ inputs.ssh-opts }} ${{ inputs.vps-user }}@${{ inputs.vps-host }} "ls -la ${{ inputs.deploy-path }} || echo 'Directory verification failed'"
+
+    - name: Prepare docker-compose with correct image name and environment
+      shell: bash
+      run: |
+        # Convert service name to uppercase for placeholder
+        SERVICE_UPPER=$(echo "${{ inputs.service-name }}" | tr '[:lower:]' '[:upper:]')
+        sed -e "s|__${SERVICE_UPPER}_IMAGE_NAME__|${{ inputs.image-name }}|g" -e "s|__ENV__|${{ inputs.environment }}|g" ${{ inputs.compose-template }} > ${{ inputs.compose-template }}.deployed
+        # Show content for debugging
+        cat ${{ inputs.compose-template }}.deployed
+
+    - name: Upload docker-compose.yml to VPS
+      shell: bash
+      run: |
+        # Ensure the target directory exists again right before upload
+        ssh ${{ inputs.ssh-opts }} ${{ inputs.vps-user }}@${{ inputs.vps-host }} "mkdir -p ${{ inputs.deploy-path }}"
+
+        # Upload the file
+        scp ${{ inputs.ssh-opts }} ${{ inputs.compose-template }}.deployed \
+          ${{ inputs.vps-user }}@${{ inputs.vps-host }}:${{ inputs.deploy-path }}/${{ inputs.target-filename }}
+
+        # Verify the file was uploaded successfully
+        ssh ${{ inputs.ssh-opts }} ${{ inputs.vps-user }}@${{ inputs.vps-host }} "ls -la ${{ inputs.deploy-path }}/${{ inputs.target-filename }} || echo 'File verification failed'"

@@ -1,0 +1,141 @@
+name: Deploy Admin Portal
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to deploy to'
+        required: true
+        default: 'stage'
+        type: choice
+        options:
+          - stage
+          - production
+
+env:
+  DEPLOY_PATH: /home/${{ secrets.VPS_USER }}/monorepo-template # Please update base on repository name
+  SSH_OPTS: -o StrictHostKeyChecking=no -o ConnectTimeout=10
+  SERVICE_NAME: admin
+  CONTAINER_NAME: admin.monorepo-template # Please replace monorepo-template when using other project
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: ${{ github.event.inputs.environment }}
+    concurrency:
+      group: deploy-admin-${{ github.event.inputs.environment }}
+      cancel-in-progress: false
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Detect deploy tag
+        id: tag
+        uses: ./.github/actions/detect-deploy-tag
+        with:
+          environment: ${{ github.event.inputs.environment }}
+
+      - name: Setup Node and PNPM
+        uses: ./.github/actions/setup-node-and-pnpm
+        with:
+          node-version: '22.14.0'
+          pnpm-version: '9.15.9'
+          enable-cache: true
+          enable-corepack: true
+          run-install: true
+          cache-dependency-path: pnpm-lock.yaml
+
+      - name: Build web app
+        uses: ./.github/actions/build-turbo-app
+        with:
+          environment: ${{ github.event.inputs.environment }}
+          package-filter: '@monorepo-template/admin-portal' # Please replace monorepo-template when using other project
+          turbo-cache: true
+
+      # Setup Docker and GHCR
+      - name: Setup Docker and GHCR
+        uses: ./.github/actions/setup-docker-and-ghcr
+        with:
+          username: ${{ github.actor }}
+          github-token: ${{ secrets.GHCR_PAT }}
+
+      # Build and push Docker image
+      - name: Build and push Docker image
+        id: build-image
+        uses: ./.github/actions/build-docker-image
+        with:
+          service-name: ${{ env.SERVICE_NAME }}
+          dockerfile-path: docker/Dockerfile.${{ env.SERVICE_NAME }}
+          environment: ${{ github.event.inputs.environment }}
+          github-token: ${{ secrets.GHCR_PAT }}
+          tag: ${{ steps.tag.outputs.tag }}
+          build-args: |
+            NODE_ENV=production
+            BUILD_MODE=${{ github.event.inputs.environment }}
+
+      # Setup SSH for deployment
+      - name: Setup SSH Deployment
+        uses: ./.github/actions/setup-ssh-deploy
+        with:
+          ssh-private-key: ${{ secrets.VPS_DEPLOY_KEY }}
+          vps-host: ${{ secrets.VPS_HOST }}
+
+      # Prepare and upload docker-compose file
+      - name: Prepare and upload docker-compose
+        uses: ./.github/actions/prepare-docker-compose
+        with:
+          service-name: ${{ env.SERVICE_NAME }}
+          image-name: ${{ steps.build-image.outputs.image-name }}
+          environment: ${{ github.event.inputs.environment }}
+          compose-template: docker-compose.${{ env.SERVICE_NAME }}${{ github.event.inputs.environment == 'production' && '.production' || '' }}.yml
+          target-filename: docker-compose.${{ env.SERVICE_NAME }}.yml
+          vps-user: ${{ secrets.VPS_USER }}
+          vps-host: ${{ secrets.VPS_HOST }}
+          deploy-path: ${{ env.DEPLOY_PATH }}
+          ssh-opts: ${{ env.SSH_OPTS }}
+
+      # Upload environment files
+      - name: Upload environment files
+        uses: ./.github/actions/upload-env-files
+        with:
+          service-name: ${{ env.SERVICE_NAME }}-portal
+          environment: ${{ github.event.inputs.environment }}
+          vps-user: ${{ secrets.VPS_USER }}
+          vps-host: ${{ secrets.VPS_HOST }}
+          deploy-path: ${{ env.DEPLOY_PATH }}
+          ssh-opts: ${{ env.SSH_OPTS }}
+
+      # Setup GHCR authentication on VPS
+      - name: Setup GHCR Auth on VPS
+        uses: ./.github/actions/setup-ghcr-auth-vps
+        with:
+          vps-user: ${{ secrets.VPS_USER }}
+          vps-host: ${{ secrets.VPS_HOST }}
+          github-actor: ${{ github.actor }}
+          github-token: ${{ secrets.GHCR_PAT }}
+
+      # Deploy container
+      - name: Deploy container
+        uses: ./.github/actions/deploy-container
+        with:
+          service-name: ${{ env.SERVICE_NAME }}
+          container-name: ${{ env.CONTAINER_NAME }}
+          compose-file: docker-compose.${{ env.SERVICE_NAME }}.yml
+          environment: ${{ github.event.inputs.environment }}
+          vps-user: ${{ secrets.VPS_USER }}
+          vps-host: ${{ secrets.VPS_HOST }}
+          deploy-path: ${{ env.DEPLOY_PATH }}
+          ssh-opts: ${{ env.SSH_OPTS }}
+
+      # Cleanup untagged GHCR images
+      - name: Cleanup untagged GHCR images
+        uses: ./.github/actions/cleanup-ghcr-images
+        with:
+          github-token: ${{ secrets.GHCR_PAT }}
+          package-name: 'monorepo-template/${{ env.SERVICE_NAME }}' # Please replace monorepo-template when using other project

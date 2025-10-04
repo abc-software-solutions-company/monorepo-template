@@ -1,0 +1,34 @@
+name: Detect Deploy Tag
+description: 'Detect tag for deploy and validate production deploys'
+
+inputs:
+  environment:
+    description: 'Deployment environment (e.g., stage, production)'
+    required: true
+
+outputs:
+  tag:
+    description: 'The Git tag used for deploy'
+    value: ${{ steps.detect.outputs.tag }}
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Production must run from tag
+      if: ${{ inputs.environment == 'production' && github.ref_type != 'tag' }}
+      run: |
+        echo "::error::You must run production deploy from a Git tag."
+        exit 1
+      shell: bash
+
+    - name: Determine deploy tag
+      id: detect
+      run: |
+        if [[ "${{ github.ref_type }}" == "tag" ]]; then
+          echo "Detected tag: ${{ github.ref_name }}"
+          echo "tag=${{ github.ref_name }}" >> "$GITHUB_OUTPUT"
+        else
+          echo "No tag provided (not running from tag)"
+          echo "tag=" >> "$GITHUB_OUTPUT"
+        fi
+      shell: bash

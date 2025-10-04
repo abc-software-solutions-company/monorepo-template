@@ -1,0 +1,67 @@
+name: 'Upload Environment Files'
+description: 'Uploads environment files to the VPS'
+
+inputs:
+  service-name:
+    description: 'Name of the service (api, admin-portal, etc.)'
+    required: true
+  environment:
+    description: 'Deployment environment (stage, prod, etc.)'
+    required: true
+  vps-user:
+    description: 'VPS username'
+    required: true
+  vps-host:
+    description: 'VPS hostname or IP'
+    required: true
+  deploy-path:
+    description: 'Path on the VPS to deploy to'
+    required: true
+  local-env-path:
+    description: 'Local path to environment files'
+    required: false
+    default: ''
+  ssh-opts:
+    description: 'SSH options'
+    required: false
+    default: '-o StrictHostKeyChecking=no -o ConnectTimeout=10'
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Create env directories on VPS
+      shell: bash
+      run: |
+        ssh ${{ inputs.ssh-opts }} ${{ inputs.vps-user }}@${{ inputs.vps-host }} "mkdir -p ${{ inputs.deploy-path }}/apps/${{ inputs.service-name }}/envs"
+
+    - name: Upload environment files
+      shell: bash
+      run: |
+        # Determine the local env path - use default if not provided
+        LOCAL_ENV_PATH="${{ inputs.local-env-path }}"
+        if [ -z "$LOCAL_ENV_PATH" ]; then
+          LOCAL_ENV_PATH="apps/${{ inputs.service-name }}/envs"
+        fi
+
+        echo "Using local env path: $LOCAL_ENV_PATH"
+
+        # Check if local env files exist
+        if [ -f "$LOCAL_ENV_PATH/.env.base" ]; then
+          scp ${{ inputs.ssh-opts }} $LOCAL_ENV_PATH/.env.base \
+            ${{ inputs.vps-user }}@${{ inputs.vps-host }}:${{ inputs.deploy-path }}/apps/${{ inputs.service-name }}/envs/.env.base
+          echo ".env.base uploaded successfully"
+        else
+          echo "Warning: .env.base file not found locally at $LOCAL_ENV_PATH/.env.base"
+        fi
+
+        # Upload environment-specific env file
+        if [ -f "$LOCAL_ENV_PATH/.env.${{ inputs.environment }}" ]; then
+          scp ${{ inputs.ssh-opts }} $LOCAL_ENV_PATH/.env.${{ inputs.environment }} \
+            ${{ inputs.vps-user }}@${{ inputs.vps-host }}:${{ inputs.deploy-path }}/apps/${{ inputs.service-name }}/envs/.env.${{ inputs.environment }}
+          echo ".env.${{ inputs.environment }} uploaded successfully"
+        else
+          echo "Warning: .env.${{ inputs.environment }} file not found locally at $LOCAL_ENV_PATH/.env.${{ inputs.environment }}"
+        fi
+
+        # Verify the env files were uploaded
+        ssh ${{ inputs.ssh-opts }} ${{ inputs.vps-user }}@${{ inputs.vps-host }} "ls -la ${{ inputs.deploy-path }}/apps/${{ inputs.service-name }}/envs/ || echo 'Env files verification failed'"

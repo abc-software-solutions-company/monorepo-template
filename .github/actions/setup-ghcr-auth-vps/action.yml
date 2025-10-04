@@ -1,0 +1,42 @@
+name: Setup GHCR Auth on VPS
+description: Sets up GitHub Container Registry authentication on the VPS
+
+inputs:
+  vps-user:
+    description: 'VPS user'
+    required: true
+  vps-host:
+    description: 'VPS host'
+    required: true
+  github-actor:
+    description: 'GitHub actor'
+    required: true
+  github-token:
+    description: 'GitHub token'
+    required: true
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Setup GitHub Container Registry authentication on VPS
+      shell: bash
+      run: |
+        # Create Docker config directory if it doesn't exist
+        ssh -o StrictHostKeyChecking=no -o ConnectTimeout=10 ${{ inputs.vps-user }}@${{ inputs.vps-host }} "mkdir -p ~/.docker"
+
+        # Create a base64 encoded auth string (username:token)
+        AUTH=$(echo -n "${{ inputs.github-actor }}:${{ inputs.github-token }}" | base64)
+
+        # Create or update Docker config.json with GHCR credentials
+        ssh -o StrictHostKeyChecking=no -o ConnectTimeout=10 ${{ inputs.vps-user }}@${{ inputs.vps-host }} "cat > ~/.docker/config.json << EOF
+        {
+          \"auths\": {
+            \"ghcr.io\": {
+              \"auth\": \"$AUTH\"
+            }
+          }
+        }
+        EOF"
+
+        # Verify the config file was created
+        ssh -o StrictHostKeyChecking=no -o ConnectTimeout=10 ${{ inputs.vps-user }}@${{ inputs.vps-host }} "cat ~/.docker/config.json"
