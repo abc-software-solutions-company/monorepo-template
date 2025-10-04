@@ -126,23 +126,8 @@ jobs:
                 "Status": "Enabled",
                 "Prefix": "postgres/",
                 "Expiration": {
-                  "Days": 30
+                  "Days": 7
                 }
-              },
-              {
-                "Id": "TransitionToIA",
-                "Status": "Enabled",
-                "Prefix": "postgres/",
-                "Transitions": [
-                  {
-                    "Days": 7,
-                    "StorageClass": "STANDARD_IA"
-                  },
-                  {
-                    "Days": 14,
-                    "StorageClass": "GLACIER_IR"
-                  }
-                ]
               }
             ]
           }
