@@ -9,13 +9,6 @@ on:
   workflow_dispatch: # Allow manual triggering for testing
 
 jobs:
-  clean-logs:
-    name: Clean Docker Logs
-    uses: ./.github/workflows/clean_docker_log.yml
-    with:
-      environment: production
-    secrets: inherit
-
   restart-containers:
     name: Restart All Containers
     needs: clean-logs
