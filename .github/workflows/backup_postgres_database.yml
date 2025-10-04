@@ -87,12 +87,15 @@ jobs:
           EOF
 
           # Download backups from VPS to GitHub runner
-          echo "=== Downloading backups from VPS ==="
+          echo "=== Downloading backup from VPS ==="
           mkdir -p ./backups
           scp -r $VPS_USER@$VPS_HOST:$BACKUP_DIR/* ./backups/
+          echo "=== Download backup from VPS success ==="
 
           # Cleanup remote backup
+          echo "=== Cleaning remote backup from VPS"
           ssh $VPS_USER@$VPS_HOST "rm -rf $BACKUP_DIR"
+          echo "=== Clean remote backup from VPS success ==="
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v2
