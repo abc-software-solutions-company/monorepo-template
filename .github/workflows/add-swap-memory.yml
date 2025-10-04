@@ -53,15 +53,19 @@ jobs:
 
             echo "✗ No swap memory detected. Configuring swap..."
 
-            # Get total RAM in GB (rounded)
+            # Get total RAM in KB
             TOTAL_RAM_KB=$(grep MemTotal /proc/meminfo | awk '{print $2}')
-            TOTAL_RAM_GB=$(echo "scale=0; $TOTAL_RAM_KB / 1024 / 1024" | bc)
 
-            # Calculate swap size (half of RAM, minimum 1GB)
-            SWAP_SIZE_GB=$(echo "scale=0; $TOTAL_RAM_GB / 2" | bc)
+            # Calculate swap size (half of RAM) in GB using awk
+            SWAP_SIZE_GB=$(awk "BEGIN {printf \"%.0f\", $TOTAL_RAM_KB / 1024 / 1024 / 2}")
+
+            # Ensure minimum 1GB swap
             if [ "$SWAP_SIZE_GB" -lt 1 ]; then
               SWAP_SIZE_GB=1
             fi
+
+            # Calculate total RAM in GB for display
+            TOTAL_RAM_GB=$(awk "BEGIN {printf \"%.1f\", $TOTAL_RAM_KB / 1024 / 1024}")
 
             echo "Total RAM: ${TOTAL_RAM_GB}GB"
             echo "Creating swap file: ${SWAP_SIZE_GB}GB"
