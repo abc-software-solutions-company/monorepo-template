@@ -2,9 +2,8 @@ name: Scheduled Postgres Backup (Production)
 
 on:
   schedule:
-    # Runs at midnight UTC+7 (Vietnam time) every day
-    # Midnight UTC+7 = 17:00 UTC (previous day)
-    - cron: '0 17 * * *'
+    # Runs at 17:30 UTC every day
+    - cron: '30 17 * * *'
   workflow_dispatch: # Allow manual triggering for testing
 
 jobs:
