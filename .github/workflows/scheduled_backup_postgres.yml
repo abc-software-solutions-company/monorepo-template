@@ -10,7 +10,7 @@ on:
 jobs:
   backup-postgres:
     name: Backup Postgres Volumes
-    uses: ./.github/workflows/backup_postgres.yml
+    uses: ./.github/workflows/backup_postgres_database.yml
     with:
       environment: production
     secrets: inherit
