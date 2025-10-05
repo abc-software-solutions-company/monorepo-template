@@ -105,8 +105,8 @@ jobs:
           TIMESTAMP=$(date +%Y%m%d_%H%M%S)
           S3_PATH="s3://${S3_BUCKET}/${BACKUP_FOLDER}/${ENVIRONMENT}/${TIMESTAMP}/"
 
-          echo "☁️  Uploading backups to S3 with Glacier Instant Retrieval storage class"
-          aws s3 cp ./backups/ $S3_PATH --recursive --storage-class GLACIER_IR
+          echo "☁️  Uploading backups to S3 with Intelligent-Tiering storage class"
+          aws s3 cp ./backups/ $S3_PATH --recursive --storage-class INTELLIGENT_TIERING
 
           echo "✅ Backups uploaded to: $S3_PATH"
           aws s3 ls $S3_PATH
