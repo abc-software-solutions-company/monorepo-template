@@ -12,5 +12,5 @@ jobs:
     name: Backup Postgres Volumes
     uses: ./.github/workflows/backup_postgres_database.yml
     with:
-      environment: production
+      environment: stage
     secrets: inherit
