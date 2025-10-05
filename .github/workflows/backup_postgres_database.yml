@@ -92,9 +92,9 @@ jobs:
 
       - name: Upload backups to S3
         env:
-          S3_BUCKET: ${{ secrets.S3_BACKUP_BUCKET }}
+          S3_BUCKET: ${{ secrets.DB_BACKUP_BUCKET }}
           ENVIRONMENT: ${{ inputs.environment }}
-          BACKUP_FOLDER: ${{ secrets.S3_BACKUP_FOLDER }}
+          BACKUP_FOLDER: ${{ secrets.DB_BACKUP_FOLDER }}
         run: |
           TIMESTAMP=$(date +%Y%m%d_%H%M%S)
           S3_PATH="s3://${S3_BUCKET}/${BACKUP_FOLDER}/${ENVIRONMENT}/${TIMESTAMP}/"
