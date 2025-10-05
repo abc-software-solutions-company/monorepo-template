@@ -66,6 +66,12 @@ jobs:
               echo "✅ Successfully backed up Postgres data" || \
               (echo "❌ Failed to backup Postgres data" && exit 1)
 
+            # Backup docker inspect configuration
+            echo "🐳 Backing up Docker container configuration"
+            docker inspect postgres > $BACKUP_DIR/postgres_docker_inspect_${TIMESTAMP}.json && \
+              echo "✅ Successfully backed up Docker inspect configuration" || \
+              (echo "❌ Failed to backup Docker inspect configuration" && exit 1)
+
             echo "🎉 Backup completed"
             echo "📁 Backup location: $BACKUP_DIR"
             echo "📦 Backup files:"
