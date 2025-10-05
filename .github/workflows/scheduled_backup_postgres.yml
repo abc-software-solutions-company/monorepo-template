@@ -1,4 +1,4 @@
-name: Scheduled Postgres Backup (Stage)
+name: Scheduled Postgres Backup (Production)
 
 on:
   schedule:
@@ -12,5 +12,5 @@ jobs:
     name: Backup Postgres Volumes
     uses: ./.github/workflows/backup_postgres.yml
     with:
-      environment: stage
+      environment: production
     secrets: inherit
