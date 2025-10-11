@@ -55,7 +55,10 @@
     "AP_AWS_S3_BUCKET_NAME",
     "FIREBASE_UNIVERSE_DOMAIN",
     "VITE_PUBLIC_API_URL",
-    "AP_FIREBASE_CONFIG"
+    "AP_FIREBASE_CONFIG",
+    "KAFKA_CLIENT_ID",
+    "KAFKA_BROKERS",
+    "KAFKA_GROUP_ID"
   ],
   "tasks": {
     "lint": {

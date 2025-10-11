@@ -6,7 +6,9 @@ import { AppService } from './app.service';
 @ApiTags('App')
 @Controller()
 export class AppController {
-  constructor(private readonly appService: AppService) {}
+  constructor(
+    private readonly appService: AppService,
+  ) {}
 
   @Get()
   @ApiOperation({ summary: 'Health check' })
@@ -14,4 +16,13 @@ export class AppController {
   getHello(): string {
     return this.appService.getHello();
   }
+
+  @Get('/kafka-health-check')
+  @ApiOperation({ summary: 'Health check Kafka' })
+  @ApiResponse({ status: HttpStatus.OK, schema: { example: 'Hello World!' } })
+  async healthCheckKafka(): Promise<string> {
+    return this.appService.healthCheckKafka();
+  }
+
+
 }

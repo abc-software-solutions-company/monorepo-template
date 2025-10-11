@@ -57,5 +57,9 @@ declare namespace NodeJS {
     AP_AWS_S3_BASE_URL: string;
     // FIREBASE
     AP_FIREBASE_CONFIG: string;
+    // KAFKA
+    KAFKA_CLIENT_ID: string;
+    KAFKA_BROKERS: string;
+    KAFKA_GROUP_ID: string;
   }
 }
