@@ -25,7 +25,7 @@ export class FilesService {
     @InjectRepository(File)
     private readonly fileRepository: Repository<File>,
     private readonly awsService: AwsService
-  ) {}
+  ) { }
 
   async uploadFiles(body: UploadDto, files: Array<Express.Multer.File>) {
     const uploadedFileInfos = [];
@@ -57,7 +57,7 @@ export class FilesService {
 
       await this.awsService.putObject({
         key: `thumbnails/${fileInfo.uniqueName}`,
-        body: (await thumb.toBuffer()).buffer as Buffer,
+        body: (await thumb.toBuffer()).buffer as unknown as Buffer,
       });
     }
   }
