@@ -22,7 +22,7 @@ export const publicPages = [
   '/contact-us',
 ];
 export const locales = LANGUAGES.map(x => x.code);
-export const localePrefix = { mode: 'as-needed' } satisfies LocalePrefix<typeof locales>;
+export const localePrefix = { mode: 'always' } satisfies LocalePrefix<typeof locales>;
 export const pathnames = {
   '/': '/',
   '/sign-in': '/sign-in',
