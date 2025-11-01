@@ -53,7 +53,7 @@ The repository is organized as follows:
 ### Install dependencies:
 
 ```bash
-yarn install
+pnpm install
 ```
 
 **Set up API Backend:** Please refer to the <a href="apps/api/README.md" target="\_blank">API documentation</a> for more information.

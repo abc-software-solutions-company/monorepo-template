@@ -23,7 +23,7 @@ Admin Portal Template for Startup:
 ## Installation
 
 ```bash
-$ yarn install
+$ pnpm install
 ```
 
 ## Documentation
@@ -75,64 +75,64 @@ src
 ```bash
 # Step 1
 
-yarn db:up                          # Setup database
-yarn dbtest:up                      # Setup database for E2E testing
-yarn redis:up                       # Setup Redis
+pnpm db:up                          # Setup database
+pnpm dbtest:up                      # Setup database for E2E testing
+pnpm redis:up                       # Setup Redis
 
 # You can run all 3 scripts above one time with:
-yarn docker:up
+pnpm docker:up
 ```
 
 ### 2. Create DB structure and seed data
 
 ```bash
-yarn data:init                      # Run migrations and seeding data
-yarn data:e2einit                   # Run migrations for testing database
+pnpm data:init                      # Run migrations and seeding data
+pnpm data:e2einit                   # Run migrations for testing database
 ```
 
 ## Running the app
 
 ```bash
 # development
-$ yarn run start
+$ pnpm run start
 
 # watch mode
-$ yarn run start:dev
+$ pnpm run start:dev
 
 # production mode
-$ yarn run start:prod
+$ pnpm run start:prod
 ```
 
 ## Test
 
 ```bash
 # Run all Unit testcases
-$ yarn run test
+$ pnpm run test
 
 # Run single Unit testcase
-$ yarn run test src/modules/app/app.controller.spec.ts
+$ pnpm run test src/modules/app/app.controller.spec.ts
 
 # Run all E2E testcases
-$ yarn run test:e2e
+$ pnpm run test:e2e
 
 # Run single E2E testcase
-$ yarn run test:e2e test/app.e2e-spec.ts
+$ pnpm run test:e2e test/app.e2e-spec.ts
 
 # test coverage
-$ yarn run test:cov
+$ pnpm run test:cov
 ```
 
 ## Nest command lines
 
 ```bash
 # generate migration
-$ yarn migration:generate src/database/migrations/migration-name
+$ pnpm migration:generate src/database/migrations/migration-name
 
 # create migration
-$ yarn migration:create src/database/migrations/migration-name
+$ pnpm migration:create src/database/migrations/migration-name
 
 # create seed
-$ yarn migration:create src/database/seeds/migration-name
+$ pnpm migration:create src/database/seeds/migration-name
 ```
 
 ## Refs
