@@ -49,12 +49,19 @@ jobs:
           VPS_HOST: ${{ secrets.VPS_HOST }}
           VPS_USER: ${{ secrets.VPS_USER }}
         run: |
-          if ssh $VPS_USER@$VPS_HOST "[ -f /home/$VPS_USER/create_docker_network.sh ]"; then
+          # Determine home directory based on user
+          if [ "$VPS_USER" = "root" ]; then
+            USER_HOME="/root"
+          else
+            USER_HOME="/home/$VPS_USER"
+          fi
+
+          if ssh $VPS_USER@$VPS_HOST "[ -f $USER_HOME/create_docker_network.sh ]"; then
             # Get hash of local script
             LOCAL_HASH=$(sha256sum scripts/create_docker_network.sh | awk '{print $1}')
             # Get hash of remote script
-            REMOTE_HASH=$(ssh $VPS_USER@$VPS_HOST "sha256sum /home/$VPS_USER/create_docker_network.sh" | awk '{print $1}')
-            
+            REMOTE_HASH=$(ssh $VPS_USER@$VPS_HOST "sha256sum $USER_HOME/create_docker_network.sh" | awk '{print $1}')
+
             if [ "$LOCAL_HASH" = "$REMOTE_HASH" ]; then
               echo "Script already exists and is up to date"
               echo "script_needs_update=false" >> $GITHUB_OUTPUT
@@ -73,8 +80,15 @@ jobs:
           VPS_HOST: ${{ secrets.VPS_HOST }}
           VPS_USER: ${{ secrets.VPS_USER }}
         run: |
-          scp scripts/create_docker_network.sh $VPS_USER@$VPS_HOST:/home/$VPS_USER/
-          ssh $VPS_USER@$VPS_HOST "chmod +x /home/$VPS_USER/create_docker_network.sh"
+          # Determine home directory based on user
+          if [ "$VPS_USER" = "root" ]; then
+            USER_HOME="/root"
+          else
+            USER_HOME="/home/$VPS_USER"
+          fi
+
+          scp scripts/create_docker_network.sh $VPS_USER@$VPS_HOST:$USER_HOME/
+          ssh $VPS_USER@$VPS_HOST "chmod +x $USER_HOME/create_docker_network.sh"
           echo "Network creation script copied to VPS"
 
       - name: Create Docker network on VPS
@@ -86,14 +100,21 @@ jobs:
         run: |
           # Run with set -e to fail on any error
           set -e
-          
+
+          # Determine home directory based on user
+          if [ "$VPS_USER" = "root" ]; then
+            USER_HOME="/root"
+          else
+            USER_HOME="/home/$VPS_USER"
+          fi
+
           # Pass force_recreate flag to the script if needed
           if [ "$FORCE_RECREATE" = "true" ]; then
-            ssh $VPS_USER@$VPS_HOST "/home/$VPS_USER/create_docker_network.sh --force"
+            ssh $VPS_USER@$VPS_HOST "$USER_HOME/create_docker_network.sh --force"
           else
-            ssh $VPS_USER@$VPS_HOST "/home/$VPS_USER/create_docker_network.sh"
+            ssh $VPS_USER@$VPS_HOST "$USER_HOME/create_docker_network.sh"
           fi
-          
+
           echo "Docker infrastructure network setup completed"
           
       - name: Verify network configuration
