@@ -15,8 +15,8 @@
     "api": "turbo dev --filter=api",
     "admin-portal": "turbo dev --filter=admin-portal",
     "website": "turbo dev --filter=website",
-    "mobile-app:ios": "yarn workspace mobile-app ios",
-    "mobile-app:android": "yarn workspace mobile-app android",
+    "mobile-app:ios": "pnpm --filter mobile-app ios",
+    "mobile-app:android": "pnpm --filter mobile-app android",
     "setup": "turbo setup",
     "prepare": "turbo prepare",
     "postinstall": "manypkg check"
@@ -33,9 +33,5 @@
     "prettier-plugin-tailwindcss": "^0.6.5",
     "turbo": "^2.3.3"
   },
-  "workspaces": [
-    "apps/*",
-    "packages/*"
-  ],
-  "packageManager": "yarn@1.22.22"
+  "packageManager": "pnpm@9.15.9"
 }
