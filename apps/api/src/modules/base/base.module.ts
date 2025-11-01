@@ -45,17 +45,13 @@ import { FirebaseModule } from '../firebase/firebase.module';
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: (configService: ConfigService<IConfigs>) => {
-        const { ssl, host, port, username, password, name, isLoggingEnable } = configService.get<IConfigs['database']>('database');
+        const { url, schema, isLoggingEnable } = configService.get<IConfigs['database']>('database');
 
         return {
           type: 'postgres',
-          ssl,
-          host,
-          port,
-          username,
-          password,
-          database: name,
-          isLoggingEnable,
+          url,
+          schema,
+          logging: isLoggingEnable,
           entities: [path.join(__dirname, '../../modules/**/*.entity{.ts,.js}')],
           migrations: [path.join(__dirname, '../../database/migrations/*{.ts,.js}')],
           subscribers: [path.join(__dirname, '../../database/subscriber/*{.ts,.js}')],

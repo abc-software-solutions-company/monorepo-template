@@ -1,0 +1,35 @@
+FROM node:22.14-alpine AS base
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
+RUN corepack enable && corepack prepare pnpm@9.15.9 --activate
+
+FROM base AS builder
+WORKDIR /app
+
+COPY turbo.json pnpm-workspace.yaml package.json pnpm-lock.yaml ./
+# Copy only required project files
+COPY apps/api ./apps/api
+COPY packages ./packages
+
+# Install dependencies (workspace-aware)
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
+
+RUN pnpm --filter ./apps/api... run build
+
+# Create production deployment with the built artifacts
+RUN pnpm deploy --filter ./apps/api --prod /prod/api
+
+# Copy the build output to deployment directory 
+RUN mkdir -p /prod/api/dist
+RUN cp -r /app/apps/api/dist/* /prod/api/dist/
+
+FROM base AS runner
+WORKDIR /prod/api
+
+COPY --from=builder /prod/api /prod/api
+
+# Config for Instana APM
+#ENV NODE_OPTIONS="--require ./node_modules/@instana/collector/src/immediate"
+
+EXPOSE 3000
+CMD ["pnpm", "start:prod"]

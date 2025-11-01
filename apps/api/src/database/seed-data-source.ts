@@ -8,12 +8,7 @@ dotenv.config({ path: path.join(__dirname, `../../.env${process.env.NODE_ENV ===
 
 const options: DataSourceOptions = {
   type: 'postgres',
-  ssl: process.env.AP_DB_SSL === 'true',
-  host: process.env.AP_DB_HOST,
-  port: Number(process.env.AP_DB_PORT),
-  username: process.env.AP_DB_USERNAME,
-  password: process.env.AP_DB_PASSWORD,
-  database: process.env.AP_DB_NAME,
+  url: process.env.AP_DB_URL,
   schema: process.env.AP_DB_SCHEMA,
   entities: [path.join(__dirname, '../modules/**/*.entity{.ts,.js}')],
   migrations: [path.join(__dirname, '../database/seeds/*{.ts,.js}')],

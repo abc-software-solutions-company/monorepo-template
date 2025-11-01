@@ -9,12 +9,7 @@ export interface IConfigs {
     timeout: number;
   };
   database: {
-    ssl: boolean;
-    host: string;
-    port: number;
-    name: string;
-    username: string;
-    password: string;
+    url: string;
     schema: string;
     isLoggingEnable: boolean;
   };

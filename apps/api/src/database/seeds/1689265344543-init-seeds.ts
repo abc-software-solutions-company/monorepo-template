@@ -125,7 +125,7 @@ export class InitSeeds1689265344543 implements MigrationInterface {
       const commandThumbnail = new PutObjectCommand({
         Bucket: process.env.AP_AWS_S3_BUCKET_NAME,
         Key: `thumbnails/${filename}`,
-        Body: (await thumb.toBuffer()).buffer as Buffer,
+        Body: (await thumb.toBuffer()).buffer as unknown as Buffer,
       });
 
       await this.s3Client.send(commandThumbnail);

@@ -16,7 +16,7 @@ Ensure you have the following installed on your machine:
 Before you start coding, run the following commands:
 
 ```bash
-yarn install
+pnpm install
 bundle install
 cd ios/ && pod install
 ```
@@ -49,17 +49,17 @@ export PATH=$PATH:$ANDROID_SDK_ROOT/platform-tools
 To start the Android application:
 
 ```bash
-npm run android
+pnpm android
 # or
-yarn android
+npm run android
 ```
 
 To start the iOS application:
 
 ```bash
-npm run ios
+pnpm ios
 # or
-yarn ios
+npm run ios
 ```
 
 ## Testing
@@ -67,9 +67,9 @@ yarn ios
 Run tests with:
 
 ```bash
-npm run test
+pnpm test
 # or
-yarn test
+npm run test
 ```
 
 ## Linting
@@ -77,9 +77,9 @@ yarn test
 Check code for errors and warnings:
 
 ```bash
-npm run lint
+pnpm lint
 # or
-yarn lint
+npm run lint
 ```
 
 ## Firebase Setup
