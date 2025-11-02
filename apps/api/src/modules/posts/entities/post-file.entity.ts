@@ -1,16 +1,10 @@
-import { Entity, ManyToOne, PrimaryKey, Property } from '@mikro-orm/core';
+import { Entity, ManyToOne, Property } from '@mikro-orm/core';
 
 import { File } from '@/modules/files/entities/file.entity';
 import { Post } from '@/modules/posts/entities/post.entity';
 
 @Entity({ tableName: 'posts_files' })
 export class PostFile {
-  @PrimaryKey({ type: 'uuid', fieldName: 'post_id' })
-  postId: string;
-
-  @PrimaryKey({ type: 'uuid', fieldName: 'file_id' })
-  fileId: string;
-
   @Property({ type: 'int', nullable: true })
   position: number;
 

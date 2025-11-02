@@ -6,12 +6,6 @@ import { Category } from './category.entity';
 
 @Entity({ tableName: 'categories_files' })
 export class CategoryFile {
-  @PrimaryKey({ type: 'uuid', fieldName: 'category_id' })
-  categoryId: string;
-
-  @PrimaryKey({ type: 'uuid', fieldName: 'file_id' })
-  fileId: string;
-
   @Property({ type: 'int', nullable: true })
   position: number;
 
