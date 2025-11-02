@@ -17,6 +17,7 @@ setup. Follow each step carefully to ensure a smooth deployment.
 2. Go to **Settings → Secrets and variables → Actions**.
 3. Click on **New repository secret**.
 4. Add the following secrets:
+
    - **`STAGE_SERVER_HOST`**: Hostname or IP address of your staging server.
    - **`STAGE_SERVER_USER_NAME`**: SSH username for the staging server.
    - **`STAGE_SERVER_PASSWORD`**: SSH password for the staging server.
@@ -28,6 +29,7 @@ setup. Follow each step carefully to ensure a smooth deployment.
 2. Go to **Settings → Secrets and variables → Actions**.
 3. Click on **New repository secret**.
 4. Add the following secrets:
+
    - **`PROD_SERVER_HOST`**: Hostname or IP address of your production server.
    - **`PROD_SERVER_USER_NAME`**: SSH username for the production server.
    - **`PROD_SERVER_PASSWORD`**: SSH password for the production server.
@@ -42,14 +44,17 @@ setup. Follow each step carefully to ensure a smooth deployment.
 Before modifying the GitHub Actions workflows in `.github/workflows`, follow these steps:
 
 1. **Check Available Ports**
+
    - Run **`docker ps`** on your server to see which ports are already in use
    - Choose an available port for the **`SERVER_PORT`** setting
 
 2. **Update Service Names**
+
    - Change **`APP_NAME`** to a unique identifier for your application
    - Update **`DOCKER_COMPOSE_SERVICE`** to match your service name
 
 3. **Required Changes** The following variables **must** be updated in each workflow file:
+
    - **`SERVER_PORT`**: The port your container will use on the host machine
    - **`APP_NAME`**: The name of your Docker container/application
    - **`DOCKER_COMPOSE_SERVICE`**: The service name in your docker-compose file
@@ -57,7 +62,9 @@ Before modifying the GitHub Actions workflows in `.github/workflows`, follow the
 4. **Configure Branch Deployment**
 
    For proper deployment control between environments:
+
    - **Staging Environment**:
+
      - Deploys from the `main` branch
      - Triggered on every push to `main`
      - Used for testing new features and changes
@@ -84,6 +91,7 @@ Before modifying the GitHub Actions workflows in `.github/workflows`, follow the
        ```
 
    This separation ensures that:
+
    - New features are properly tested in staging before production
    - Production deployments are intentional and controlled
    - Development team can continuously integrate to `main` without affecting production
@@ -182,7 +190,16 @@ configuration.
 3. Enter a **Username** for the SMTP credentials.
 4. Review the permissions policy for the user group. Ensure it includes the following permissions:
    ```json
-   { "Version": "2012-10-17", "Statement": [{ "Effect": "Allow", "Action": "ses:SendRawEmail", "Resource": "*" }] }
+   {
+     "Version": "2012-10-17",
+     "Statement": [
+       {
+         "Effect": "Allow",
+         "Action": "ses:SendRawEmail",
+         "Resource": "*"
+       }
+     ]
+   }
    ```
 5. Click **Create User**.
 6. In the **Retrieve SMTP Credentials** step, download the `.csv` file containing the credentials. The file includes:
@@ -198,11 +215,11 @@ Map the SMTP credentials and settings to your backend environment variables as f
 
 ```plaintext
 # EMAIL CONFIGURATION
-EMAIL_HOST=email-smtp.<region>.amazonaws.com  # Replace <region> with your AWS region (e.g., us-east-1)
-EMAIL_PORT=587                                # Default port for TLS
-EMAIL_SECURE=false                            # Set to true if using SSL
-EMAIL_USERNAME=<SMTP Username>                # From the downloaded .csv file
-EMAIL_PASSWORD=<SMTP Password>                # From the downloaded .csv file
+AP_EMAIL_HOST=email-smtp.<region>.amazonaws.com  # Replace <region> with your AWS region (e.g., us-east-1)
+AP_EMAIL_PORT=587                                # Default port for TLS
+AP_EMAIL_SECURE=false                            # Set to true if using SSL
+AP_EMAIL_USERNAME=<SMTP Username>                # From the downloaded .csv file
+AP_EMAIL_PASSWORD=<SMTP Password>                # From the downloaded .csv file
 ```
 
 ---
@@ -211,11 +228,11 @@ EMAIL_PASSWORD=<SMTP Password>                # From the downloaded .csv file
 
 - Create an AWS S3 bucket to store and manage files in AWS
 - Configure AWS S3 environment variables for backend:
-  - Set `AWS_ENDPOINT` to your S3 endpoint URL
-  - Configure `AWS_REGION` for your bucket region
-  - Add `AWS_ACCESS_KEY_ID` from your IAM credentials
-  - Set `AWS_SECRET_ACCESS_KEY` from your IAM credentials
-  - Configure `AWS_S3_BUCKET_NAME` with your bucket name
+  - Set `AP_AWS_ENDPOINT` to your S3 endpoint URL
+  - Configure `AP_AWS_REGION` for your bucket region
+  - Add `AP_AWS_ACCESS_KEY_ID` from your IAM credentials
+  - Set `AP_AWS_SECRET_ACCESS_KEY` from your IAM credentials
+  - Configure `AP_AWS_S3_BUCKET_NAME` with your bucket name
 - Test file upload functionality through the admin portal to verify S3 configuration
 
 ---
@@ -224,8 +241,9 @@ EMAIL_PASSWORD=<SMTP Password>                # From the downloaded .csv file
 
 - Prepare initial data for the admin portal, including a default admin user account.
 - Configure default admin user credentials in environment variables:
-  - Set `ADMIN_USER_EMAIL` to your admin email (e.g., admin@example.com)
-  - Set `ADMIN_USER_PASSWORD` to a strong password that includes:
+
+  - Set `AP_USER_EMAIL` to your admin email (e.g., admin@example.com)
+  - Set `AP_USER_PASSWORD` to a strong password that includes:
     - At least 8 characters
     - At least one uppercase letter (A-Z)
     - At least one lowercase letter (a-z)
@@ -240,8 +258,8 @@ EMAIL_PASSWORD=<SMTP Password>                # From the downloaded .csv file
 
 - Set up Cross-Origin Resource Sharing (CORS) policies on the backend to allow safe interactions with the admin portal and website.
 - Configure CORS environment variables for backend:
-  - Set `ALLOW_WEB_APP_ORIGIN` to your web application URL (e.g., https://example.com)
-  - Set `ALLOW_ADMIN_PORTAL_ORIGIN` to your admin portal URL (e.g., https://portal.example.com)
+  - Set `AP_ALLOW_WEB_APP_ORIGIN` to your web application URL (e.g., https://example.com)
+  - Set `AP_ALLOW_ADMIN_PORTAL_ORIGIN` to your admin portal URL (e.g., https://portal.example.com)
 - Test CORS configuration by:
   - Making API requests from both the web application and admin portal
   - Verifying that requests are properly handled with correct CORS headers
@@ -259,29 +277,29 @@ EMAIL_PASSWORD=<SMTP Password>                # From the downloaded .csv file
     - `AP_DB_PASSWORD`: Database password
     - `AP_DB_NAME`: Database name
   - AWS S3 credentials for file storage:
-    - `AWS_ENDPOINT`: S3 endpoint URL
-    - `AWS_REGION`: AWS region
-    - `AWS_ACCESS_KEY_ID`: AWS access key
-    - `AWS_SECRET_ACCESS_KEY`: AWS secret key
-    - `AWS_S3_BUCKET_NAME`: S3 bucket name
+    - `AP_AWS_ENDPOINT`: S3 endpoint URL
+    - `AP_AWS_REGION`: AWS region
+    - `AP_AWS_ACCESS_KEY_ID`: AWS access key
+    - `AP_AWS_SECRET_ACCESS_KEY`: AWS secret key
+    - `AP_AWS_S3_BUCKET_NAME`: S3 bucket name
   - Default admin user credentials:
-    - `ADMIN_USER_EMAIL`: Admin email
-    - `ADMIN_USER_PASSWORD`: Admin password
+    - `AP_USER_EMAIL`: Admin email
+    - `AP_USER_PASSWORD`: Admin password
   - Email configuration:
-    - `EMAIL_HOST`: SMTP host
-    - `EMAIL_PORT`: SMTP port
-    - `EMAIL_SECURE`: Use TLS/SSL
-    - `EMAIL_USERNAME`: SMTP username
-    - `EMAIL_PASSWORD`: SMTP password
+    - `AP_EMAIL_HOST`: SMTP host
+    - `AP_EMAIL_PORT`: SMTP port
+    - `AP_EMAIL_SECURE`: Use TLS/SSL
+    - `AP_EMAIL_USERNAME`: SMTP username
+    - `AP_EMAIL_PASSWORD`: SMTP password
   - CORS settings:
-    - `ALLOW_WEB_APP_ORIGIN`: Web app URL
-    - `ALLOW_ADMIN_PORTAL_ORIGIN`: Admin portal URL
+    - `AP_ALLOW_WEB_APP_ORIGIN`: Web app URL
+    - `AP_ALLOW_ADMIN_PORTAL_ORIGIN`: Admin portal URL
   - Application settings:
-    - `PORT`: Backend server port
+    - `AP_PORT`: Backend server port
     - `AP_JWT_SECRET`: JWT signing secret
-    - `JWT_EXPIRES_IN`: JWT expiration time
-    - `THROTTLE_TTL`: Rate limit window (seconds)
-    - `THROTTLE_LIMIT`: Max requests per window
+    - `AP_JWT_EXPIRES_IN`: JWT expiration time
+    - `AP_THROTTLE_TTL`: Rate limit window (seconds)
+    - `AP_THROTTLE_LIMIT`: Max requests per window
 - Ensure all environment variables are properly set in deployment environment
 - Consider using a .env file for local development and secure secrets management for production
 
@@ -316,27 +334,33 @@ EMAIL_PASSWORD=<SMTP Password>                # From the downloaded .csv file
 ## 13. **Sitemap Generation and Verification**
 
 1. **Generate the Sitemap**
+
    - Ensure your Next.js application generates a sitemap dynamically or statically.
    - Use a library like [`next-sitemap`](https://github.com/iamvishnusankar/next-sitemap) or manually create a `sitemap.xml` file.
 
 2. **Verify Sitemap Accessibility**
+
    - Ensure the sitemap is accessible at `https://yourwebsite.com/sitemap.xml`.
    - Test the sitemap URL in a browser or using a tool like `curl` to confirm it returns a valid XML file.
 
 3. **Validate Sitemap Content**
+
    - Use a sitemap validator (e.g., [XML Sitemap Validator](https://www.xml-sitemaps.com/validate-xml-sitemap.html)) to ensure the sitemap is
      correctly formatted and contains no broken links.
    - Confirm all important pages are included and no unnecessary pages are listed.
 
 4. **Automate Sitemap Updates**
+
    - If your site has dynamic content, ensure the sitemap is regenerated and updated automatically whenever new content is added.
    - Integrate sitemap generation into your build or deployment pipeline.
 
 5. **Check robots.txt**
+
    - Ensure the `robots.txt` file references the sitemap.
    - Example: `User-agent: \* Allow: / Sitemap: https://yourwebsite.com/sitemap.xml`
 
 6. **Monitor Post-Deployment**
+
    - After deployment, verify the sitemap is still accessible and correctly updated.
    - Check search engine tools for any indexing issues related to the sitemap.
 

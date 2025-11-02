@@ -25,7 +25,7 @@ export class FacebookService {
   }
 
   private async getAppAccessToken(): Promise<string> {
-    const url = `https://graph.facebook.com/oauth/access_token?client_id=${process.env.OAUTH_FACEBOOK_CLIENT_ID}&client_secret=${process.env.OAUTH_FACEBOOK_CLIENT_SECRET}&grant_type=client_credentials`;
+    const url = `https://graph.facebook.com/oauth/access_token?client_id=${process.env.AP_OAUTH_FACEBOOK_CLIENT_ID}&client_secret=${process.env.AP_OAUTH_FACEBOOK_CLIENT_SECRET}&grant_type=client_credentials`;
     const response = await axios.get(url);
 
     return response.data.access_token;

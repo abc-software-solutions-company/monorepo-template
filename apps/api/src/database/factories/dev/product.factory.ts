@@ -10,7 +10,7 @@ import { categoryFactory } from './category.factory';
 import { userFactory } from '../user.factory';
 
 const statuses = Object.values(PRODUCT_STATUS).filter(x => x !== PRODUCT_STATUS.DELETED);
-const defaultLanguage = process.env.LANG_CODE ?? 'en-us';
+const defaultLanguage = process.env.AP_LANG_CODE ?? 'en-us';
 const description =
   '<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>';
 const body = `

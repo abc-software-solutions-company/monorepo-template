@@ -10,7 +10,7 @@ import { categoryFactory } from './category.factory';
 import { userFactory } from '../user.factory';
 
 const statuses = Object.values(POST_STATUS).filter(x => x !== POST_STATUS.DELETED);
-const defaultLanguage = process.env.LANG_CODE ?? 'en-us';
+const defaultLanguage = process.env.AP_LANG_CODE ?? 'en-us';
 
 export function createRandomPost() {
   const name = faker.lorem.words(10);

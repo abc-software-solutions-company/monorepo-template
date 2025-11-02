@@ -15,7 +15,7 @@ import { FilterPostDto } from '../dto/filter-post.dto';
 import { UpdatePostDto } from '../dto/update-post.dto';
 import { PostsService } from '../posts.service';
 
-const defaultLanguage = process.env.LANG_CODE ?? 'en-us';
+const defaultLanguage = process.env.AP_LANG_CODE ?? 'en-us';
 
 describe('AdminPostsController', () => {
   let controller: AdminPostsController;

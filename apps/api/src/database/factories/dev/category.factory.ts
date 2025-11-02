@@ -8,7 +8,7 @@ import { Category } from '@/modules/categories/entities/category.entity';
 import { userFactory } from '../user.factory';
 
 const statuses = Object.values(CATEGORY_STATUS).filter(x => x !== CATEGORY_STATUS.DELETED);
-const defaultLanguage = process.env.LANG_CODE ?? 'en-us';
+const defaultLanguage = process.env.AP_LANG_CODE ?? 'en-us';
 
 export const categoryFactory = [
   {

@@ -12,7 +12,7 @@ export class GoogleService {
   }
 
   async verifyIdToken(token: string) {
-    const ticket = await this.client.verifyIdToken({ idToken: token, audience: process.env.OAUTH_GOOGLE_CLIENT_ID });
+    const ticket = await this.client.verifyIdToken({ idToken: token, audience: process.env.AP_OAUTH_GOOGLE_CLIENT_ID });
 
     const payload = ticket.getPayload() as OAuthGoogleResponse;
 

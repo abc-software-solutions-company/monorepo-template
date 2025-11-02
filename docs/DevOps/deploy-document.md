@@ -182,12 +182,15 @@ của API.
 - Lấy thông tin credentials AWS S3 từ thư mục
   [AWS S3 Credentials](https://abcdigitalio.sharepoint.com/:t:/s/ABCdigital/EfCqvYb1zu5OpdNKArJ38t0B5h4g_LnAxJFLg51BAfltRA?e=ADwpgR)
 - Tạo bucket mới tại AWS Console:
+
   - Search "S3" và click vào S3
 
    <img src="https://github.com/user-attachments/assets/d4feef47-0b51-4289-b150-71d2827a85cd" width="100%">
+
   - Kiểm tra khu vực là Singapore
 
    <img src="https://github.com/user-attachments/assets/640b52c4-7db6-465e-a15a-e1cdf895882d" width="100%">
+
   - Nhấn "Create bucket"
   - Nhập tên bucket
   - Bỏ chọn "Block all public access"
@@ -227,7 +230,14 @@ của API.
 - Nhấn "Edit" và nhập JSON:
 
 ```json
-[{ "AllowedHeaders": ["*"], "AllowedMethods": ["HEAD", "GET", "PUT", "POST", "DELETE"], "AllowedOrigins": ["*"], "ExposeHeaders": ["ETag"] }]
+[
+  {
+    "AllowedHeaders": ["*"],
+    "AllowedMethods": ["HEAD", "GET", "PUT", "POST", "DELETE"],
+    "AllowedOrigins": ["*"],
+    "ExposeHeaders": ["ETag"]
+  }
+]
 ```
 
 - Nhấn "Save changes"
@@ -265,7 +275,7 @@ của API.
 
 ### Kiểm tra port
 
-- `APP_PORT` mặc định của API là 3500 (để đổi port hãy sửa biến `PORT` trong file `.env` và `APP_PORT` trong `api.stage.yml`)
+- `APP_PORT` mặc định của API là 3500 (để đổi port hãy sửa biến `AP_PORT` trong file `.env` và `APP_PORT` trong `api.stage.yml`)
 - Kiểm tra `SERVER_PORT` và `APP_PORT` của api trong file `.github/workflows/api.stage.yml`
 
 ### Kiểm tra port đã được sử dụng

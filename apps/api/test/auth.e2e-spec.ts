@@ -43,7 +43,7 @@ describe('AuthController (e2e)', () => {
 
     inactiveUser = await userRepository.save({
       email: 'inactive@email.com',
-      password: hashPassword(process.env.ADMIN_USER_PASSWORD),
+      password: hashPassword(process.env.AP_USER_PASSWORD),
       name: 'Register',
       role: USER_ROLE.USER,
       status: USER_STATUS.INACTIVE,
@@ -51,7 +51,7 @@ describe('AuthController (e2e)', () => {
     });
     blockedUser = await userRepository.save({
       email: 'blocked@email.com',
-      password: hashPassword(process.env.ADMIN_USER_PASSWORD),
+      password: hashPassword(process.env.AP_USER_PASSWORD),
       name: 'Blocked',
       role: USER_ROLE.USER,
       status: USER_STATUS.BLOCKED,
@@ -59,7 +59,7 @@ describe('AuthController (e2e)', () => {
     });
     registerUser = await userRepository.save({
       email: 'register@email.com',
-      password: hashPassword(process.env.ADMIN_USER_PASSWORD),
+      password: hashPassword(process.env.AP_USER_PASSWORD),
       name: 'Register',
       role: USER_ROLE.USER,
       status: USER_STATUS.ACTIVE,
@@ -143,7 +143,7 @@ describe('AuthController (e2e)', () => {
     });
 
     it('should throw UnauthorizedException if user is INACTIVE', async () => {
-      const response = await login(app, { email: inactiveUser.email, password: process.env.ADMIN_USER_PASSWORD });
+      const response = await login(app, { email: inactiveUser.email, password: process.env.AP_USER_PASSWORD });
 
       expect(response.body).toMatchObject({
         statusCode: 401,
@@ -153,7 +153,7 @@ describe('AuthController (e2e)', () => {
     });
 
     it('should throw UnauthorizedException if user is BLOCKED', async () => {
-      const response = await login(app, { email: blockedUser.email, password: process.env.ADMIN_USER_PASSWORD });
+      const response = await login(app, { email: blockedUser.email, password: process.env.AP_USER_PASSWORD });
 
       expect(response.body).toMatchObject({
         statusCode: 401,
@@ -163,7 +163,7 @@ describe('AuthController (e2e)', () => {
     });
 
     it('returns user if credentials are correct', async () => {
-      const response = await login(app, { email: registerUser.email, password: process.env.ADMIN_USER_PASSWORD });
+      const response = await login(app, { email: registerUser.email, password: process.env.AP_USER_PASSWORD });
 
       expect(response.body).toMatchObject({
         statusCode: 200,
@@ -185,7 +185,7 @@ describe('AuthController (e2e)', () => {
 
   describe('#logout', () => {
     it('should return 200 - Success if token is correct', async () => {
-      await login(app, { email: process.env.ADMIN_USER_EMAIL, password: process.env.ADMIN_USER_PASSWORD });
+      await login(app, { email: process.env.AP_USER_EMAIL, password: process.env.AP_USER_PASSWORD });
       const response = await logout(app);
 
       expect(response.body).toMatchObject({

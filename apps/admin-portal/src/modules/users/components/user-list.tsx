@@ -119,7 +119,7 @@ const UserList: FC<ComponentBaseProps> = ({ className }) => {
       {
         accessorKey: 'email',
         size: 0,
-        header: ({ column }) => <DataTableColumnHeader column={column} title={t('ADMIN_USER_EMAIL')} />,
+        header: ({ column }) => <DataTableColumnHeader column={column} title={t('user_email')} />,
         cell: ({ row }) => {
           return <p>{row.getValue('email')}</p>;
         },
