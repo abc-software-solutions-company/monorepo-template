@@ -50,7 +50,13 @@ type DirectoryTreeProps = {
 } & ComponentBaseProps;
 
 const DirectoryTree: React.FC<DirectoryTreeProps> = ({ className, data, onItemClick }) => {
-  return <div className={classNames(className)}>{data?.map(node => <TreeNode key={node.id} node={node} onItemClick={onItemClick} />)}</div>;
+  return (
+    <div className={classNames(className)}>
+      {data?.map(node => (
+        <TreeNode key={node.id} node={node} onItemClick={onItemClick} />
+      ))}
+    </div>
+  );
 };
 
 export default DirectoryTree;

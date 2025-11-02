@@ -15,7 +15,9 @@ type ProductListProps = {
 const ProductList: FC<ProductListProps> = ({ className, items, ...rest }) => {
   return (
     <div className={classNames('grid grid-cols-4 gap-6', className)} {...rest}>
-      {items?.map(item => <ProductItem key={item.id} item={item} />)}
+      {items?.map(item => (
+        <ProductItem key={item.id} item={item} />
+      ))}
     </div>
   );
 };

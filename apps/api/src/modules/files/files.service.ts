@@ -25,7 +25,7 @@ export class FilesService {
     @InjectRepository(File)
     private readonly fileRepository: Repository<File>,
     private readonly awsService: AwsService
-  ) { }
+  ) {}
 
   async uploadFiles(body: UploadDto, files: Array<Express.Multer.File>) {
     const uploadedFileInfos = [];

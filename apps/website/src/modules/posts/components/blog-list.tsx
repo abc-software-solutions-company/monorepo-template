@@ -15,7 +15,9 @@ type BlogListProps = {
 const BlogList: FC<BlogListProps> = ({ className, items, ...rest }) => {
   return (
     <div className={classNames('grid gap-6', className)} {...rest}>
-      {items?.map(item => <BlogItem key={item.id} item={item} />)}
+      {items?.map(item => (
+        <BlogItem key={item.id} item={item} />
+      ))}
     </div>
   );
 };

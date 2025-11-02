@@ -19,7 +19,9 @@ const ProfileActionList: FC<ProfileActionListProps> = ({ items, style }) => {
 
   return (
     <View style={[ds.px14, style]}>
-      {items?.map(item => <ProfileActionItem key={item.name} item={item} style={[ds.borderB1, styles.border(configs.border)]} />)}
+      {items?.map(item => (
+        <ProfileActionItem key={item.name} item={item} style={[ds.borderB1, styles.border(configs.border)]} />
+      ))}
     </View>
   );
 };
