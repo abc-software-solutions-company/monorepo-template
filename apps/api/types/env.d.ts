@@ -2,36 +2,36 @@ declare namespace NodeJS {
   export interface ProcessEnv {
     NODE_ENV: string;
     // APP
-    AP_HOST: string;
-    AP_PORT: string;
-    AP_LANG_CODE: string;
+    HOST: string;
+    PORT: string;
+    LANG_CODE: string;
     // HTTP
-    AP_REQUEST_TIMEOUT: string;
+    REQUEST_TIMEOUT: string;
     // RATE LIMIT
-    AP_THROTTLE_TTL: string;
-    AP_THROTTLE_LIMIT: string;
+    THROTTLE_TTL: string;
+    THROTTLE_LIMIT: string;
     // CACHE
-    AP_CACHE_TIME_TO_LIVE: string;
+    CACHE_TIME_TO_LIVE: string;
     // AUTH
-    AP_JWT_SECRET_KEY: string;
-    AP_JWT_EXPIRES_IN: string;
-    AP_JWT_REFRESH_SECRET_KEY: string;
-    AP_JWT_REFRESH_EXPIRES_IN: string;
-    AP_OAUTH_FACEBOOK_CLIENT_ID: string;
-    AP_OAUTH_FACEBOOK_CLIENT_SECRET: string;
-    AP_OAUTH_GOOGLE_CLIENT_ID: string;
-    AP_OAUTH_GOOGLE_CLIENT_SECRET: string;
+    JWT_SECRET_KEY: string;
+    JWT_EXPIRES_IN: string;
+    JWT_REFRESH_SECRET_KEY: string;
+    JWT_REFRESH_EXPIRES_IN: string;
+    OAUTH_FACEBOOK_CLIENT_ID: string;
+    OAUTH_FACEBOOK_CLIENT_SECRET: string;
+    OAUTH_GOOGLE_CLIENT_ID: string;
+    OAUTH_GOOGLE_CLIENT_SECRET: string;
     // DOCUMENTATION
-    AP_DOCUMENTATION_ENABLED: string;
+    DOCUMENTATION_ENABLED: string;
     // DEFAULT USER
-    AP_USER_EMAIL: string;
-    AP_USER_PASSWORD: string;
+    ADMIN_USER_EMAIL: string;
+    ADMIN_USER_PASSWORD: string;
     // EMAIL
-    AP_EMAIL_HOST: string;
-    AP_EMAIL_PORT: string;
-    AP_EMAIL_SECURE: string;
-    AP_EMAIL_USERNAME: string;
-    AP_EMAIL_PASSWORD: string;
+    EMAIL_HOST: string;
+    EMAIL_PORT: string;
+    EMAIL_SECURE: string;
+    EMAIL_USERNAME: string;
+    EMAIL_PASSWORD: string;
     // DATABASE
     AP_DB_SSL: string;
     AP_DB_HOST: string;
@@ -39,23 +39,23 @@ declare namespace NodeJS {
     AP_DB_NAME: string;
     AP_DB_USERNAME: string;
     AP_DB_PASSWORD: string;
-    AP_DB_SCHEMA: string;
+    DB_SCHEMA: string;
     AP_DB_LOGS: string;
     // REDIS
-    AP_REDIS_HOST: string;
-    AP_REDIS_PORT: string;
+    REDIS_HOST: string;
+    REDIS_PORT: string;
     // ALLOW ORIGIN
-    AP_ALLOW_WEB_APP_ORIGIN: string;
-    AP_ALLOW_ADMIN_PORTAL_ORIGIN: string;
+    ALLOW_WEB_APP_ORIGIN: string;
+    ALLOW_ADMIN_PORTAL_ORIGIN: string;
     // AWS
-    AP_AWS_ENDPOINT: string;
-    AP_AWS_REGION: string;
-    AP_AWS_ACCESS_KEY_ID: string;
-    AP_AWS_SECRET_ACCESS_KEY: string;
+    AWS_ENDPOINT: string;
+    AWS_REGION: string;
+    AWS_ACCESS_KEY_ID: string;
+    AWS_SECRET_ACCESS_KEY: string;
     // S3
-    AP_AWS_S3_BUCKET_NAME: string;
+    AWS_S3_BUCKET_NAME: string;
     AP_AWS_S3_BASE_URL: string;
     // FIREBASE
-    AP_FIREBASE_CONFIG: string;
+    FIREBASE_CONFIG: string;
   }
 }

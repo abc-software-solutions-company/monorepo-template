@@ -6,7 +6,7 @@ import { IConfigs } from '@/common/interfaces/configs.interface';
 const parseFirebaseConfig = (): IConfigs['firebase'] => {
   try {
     // Parse the JSON string from the environment variable
-    const firebaseConfig = JSON.parse(process.env.AP_FIREBASE_CONFIG || '{}');
+    const firebaseConfig = JSON.parse(process.env.FIREBASE_CONFIG || '{}');
 
     // Ensure all required fields are present
     const requiredFields = [

@@ -16,84 +16,62 @@
     "AUTH_GOOGLE_SECRET",
     "AUTH_FACEBOOK_ID",
     "AUTH_FACEBOOK_SECRET",
-    "AP_HOST",
-    "AP_PORT",
-    "AP_REQUEST_TIMEOUT",
-    "AP_THROTTLE_TTL",
-    "AP_THROTTLE_LIMIT",
-    "AP_CACHE_TIME_TO_LIVE",
+    "HOST",
+    "PORT",
+    "REQUEST_TIMEOUT",
+    "THROTTLE_TTL",
+    "THROTTLE_LIMIT",
+    "CACHE_TIME_TO_LIVE",
     "AP_DB_SSL",
     "AP_DB_HOST",
     "AP_DB_PORT",
     "AP_DB_NAME",
     "AP_DB_USERNAME",
     "AP_DB_PASSWORD",
-    "AP_DB_SCHEMA",
+    "DB_SCHEMA",
     "AP_DB_LOGS",
-    "AP_REDIS_HOST",
-    "AP_REDIS_PORT",
-    "AP_JWT_SECRET_KEY",
-    "AP_JWT_EXPIRES_IN",
-    "AP_JWT_REFRESH_SECRET_KEY",
-    "AP_JWT_REFRESH_EXPIRES_IN",
-    "AP_OAUTH_FACEBOOK_CLIENT_ID",
-    "AP_OAUTH_FACEBOOK_CLIENT_SECRET",
-    "AP_OAUTH_GOOGLE_CLIENT_ID",
-    "AP_OAUTH_GOOGLE_CLIENT_SECRET",
-    "AP_EMAIL_HOST",
-    "AP_EMAIL_PORT",
-    "AP_EMAIL_SECURE",
-    "AP_EMAIL_USERNAME",
-    "AP_EMAIL_PASSWORD",
-    "AP_DOCUMENTATION_ENABLED",
-    "AP_USER_EMAIL",
-    "AP_USER_PASSWORD",
-    "AP_AWS_ENDPOINT",
-    "AP_AWS_REGION",
-    "AP_AWS_ACCESS_KEY_ID",
-    "AP_AWS_SECRET_ACCESS_KEY",
-    "AP_AWS_S3_BUCKET_NAME",
+    "REDIS_HOST",
+    "REDIS_PORT",
+    "JWT_SECRET_KEY",
+    "JWT_EXPIRES_IN",
+    "JWT_REFRESH_SECRET_KEY",
+    "JWT_REFRESH_EXPIRES_IN",
+    "OAUTH_FACEBOOK_CLIENT_ID",
+    "OAUTH_FACEBOOK_CLIENT_SECRET",
+    "OAUTH_GOOGLE_CLIENT_ID",
+    "OAUTH_GOOGLE_CLIENT_SECRET",
+    "EMAIL_HOST",
+    "EMAIL_PORT",
+    "EMAIL_SECURE",
+    "EMAIL_USERNAME",
+    "EMAIL_PASSWORD",
+    "DOCUMENTATION_ENABLED",
+    "ADMIN_USER_EMAIL",
+    "ADMIN_USER_PASSWORD",
+    "AWS_ENDPOINT",
+    "AWS_REGION",
+    "AWS_ACCESS_KEY_ID",
+    "AWS_SECRET_ACCESS_KEY",
+    "AWS_S3_BUCKET_NAME",
     "FIREBASE_UNIVERSE_DOMAIN",
     "VITE_PUBLIC_API_URL",
-    "AP_FIREBASE_CONFIG"
+    "FIREBASE_CONFIG"
   ],
   "tasks": {
-    "lint": {
-      "dependsOn": ["^lint"]
-    },
-    "lint:fix": {
-      "dependsOn": ["^lint:fix"]
-    },
-    "format": {
-      "dependsOn": ["^format"]
-    },
-    "check:format": {
-      "dependsOn": ["^check:format"]
-    },
-    "check:types": {
-      "dependsOn": ["^check:types"]
-    },
+    "lint": { "dependsOn": ["^lint"] },
+    "lint:fix": { "dependsOn": ["^lint:fix"] },
+    "format": { "dependsOn": ["^format"] },
+    "check:format": { "dependsOn": ["^check:format"] },
+    "check:types": { "dependsOn": ["^check:types"] },
     "build": {
       "dependsOn": ["^build"],
       "outputs": [".next/**", "!.next/cache/**", "dist/**"],
       "inputs": ["$TURBO_DEFAULT$", ".env.production.local", ".env.local", ".env.production", ".env"]
     },
-    "dev": {
-      "cache": false,
-      "persistent": true,
-      "inputs": ["$TURBO_DEFAULT$", ".env.development.local", ".env.local", ".env.development", ".env"]
-    },
-    "test": {
-      "inputs": ["$TURBO_DEFAULT$", ".env.test.local", ".env.test", ".env"]
-    },
-    "test:cov": {
-      "dependsOn": ["^test:cov"]
-    },
-    "prepare": {
-      "dependsOn": ["^prepare"]
-    },
-    "setup": {
-      "dependsOn": ["^setup"]
-    }
+    "dev": { "cache": false, "persistent": true, "inputs": ["$TURBO_DEFAULT$", ".env.development.local", ".env.local", ".env.development", ".env"] },
+    "test": { "inputs": ["$TURBO_DEFAULT$", ".env.test.local", ".env.test", ".env"] },
+    "test:cov": { "dependsOn": ["^test:cov"] },
+    "prepare": { "dependsOn": ["^prepare"] },
+    "setup": { "dependsOn": ["^setup"] }
   }
 }

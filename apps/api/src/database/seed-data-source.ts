@@ -8,8 +8,8 @@ dotenv.config({ path: path.join(__dirname, `../../.env${process.env.NODE_ENV ===
 
 const options: DataSourceOptions = {
   type: 'postgres',
-  url: process.env.AP_DB_URL,
-  schema: process.env.AP_DB_SCHEMA,
+  url: process.env.DB_URL,
+  schema: process.env.DB_SCHEMA,
   entities: [path.join(__dirname, '../modules/**/*.entity{.ts,.js}')],
   migrations: [path.join(__dirname, '../database/seeds/*{.ts,.js}')],
   migrationsTableName: 'seeds_lock',

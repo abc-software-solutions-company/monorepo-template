@@ -28,12 +28,12 @@ export class InitSeeds1689265344543 implements MigrationInterface {
 
   constructor() {
     const s3ClientConfig: S3ClientConfig = {
-      region: process.env.AP_AWS_REGION,
-      endpoint: process.env.AP_AWS_ENDPOINT,
+      region: process.env.AWS_REGION,
+      endpoint: process.env.AWS_ENDPOINT,
       forcePathStyle: true,
       credentials: {
-        accessKeyId: process.env.AP_AWS_ACCESS_KEY_ID,
-        secretAccessKey: process.env.AP_AWS_SECRET_ACCESS_KEY,
+        accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
       },
     };
 
@@ -71,7 +71,7 @@ export class InitSeeds1689265344543 implements MigrationInterface {
     // Create bucket
     try {
       const createBucketParams = {
-        Bucket: process.env.AP_AWS_S3_BUCKET_NAME,
+        Bucket: process.env.AWS_S3_BUCKET_NAME,
         ACL: BucketCannedACL.public_read,
       };
 
@@ -85,13 +85,13 @@ export class InitSeeds1689265344543 implements MigrationInterface {
             Effect: 'Allow',
             Principal: '*',
             Action: 's3:GetObject',
-            Resource: `arn:aws:s3:::${process.env.AP_AWS_S3_BUCKET_NAME}/*`,
+            Resource: `arn:aws:s3:::${process.env.AWS_S3_BUCKET_NAME}/*`,
           },
         ],
       };
 
       const policyParams = {
-        Bucket: process.env.AP_AWS_S3_BUCKET_NAME,
+        Bucket: process.env.AWS_S3_BUCKET_NAME,
         Policy: JSON.stringify(bucketPolicy),
       };
 
@@ -116,14 +116,14 @@ export class InitSeeds1689265344543 implements MigrationInterface {
       // Upload to Minio
       const fileContent: Buffer = fs.readFileSync(file);
 
-      const command = new PutObjectCommand({ Bucket: process.env.AP_AWS_S3_BUCKET_NAME, Key: filename, Body: fileContent });
+      const command = new PutObjectCommand({ Bucket: process.env.AWS_S3_BUCKET_NAME, Key: filename, Body: fileContent });
 
       await this.s3Client.send(command);
 
       const thumb = sharp(fileContent).resize(THUMBNAIL_WIDTH, null, { fit: 'contain' });
 
       const commandThumbnail = new PutObjectCommand({
-        Bucket: process.env.AP_AWS_S3_BUCKET_NAME,
+        Bucket: process.env.AWS_S3_BUCKET_NAME,
         Key: `thumbnails/${filename}`,
         Body: (await thumb.toBuffer()).buffer as unknown as Buffer,
       });
