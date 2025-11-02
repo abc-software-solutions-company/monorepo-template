@@ -1,19 +1,38 @@
 import * as dotenv from 'dotenv';
 import * as path from 'path';
-import { DataSource, DataSourceOptions } from 'typeorm';
-
-import { SnakeNamingStrategy } from '@/common/utils/snake-naming-strategy.util';
+import { MikroORM, Options, UnderscoreNamingStrategy } from '@mikro-orm/core';
+import { Migrator } from '@mikro-orm/migrations';
+import { PostgreSqlDriver } from '@mikro-orm/postgresql';
 
 dotenv.config({ path: path.join(__dirname, `../../.env${process.env.NODE_ENV === 'test' ? '.test' : ''}`) });
 
-const options: DataSourceOptions = {
-  type: 'postgres',
-  url: process.env.AP_DB_URL,
+const options: Options = {
+  driver: PostgreSqlDriver,
+  driverOptions: {
+    connection: {
+      ssl: {
+        rejectUnauthorized: false,
+      },
+    },
+  },
+  clientUrl: process.env.AP_DB_URL,
   schema: process.env.AP_DB_SCHEMA,
-  entities: [path.join(__dirname, '../modules/**/*.entity{.ts,.js}')],
-  migrations: [path.join(__dirname, '../database/migrations/*{.ts,.js}')],
-  migrationsTableName: 'migrations_lock',
-  namingStrategy: new SnakeNamingStrategy(),
+  entities: [path.join(__dirname, '../modules/**/*.entity.js')],
+  entitiesTs: [path.join(__dirname, '../modules/**/*.entity.ts')],
+  migrations: {
+    tableName: 'mikro_orm_migrations',
+    path: path.join(__dirname, './migrations'),
+    glob: '!(*.d).{js,ts}',
+    transactional: true,
+    disableForeignKeys: false,
+    allOrNothing: true,
+    emit: 'ts' as const,
+  },
+  extensions: [Migrator],
+  namingStrategy: UnderscoreNamingStrategy,
+  debug: process.env.NODE_ENV !== 'production',
 };
 
-export const dataSource = new DataSource(options);
+export const initDataSource = async () => {
+  return await MikroORM.init(options);
+};

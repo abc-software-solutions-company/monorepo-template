@@ -14,6 +14,13 @@ const config: Options = {
   entities: ['./dist/modules/**/*.entity.js'],
   entitiesTs: ['./src/modules/**/*.entity.ts'],
   debug: process.env.NODE_ENV !== 'production',
+  driverOptions: {
+    connection: {
+      ssl: {
+        rejectUnauthorized: false,
+      },
+    },
+  },
   migrations: {
     tableName: 'mikro_orm_migrations',
     path: './dist/database/migrations',

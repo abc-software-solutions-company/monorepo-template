@@ -8,10 +8,11 @@ import { JwtModule } from '@nestjs/jwt';
 import { MulterModule } from '@nestjs/platform-express';
 import { ScheduleModule } from '@nestjs/schedule';
 import { ThrottlerModule } from '@nestjs/throttler';
-import { MikroOrmModule } from '@mikro-orm/nestjs';
 import { LoggerModule, Params } from 'nestjs-pino';
 import path from 'path';
 import { RedisClientOptions } from 'redis';
+import { MikroOrmModule } from '@mikro-orm/nestjs';
+import { PostgreSqlDriver } from '@mikro-orm/postgresql';
 
 import configs from '@/configs';
 
@@ -47,6 +48,7 @@ import { FirebaseModule } from '../firebase/firebase.module';
         const { url, schema, isLoggingEnable } = configService.get<IConfigs['database']>('database');
 
         return {
+          driver: PostgreSqlDriver,
           clientUrl: url,
           schema,
           debug: isLoggingEnable,
@@ -54,6 +56,13 @@ import { FirebaseModule } from '../firebase/firebase.module';
           entitiesTs: [path.join(__dirname, '../../modules/**/*.entity.ts')],
           discovery: {
             warnWhenNoEntities: false,
+          },
+          driverOptions: {
+            connection: {
+              ssl: {
+                rejectUnauthorized: false,
+              },
+            },
           },
         };
       },
@@ -138,4 +147,4 @@ import { FirebaseModule } from '../firebase/firebase.module';
     FirebaseModule,
   ],
 })
-export class BaseModule {}
+export class BaseModule { }
