@@ -1,4 +1,4 @@
-import { Column, Entity, ManyToOne, OneToMany } from 'typeorm';
+import { Collection, Entity, Enum, ManyToOne, OneToMany, Property } from '@mikro-orm/core';
 
 import { AbstractEntity } from '@/common/entities/abstract.entity';
 
@@ -9,44 +9,44 @@ import { ProductFile } from '@/modules/products/entities/product-file.entity';
 
 import { FILE_STATUS } from '../constants/files.constant';
 
-@Entity({ name: 'files' })
+@Entity({ tableName: 'files' })
 export class File extends AbstractEntity {
-  @Column({ type: 'varchar', length: 255 })
+  @Property({ type: 'varchar', length: 255 })
   name: string;
 
-  @Column({ type: 'varchar', length: 255 })
+  @Property({ type: 'varchar', length: 255 })
   uniqueName: string;
 
-  @Column({ type: 'varchar', length: 255, nullable: true })
+  @Property({ type: 'varchar', length: 255, nullable: true })
   caption: string;
 
-  @Column({ type: 'varchar', length: 5 })
+  @Property({ type: 'varchar', length: 5 })
   ext: string;
 
-  @Column({ type: 'bigint' })
+  @Property({ type: 'bigint' })
   size: number;
 
-  @Column({ type: 'varchar', length: 50 })
+  @Property({ type: 'varchar', length: 50 })
   mime: string;
 
-  @Column({ type: 'boolean', default: true })
-  isTemp: boolean;
+  @Property({ type: 'boolean', default: true })
+  isTemp: boolean = true;
 
-  @Column({ type: 'varchar', length: 50, default: FILE_STATUS.PUBLISHED })
-  status: FILE_STATUS;
+  @Enum(() => FILE_STATUS)
+  status: FILE_STATUS = FILE_STATUS.PUBLISHED;
 
-  @ManyToOne(() => Category, category => category.files)
+  @ManyToOne(() => Category, { nullable: true })
   category: Category;
 
   // Ref: https://orkhan.gitbook.io/typeorm/docs/many-to-many-relations#many-to-many-relations-with-custom-properties
   @OneToMany(() => PostFile, postFile => postFile.image)
-  postFiles: PostFile[];
+  postFiles = new Collection<PostFile>(this);
 
   // Ref: https://orkhan.gitbook.io/typeorm/docs/many-to-many-relations#many-to-many-relations-with-custom-properties
   @OneToMany(() => ProductFile, productFile => productFile.image)
-  productFiles: ProductFile[];
+  productFiles = new Collection<ProductFile>(this);
 
   // Ref: https://orkhan.gitbook.io/typeorm/docs/many-to-many-relations#many-to-many-relations-with-custom-properties
   @OneToMany(() => CategoryFile, categoryFile => categoryFile.image)
-  categoryFiles: CategoryFile[];
+  categoryFiles = new Collection<CategoryFile>(this);
 }

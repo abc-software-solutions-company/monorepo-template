@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { TypeOrmModule } from '@nestjs/typeorm';
+import { MikroOrmModule } from '@mikro-orm/nestjs';
 
 import { Product } from './entities/product.entity';
 import { ProductFile } from './entities/product-file.entity';
@@ -13,7 +13,7 @@ import { AuditLog } from '../audit-logs/entities/audit-log.entity';
 import { CategoriesModule } from '../categories/categories.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Product, ProductFile, AuditLog]), CategoriesModule],
+  imports: [MikroOrmModule.forFeature([Product, ProductFile, AuditLog]), CategoriesModule],
   controllers: [ProductsController, AdminProductsController],
   providers: [ProductsService, JwtService, AuditLogsService],
 })

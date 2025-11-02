@@ -1,5 +1,5 @@
 import { Exclude, Expose } from 'class-transformer';
-import { AfterLoad, Column, Entity, ManyToOne, OneToMany } from 'typeorm';
+import { Collection, Entity, Enum, ManyToOne, OneToMany, Property } from '@mikro-orm/core';
 
 import { TranslationEntity } from '@/common/entities/translation.entity';
 
@@ -12,53 +12,52 @@ import { CategoryFile } from './category-file.entity';
 
 import { CATEGORY_STATUS, CATEGORY_TYPE } from '../constants/categories.constant';
 
-@Entity({ name: 'categories' })
+@Entity({ tableName: 'categories' })
 export class Category extends TranslationEntity {
-  @Column({ type: 'varchar', unique: true, length: 255 })
+  @Property({ type: 'varchar', unique: true, length: 255 })
   slug: string;
 
-  @Column({ type: 'varchar', length: 50, default: CATEGORY_TYPE.NEWS })
-  type: CATEGORY_TYPE;
+  @Enum(() => CATEGORY_TYPE)
+  type: CATEGORY_TYPE = CATEGORY_TYPE.NEWS;
 
-  @Column({ type: 'varchar', length: 2048, nullable: true })
+  @Property({ type: 'varchar', length: 2048, nullable: true })
   externalUrl: string;
 
-  @Column({ type: 'varchar', length: 50, default: CATEGORY_STATUS.PUBLISHED })
-  status: CATEGORY_STATUS;
+  @Enum(() => CATEGORY_STATUS)
+  status: CATEGORY_STATUS = CATEGORY_STATUS.PUBLISHED;
 
-  @Column({ type: 'timestamp without time zone', nullable: true })
+  @Property({ type: 'timestamp', nullable: true })
   publishDate: Date;
 
   @Expose()
   images: File[];
 
-  @ManyToOne(() => User, user => user.categories)
+  @ManyToOne(() => User, { nullable: true })
   creator: User;
 
-  @ManyToOne(() => Category, category => category.children, { nullable: true })
+  @ManyToOne(() => Category, { nullable: true })
   parent: Category;
 
   @OneToMany(() => Category, category => category.parent)
-  children: Category[];
+  children = new Collection<Category>(this);
 
   @OneToMany(() => File, file => file.category)
-  files: File[];
+  files = new Collection<File>(this);
 
   @OneToMany(() => Post, post => post.category)
-  posts: Post[];
+  posts = new Collection<Post>(this);
 
   @OneToMany(() => Product, product => product.category)
-  products: Product[];
+  products = new Collection<Product>(this);
 
   // Ref: https://orkhan.gitbook.io/typeorm/docs/many-to-many-relations#many-to-many-relations-with-custom-properties
   @OneToMany(() => CategoryFile, categoryFile => categoryFile.category)
   @Exclude()
-  categoryFiles: CategoryFile[];
+  categoryFiles = new Collection<CategoryFile>(this);
 
-  @AfterLoad()
   transformFilesToImages() {
-    if (this.categoryFiles) {
-      this.images = this.categoryFiles.map(item => {
+    if (this.categoryFiles.isInitialized()) {
+      this.images = this.categoryFiles.getItems().map(item => {
         return {
           id: item.fileId,
           uniqueName: item.image.uniqueName,
@@ -69,6 +68,6 @@ export class Category extends TranslationEntity {
   }
 
   get hasChildren(): boolean {
-    return this.children && this.children.length > 0;
+    return this.children.isInitialized() && this.children.length > 0;
   }
 }

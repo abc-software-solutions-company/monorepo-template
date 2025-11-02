@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { InjectEntityManager, InjectRepository } from '@nestjs/typeorm';
-import { EntityManager, Repository } from 'typeorm';
+import { InjectRepository } from '@mikro-orm/nestjs';
+import { EntityRepository, EntityManager } from '@mikro-orm/postgresql';
 
 import { PaginationDto } from '@/common/dtos/pagination.dto';
 import { PaginationResponseDto } from '@/common/dtos/pagination-response.dto';
@@ -16,17 +16,16 @@ import { User } from '../users/entities/user.entity';
 export class AuditLogsService {
   constructor(
     @InjectRepository(AuditLog)
-    private readonly auditLogRepository: Repository<AuditLog>,
-    @InjectEntityManager()
-    private readonly entityManager: EntityManager
+    private readonly auditLogRepository: EntityRepository<AuditLog>,
+    private readonly em: EntityManager
   ) {}
 
   async create(createDto: CreateAuditLogDto) {
     const auditLog = this.auditLogRepository.create(createDto);
 
-    const createdAuditLog = this.auditLogRepository.save(auditLog);
+    await this.em.persistAndFlush(auditLog);
 
-    return createdAuditLog;
+    return auditLog;
   }
 
   async find(filterDto: FilterAuditLogDto) {
@@ -34,15 +33,15 @@ export class AuditLogsService {
     const queryBuilder = this.auditLogRepository.createQueryBuilder('audit');
 
     queryBuilder.select(AUDIT_LOG_GET_FIELDS);
-    queryBuilder.leftJoin('audit.user', 'user');
-    if (email) queryBuilder.andWhere('user.email = :email', { email });
-    if (tableName) queryBuilder.andWhere('audit.tableName = :tableName', { tableName });
-    if (action) queryBuilder.andWhere('audit.action = :action', { action });
-    if (recordId) queryBuilder.andWhere('audit.recordId = :recordId', { recordId });
-    queryBuilder.orderBy('audit.createdAt', 'DESC');
-    queryBuilder.skip(skip).take(limit);
+    queryBuilder.leftJoinAndSelect('audit.user', 'user');
+    if (email) queryBuilder.andWhere({ 'user.email': email });
+    if (tableName) queryBuilder.andWhere({ tableName });
+    if (action) queryBuilder.andWhere({ action });
+    if (recordId) queryBuilder.andWhere({ recordId });
+    queryBuilder.orderBy({ createdAt: 'DESC' });
+    queryBuilder.offset(skip).limit(limit);
 
-    const [{ entities }, totalItems] = await Promise.all([queryBuilder.getRawAndEntities(), queryBuilder.getCount()]);
+    const [entities, totalItems] = await queryBuilder.getResultAndCount();
 
     for (const entity of entities) {
       entity.title = await this.getRecordTitle(entity.tableName, entity.recordId);
@@ -57,10 +56,10 @@ export class AuditLogsService {
     const queryBuilder = this.auditLogRepository.createQueryBuilder('audit');
 
     queryBuilder.select(AUDIT_LOG_GET_FIELDS);
-    queryBuilder.leftJoin('audit.user', 'user');
-    queryBuilder.where('audit.id = :id', { id });
+    queryBuilder.leftJoinAndSelect('audit.user', 'user');
+    queryBuilder.where({ id });
 
-    const auditLog = await queryBuilder.getOne();
+    const auditLog = await queryBuilder.getSingleResult();
 
     auditLog.title = await this.getRecordTitle(auditLog.tableName, auditLog.recordId);
 
@@ -76,24 +75,22 @@ export class AuditLogsService {
     let title = '';
 
     try {
-      const queryBuilder = this.entityManager.createQueryBuilder();
+      const queryBuilder = this.em.createQueryBuilder(tableName, 'table');
 
       if (tableName === AUDIT_LOG_TABLE_NAME.USERS || tableName === AUDIT_LOG_TABLE_NAME.FILES) {
-        queryBuilder.select('table.name', 'name');
-        queryBuilder.from(tableName, 'table');
-        queryBuilder.where('table.id = :recordId', { recordId });
+        queryBuilder.select('name');
+        queryBuilder.where({ id: recordId });
 
-        const result = await queryBuilder.getRawOne();
+        const result = await queryBuilder.getSingleResult();
 
-        title = result.name || '';
+        title = (result as any)?.name || '';
       } else {
-        queryBuilder.select('table.nameLocalized', 'titleLocalized');
-        queryBuilder.from(tableName, 'table');
-        queryBuilder.where('table.id = :recordId', { recordId });
+        queryBuilder.select('nameLocalized');
+        queryBuilder.where({ id: recordId });
 
-        const result = await queryBuilder.getRawOne();
+        const result = await queryBuilder.getSingleResult();
 
-        title = result.titleLocalized?.[0]?.value || '';
+        title = (result as any)?.nameLocalized?.[0]?.value || '';
       }
 
       return title;
@@ -103,7 +100,7 @@ export class AuditLogsService {
   }
 
   async auditLogCreate<T extends { id: string }>(creator: User, entity: T, tableName: AUDIT_LOG_TABLE_NAME) {
-    await this.auditLogRepository.save({
+    const auditLog = this.auditLogRepository.create({
       user: creator,
       recordId: entity.id,
       tableName,
@@ -111,10 +108,12 @@ export class AuditLogsService {
       oldValue: {},
       newValue: { ...entity },
     });
+
+    await this.em.persistAndFlush(auditLog);
   }
 
   async auditLogUpdate<T extends { id: string }>(creator: User, originalEntity: T, updatedEntity: T, tableName: AUDIT_LOG_TABLE_NAME) {
-    await this.auditLogRepository.save({
+    const auditLog = this.auditLogRepository.create({
       user: creator,
       recordId: originalEntity.id,
       tableName,
@@ -122,6 +121,8 @@ export class AuditLogsService {
       oldValue: { ...originalEntity },
       newValue: { ...updatedEntity },
     });
+
+    await this.em.persistAndFlush(auditLog);
   }
 
   async auditLogDelete<T extends { id: string }>(creator: User, originalEntities: T[], updatedEntities: T[], tableName: AUDIT_LOG_TABLE_NAME) {
@@ -144,8 +145,10 @@ export class AuditLogsService {
       for (const entry of chunk) {
         const newData = this.auditLogRepository.create(entry);
 
-        await this.auditLogRepository.save(newData);
+        await this.em.persist(newData);
       }
+
+      await this.em.flush();
     }
   }
 }

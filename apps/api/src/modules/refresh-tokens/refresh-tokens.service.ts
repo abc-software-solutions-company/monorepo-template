@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { InjectRepository } from '@mikro-orm/nestjs';
+import { EntityRepository, EntityManager } from '@mikro-orm/postgresql';
 
 import { CreateRefreshTokenDto } from './dto/create-refresh-token.dto';
 import { RefreshToken } from './entities/refresh-token.entity';
@@ -12,19 +12,20 @@ import { UsersService } from '../users/users.service';
 export class RefreshTokensService {
   constructor(
     @InjectRepository(RefreshToken)
-    private readonly refreshTokenRepository: Repository<RefreshToken>,
+    private readonly refreshTokenRepository: EntityRepository<RefreshToken>,
     private readonly userService: UsersService,
-    private readonly tokenService: TokenService
+    private readonly tokenService: TokenService,
+    private readonly em: EntityManager
   ) {}
 
   create(createDto: CreateRefreshTokenDto) {
     const refreshToken = this.refreshTokenRepository.create(createDto);
 
-    return this.refreshTokenRepository.save(refreshToken);
+    return this.em.persistAndFlush(refreshToken);
   }
 
   async findByToken(token: string, ipAddress: string, _userAgent: string) {
-    const refreshToken = await this.refreshTokenRepository.findOneBy({ token, createdByIp: ipAddress });
+    const refreshToken = await this.refreshTokenRepository.findOne({ token, createdByIp: ipAddress });
 
     if (!refreshToken) {
       throw new NotFoundException('Refresh token not found');
@@ -61,7 +62,7 @@ export class RefreshTokensService {
 
     refreshToken.revokedByIp = ipAddress;
     refreshToken.revokedAt = new Date();
-    await this.refreshTokenRepository.save(refreshToken);
+    await this.em.flush();
 
     return { status: 'success' };
   }

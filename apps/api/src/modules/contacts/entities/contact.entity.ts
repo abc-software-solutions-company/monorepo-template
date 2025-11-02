@@ -1,26 +1,26 @@
-import { Column, Entity } from 'typeorm';
+import { Entity, Enum, Property } from '@mikro-orm/core';
 
 import { AbstractEntity } from '@/common/entities/abstract.entity';
 
 import { CONTACT_STATUS } from '../constants/contacts.constant';
 
-@Entity({ name: 'contacts' })
+@Entity({ tableName: 'contacts' })
 export class Contact extends AbstractEntity {
-  @Column({ type: 'varchar', length: 255 })
+  @Property({ type: 'varchar', length: 255 })
   name: string;
 
-  @Column({ type: 'varchar', length: 320 })
+  @Property({ type: 'varchar', length: 320 })
   email: string;
 
-  @Column({ type: 'varchar', length: 255, nullable: true })
+  @Property({ type: 'varchar', length: 255, nullable: true })
   subject: string;
 
-  @Column({ type: 'varchar', length: 5000 })
+  @Property({ type: 'varchar', length: 5000 })
   message: string;
 
-  @Column({ type: 'boolean', default: false })
-  isRead: boolean;
+  @Property({ type: 'boolean', default: false })
+  isRead: boolean = false;
 
-  @Column({ type: 'varchar', length: 50, default: CONTACT_STATUS.PUBLISHED })
-  status: CONTACT_STATUS;
+  @Enum(() => CONTACT_STATUS)
+  status: CONTACT_STATUS = CONTACT_STATUS.PUBLISHED;
 }

@@ -1,4 +1,4 @@
-import { Column, Entity } from 'typeorm';
+import { Entity, Enum, Property } from '@mikro-orm/core';
 
 import { AbstractEntity } from '@/common/entities/abstract.entity';
 
@@ -6,14 +6,14 @@ import { Translation } from '@/common/interfaces/language.interface';
 
 import { FAQ_STATUS } from '../constants/faqs.constant';
 
-@Entity({ name: 'faqs' })
+@Entity({ tableName: 'faqs' })
 export class Faq extends AbstractEntity {
-  @Column({ type: 'jsonb', nullable: true })
+  @Property({ type: 'jsonb', nullable: true })
   titleLocalized: Translation[];
 
-  @Column({ type: 'jsonb', nullable: true })
+  @Property({ type: 'jsonb', nullable: true })
   descriptionLocalized: Translation[];
 
-  @Column({ type: 'varchar', length: 50, default: FAQ_STATUS.DRAFT })
-  status: FAQ_STATUS;
+  @Enum(() => FAQ_STATUS)
+  status: FAQ_STATUS = FAQ_STATUS.DRAFT;
 }

@@ -13,6 +13,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { UpdateUserDeviceTokenDto } from './dto/update-user-device-token.dto';
 import { UpdateUserPreferenceDto } from './dto/update-user-preference.dto';
 import { User } from './entities/user.entity';
+import { UserPreference } from './entities/user-preference.entity';
 import { UsersService } from './users.service';
 import { UsersPreferencesService } from './users-preferences.service';
 
@@ -36,7 +37,7 @@ export class UsersController {
   @ApiDocumentResponse({ status: HttpStatus.NOT_FOUND, message: 'User not found', model: UserPreferenceNotFoundDoc })
   @ApiDocumentResponse({ status: HttpStatus.BAD_REQUEST, message: 'Data should not be empty', model: UpdateUserPreferenceBadRequestDoc })
   @Response({ message: 'Update user preference successfully' })
-  updatePreference(@Req() req: Request, @Body() updateUserPreferenceDto: UpdateUserPreferenceDto) {
+  updatePreference(@Req() req: Request, @Body() updateUserPreferenceDto: UpdateUserPreferenceDto): Promise<UserPreference> {
     const user = req.user as User;
 
     return this.usersPreferencesService.updateReference(user.id, updateUserPreferenceDto);

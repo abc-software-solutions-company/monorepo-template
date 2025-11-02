@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { InjectRepository } from '@mikro-orm/nestjs';
+import { EntityRepository } from '@mikro-orm/postgresql';
 
 import { getSecondBetweenTwoDates } from '@/common/utils/datetime.util';
 
@@ -30,7 +30,7 @@ import { UserPreference } from '../users/entities/user-preference.entity';
 export class AuthService {
   constructor(
     @InjectRepository(User)
-    private readonly userRepository: Repository<User>,
+    private readonly userRepository: EntityRepository<User>,
     private usersService: UsersService,
     private refreshTokensService: RefreshTokensService,
     private tokenService: TokenService,
@@ -42,7 +42,18 @@ export class AuthService {
     private googleService: GoogleService
   ) {}
 
-  async signInAdmin(signInDto: SignInDto, ipAddress: string, userAgent: string) {
+  async signInAdmin(signInDto: SignInDto, ipAddress: string, userAgent: string): Promise<{
+    user: {
+      id: string;
+      email: string;
+      role: string;
+      name: string;
+      avatar: string;
+      preference: UserPreference;
+    };
+    accessToken: string;
+    refreshToken: string;
+  }> {
     const { email, password } = signInDto;
 
     const user = await this.usersService.findByEmailAndPassword(email, password);
@@ -86,7 +97,18 @@ export class AuthService {
     };
   }
 
-  async signIn(signInDto: SignInDto, ipAddress: string, userAgent: string) {
+  async signIn(signInDto: SignInDto, ipAddress: string, userAgent: string): Promise<{
+    user: {
+      id: string;
+      email: string;
+      role: string;
+      name: string;
+      avatar: string;
+      preference: UserPreference;
+    };
+    accessToken: string;
+    refreshToken: string;
+  }> {
     const { email, password } = signInDto;
 
     const user = await this.usersService.findByEmailAndPassword(email, password);
@@ -127,7 +149,18 @@ export class AuthService {
     };
   }
 
-  async signInWithGoogle(oAuthSignInDto: OAuthSignInDto, ipAddress: string, userAgent: string) {
+  async signInWithGoogle(oAuthSignInDto: OAuthSignInDto, ipAddress: string, userAgent: string): Promise<{
+    user: {
+      id: string;
+      email: string;
+      role: string;
+      name: string;
+      avatar: string;
+      preference: UserPreference;
+    };
+    accessToken: string;
+    refreshToken: string;
+  }> {
     const { token, authenticator } = oAuthSignInDto;
     let userInfo: OAuthProfile = null;
 
@@ -172,7 +205,18 @@ export class AuthService {
     };
   }
 
-  async signInWithFacebook(oAuthFacebookSignInDto: OAuthFacebookSignInDto, ipAddress: string, userAgent: string) {
+  async signInWithFacebook(oAuthFacebookSignInDto: OAuthFacebookSignInDto, ipAddress: string, userAgent: string): Promise<{
+    user: {
+      id: string;
+      email: string;
+      role: string;
+      name: string;
+      avatar: string;
+      preference: UserPreference;
+    };
+    accessToken: string;
+    refreshToken: string;
+  }> {
     const { token, authenticator, isFacebookLimited } = oAuthFacebookSignInDto;
     let userInfo: OAuthProfile = null;
 
@@ -220,7 +264,18 @@ export class AuthService {
     };
   }
 
-  async signInWithApple(oAuthSignInDto: OAuthSignInDto, ipAddress: string, userAgent: string) {
+  async signInWithApple(oAuthSignInDto: OAuthSignInDto, ipAddress: string, userAgent: string): Promise<{
+    user: {
+      id: string;
+      email: string;
+      role: string;
+      name: string;
+      avatar: string;
+      preference: UserPreference;
+      accessToken: string;
+      refreshToken: string;
+    };
+  }> {
     const { token, authenticator } = oAuthSignInDto;
     let userInfo: OAuthProfile = null;
 
@@ -328,7 +383,7 @@ export class AuthService {
   }
 
   async verifyResetPasswordCode(verifyResetPasswordDto: VerifyResetPasswordDto) {
-    const user = await this.userRepository.findOneBy({
+    const user = await this.userRepository.findOne({
       email: verifyResetPasswordDto.email,
       recoveryCode: verifyResetPasswordDto.code,
     });

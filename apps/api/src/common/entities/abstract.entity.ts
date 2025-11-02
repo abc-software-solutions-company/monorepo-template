@@ -1,12 +1,12 @@
-import { BaseEntity, CreateDateColumn, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import { PrimaryKey, Property } from '@mikro-orm/core';
 
-export abstract class AbstractEntity extends BaseEntity {
-  @PrimaryGeneratedColumn('uuid')
+export abstract class AbstractEntity {
+  @PrimaryKey({ type: 'uuid', defaultRaw: 'gen_random_uuid()' })
   id: string;
 
-  @CreateDateColumn({ type: 'timestamp without time zone', default: () => 'CURRENT_TIMESTAMP' })
+  @Property({ type: 'timestamp', defaultRaw: 'CURRENT_TIMESTAMP', onCreate: () => new Date() })
   createdAt: Date;
 
-  @UpdateDateColumn({ type: 'timestamp without time zone', nullable: true, default: null })
+  @Property({ type: 'timestamp', nullable: true, onUpdate: () => new Date() })
   updatedAt: Date;
 }

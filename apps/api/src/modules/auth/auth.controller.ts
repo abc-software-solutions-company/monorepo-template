@@ -37,7 +37,17 @@ export class AuthController {
   @ApiOperation({ summary: 'Login with credentials' })
   @ApiDocumentResponse({ message: 'Login successfully', model: LoginWithCredentialsDoc })
   @Response({ message: 'Login successfully' })
-  async login(@Req() req: Request, @Res({ passthrough: true }) response: ExpressResponse, @Body() signInDto: SignInDto) {
+  async login(@Req() req: Request, @Res({ passthrough: true }) response: ExpressResponse, @Body() signInDto: SignInDto): Promise<{
+    user: {
+      id: string;
+      email: string;
+      role: string;
+      name: string;
+      avatar: string;
+      preference: any;
+    };
+    accessToken: string;
+  }> {
     const ip = req.ip as string;
     const ua = req.headers['user-agent'] || '';
 
@@ -57,7 +67,17 @@ export class AuthController {
   @ApiOperation({ summary: 'Login with Google' })
   @ApiDocumentResponse({ message: 'Login successfully', model: LoginWithGoogleDoc })
   @Response({ message: 'Login successfully' })
-  async signInWithGoogle(@Req() req: Request, @Res({ passthrough: true }) response: ExpressResponse, @Body() oAuthSignInDto: OAuthSignInDto) {
+  async signInWithGoogle(@Req() req: Request, @Res({ passthrough: true }) response: ExpressResponse, @Body() oAuthSignInDto: OAuthSignInDto): Promise<{
+    user: {
+      id: string;
+      email: string;
+      role: string;
+      name: string;
+      avatar: string;
+      preference: any;
+    };
+    accessToken: string;
+  }> {
     const ip = req.ip as string;
     const ua = req.headers['user-agent'] || '';
 
@@ -81,7 +101,17 @@ export class AuthController {
     @Req() req: Request,
     @Res({ passthrough: true }) response: ExpressResponse,
     @Body() oAuthFacebookSignInDto: OAuthFacebookSignInDto
-  ) {
+  ): Promise<{
+    user: {
+      id: string;
+      email: string;
+      role: string;
+      name: string;
+      avatar: string;
+      preference: any;
+    };
+    accessToken: string;
+  }> {
     const ip = req.ip as string;
     const ua = req.headers['user-agent'] || '';
 
@@ -101,7 +131,16 @@ export class AuthController {
   @ApiOperation({ summary: 'Login with Apple' })
   @ApiDocumentResponse({ message: 'Login successfully', model: LoginWithAppleDoc })
   @Response({ message: 'Login successfully' })
-  async signInWithApple(@Req() req: Request, @Res({ passthrough: true }) response: ExpressResponse, @Body() oAuthSignInDto: OAuthSignInDto) {
+  async signInWithApple(@Req() req: Request, @Res({ passthrough: true }) response: ExpressResponse, @Body() oAuthSignInDto: OAuthSignInDto): Promise<{
+    user: {
+      id: string;
+      email: string;
+      role: string;
+      name: string;
+      avatar: string;
+      preference: any;
+    };
+  }> {
     const ip = req.ip as string;
     const ua = req.headers['user-agent'] || '';
 

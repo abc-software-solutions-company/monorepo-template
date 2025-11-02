@@ -1,5 +1,5 @@
 import { Exclude } from 'class-transformer';
-import { Column, Entity, JoinColumn, OneToMany, OneToOne } from 'typeorm';
+import { Entity, Property, OneToMany, OneToOne, Enum, Collection } from '@mikro-orm/core';
 
 import { AbstractEntity } from '@/common/entities/abstract.entity';
 
@@ -13,85 +13,84 @@ import { UserPreference } from '@/modules/users/entities/user-preference.entity'
 
 import { USER_GENDER, USER_ROLE, USER_STATUS } from '../constants/users.constant';
 
-@Entity({ name: 'users' })
+@Entity({ tableName: 'users' })
 export class User extends AbstractEntity {
-  @Column({ type: 'varchar', length: 50, nullable: true })
+  @Property({ type: 'varchar', length: 50, nullable: true })
   name: string;
 
-  @Column({ type: 'varchar', length: 320, nullable: true, unique: true })
+  @Property({ type: 'varchar', length: 320, nullable: true, unique: true })
   email: string;
 
-  @Column({ type: 'varchar', nullable: true })
+  @Property({ type: 'varchar', nullable: true })
   avatar: string;
 
-  @Column({ type: 'varchar', nullable: true })
+  @Property({ type: 'varchar', nullable: true })
   phoneNumber: string;
 
-  @Column({ type: 'varchar', nullable: true })
+  @Property({ type: 'varchar', nullable: true, hidden: true })
   @Exclude()
   password: string;
 
-  @Column({ type: 'boolean', nullable: true })
+  @Property({ type: 'boolean', nullable: true })
   emailVerified: boolean;
 
-  @Column({ type: 'varchar', nullable: true })
+  @Property({ type: 'varchar', nullable: true })
   recoveryCode: string;
 
-  @Column({ type: 'timestamp without time zone', nullable: true })
+  @Property({ type: 'timestamp', nullable: true })
   recoveredAt: Date;
 
-  @Column({ type: 'varchar', nullable: true })
+  @Property({ type: 'varchar', nullable: true })
   locale: string;
 
-  @Column({ type: 'timestamp without time zone', nullable: true })
+  @Property({ type: 'timestamp', nullable: true })
   dateOfBirth: Date;
 
-  @Column({ type: 'varchar', nullable: true })
+  @Property({ type: 'varchar', nullable: true })
   country: string;
 
-  @Column({ type: 'varchar', length: 2000, nullable: true })
+  @Property({ type: 'varchar', length: 2000, nullable: true })
   bio: string;
 
-  @Column({ type: 'timestamp without time zone', nullable: true })
+  @Property({ type: 'timestamp', nullable: true })
   lastLogin: Date;
 
-  @Column({ nullable: true })
+  @Property({ nullable: true })
   providerAccountId: string;
 
-  @Column({ type: 'varchar', array: true, nullable: true })
+  @Property({ type: 'varchar[]', nullable: true })
   deviceTokens: string[];
 
-  @Column({ type: 'varchar', length: 50, enum: AUTH_PROVIDER, default: AUTH_PROVIDER.CREDENTIALS })
-  provider: AUTH_PROVIDER;
+  @Enum(() => AUTH_PROVIDER)
+  provider: AUTH_PROVIDER = AUTH_PROVIDER.CREDENTIALS;
 
-  @Column({ type: 'varchar', length: 50, enum: AUTH_TYPE, default: AUTH_TYPE.CREDENTIALS })
-  authType: AUTH_TYPE;
+  @Enum(() => AUTH_TYPE)
+  authType: AUTH_TYPE = AUTH_TYPE.CREDENTIALS;
 
-  @Column({ type: 'varchar', length: 50, enum: USER_GENDER, default: USER_GENDER.MALE })
-  gender: USER_GENDER;
+  @Enum(() => USER_GENDER)
+  gender: USER_GENDER = USER_GENDER.MALE;
 
-  @Column({ type: 'varchar', length: 50, default: USER_STATUS.INACTIVE })
-  status: USER_STATUS;
+  @Enum(() => USER_STATUS)
+  status: USER_STATUS = USER_STATUS.INACTIVE;
 
-  @Column({ type: 'varchar', length: 50, enum: USER_ROLE, default: USER_ROLE.USER })
-  role: USER_ROLE;
+  @Enum(() => USER_ROLE)
+  role: USER_ROLE = USER_ROLE.USER;
 
   @OneToMany(() => Post, post => post.creator)
-  posts: Post[];
+  posts = new Collection<Post>(this);
 
   @OneToMany(() => Product, product => product.creator)
-  products: Product[];
+  products = new Collection<Product>(this);
 
   @OneToMany(() => Category, category => category.creator)
-  categories: Category[];
+  categories = new Collection<Category>(this);
 
   @OneToMany(() => AuditLog, auditLog => auditLog.user)
-  auditLogs: AuditLog[];
+  auditLogs = new Collection<AuditLog>(this);
 
   @OneToMany(() => RefreshToken, refreshToken => refreshToken.user)
-  refreshTokens: RefreshToken[];
+  refreshTokens = new Collection<RefreshToken>(this);
 
-  @OneToOne(() => UserPreference, userPreference => userPreference.user)
-  @JoinColumn()
+  @OneToOne(() => UserPreference, userPreference => userPreference.user, { owner: true, nullable: true })
   preference: UserPreference;
 }

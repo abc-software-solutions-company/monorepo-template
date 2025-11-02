@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { TypeOrmModule } from '@nestjs/typeorm';
+import { MikroOrmModule } from '@mikro-orm/nestjs';
 
 import { User } from './entities/user.entity';
 import { UserPreference } from './entities/user-preference.entity';
@@ -14,7 +14,7 @@ import { AuditLog } from '../audit-logs/entities/audit-log.entity';
 import { AwsModule } from '../aws/aws.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([User, UserPreference, AuditLog]), AwsModule],
+  imports: [MikroOrmModule.forFeature([User, UserPreference, AuditLog]), AwsModule],
   controllers: [UsersController, AdminUsersController],
   providers: [UsersService, UsersPreferencesService, JwtService, AuditLogsService],
   exports: [UsersService],

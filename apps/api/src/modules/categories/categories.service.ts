@@ -1,6 +1,7 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { InjectRepository } from '@mikro-orm/nestjs';
+import { EntityRepository, EntityManager } from '@mikro-orm/postgresql';
+import { wrap } from '@mikro-orm/core';
 
 import { BulkDeleteDto } from '@/common/dtos/bulk-delete.dto';
 import { PaginationDto } from '@/common/dtos/pagination.dto';
@@ -24,10 +25,11 @@ import { User } from '../users/entities/user.entity';
 export class CategoriesService {
   constructor(
     @InjectRepository(Category)
-    private readonly categoryRepository: Repository<Category>,
+    private readonly categoryRepository: EntityRepository<Category>,
     @InjectRepository(CategoryFile)
-    private readonly categoryFileRepository: Repository<CategoryFile>,
-    private readonly auditLogsService: AuditLogsService
+    private readonly categoryFileRepository: EntityRepository<CategoryFile>,
+    private readonly auditLogsService: AuditLogsService,
+    private readonly em: EntityManager
   ) {}
 
   async create(creator: User, createDto: CreateCategoryDto) {
@@ -35,7 +37,8 @@ export class CategoriesService {
 
     if (createDto.parentId) {
       parent = await this.categoryRepository.findOne({
-        where: { id: createDto.parentId, type: createDto.type },
+        id: createDto.parentId,
+        type: createDto.type,
       });
     }
 
@@ -50,14 +53,14 @@ export class CategoriesService {
 
     newCategory.creator = creator;
 
-    const categoryResponse = await this.categoryRepository.save({ ...newCategory });
+    await this.em.persistAndFlush(newCategory);
 
     await Promise.all([
-      this.sortImages(createDto.images, categoryResponse.id),
-      this.auditLogsService.auditLogCreate(creator, categoryResponse, AUDIT_LOG_TABLE_NAME.CATEGORIES),
+      this.sortImages(createDto.images, newCategory.id),
+      this.auditLogsService.auditLogCreate(creator, newCategory, AUDIT_LOG_TABLE_NAME.CATEGORIES),
     ]);
 
-    return categoryResponse;
+    return newCategory;
   }
 
   async find(filterDto: FilterCategoryDto) {
@@ -68,33 +71,32 @@ export class CategoriesService {
     if (q) {
       const searchTerm = `%${q}%`;
 
-      queryBuilder.where(
-        "EXISTS (SELECT 1 FROM jsonb_array_elements(category.nameLocalized) AS translation WHERE LOWER(translation->>'value') LIKE LOWER(:searchTerm))",
-        { searchTerm }
-      );
+      queryBuilder.where({
+        $raw: `EXISTS (SELECT 1 FROM jsonb_array_elements(name_localized) AS translation WHERE LOWER(translation->>'value') LIKE LOWER('${searchTerm}'))`,
+      });
     } else {
-      queryBuilder.where('parent.id IS NULL');
+      queryBuilder.where({ parent: null });
     }
 
-    if (status) queryBuilder.andWhere('category.status in (:...status)', { status });
+    if (status) queryBuilder.andWhere({ status: { $in: status } });
     if (excludeId) {
-      queryBuilder.andWhere('category.id != :id', { id: excludeId });
+      queryBuilder.andWhere({ id: { $ne: excludeId } });
     }
     if (type) {
-      queryBuilder.andWhere('category.type = :type', { type });
+      queryBuilder.andWhere({ type });
     }
     if (sort) {
       if (order) {
-        queryBuilder.orderBy(`category.${sort}`, order);
+        queryBuilder.orderBy({ [sort]: order });
       } else {
-        queryBuilder.orderBy(`category.${sort}`, SORT_ORDER.DESC);
+        queryBuilder.orderBy({ [sort]: SORT_ORDER.DESC });
       }
     } else {
-      queryBuilder.orderBy('category.createdAt', SORT_ORDER.DESC);
+      queryBuilder.orderBy({ createdAt: SORT_ORDER.DESC });
     }
-    queryBuilder.skip(skip).take(limit);
+    queryBuilder.offset(skip).limit(limit);
 
-    const [{ entities }, totalItems] = await Promise.all([queryBuilder.getRawAndEntities(), queryBuilder.getCount()]);
+    const [entities, totalItems] = await queryBuilder.getResultAndCount();
 
     const categoriesWithChildren = await Promise.all(
       entities.map(async category => {
@@ -114,9 +116,9 @@ export class CategoriesService {
 
   async findOne(id: string) {
     const category = await this.createQueryBuilderWithJoins('category')
-      .where('category.id = :id', { id })
-      .orderBy('categoryFile.position', SORT_ORDER.ASC)
-      .getOne();
+      .where({ id })
+      .orderBy({ 'categoryFile.position': SORT_ORDER.ASC })
+      .getSingleResult();
 
     if (!category) {
       throw new NotFoundException('Category not found');
@@ -129,14 +131,14 @@ export class CategoriesService {
     let parent: Category | null = null;
 
     if (updateDto.parentId) {
-      parent = await this.categoryRepository.findOneBy({ id: updateDto.parentId });
+      parent = await this.categoryRepository.findOne({ id: updateDto.parentId });
     }
 
     if (updateDto.parentId && !parent) {
       throw new NotFoundException('Parent category does not exist.');
     }
 
-    const category = await this.categoryRepository.findOneBy({ id: id });
+    const category = await this.categoryRepository.findOne({ id: id });
 
     if (!category) {
       throw new NotFoundException('Category not found');
@@ -159,18 +161,18 @@ export class CategoriesService {
 
     category.parent = parent;
 
-    const updatedCategory = await this.categoryRepository.save(category);
+    await this.em.flush();
 
     await Promise.all([
       this.sortImages(updateDto.images, originalCategory.id),
-      this.auditLogsService.auditLogUpdate(creator, originalCategory, updatedCategory, AUDIT_LOG_TABLE_NAME.CATEGORIES),
+      this.auditLogsService.auditLogUpdate(creator, originalCategory, category, AUDIT_LOG_TABLE_NAME.CATEGORIES),
     ]);
 
-    return updatedCategory;
+    return category;
   }
 
   async remove(id: string, creator: User) {
-    const category = await this.categoryRepository.findOne({ where: { id }, relations: ['children'] });
+    const category = await this.categoryRepository.findOne({ id }, { populate: ['children'] });
 
     if (!category) {
       throw new NotFoundException('Category not found');
@@ -184,54 +186,53 @@ export class CategoriesService {
 
     category.status = CATEGORY_STATUS.DELETED;
 
-    const deletedCategory = await this.categoryRepository.save(category);
+    await this.em.flush();
 
-    await this.auditLogsService.auditLogDelete(creator, [originalCategory], [deletedCategory], AUDIT_LOG_TABLE_NAME.CATEGORIES);
+    await this.auditLogsService.auditLogDelete(creator, [originalCategory], [category], AUDIT_LOG_TABLE_NAME.CATEGORIES);
 
-    return deletedCategory;
+    return category;
   }
 
   async bulkDelete(creator: User, bulkDeleteDto: BulkDeleteDto) {
     const categories = await this.categoryRepository
       .createQueryBuilder('category')
-      .where('category.id IN (:...ids)', { ids: bulkDeleteDto.ids })
-      .orderBy('category.createdAt', SORT_ORDER.ASC)
-      .getMany();
+      .where({ id: { $in: bulkDeleteDto.ids } })
+      .orderBy({ createdAt: SORT_ORDER.ASC })
+      .getResult();
 
     const originalCategories = categories.map(category => structuredClone(category));
 
     categories.forEach(category => (category.status = CATEGORY_STATUS.DELETED));
 
-    const newCategories = await this.categoryRepository.save(categories);
+    await this.em.flush();
 
-    await this.auditLogsService.auditLogDelete(creator, originalCategories, newCategories, AUDIT_LOG_TABLE_NAME.CATEGORIES);
+    await this.auditLogsService.auditLogDelete(creator, originalCategories, categories, AUDIT_LOG_TABLE_NAME.CATEGORIES);
 
-    return newCategories;
+    return categories;
   }
 
   async findByParentId(id: string) {
     const categories = await this.createQueryBuilderWithJoins('category')
-      .where('category.parent.id = :id', { id })
-      .orderBy('category.createdAt', SORT_ORDER.DESC)
-      .getMany();
+      .where({ 'parent.id': id })
+      .orderBy({ createdAt: SORT_ORDER.DESC })
+      .getResult();
 
     return categories;
   }
 
   async findByType(type: CATEGORY_TYPE) {
     const categories = await this.createQueryBuilderWithJoins('category')
-      .where('category.type = :type', { type })
-      .orderBy('category.createdAt', SORT_ORDER.DESC)
-      .getMany();
+      .where({ type })
+      .orderBy({ createdAt: SORT_ORDER.DESC })
+      .getResult();
 
     return categories;
   }
 
   async findBySlug(slug: string) {
     const category = await this.createQueryBuilderWithJoins('category')
-      .where('category.slug = :slug', { slug })
-      .addSelect(['user.id', 'user.name', 'user.avatar'])
-      .getOne();
+      .where({ slug })
+      .getSingleResult();
 
     if (!category) {
       throw new NotFoundException('Category not found');
@@ -244,15 +245,15 @@ export class CategoriesService {
     if (!images) return;
 
     for (let i = 0; i < images.length; i++) {
-      const existingFile = await this.categoryFileRepository.findOne({ where: { fileId: images[i].id, categoryId } });
+      const existingFile = await this.categoryFileRepository.findOne({ fileId: images[i].id, categoryId });
 
       if (existingFile) {
         existingFile.position = i + 1;
-        await this.categoryFileRepository.save(existingFile);
+        await this.em.flush();
       } else {
         const newFile = this.categoryFileRepository.create({ fileId: images[i].id, categoryId, position: i + 1 });
 
-        await this.categoryFileRepository.save(newFile);
+        await this.em.persistAndFlush(newFile);
       }
     }
   }
@@ -260,10 +261,10 @@ export class CategoriesService {
   private async getChilds(parentId: string) {
     const queryBuilder = this.createQueryBuilderWithJoins('category');
 
-    queryBuilder.where('parent.id = :parentId', { parentId });
-    queryBuilder.orderBy('category.createdAt', SORT_ORDER.DESC);
+    queryBuilder.where({ 'parent.id': parentId });
+    queryBuilder.orderBy({ createdAt: SORT_ORDER.DESC });
 
-    const children = await queryBuilder.getMany();
+    const children = await queryBuilder.getResult();
 
     const childrenWithSubChildren = await Promise.all(
       children.map(async child => {
@@ -280,9 +281,9 @@ export class CategoriesService {
     return this.categoryRepository
       .createQueryBuilder(alias)
       .select(CATEGORY_GET_FIELDS)
-      .leftJoin(`${alias}.creator`, 'user')
-      .leftJoin(`${alias}.parent`, 'parent')
-      .leftJoin(`${alias}.categoryFiles`, 'categoryFile')
-      .leftJoin('categoryFile.image', 'image');
+      .leftJoinAndSelect(`${alias}.creator`, 'user')
+      .leftJoinAndSelect(`${alias}.parent`, 'parent')
+      .leftJoinAndSelect(`${alias}.categoryFiles`, 'categoryFile')
+      .leftJoinAndSelect('categoryFile.image', 'image');
   }
 }

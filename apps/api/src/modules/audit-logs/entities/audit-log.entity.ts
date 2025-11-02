@@ -1,5 +1,5 @@
 import { Expose } from 'class-transformer';
-import { Column, Entity, ManyToOne } from 'typeorm';
+import { Entity, Enum, ManyToOne, Property } from '@mikro-orm/core';
 
 import { AbstractEntity } from '@/common/entities/abstract.entity';
 
@@ -7,24 +7,24 @@ import { User } from '@/modules/users/entities/user.entity';
 
 import { AUDIT_LOG_HTTP_METHOD, AUDIT_LOG_TABLE_NAME } from '../constants/audit-logs.constant';
 
-@Entity({ name: 'audit_logs' })
+@Entity({ tableName: 'audit_logs' })
 export class AuditLog extends AbstractEntity {
-  @Column({ type: 'varchar', nullable: true })
+  @Property({ type: 'varchar', nullable: true })
   recordId: string;
 
-  @Column({ type: 'jsonb', nullable: true })
+  @Property({ type: 'jsonb', nullable: true })
   oldValue: Record<string, unknown>;
 
-  @Column({ type: 'jsonb', nullable: true })
+  @Property({ type: 'jsonb', nullable: true })
   newValue: Record<string, unknown>;
 
-  @ManyToOne(() => User, user => user.auditLogs)
+  @ManyToOne(() => User, { nullable: true })
   user: User;
 
-  @Column({ type: 'varchar', length: 50, enum: AUDIT_LOG_HTTP_METHOD })
+  @Enum(() => AUDIT_LOG_HTTP_METHOD)
   action: AUDIT_LOG_HTTP_METHOD;
 
-  @Column({ type: 'varchar', length: 50, enum: AUDIT_LOG_TABLE_NAME })
+  @Enum(() => AUDIT_LOG_TABLE_NAME)
   tableName: AUDIT_LOG_TABLE_NAME;
 
   @Expose()

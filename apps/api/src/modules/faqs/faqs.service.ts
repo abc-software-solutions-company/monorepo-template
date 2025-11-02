@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { InjectRepository } from '@mikro-orm/nestjs';
+import { EntityRepository, EntityManager } from '@mikro-orm/postgresql';
 
 import { BulkDeleteDto } from '@/common/dtos/bulk-delete.dto';
 import { PaginationDto } from '@/common/dtos/pagination.dto';
@@ -18,7 +18,8 @@ import { Faq } from './entities/faq.entity';
 export class FaqsService {
   constructor(
     @InjectRepository(Faq)
-    private readonly faqRepository: Repository<Faq>
+    private readonly faqRepository: EntityRepository<Faq>,
+    private readonly em: EntityManager
   ) {}
 
   async create(createDto: CreateFaqDto) {
@@ -32,9 +33,9 @@ export class FaqsService {
 
     if (createDto.status) newFaq.status = createDto.status;
 
-    const createdFaq = await this.faqRepository.save(newFaq);
+    await this.em.persistAndFlush(newFaq);
 
-    return createdFaq;
+    return newFaq;
   }
 
   async find(filterDto: FilterFaqDto) {
@@ -43,29 +44,28 @@ export class FaqsService {
     const queryBuilder = this.createQueryBuilderWithJoins('faq');
 
     if (status) {
-      queryBuilder.andWhere('faq.status in (:...status)', { status });
+      queryBuilder.andWhere({ status: { $in: status } });
     }
     if (q) {
       const searchTerm = `%${q}%`;
 
-      queryBuilder.andWhere(
-        "EXISTS (SELECT 1 FROM jsonb_array_elements(faq.titleLocalized) AS translation WHERE LOWER(translation->>'value') LIKE LOWER(:searchTerm))",
-        { searchTerm }
-      );
+      queryBuilder.andWhere({
+        $raw: `EXISTS (SELECT 1 FROM jsonb_array_elements(title_localized) AS translation WHERE LOWER(translation->>'value') LIKE LOWER('${searchTerm}'))`,
+      });
     }
 
     if (sort) {
       if (order) {
-        queryBuilder.orderBy(`faq.${sort}`, order);
+        queryBuilder.orderBy({ [sort]: order });
       } else {
-        queryBuilder.orderBy(`faq.${sort}`, SORT_ORDER.DESC);
+        queryBuilder.orderBy({ [sort]: SORT_ORDER.DESC });
       }
     } else {
-      queryBuilder.orderBy('faq.createdAt', SORT_ORDER.DESC);
+      queryBuilder.orderBy({ createdAt: SORT_ORDER.DESC });
     }
-    queryBuilder.skip(skip).take(limit);
+    queryBuilder.offset(skip).limit(limit);
 
-    const [{ entities }, totalItems] = await Promise.all([queryBuilder.getRawAndEntities(), queryBuilder.getCount()]);
+    const [entities, totalItems] = await queryBuilder.getResultAndCount();
     const paginationDto = new PaginationDto({ totalItems, filterDto });
 
     return new PaginationResponseDto(entities, { paging: paginationDto });
@@ -74,9 +74,9 @@ export class FaqsService {
   async findOne(id: string) {
     const queryBuilder = this.createQueryBuilderWithJoins('faq');
 
-    queryBuilder.where('faq.id = :id', { id });
+    queryBuilder.where({ id });
 
-    const faq = await queryBuilder.getOne();
+    const faq = await queryBuilder.getSingleResult();
 
     if (!faq) {
       throw new NotFoundException('Faq not found');
@@ -86,7 +86,7 @@ export class FaqsService {
   }
 
   async update(id: string, updateDto: UpdateFaqDto) {
-    const faq = await this.faqRepository.findOneBy({ id });
+    const faq = await this.faqRepository.findOne({ id });
 
     if (!faq) {
       throw new NotFoundException('Faq not found');
@@ -98,13 +98,13 @@ export class FaqsService {
       }
     }
 
-    const updatedFaq = await this.faqRepository.save(faq);
+    await this.em.flush();
 
-    return updatedFaq;
+    return faq;
   }
 
   async remove(id: string) {
-    const faq = await this.faqRepository.findOneBy({ id });
+    const faq = await this.faqRepository.findOne({ id });
 
     if (!faq) {
       throw new NotFoundException('Faq not found');
@@ -112,23 +112,23 @@ export class FaqsService {
 
     faq.status = FAQ_STATUS.DELETED;
 
-    const deletedFaq = await this.faqRepository.save(faq);
+    await this.em.flush();
 
-    return deletedFaq;
+    return faq;
   }
 
   async bulkDelete(bulkDeleteDto: BulkDeleteDto) {
     const faqs = await this.faqRepository
       .createQueryBuilder('post')
-      .where('post.id IN (:...ids)', { ids: bulkDeleteDto.ids })
-      .orderBy('post.createdAt', SORT_ORDER.ASC)
-      .getMany();
+      .where({ id: { $in: bulkDeleteDto.ids } })
+      .orderBy({ createdAt: SORT_ORDER.ASC })
+      .getResult();
 
     faqs.forEach(post => (post.status = FAQ_STATUS.DELETED));
 
-    const deletedFaqs = await this.faqRepository.save(faqs);
+    await this.em.flush();
 
-    return deletedFaqs;
+    return faqs;
   }
 
   private createQueryBuilderWithJoins(alias: string) {

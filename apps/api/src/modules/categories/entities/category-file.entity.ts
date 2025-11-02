@@ -1,27 +1,25 @@
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Entity, ManyToOne, PrimaryKey, Property } from '@mikro-orm/core';
 
 import { File } from '@/modules/files/entities/file.entity';
 
 import { Category } from './category.entity';
 
-@Entity({ name: 'categories_files' })
+@Entity({ tableName: 'categories_files' })
 export class CategoryFile {
-  @PrimaryGeneratedColumn('uuid', { name: 'category_id' })
+  @PrimaryKey({ type: 'uuid', fieldName: 'category_id' })
   categoryId: string;
 
-  @PrimaryGeneratedColumn('uuid', { name: 'file_id' })
+  @PrimaryKey({ type: 'uuid', fieldName: 'file_id' })
   fileId: string;
 
-  @Column({ type: 'int', nullable: true })
+  @Property({ type: 'int', nullable: true })
   position: number;
 
   // Ref: https://orkhan.gitbook.io/typeorm/docs/many-to-many-relations#many-to-many-relations-with-custom-properties
-  @ManyToOne(() => Category, category => category.categoryFiles)
-  @JoinColumn([{ name: 'category_id', referencedColumnName: 'id' }])
+  @ManyToOne(() => Category, { primary: true, fieldName: 'category_id' })
   category: Category;
 
   // Ref: https://orkhan.gitbook.io/typeorm/docs/many-to-many-relations#many-to-many-relations-with-custom-properties
-  @ManyToOne(() => File, file => file.categoryFiles)
-  @JoinColumn([{ name: 'file_id', referencedColumnName: 'id' }])
+  @ManyToOne(() => File, { primary: true, fieldName: 'file_id' })
   image: File;
 }

@@ -20,7 +20,17 @@ export class AdminAuthController {
   @ApiOperation({ summary: 'Login with credentials' })
   @ApiDocumentResponse({ message: 'Login successfully', model: LoginWithCredentialsDoc })
   @Response({ message: 'Login successfully' })
-  async login(@Req() req: Request, @Res({ passthrough: true }) response: ExpressResponse, @Body() signInDto: SignInDto) {
+  async login(@Req() req: Request, @Res({ passthrough: true }) response: ExpressResponse, @Body() signInDto: SignInDto): Promise<{
+    user: {
+      id: string;
+      email: string;
+      role: string;
+      name: string;
+      avatar: string;
+      preference: any;
+    };
+    accessToken: string;
+  }> {
     const ip = req.ip as string;
     const ua = req.headers['user-agent'] || '';
 

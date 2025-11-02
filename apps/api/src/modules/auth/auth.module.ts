@@ -1,7 +1,7 @@
 import { HttpModule } from '@nestjs/axios';
 import { Module } from '@nestjs/common';
 import { PassportModule } from '@nestjs/passport';
-import { TypeOrmModule } from '@nestjs/typeorm';
+import { MikroOrmModule } from '@mikro-orm/nestjs';
 
 import { AccessTokenStrategy } from './strategies/access-token.strategy';
 import { RefreshTokenStrategy } from './strategies/refresh-token.strategy';
@@ -21,7 +21,7 @@ import { User } from '../users/entities/user.entity';
 import { UsersModule } from '../users/users.module';
 
 @Module({
-  imports: [PassportModule, HttpModule, UsersModule, RefreshTokensModule, TypeOrmModule.forFeature([User])],
+  imports: [PassportModule, HttpModule, UsersModule, RefreshTokensModule, MikroOrmModule.forFeature([User])],
   controllers: [AdminAuthController, AuthController],
   providers: [
     AuthService,

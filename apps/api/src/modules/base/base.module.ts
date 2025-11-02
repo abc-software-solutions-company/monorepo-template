@@ -8,7 +8,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { MulterModule } from '@nestjs/platform-express';
 import { ScheduleModule } from '@nestjs/schedule';
 import { ThrottlerModule } from '@nestjs/throttler';
-import { TypeOrmModule } from '@nestjs/typeorm';
+import { MikroOrmModule } from '@mikro-orm/nestjs';
 import { LoggerModule, Params } from 'nestjs-pino';
 import path from 'path';
 import { RedisClientOptions } from 'redis';
@@ -18,7 +18,6 @@ import configs from '@/configs';
 import { IConfigs } from '@/common/interfaces/configs.interface';
 
 import { pinoDevOptions, pinoOptions } from '@/common/utils/pino-http.util';
-import { SnakeNamingStrategy } from '@/common/utils/snake-naming-strategy.util';
 
 import { MiddlewareModule } from '@/common/middlewares/middlewares.module';
 
@@ -41,21 +40,21 @@ import { FirebaseModule } from '../firebase/firebase.module';
         } as Params;
       },
     }),
-    TypeOrmModule.forRootAsync({
+    MikroOrmModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: (configService: ConfigService<IConfigs>) => {
         const { url, schema, isLoggingEnable } = configService.get<IConfigs['database']>('database');
 
         return {
-          type: 'postgres',
-          url,
+          clientUrl: url,
           schema,
-          logging: isLoggingEnable,
-          entities: [path.join(__dirname, '../../modules/**/*.entity{.ts,.js}')],
-          migrations: [path.join(__dirname, '../../database/migrations/*{.ts,.js}')],
-          subscribers: [path.join(__dirname, '../../database/subscriber/*{.ts,.js}')],
-          namingStrategy: new SnakeNamingStrategy(),
+          debug: isLoggingEnable,
+          entities: [path.join(__dirname, '../../modules/**/*.entity.js')],
+          entitiesTs: [path.join(__dirname, '../../modules/**/*.entity.ts')],
+          discovery: {
+            warnWhenNoEntities: false,
+          },
         };
       },
     }),

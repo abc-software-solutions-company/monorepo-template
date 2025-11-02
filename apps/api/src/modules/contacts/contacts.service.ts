@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { InjectRepository } from '@mikro-orm/nestjs';
+import { EntityRepository, EntityManager } from '@mikro-orm/postgresql';
 
 import { BulkDeleteDto } from '@/common/dtos/bulk-delete.dto';
 import { PaginationDto } from '@/common/dtos/pagination.dto';
@@ -18,7 +18,8 @@ import { Contact } from './entities/contact.entity';
 export class ContactsService {
   constructor(
     @InjectRepository(Contact)
-    private readonly contactRepository: Repository<Contact>
+    private readonly contactRepository: EntityRepository<Contact>,
+    private readonly em: EntityManager
   ) {}
 
   async create(createDto: CreateContactDto) {
@@ -32,9 +33,9 @@ export class ContactsService {
 
     newContact.status = CONTACT_STATUS.PUBLISHED;
 
-    const createdContact = await this.contactRepository.save(newContact);
+    await this.em.persistAndFlush(newContact);
 
-    return createdContact;
+    return newContact;
   }
 
   async find(filterDto: FilterContactDto) {
@@ -43,25 +44,28 @@ export class ContactsService {
     const queryBuilder = this.contactRepository.createQueryBuilder('contact');
 
     queryBuilder.select(CONTACT_GET_FIELDS);
-    if (status) queryBuilder.where('contact.status in (:...status)', { status });
+    if (status) queryBuilder.where({ status: { $in: status } });
     if (q) {
-      queryBuilder
-        .andWhere('LOWER(contact.name) LIKE LOWER(:name)', { name: `%${q}%` })
-        .orWhere('LOWER(contact.email) LIKE LOWER(:email)', { email: `%${q}%` })
-        .orWhere('LOWER(contact.message) LIKE LOWER(:message)', { message: `%${q}%` });
+      queryBuilder.andWhere({
+        $or: [
+          { name: { $ilike: `%${q}%` } },
+          { email: { $ilike: `%${q}%` } },
+          { message: { $ilike: `%${q}%` } },
+        ],
+      });
     }
     if (sort) {
       if (order) {
-        queryBuilder.orderBy(`contact.${sort}`, order);
+        queryBuilder.orderBy({ [sort]: order });
       } else {
-        queryBuilder.orderBy(`contact.${sort}`, SORT_ORDER.DESC);
+        queryBuilder.orderBy({ [sort]: SORT_ORDER.DESC });
       }
     } else {
-      queryBuilder.orderBy('contact.createdAt', SORT_ORDER.DESC);
+      queryBuilder.orderBy({ createdAt: SORT_ORDER.DESC });
     }
-    queryBuilder.skip(skip).take(limit);
+    queryBuilder.offset(skip).limit(limit);
 
-    const [{ entities }, totalItems] = await Promise.all([queryBuilder.getRawAndEntities(), queryBuilder.getCount()]);
+    const [entities, totalItems] = await queryBuilder.getResultAndCount();
     const paginationDto = new PaginationDto({ totalItems, filterDto });
 
     return new PaginationResponseDto(entities, { paging: paginationDto });
@@ -70,9 +74,9 @@ export class ContactsService {
   async findOne(id: string) {
     const queryBuilder = this.contactRepository.createQueryBuilder('contact');
 
-    queryBuilder.select(CONTACT_GET_FIELDS).where('contact.id = :id', { id });
+    queryBuilder.select(CONTACT_GET_FIELDS).where({ id });
 
-    const contact = await queryBuilder.getOne();
+    const contact = await queryBuilder.getSingleResult();
 
     if (!contact) {
       throw new NotFoundException('Contact not found');
@@ -86,7 +90,7 @@ export class ContactsService {
   }
 
   async update(id: string, updateContactDto: UpdateContactDto) {
-    const contact = await this.contactRepository.findOneBy({ id });
+    const contact = await this.contactRepository.findOne({ id });
 
     if (!contact) {
       throw new NotFoundException('Contact not found');
@@ -94,13 +98,13 @@ export class ContactsService {
 
     Object.assign(contact, updateContactDto);
 
-    const updatedContact = await this.contactRepository.save(contact);
+    await this.em.flush();
 
-    return updatedContact;
+    return contact;
   }
 
   async remove(id: string) {
-    const contact = await this.contactRepository.findOneBy({ id });
+    const contact = await this.contactRepository.findOne({ id });
 
     if (!contact) {
       throw new NotFoundException('Contact not found');
@@ -108,30 +112,32 @@ export class ContactsService {
 
     contact.status = CONTACT_STATUS.DELETED;
 
-    const contactResponse = await this.contactRepository.save(contact);
+    await this.em.flush();
 
-    return contactResponse;
+    return contact;
   }
 
   async bulkDelete(bulkDeleteDto: BulkDeleteDto) {
     const contacts = await this.contactRepository
       .createQueryBuilder('contact')
-      .where('contact.id IN (:...ids)', { ids: bulkDeleteDto.ids })
-      .orderBy('contact.createdAt', SORT_ORDER.ASC)
-      .getMany();
+      .where({ id: { $in: bulkDeleteDto.ids } })
+      .orderBy({ createdAt: SORT_ORDER.ASC })
+      .getResult();
 
     contacts.forEach(contact => (contact.status = CONTACT_STATUS.DELETED));
 
-    const deletedContacts = await this.contactRepository.save(contacts);
+    await this.em.flush();
 
-    return deletedContacts;
+    return contacts;
   }
 
   private async setView(id: string) {
-    const contact = await this.contactRepository.findOneBy({ id });
+    const contact = await this.contactRepository.findOne({ id });
 
     contact.isRead = true;
 
-    return this.contactRepository.save(contact);
+    await this.em.flush();
+
+    return contact;
   }
 }

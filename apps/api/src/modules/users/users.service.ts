@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { InjectRepository } from '@mikro-orm/nestjs';
+import { EntityRepository, EntityManager } from '@mikro-orm/postgresql';
+import { wrap } from '@mikro-orm/core';
 
 import { BulkDeleteDto } from '@/common/dtos/bulk-delete.dto';
 import { PaginationDto } from '@/common/dtos/pagination.dto';
@@ -27,9 +28,10 @@ import { getFileExtension } from '../files/utils/file.util';
 export class UsersService {
   constructor(
     @InjectRepository(User)
-    private readonly userRepository: Repository<User>,
+    private readonly userRepository: EntityRepository<User>,
     private readonly auditLogsService: AuditLogsService,
-    private readonly awsService: AwsService
+    private readonly awsService: AwsService,
+    private readonly em: EntityManager
   ) {}
 
   async create(creator: User, createDto: CreateUserDto) {
@@ -45,13 +47,13 @@ export class UsersService {
       newUser.password = hashPassword(createDto.password);
     }
 
-    const createdUser = await this.userRepository.save(newUser);
+    await this.em.persistAndFlush(newUser);
 
     if (creator) {
-      await this.auditLogsService.auditLogCreate(creator, createdUser, AUDIT_LOG_TABLE_NAME.USERS);
+      await this.auditLogsService.auditLogCreate(creator, newUser, AUDIT_LOG_TABLE_NAME.USERS);
     }
 
-    return createdUser;
+    return newUser;
   }
 
   async find(filterDto: FilterUserDto) {
@@ -62,26 +64,29 @@ export class UsersService {
     queryBuilder.select(USER_GET_FIELDS);
 
     if (status) {
-      queryBuilder.where('user.status in (:...status)', { status });
+      queryBuilder.where({ status: { $in: status } });
     }
     if (q) {
-      queryBuilder
-        .andWhere('LOWER(user.name) LIKE LOWER(:name)', { name: `%${q}%` })
-        .orWhere('LOWER(user.email) LIKE LOWER(:email)', { email: `%${q}%` })
-        .orWhere('LOWER(user.phoneNumber) LIKE LOWER(:phoneNumber)', { phoneNumber: `%${q}%` });
+      queryBuilder.andWhere({
+        $or: [
+          { name: { $ilike: `%${q}%` } },
+          { email: { $ilike: `%${q}%` } },
+          { phoneNumber: { $ilike: `%${q}%` } },
+        ],
+      });
     }
     if (sort) {
       if (order) {
-        queryBuilder.orderBy(`user.${sort}`, order);
+        queryBuilder.orderBy({ [sort]: order });
       } else {
-        queryBuilder.orderBy(`user.${sort}`, SORT_ORDER.DESC);
+        queryBuilder.orderBy({ [sort]: SORT_ORDER.DESC });
       }
     } else {
-      queryBuilder.orderBy('user.createdAt', SORT_ORDER.DESC);
+      queryBuilder.orderBy({ createdAt: SORT_ORDER.DESC });
     }
-    queryBuilder.skip(skip).take(limit);
+    queryBuilder.offset(skip).limit(limit);
 
-    const [{ entities }, totalItems] = await Promise.all([queryBuilder.getRawAndEntities(), queryBuilder.getCount()]);
+    const [entities, totalItems] = await queryBuilder.getResultAndCount();
     const paginationDto = new PaginationDto({ totalItems, filterDto });
 
     return new PaginationResponseDto(entities, { paging: paginationDto });
@@ -91,9 +96,9 @@ export class UsersService {
     const queryBuilder = this.userRepository.createQueryBuilder('user');
 
     queryBuilder.select(USER_GET_FIELDS);
-    queryBuilder.where('user.id = :id', { id });
+    queryBuilder.where({ id });
 
-    const user = await queryBuilder.getOne();
+    const user = await queryBuilder.getSingleResult();
 
     if (!user) {
       throw new NotFoundException(`User not found`);
@@ -103,22 +108,22 @@ export class UsersService {
   }
 
   async findActiveUser(id: string) {
-    const user = await this.userRepository.findOneBy({ id, status: USER_STATUS.ACTIVE });
+    const user = await this.userRepository.findOne({ id, status: USER_STATUS.ACTIVE });
 
     return user;
   }
 
   async findByEmail(email: string) {
-    const user = await this.userRepository.findOne({
-      where: { email },
-      relations: { preference: true },
-    });
+    const user = await this.userRepository.findOne(
+      { email },
+      { populate: ['preference'] }
+    );
 
     return user;
   }
 
   async findByOAuthAccount(provider: AUTH_PROVIDER, providerAccountId: string) {
-    const user = await this.userRepository.findOneBy({ provider, providerAccountId });
+    const user = await this.userRepository.findOne({ provider, providerAccountId });
 
     return user;
   }
@@ -136,7 +141,7 @@ export class UsersService {
   }
 
   async update(id: string, creator: User, updateDto: UpdateUserDto) {
-    const user = await this.userRepository.findOneBy({ id });
+    const user = await this.userRepository.findOne({ id });
 
     if (!user) {
       throw new NotFoundException('User not found');
@@ -155,15 +160,15 @@ export class UsersService {
       }
     }
 
-    const updatedUser = await this.userRepository.save(user);
+    await this.em.flush();
 
-    await this.auditLogsService.auditLogUpdate(creator, originalUser, updatedUser, AUDIT_LOG_TABLE_NAME.USERS);
+    await this.auditLogsService.auditLogUpdate(creator, originalUser, user, AUDIT_LOG_TABLE_NAME.USERS);
 
-    return updatedUser;
+    return user;
   }
 
   async remove(id: string, creator: User) {
-    const user = await this.userRepository.findOneBy({ id });
+    const user = await this.userRepository.findOne({ id });
 
     if (!user) {
       throw new NotFoundException('User not found');
@@ -173,40 +178,40 @@ export class UsersService {
 
     user.status = USER_STATUS.DELETED;
 
-    const deletedUser = await this.userRepository.save(user);
+    await this.em.flush();
 
-    await this.auditLogsService.auditLogDelete(creator, [originalUser], [deletedUser], AUDIT_LOG_TABLE_NAME.USERS);
+    await this.auditLogsService.auditLogDelete(creator, [originalUser], [user], AUDIT_LOG_TABLE_NAME.USERS);
 
-    return deletedUser;
+    return user;
   }
 
   async bulkDelete(creator: User, bulkDeleteDto: BulkDeleteDto) {
     const users = await this.userRepository
       .createQueryBuilder('user')
-      .where('user.id IN (:...ids)', { ids: bulkDeleteDto.ids })
-      .orderBy('user.createdAt', SORT_ORDER.ASC)
-      .getMany();
+      .where({ id: { $in: bulkDeleteDto.ids } })
+      .orderBy({ createdAt: SORT_ORDER.ASC })
+      .getResult();
 
     const originalUsers = users.map(user => structuredClone(user));
 
     users.forEach(user => (user.status = USER_STATUS.DELETED));
 
-    const deletedUsers = await this.userRepository.save(users);
+    await this.em.flush();
 
-    await this.auditLogsService.auditLogDelete(creator, originalUsers, deletedUsers, AUDIT_LOG_TABLE_NAME.USERS);
+    await this.auditLogsService.auditLogDelete(creator, originalUsers, users, AUDIT_LOG_TABLE_NAME.USERS);
 
-    return deletedUsers;
+    return users;
   }
 
   async getAllDeviceTokens() {
-    const users = await this.userRepository.createQueryBuilder('user').select('user.deviceTokens').getMany();
+    const users = await this.userRepository.createQueryBuilder('user').select('deviceTokens').getResult();
     const deviceTokens = users.flatMap(user => user.deviceTokens);
 
     return deviceTokens;
   }
 
   async updateAvatar(id: string, file: Express.Multer.File) {
-    const user = await this.userRepository.findOneBy({ id });
+    const user = await this.userRepository.findOne({ id });
 
     if (!user) {
       throw new NotFoundException('User not found');
@@ -230,12 +235,12 @@ export class UsersService {
 
     user.avatar = `/avatars/${uniqueName}`;
 
-    const response = await this.userRepository.save(user);
+    await this.em.flush();
 
     await this.awsService.putObject({ key: `avatars/${uniqueName}`, body: file.buffer });
 
     return {
-      avatar: response.avatar,
+      avatar: user.avatar,
     };
   }
 }

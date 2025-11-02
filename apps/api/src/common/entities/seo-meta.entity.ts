@@ -1,22 +1,23 @@
-import { Column } from 'typeorm';
+import { Property, Embeddable } from '@mikro-orm/core';
 
 import { Translation } from '../interfaces/language.interface';
 
+@Embeddable()
 export class SeoMeta {
   // TODO: Will be removed
-  @Column({ type: 'varchar', length: 60, nullable: true })
+  @Property({ type: 'varchar', length: 60, nullable: true })
   title?: string;
 
   // TODO: Will be removed
-  @Column({ type: 'varchar', length: 150, nullable: true })
+  @Property({ type: 'varchar', length: 150, nullable: true })
   description?: string;
 
-  @Column({ type: 'jsonb', nullable: true })
+  @Property({ type: 'jsonb', nullable: true })
   titleLocalized?: Translation[];
 
-  @Column({ type: 'jsonb', nullable: true })
+  @Property({ type: 'jsonb', nullable: true })
   descriptionLocalized?: Translation[];
 
-  @Column({ type: 'varchar', length: 150, nullable: true })
+  @Property({ type: 'varchar', length: 150, nullable: true })
   keywords?: string;
 }

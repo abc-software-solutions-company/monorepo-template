@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { InjectRepository } from '@mikro-orm/nestjs';
+import { EntityRepository, EntityManager } from '@mikro-orm/postgresql';
+import { wrap } from '@mikro-orm/core';
 
 import { BulkDeleteDto } from '@/common/dtos/bulk-delete.dto';
 import { PaginationDto } from '@/common/dtos/pagination.dto';
@@ -25,11 +26,12 @@ import { User } from '../users/entities/user.entity';
 export class ProductsService {
   constructor(
     @InjectRepository(Product)
-    private readonly productRepository: Repository<Product>,
+    private readonly productRepository: EntityRepository<Product>,
     @InjectRepository(ProductFile)
-    private readonly productFileRepository: Repository<ProductFile>,
+    private readonly productFileRepository: EntityRepository<ProductFile>,
     private readonly categoriesService: CategoriesService,
-    private readonly auditLogsService: AuditLogsService
+    private readonly auditLogsService: AuditLogsService,
+    private readonly em: EntityManager
   ) {}
 
   async create(creator: User, createDto: CreateProductDto) {
@@ -52,14 +54,14 @@ export class ProductsService {
 
     newProduct.creator = creator;
 
-    const createdProduct = await this.productRepository.save(newProduct);
+    await this.em.persistAndFlush(newProduct);
 
     await Promise.all([
-      this.sortImages(createDto.images, createdProduct.id),
-      this.auditLogsService.auditLogCreate(creator, createdProduct, AUDIT_LOG_TABLE_NAME.PRODUCTS),
+      this.sortImages(createDto.images, newProduct.id),
+      this.auditLogsService.auditLogCreate(creator, newProduct, AUDIT_LOG_TABLE_NAME.PRODUCTS),
     ]);
 
-    return createdProduct;
+    return newProduct;
   }
 
   async find(filterDto: FilterProductDto) {
@@ -67,34 +69,33 @@ export class ProductsService {
 
     const queryBuilder = this.createQueryBuilderWithJoins('product');
 
-    queryBuilder.andWhere('product.type = :type', { type });
+    queryBuilder.andWhere({ type });
 
     if (status) {
-      queryBuilder.andWhere('product.status IN (:...status)', { status });
+      queryBuilder.andWhere({ status: { $in: status } });
     }
     if (categoryId) {
-      queryBuilder.andWhere('category.id = :categoryId', { categoryId });
+      queryBuilder.andWhere({ category: categoryId });
     }
     if (q) {
       const searchTerm = `%${q}%`;
 
-      queryBuilder.andWhere(
-        "EXISTS (SELECT 1 FROM jsonb_array_elements(product.nameLocalized) AS translation WHERE LOWER(translation->>'value') LIKE LOWER(:searchTerm))",
-        { searchTerm }
-      );
+      queryBuilder.andWhere({
+        $raw: `EXISTS (SELECT 1 FROM jsonb_array_elements(name_localized) AS translation WHERE LOWER(translation->>'value') LIKE LOWER('${searchTerm}'))`,
+      });
     }
     if (sort) {
       if (order) {
-        queryBuilder.orderBy(`product.${sort}`, order);
+        queryBuilder.orderBy({ [sort]: order });
       } else {
-        queryBuilder.orderBy(`product.${sort}`, SORT_ORDER.DESC);
+        queryBuilder.orderBy({ [sort]: SORT_ORDER.DESC });
       }
     } else {
-      queryBuilder.orderBy('product.createdAt', SORT_ORDER.DESC);
+      queryBuilder.orderBy({ createdAt: SORT_ORDER.DESC });
     }
-    queryBuilder.skip(skip).take(limit);
+    queryBuilder.offset(skip).limit(limit);
 
-    const [{ entities }, totalItems] = await Promise.all([queryBuilder.getRawAndEntities(), queryBuilder.getCount()]);
+    const [entities, totalItems] = await queryBuilder.getResultAndCount();
     const paginationDto = new PaginationDto({ totalItems, filterDto });
 
     return new PaginationResponseDto(entities, { paging: paginationDto });
@@ -102,9 +103,9 @@ export class ProductsService {
 
   async findOne(id: string) {
     const product = await this.createQueryBuilderWithJoins('product')
-      .where('product.id = :id', { id })
-      .orderBy('productFile.position', SORT_ORDER.ASC)
-      .getOne();
+      .where({ id })
+      .orderBy({ 'productFile.position': SORT_ORDER.ASC })
+      .getSingleResult();
 
     if (!product) {
       throw new NotFoundException('Product not found');
@@ -115,10 +116,9 @@ export class ProductsService {
 
   async findBySlug(slug: string, status: PRODUCT_STATUS = PRODUCT_STATUS.PUBLISHED) {
     const product = await this.createQueryBuilderWithJoins('product')
-      .where('product.slug = :slug', { slug })
-      .andWhere('product.status = :status', { status })
-      .orderBy('productFile.position', SORT_ORDER.ASC)
-      .getOne();
+      .where({ slug, status })
+      .orderBy({ 'productFile.position': SORT_ORDER.ASC })
+      .getSingleResult();
 
     if (!product) {
       throw new NotFoundException('Product not found');
@@ -128,7 +128,7 @@ export class ProductsService {
   }
 
   async update(id: string, creator: User, updateDto: UpdateProductDto) {
-    const product = await this.productRepository.findOneBy({ id });
+    const product = await this.productRepository.findOne({ id });
 
     if (!product) {
       throw new NotFoundException('Product not found');
@@ -153,18 +153,18 @@ export class ProductsService {
     if (updateDto.status) product.status = updateDto.status;
     if (updateDto.seoMeta) product.seoMeta = updateDto.seoMeta;
 
-    const updatedProduct = await this.productRepository.save(product);
+    await this.em.flush();
 
     await Promise.all([
       this.sortImages(updateDto.images, originalProduct.id),
-      this.auditLogsService.auditLogUpdate(creator, originalProduct, updatedProduct, AUDIT_LOG_TABLE_NAME.PRODUCTS),
+      this.auditLogsService.auditLogUpdate(creator, originalProduct, product, AUDIT_LOG_TABLE_NAME.PRODUCTS),
     ]);
 
-    return updatedProduct;
+    return product;
   }
 
   async remove(id: string, creator: User) {
-    const product = await this.productRepository.findOneBy({ id });
+    const product = await this.productRepository.findOne({ id });
 
     if (!product) {
       throw new NotFoundException('Product not found');
@@ -174,52 +174,52 @@ export class ProductsService {
 
     product.status = PRODUCT_STATUS.DELETED;
 
-    const deletedProduct = await this.productRepository.save(product);
+    await this.em.flush();
 
-    await this.auditLogsService.auditLogDelete(creator, [originalProduct], [deletedProduct], AUDIT_LOG_TABLE_NAME.PRODUCTS);
+    await this.auditLogsService.auditLogDelete(creator, [originalProduct], [product], AUDIT_LOG_TABLE_NAME.PRODUCTS);
 
-    return deletedProduct;
+    return product;
   }
 
   async bulkDelete(creator: User, bulkDeleteDto: BulkDeleteDto) {
     const products = await this.productRepository
       .createQueryBuilder('product')
-      .where('product.id IN (:...ids)', { ids: bulkDeleteDto.ids })
-      .orderBy('product.createdAt', SORT_ORDER.ASC)
-      .getMany();
+      .where({ id: { $in: bulkDeleteDto.ids } })
+      .orderBy({ createdAt: SORT_ORDER.ASC })
+      .getResult();
 
     const originalProducts = products.map(product => structuredClone(product));
 
     products.forEach(product => (product.status = PRODUCT_STATUS.DELETED));
 
-    const deletedProducts = await this.productRepository.save(products);
+    await this.em.flush();
 
-    await this.auditLogsService.auditLogDelete(creator, originalProducts, deletedProducts, AUDIT_LOG_TABLE_NAME.PRODUCTS);
+    await this.auditLogsService.auditLogDelete(creator, originalProducts, products, AUDIT_LOG_TABLE_NAME.PRODUCTS);
 
-    return deletedProducts;
+    return products;
   }
 
   async sortImages(images: File[] | undefined, productId: string) {
     if (!images) return;
 
-    const existingFiles = await this.productFileRepository.find({ where: { productId } });
+    const existingFiles = await this.productFileRepository.find({ productId });
     const newFileIds = images.map(image => image.id);
     const filesToRemove = existingFiles.filter(file => !newFileIds.includes(file.fileId));
 
     if (filesToRemove.length > 0) {
-      await this.productFileRepository.remove(filesToRemove);
+      await this.em.removeAndFlush(filesToRemove);
     }
 
     for (let i = 0; i < images.length; i++) {
-      const existingFile = await this.productFileRepository.findOne({ where: { fileId: images[i].id, productId } });
+      const existingFile = await this.productFileRepository.findOne({ fileId: images[i].id, productId });
 
       if (existingFile) {
         existingFile.position = i + 1;
-        await this.productFileRepository.save(existingFile);
+        await this.em.flush();
       } else {
         const newFile = this.productFileRepository.create({ fileId: images[i].id, productId, position: i + 1 });
 
-        await this.productFileRepository.save(newFile);
+        await this.em.persistAndFlush(newFile);
       }
     }
   }
@@ -228,9 +228,9 @@ export class ProductsService {
     return this.productRepository
       .createQueryBuilder(alias)
       .select(PRODUCT_GET_FIELDS)
-      .leftJoin(`${alias}.creator`, 'user')
-      .leftJoin(`${alias}.category`, 'category')
-      .leftJoin(`${alias}.productFiles`, 'productFile')
-      .leftJoin('productFile.image', 'image');
+      .leftJoinAndSelect(`${alias}.creator`, 'user')
+      .leftJoinAndSelect(`${alias}.category`, 'category')
+      .leftJoinAndSelect(`${alias}.productFiles`, 'productFile')
+      .leftJoinAndSelect('productFile.image', 'image');
   }
 }

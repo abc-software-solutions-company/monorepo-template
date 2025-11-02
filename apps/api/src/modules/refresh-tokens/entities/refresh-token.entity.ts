@@ -1,27 +1,26 @@
-import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
+import { Entity, ManyToOne, Property } from '@mikro-orm/core';
 
 import { AbstractEntity } from '@/common/entities/abstract.entity';
 
 import { User } from '@/modules/users/entities/user.entity';
 
-@Entity({ name: 'refresh_tokens' })
+@Entity({ tableName: 'refresh_tokens' })
 export class RefreshToken extends AbstractEntity {
-  @Column()
+  @Property()
   token: string;
 
-  @Column()
+  @Property()
   createdByIp: string;
 
-  @Column({ nullable: true })
+  @Property({ nullable: true })
   revokedByIp?: string;
 
-  @Column({ type: 'timestamp without time zone', nullable: true })
+  @Property({ type: 'timestamp', nullable: true })
   revokedAt?: Date;
 
-  @Column()
+  @Property()
   userAgent: string;
 
-  @ManyToOne(() => User, user => user.refreshTokens)
-  @JoinColumn({ name: 'user_id' })
+  @ManyToOne(() => User, { fieldName: 'user_id' })
   user: User;
 }

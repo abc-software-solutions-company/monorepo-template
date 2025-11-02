@@ -1,8 +1,8 @@
 import { Injectable, NotFoundException, UnprocessableEntityException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
+import { InjectRepository } from '@mikro-orm/nestjs';
 import path from 'path';
 import sharp from 'sharp';
-import { Repository } from 'typeorm';
+import { EntityRepository, EntityManager } from '@mikro-orm/postgresql';
 
 import { BulkDeleteDto } from '@/common/dtos/bulk-delete.dto';
 import { PaginationDto } from '@/common/dtos/pagination.dto';
@@ -23,8 +23,9 @@ import { Category } from '../categories/entities/category.entity';
 export class FilesService {
   constructor(
     @InjectRepository(File)
-    private readonly fileRepository: Repository<File>,
-    private readonly awsService: AwsService
+    private readonly fileRepository: EntityRepository<File>,
+    private readonly awsService: AwsService,
+    private readonly em: EntityManager
   ) { }
 
   async uploadFiles(body: UploadDto, files: Array<Express.Multer.File>) {
@@ -35,7 +36,7 @@ export class FilesService {
         const fileInfo = await this.processFile(file, body.categoryId);
         const fileData = this.fileRepository.create(fileInfo);
 
-        await this.fileRepository.save(fileData);
+        await this.em.persist(fileData);
 
         await this.handleUploadFileS3(fileInfo, file);
         // await this.handleUploadFileSelfHosted(fileInfo, file);
@@ -45,6 +46,8 @@ export class FilesService {
         throw new UnprocessableEntityException(`Failed to process file ${file.originalname}: ${error.message}`);
       }
     }
+
+    await this.em.flush();
 
     return uploadedFileInfos;
   }
@@ -75,38 +78,42 @@ export class FilesService {
   async find(filterDto: FilterFileDto) {
     const { q, order, status, sort, mime, categoryId } = filterDto;
 
-    const queryBuilder = this.fileRepository.createQueryBuilder('file').select(FILE_GET_FIELDS).leftJoin('file.category', 'category');
+    const queryBuilder = this.fileRepository.createQueryBuilder('file').select(FILE_GET_FIELDS).leftJoinAndSelect('file.category', 'category');
 
     if (status) {
-      queryBuilder.where('file.status in (:...status)', { status });
+      queryBuilder.where({ status: { $in: status } });
     }
     if (categoryId) {
-      queryBuilder.andWhere('category.id = :categoryId', { categoryId });
+      queryBuilder.andWhere({ category: categoryId });
     }
     if (q) {
-      queryBuilder.andWhere('LOWER(file.name) LIKE LOWER(:name)', { name: `%${q}%` });
-      queryBuilder.orWhere('LOWER(file.caption) LIKE LOWER(:caption)', { caption: `%${q}%` });
+      queryBuilder.andWhere({
+        $or: [
+          { name: { $ilike: `%${q}%` } },
+          { caption: { $ilike: `%${q}%` } },
+        ],
+      });
     }
     if (mime) {
-      queryBuilder.andWhere('LOWER(file.mime) LIKE LOWER(:mime)', { mime: `${mime}%` });
+      queryBuilder.andWhere({ mime: { $like: `${mime}%` } });
     }
     if (sort) {
-      queryBuilder.orderBy(`file.${sort}`, order.toUpperCase() as 'ASC' | 'DESC');
+      queryBuilder.orderBy({ [sort]: order.toUpperCase() as 'ASC' | 'DESC' });
     } else if (order) {
-      queryBuilder.orderBy('file.createdAt', order.toUpperCase() as 'ASC' | 'DESC');
+      queryBuilder.orderBy({ createdAt: order.toUpperCase() as 'ASC' | 'DESC' });
     } else {
-      queryBuilder.orderBy('file.createdAt', 'DESC');
+      queryBuilder.orderBy({ createdAt: 'DESC' });
     }
-    queryBuilder.skip(filterDto.skip).take(filterDto.limit);
+    queryBuilder.offset(filterDto.skip).limit(filterDto.limit);
 
-    const [{ entities }, totalItems] = await Promise.all([queryBuilder.getRawAndEntities(), queryBuilder.getCount()]);
+    const [entities, totalItems] = await queryBuilder.getResultAndCount();
     const paginationDto = new PaginationDto({ totalItems, filterDto });
 
     return new PaginationResponseDto(entities, { paging: paginationDto });
   }
 
   async remove(id: string) {
-    const file = await this.fileRepository.findOneBy({ id });
+    const file = await this.fileRepository.findOne({ id });
 
     if (!file) {
       throw new NotFoundException('File not found');
@@ -114,14 +121,19 @@ export class FilesService {
 
     file.status = FILE_STATUS.DELETED;
 
-    return this.fileRepository.save(file);
+    await this.em.flush();
+
+    return file;
   }
 
   async bulkDelete(bulkDeleteFileDto: BulkDeleteDto) {
-    const queryBuilder = this.fileRepository.createQueryBuilder().update(File).set({ status: FILE_STATUS.DELETED }).whereInIds(bulkDeleteFileDto.ids);
-    const data = await queryBuilder.returning('id, status').execute();
+    const files = await this.fileRepository.find({ id: { $in: bulkDeleteFileDto.ids } });
 
-    return data.raw;
+    files.forEach(file => (file.status = FILE_STATUS.DELETED));
+
+    await this.em.flush();
+
+    return files.map(file => ({ id: file.id, status: file.status }));
   }
 
   private async processFile(file: Express.Multer.File, categoryId?: string): Promise<File> {

@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { InjectRepository } from '@mikro-orm/nestjs';
+import { EntityRepository, EntityManager } from '@mikro-orm/postgresql';
+import { wrap } from '@mikro-orm/core';
 
 import { BulkDeleteDto } from '@/common/dtos/bulk-delete.dto';
 import { PaginationDto } from '@/common/dtos/pagination.dto';
@@ -25,11 +26,12 @@ import { User } from '../users/entities/user.entity';
 export class PostsService {
   constructor(
     @InjectRepository(Post)
-    private readonly postRepository: Repository<Post>,
+    private readonly postRepository: EntityRepository<Post>,
     @InjectRepository(PostFile)
-    private readonly postFileRepository: Repository<PostFile>,
+    private readonly postFileRepository: EntityRepository<PostFile>,
     private readonly categoriesService: CategoriesService,
-    private readonly auditLogsService: AuditLogsService
+    private readonly auditLogsService: AuditLogsService,
+    private readonly em: EntityManager
   ) {}
 
   async create(creator: User, createDto: CreatePostDto) {
@@ -52,14 +54,14 @@ export class PostsService {
 
     newPost.creator = creator;
 
-    const createdPost = await this.postRepository.save(newPost);
+    await this.em.persistAndFlush(newPost);
 
     await Promise.all([
-      this.sortImages(createDto.images, createdPost.id),
-      this.auditLogsService.auditLogCreate(creator, createdPost, AUDIT_LOG_TABLE_NAME.POSTS),
+      this.sortImages(createDto.images, newPost.id),
+      this.auditLogsService.auditLogCreate(creator, newPost, AUDIT_LOG_TABLE_NAME.POSTS),
     ]);
 
-    return createdPost;
+    return newPost;
   }
 
   async find(filterDto: FilterPostDto) {
@@ -67,47 +69,46 @@ export class PostsService {
 
     const queryBuilder = this.createQueryBuilderWithJoins('post');
 
-    queryBuilder.where('post.type = :type', { type });
+    queryBuilder.where({ type });
 
     if (status) {
-      queryBuilder.andWhere('post.status IN (:...status)', { status });
+      queryBuilder.andWhere({ status: { $in: status } });
     }
     if (categoryId) {
-      queryBuilder.andWhere('category.id = :categoryId', { categoryId });
+      queryBuilder.andWhere({ category: categoryId });
     }
     if (q) {
       const searchTerm = `%${q}%`;
 
-      queryBuilder.andWhere(
-        "EXISTS (SELECT 1 FROM jsonb_array_elements(post.nameLocalized) AS translation WHERE LOWER(translation->>'value') LIKE LOWER(:searchTerm))",
-        { searchTerm }
-      );
+      queryBuilder.andWhere({
+        $raw: `EXISTS (SELECT 1 FROM jsonb_array_elements(name_localized) AS translation WHERE LOWER(translation->>'value') LIKE LOWER('${searchTerm}'))`,
+      });
     }
     if (year) {
       const startDate = new Date(year, 0, 1);
       const endDate = new Date(year, 11, 31, 23, 59, 59, 999);
 
-      queryBuilder.andWhere('post.createdAt BETWEEN :startDate AND :endDate', { startDate, endDate });
+      queryBuilder.andWhere({ createdAt: { $gte: startDate, $lte: endDate } });
     }
     if (sort) {
       if (order) {
-        queryBuilder.orderBy(`post.${sort}`, order);
+        queryBuilder.orderBy({ [sort]: order });
       } else {
-        queryBuilder.orderBy(`post.${sort}`, SORT_ORDER.DESC);
+        queryBuilder.orderBy({ [sort]: SORT_ORDER.DESC });
       }
     } else {
-      queryBuilder.orderBy('post.createdAt', SORT_ORDER.DESC);
+      queryBuilder.orderBy({ createdAt: SORT_ORDER.DESC });
     }
-    queryBuilder.skip(skip).take(limit);
+    queryBuilder.offset(skip).limit(limit);
 
-    const [{ entities }, totalItems] = await Promise.all([queryBuilder.getRawAndEntities(), queryBuilder.getCount()]);
+    const [entities, totalItems] = await queryBuilder.getResultAndCount();
     const paginationDto = new PaginationDto({ totalItems, filterDto });
 
     return new PaginationResponseDto(entities, { paging: paginationDto });
   }
 
   async findOne(id: string) {
-    const post = await this.createQueryBuilderWithJoins('post').where('post.id = :id', { id }).orderBy('postFile.position', SORT_ORDER.ASC).getOne();
+    const post = await this.createQueryBuilderWithJoins('post').where({ id }).orderBy({ 'postFile.position': SORT_ORDER.ASC }).getSingleResult();
 
     if (!post) {
       throw new NotFoundException('Post not found');
@@ -118,10 +119,9 @@ export class PostsService {
 
   async findBySlug(slug: string, status: POST_STATUS = POST_STATUS.PUBLISHED, hasNavigation = true) {
     const post = await this.createQueryBuilderWithJoins('post')
-      .where('post.slug = :slug', { slug })
-      .andWhere('post.status = :status', { status })
-      .orderBy('postFile.position', SORT_ORDER.ASC)
-      .getOne();
+      .where({ slug, status })
+      .orderBy({ 'postFile.position': SORT_ORDER.ASC })
+      .getSingleResult();
 
     if (!post) {
       throw new NotFoundException('Post not found');
@@ -134,23 +134,19 @@ export class PostsService {
         // Get previous post
         this.postRepository
           .createQueryBuilder('post')
-          .select(['post.id', 'post.slug', 'post.nameLocalized'])
-          .where('post.type = :type', { type: post.type })
-          .andWhere('post.status = :status', { status })
-          .andWhere('post.createdAt < :createdAt', { createdAt: post.createdAt })
-          .orderBy('post.createdAt', 'DESC')
-          .take(1)
-          .getOne(),
+          .select(['id', 'slug', 'nameLocalized'])
+          .where({ type: post.type, status, createdAt: { $lt: post.createdAt } })
+          .orderBy({ createdAt: 'DESC' })
+          .limit(1)
+          .getSingleResult(),
         // Get next post
         this.postRepository
           .createQueryBuilder('post')
-          .select(['post.id', 'post.slug', 'post.nameLocalized'])
-          .where('post.type = :type', { type: post.type })
-          .andWhere('post.status = :status', { status })
-          .andWhere('post.createdAt > :createdAt', { createdAt: post.createdAt })
-          .orderBy('post.createdAt', 'ASC')
-          .take(1)
-          .getOne(),
+          .select(['id', 'slug', 'nameLocalized'])
+          .where({ type: post.type, status, createdAt: { $gt: post.createdAt } })
+          .orderBy({ createdAt: 'ASC' })
+          .limit(1)
+          .getSingleResult(),
       ]);
 
       meta = {
@@ -163,7 +159,7 @@ export class PostsService {
   }
 
   async update(id: string, creator: User, updateDto: UpdatePostDto) {
-    const post = await this.postRepository.findOneBy({ id });
+    const post = await this.postRepository.findOne({ id });
 
     if (!post) {
       throw new NotFoundException('Post not found');
@@ -185,18 +181,18 @@ export class PostsService {
     if (updateDto.status) post.status = updateDto.status;
     if (updateDto.seoMeta) post.seoMeta = updateDto.seoMeta;
 
-    const updatedPost = await this.postRepository.save(post);
+    await this.em.flush();
 
     await Promise.all([
       this.sortImages(updateDto.images, originalPost.id),
-      this.auditLogsService.auditLogUpdate(creator, originalPost, updatedPost, AUDIT_LOG_TABLE_NAME.POSTS),
+      this.auditLogsService.auditLogUpdate(creator, originalPost, post, AUDIT_LOG_TABLE_NAME.POSTS),
     ]);
 
-    return updatedPost;
+    return post;
   }
 
   async remove(id: string, creator: User) {
-    const post = await this.postRepository.findOneBy({ id });
+    const post = await this.postRepository.findOne({ id });
 
     if (!post) {
       throw new NotFoundException('Post not found');
@@ -206,52 +202,52 @@ export class PostsService {
 
     post.status = POST_STATUS.DELETED;
 
-    const deletedPost = await this.postRepository.save(post);
+    await this.em.flush();
 
-    await this.auditLogsService.auditLogDelete(creator, [originalPost], [deletedPost], AUDIT_LOG_TABLE_NAME.POSTS);
+    await this.auditLogsService.auditLogDelete(creator, [originalPost], [post], AUDIT_LOG_TABLE_NAME.POSTS);
 
-    return deletedPost;
+    return post;
   }
 
   async bulkDelete(creator: User, bulkDeleteDto: BulkDeleteDto) {
     const posts = await this.postRepository
       .createQueryBuilder('post')
-      .where('post.id IN (:...ids)', { ids: bulkDeleteDto.ids })
-      .orderBy('post.createdAt', SORT_ORDER.ASC)
-      .getMany();
+      .where({ id: { $in: bulkDeleteDto.ids } })
+      .orderBy({ createdAt: SORT_ORDER.ASC })
+      .getResult();
 
     const originalPosts = posts.map(post => structuredClone(post));
 
     posts.forEach(post => (post.status = POST_STATUS.DELETED));
 
-    const deletedPosts = await this.postRepository.save(posts);
+    await this.em.flush();
 
-    await this.auditLogsService.auditLogDelete(creator, originalPosts, deletedPosts, AUDIT_LOG_TABLE_NAME.POSTS);
+    await this.auditLogsService.auditLogDelete(creator, originalPosts, posts, AUDIT_LOG_TABLE_NAME.POSTS);
 
-    return deletedPosts;
+    return posts;
   }
 
   async sortImages(images: File[] | undefined, postId: string) {
     if (!images) return;
 
-    const existingFiles = await this.postFileRepository.find({ where: { postId } });
+    const existingFiles = await this.postFileRepository.find({ postId });
     const newFileIds = images.map(image => image.id);
     const filesToRemove = existingFiles.filter(file => !newFileIds.includes(file.fileId));
 
     if (filesToRemove.length > 0) {
-      await this.postFileRepository.remove(filesToRemove);
+      await this.em.removeAndFlush(filesToRemove);
     }
 
     for (let i = 0; i < images.length; i++) {
-      const existingFile = await this.postFileRepository.findOne({ where: { fileId: images[i].id, postId } });
+      const existingFile = await this.postFileRepository.findOne({ fileId: images[i].id, postId });
 
       if (existingFile) {
         existingFile.position = i + 1;
-        await this.postFileRepository.save(existingFile);
+        await this.em.flush();
       } else {
         const newFile = this.postFileRepository.create({ fileId: images[i].id, postId, position: i + 1 });
 
-        await this.postFileRepository.save(newFile);
+        await this.em.persistAndFlush(newFile);
       }
     }
   }
@@ -260,9 +256,9 @@ export class PostsService {
     return this.postRepository
       .createQueryBuilder(alias)
       .select(POST_GET_FIELDS)
-      .leftJoin(`${alias}.creator`, 'user')
-      .leftJoin(`${alias}.category`, 'category')
-      .leftJoin(`${alias}.postFiles`, 'postFile')
-      .leftJoin('postFile.image', 'image');
+      .leftJoinAndSelect(`${alias}.creator`, 'user')
+      .leftJoinAndSelect(`${alias}.category`, 'category')
+      .leftJoinAndSelect(`${alias}.postFiles`, 'postFile')
+      .leftJoinAndSelect('postFile.image', 'image');
   }
 }
