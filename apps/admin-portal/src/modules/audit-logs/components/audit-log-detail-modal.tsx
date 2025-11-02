@@ -69,7 +69,7 @@ const AuditLogDetailModal: FC<AuditLogDetailModalProps> = ({ id, visible, onCanc
                     <span>{auditLog.user.name}</span>
                   </div>
                   <div className="flex items-center gap-1">
-                    <strong>{t('audit_log_user_email')}:</strong>
+                    <strong>{t('audit_log_ADMIN_USER_EMAIL')}:</strong>
                     <span>{auditLog.user.email}</span>
                   </div>
                 </div>

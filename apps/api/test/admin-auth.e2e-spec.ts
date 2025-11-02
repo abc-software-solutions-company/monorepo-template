@@ -45,7 +45,7 @@ describe('AdminAuthController (e2e)', () => {
 
     superAdminUser = await userRepository.save({
       email: 'superadmin@email.com',
-      password: hashPassword(process.env.AP_USER_PASSWORD),
+      password: hashPassword(process.env.ADMIN_USER_PASSWORD),
       name: 'Super Admin',
       role: USER_ROLE.SUPER_ADMIN,
       status: USER_STATUS.ACTIVE,
@@ -53,7 +53,7 @@ describe('AdminAuthController (e2e)', () => {
     });
     adminUser = await userRepository.save({
       email: 'admin@email.com',
-      password: hashPassword(process.env.AP_USER_PASSWORD),
+      password: hashPassword(process.env.ADMIN_USER_PASSWORD),
       name: 'Admin',
       role: USER_ROLE.ADMIN,
       status: USER_STATUS.ACTIVE,
@@ -61,7 +61,7 @@ describe('AdminAuthController (e2e)', () => {
     });
     inactiveUser = await userRepository.save({
       email: 'inactive@email.com',
-      password: hashPassword(process.env.AP_USER_PASSWORD),
+      password: hashPassword(process.env.ADMIN_USER_PASSWORD),
       name: 'Register',
       role: USER_ROLE.SUPER_ADMIN,
       status: USER_STATUS.INACTIVE,
@@ -69,7 +69,7 @@ describe('AdminAuthController (e2e)', () => {
     });
     blockedUser = await userRepository.save({
       email: 'blocked@email.com',
-      password: hashPassword(process.env.AP_USER_PASSWORD),
+      password: hashPassword(process.env.ADMIN_USER_PASSWORD),
       name: 'Blocked',
       role: USER_ROLE.SUPER_ADMIN,
       status: USER_STATUS.BLOCKED,
@@ -77,7 +77,7 @@ describe('AdminAuthController (e2e)', () => {
     });
     registerUser = await userRepository.save({
       email: 'register@email.com',
-      password: hashPassword(process.env.AP_USER_PASSWORD),
+      password: hashPassword(process.env.ADMIN_USER_PASSWORD),
       name: 'Register',
       role: USER_ROLE.USER,
       status: USER_STATUS.ACTIVE,
@@ -161,7 +161,7 @@ describe('AdminAuthController (e2e)', () => {
     });
 
     it('should throw UnauthorizedException if user is INACTIVE', async () => {
-      const response = await adminLogin(app, { email: inactiveUser.email, password: process.env.AP_USER_PASSWORD });
+      const response = await adminLogin(app, { email: inactiveUser.email, password: process.env.ADMIN_USER_PASSWORD });
 
       expect(response.body).toMatchObject({
         statusCode: 401,
@@ -171,7 +171,7 @@ describe('AdminAuthController (e2e)', () => {
     });
 
     it('should throw UnauthorizedException if user is BLOCKED', async () => {
-      const response = await adminLogin(app, { email: blockedUser.email, password: process.env.AP_USER_PASSWORD });
+      const response = await adminLogin(app, { email: blockedUser.email, password: process.env.ADMIN_USER_PASSWORD });
 
       expect(response.body).toMatchObject({
         statusCode: 401,
@@ -181,7 +181,7 @@ describe('AdminAuthController (e2e)', () => {
     });
 
     it('should throw UnauthorizedException if user role is USER and credentials are correct', async () => {
-      const response = await adminLogin(app, { email: registerUser.email, password: process.env.AP_USER_PASSWORD });
+      const response = await adminLogin(app, { email: registerUser.email, password: process.env.ADMIN_USER_PASSWORD });
 
       expect(response.body).toMatchObject({
         statusCode: 401,
@@ -190,7 +190,7 @@ describe('AdminAuthController (e2e)', () => {
     });
 
     it('returns user if user role is SUPER_ADMIN and credentials are correct', async () => {
-      const response = await adminLogin(app, { email: superAdminUser.email, password: process.env.AP_USER_PASSWORD });
+      const response = await adminLogin(app, { email: superAdminUser.email, password: process.env.ADMIN_USER_PASSWORD });
 
       expect(response.body).toMatchObject({
         statusCode: 200,
@@ -210,7 +210,7 @@ describe('AdminAuthController (e2e)', () => {
     });
 
     it('returns user if user role is ADMIN and credentials are correct', async () => {
-      const response = await adminLogin(app, { email: adminUser.email, password: process.env.AP_USER_PASSWORD });
+      const response = await adminLogin(app, { email: adminUser.email, password: process.env.ADMIN_USER_PASSWORD });
 
       expect(response.body).toMatchObject({
         statusCode: 200,
@@ -232,7 +232,7 @@ describe('AdminAuthController (e2e)', () => {
 
   describe('#logout', () => {
     it('should return 200 - Success if token is correct', async () => {
-      await adminLogin(app, { email: process.env.AP_USER_EMAIL, password: process.env.AP_USER_PASSWORD });
+      await adminLogin(app, { email: process.env.ADMIN_USER_EMAIL, password: process.env.ADMIN_USER_PASSWORD });
       const response = await adminLogout(app);
 
       expect(response.body).toMatchObject({
