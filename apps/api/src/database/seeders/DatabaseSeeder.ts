@@ -44,13 +44,33 @@ export class DatabaseSeeder extends Seeder {
 
   async run(em: EntityManager): Promise<void> {
     // Insert seed data
-    await em.persistAndFlush(userFactory);
-    await em.persistAndFlush(categoryFactory);
-    await em.persistAndFlush(fileFactory);
-    await em.persistAndFlush(postFactory);
-    await em.persistAndFlush(productFactory);
-    await em.persistAndFlush(faqFactory);
-    await em.persistAndFlush(contactFactory);
+    const users = userFactory.map(data => em.create(User, data));
+
+    await em.persistAndFlush(users);
+
+    const categories = categoryFactory.map(data => em.create(Category, data));
+
+    await em.persistAndFlush(categories);
+
+    const files = fileFactory.map(data => em.create(File, data));
+
+    await em.persistAndFlush(files);
+
+    const posts = postFactory.map(data => em.create(Post, data));
+
+    await em.persistAndFlush(posts);
+
+    const products = productFactory.map(data => em.create(Product, data));
+
+    await em.persistAndFlush(products);
+
+    const faqs = faqFactory.map(data => em.create(Faq, data));
+
+    await em.persistAndFlush(faqs);
+
+    const contacts = contactFactory.map(data => em.create(Contact, data));
+
+    await em.persistAndFlush(contacts);
 
     // Setup file directories
     removeDirectory(FILE_ROOT_PATH);
@@ -58,8 +78,15 @@ export class DatabaseSeeder extends Seeder {
     createDirectory(THUMBNAIL_PATH);
 
     // Setup S3 bucket and copy assets
-    await this.createS3Bucket();
-    await this.copyAssets();
+    try {
+      await this.createS3Bucket();
+      await this.copyAssets();
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.log('Warning: Failed to setup S3 bucket or copy assets:', error.message);
+      // eslint-disable-next-line no-console
+      console.log('Database seeding completed, but S3 setup failed. You may need to configure S3/MinIO separately.');
+    }
   }
 
   private async createS3Bucket() {
