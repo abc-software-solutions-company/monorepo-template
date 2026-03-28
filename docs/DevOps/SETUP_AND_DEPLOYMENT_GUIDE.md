@@ -82,16 +82,6 @@ To enable GitHub Actions to push images to GitHub Container Registry:
      - `contents: write`
 4. Click **Generate token** and copy the token value
 
-### Step 1.6: Add GitHub Token to VPS (for manual deployments)
-
-On your VPS, configure GitHub credentials for GHCR:
-
-```bash
-echo "github.com" >> ~/.docker/config.json
-```
-
-Or use the GitHub Actions workflow which handles this automatically.
-
 ---
 
 ## Part 2: Create SSH Key for VPS
