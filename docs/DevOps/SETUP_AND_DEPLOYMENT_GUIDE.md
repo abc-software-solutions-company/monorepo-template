@@ -19,7 +19,7 @@ This guide covers everything you need to deploy this monorepo to a VPS using Git
 
 ## Prerequisites
 
-- A VPS with Ubuntu/Debian (tested on Namecheap, Ocean Digital Ocean, and AWS LightSail)
+- A VPS with Ubuntu/Debian (tested on Namecheap, Digital Ocean, and AWS LightSail)
 - GitHub account with permissions to add secrets and run workflows
 - Git installed on your local machine
 
