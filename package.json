@@ -33,5 +33,12 @@
     "prettier-plugin-tailwindcss": "^0.6.5",
     "turbo": "^2.3.3"
   },
-  "packageManager": "pnpm@9.15.9"
+  "packageManager": "pnpm@9.15.9",
+  "pnpm": {
+    "overrides": {
+      "websocket-driver@<0.7.5": "^0.7.5",
+      "shell-quote@>=1.1.0 <1.8.4": "^1.8.4",
+      "protobufjs@>=7.0.0 <7.5.5": "^7.5.5"
+    }
+  }
 }
